@@ -1,6 +1,16 @@
 const gradeSpeakingPractice = new URL("../assets/magazine/grade-speaking-practice.webp", import.meta.url).href;
 const naturalConversation = new URL("../assets/magazine/natural-conversation.webp", import.meta.url).href;
 const oomStudyWorkflow = new URL("../assets/magazine/oom-study-workflow.webp", import.meta.url).href;
+const opic55DifficultyGuideCover = new URL("../assets/magazine/opic-55-difficulty-guide-cover.jpg", import.meta.url).href;
+const opicAnswerChecklistCover = new URL("../assets/magazine/opic-answer-checklist-cover.jpg", import.meta.url).href;
+const opicHomeTopicScriptGuideCover = new URL("../assets/magazine/opic-home-topic-script-guide-cover.jpg", import.meta.url).href;
+const opicImToIhPracticePlanCover = new URL("../assets/magazine/opic-im-to-ih-practice-plan-cover.jpg", import.meta.url).href;
+const opicIndoorTopicGuideCover = new URL("../assets/magazine/opic-indoor-topic-guide-cover.jpg", import.meta.url).href;
+const opicLastWeekStudyPlanCover = new URL("../assets/magazine/opic-last-week-study-plan-cover.jpg", import.meta.url).href;
+const opicRecordingReviewRoutineCover = new URL("../assets/magazine/opic-recording-review-routine-cover.jpg", import.meta.url).href;
+const opicRoleplay6StepTemplateCover = new URL("../assets/magazine/opic-roleplay-6-step-template-cover.jpg", import.meta.url).href;
+const opicSurveyChoiceGuideCover = new URL("../assets/magazine/opic-survey-choice-guide-cover.jpg", import.meta.url).href;
+const opicTravelTopicScriptGuideCover = new URL("../assets/magazine/opic-travel-topic-script-guide-cover.jpg", import.meta.url).href;
 const selfIntroductionCover = new URL("../assets/magazine/self-introduction-cover.jpg", import.meta.url).href;
 const selfIntroductionWarmup = new URL("../assets/magazine/self-introduction-warmup.jpg", import.meta.url).href;
 const strategyStoryPractice = new URL("../assets/magazine/strategy-story-practice.webp", import.meta.url).href;
@@ -50,9 +60,512 @@ type StudyArticleInput = {
   checklist: string[];
 };
 
-const extraArticleImage = oomStudyWorkflow;
+const studyArticleDetails: Record<string, { image: string; imageAlt: string; sections: MagazineArticleSection[] }> = {
+  "opic-survey-choice-guide": {
+    image: opicSurveyChoiceGuideCover,
+    imageAlt: "책상 위 노트와 펜, 안경을 놓고 OPIc 서베이 선택지를 정리하는 장면",
+    sections: [
+      {
+        heading: "시험 전날 바꾸고 싶어지는 선택지",
+        paragraphs: [
+          "서베이를 고를 때 가장 흔한 함정은 '있어 보이는 취미'를 찾는 것입니다. 수영을 거의 하지 않는데 수영을 고르거나, 여행 이야기가 부족한데 여행을 크게 열어 두면 질문을 받는 순간 머릿속이 바빠집니다.",
+          "오히려 좋은 선택지는 소박합니다. 집 근처 산책, 자주 가는 카페, 주말에 보는 영화처럼 말이 바로 나오는 소재가 낫습니다. 시험장은 새로운 이야기를 만드는 곳이 아니라, 이미 익숙한 장면을 꺼내는 곳에 가깝습니다.",
+        ],
+      },
+      {
+        heading: "고르기 전에 10초만 말해 보기",
+        paragraphs: [
+          "선택지를 누르기 전에 한국어로라도 10초 안에 장면 하나가 떠오르는지 확인하세요. 장소, 함께 있던 사람, 내가 한 행동 중 두 가지가 바로 떠오르면 연습용 소재로 쓸 가능성이 높습니다.",
+          "반대로 '좋아하긴 하는데 설명할 말이 없다'면 시험 준비에는 조금 불리할 수 있습니다. 관심과 답변 가능성은 다릅니다. 오픽온미의 서베이 고정 화면은 이 둘을 분리해서 보게 만드는 용도로 쓰면 좋습니다.",
+        ],
+        bullets: ["10초 안에 장소 하나가 떠오른다", "반복 행동을 말할 수 있다", "최근 변화나 작은 문제 상황으로 확장할 수 있다"],
+      },
+      {
+        heading: "답변 범위를 줄이면 말이 길어진다",
+        paragraphs: [
+          "선택지를 줄이면 답변도 짧아질 것 같지만 실제로는 반대인 경우가 많습니다. 말할 장면이 적어질수록 한 장면을 여러 각도로 다시 쓰게 되고, 그때 답변의 밀도가 올라갑니다.",
+          "예를 들어 카페를 고른다면 묘사 질문에서는 조용한 자리와 음악을 말하고, 비교 질문에서는 예전에는 붐비는 곳을 갔지만 요즘은 조용한 곳을 찾는다고 말할 수 있습니다. 소재는 하나지만 입구는 여러 개가 됩니다.",
+        ],
+      },
+      {
+        heading: "선택지 점검 예시",
+        paragraphs: [
+          "아래 문장은 그대로 외우기보다 내가 왜 그 선택지를 고정했는지 확인하는 말입니다. 이 정도 설명이 자연스럽게 나오면 연습을 시작해도 됩니다.",
+          "영어 문장이 완벽하지 않아도 괜찮습니다. 중요한 것은 그 선택지가 실제 내 루틴과 붙어 있는지입니다.",
+        ],
+        example: {
+          title: "서베이 선택 이유 말하기",
+          lines: [
+            "I choose walking because it is part of my real routine.",
+            "I can talk about the park near my home, the time I usually go there, and how I feel after walking.",
+            "So if the question changes a little, I can still use the same scene.",
+          ],
+        },
+      },
+      {
+        heading: "오픽온미에서는 이렇게 이어가기",
+        paragraphs: [
+          "서베이를 고정했다면 바로 난이도나 스크립트로 넘어가기 전에 선택한 소재를 한 줄씩 적어 보세요. '카페 - 퇴근 후 - 노트 정리'처럼 짧아도 충분합니다.",
+          "그 다음 스크립트 훈련에서 같은 장면을 60초 답변으로 키우고, 실전 연습에서 녹음해 보세요. 서베이는 체크리스트가 아니라 이후 답변을 좁혀 주는 시작점입니다.",
+        ],
+      },
+    ],
+  },
+  "opic-55-difficulty-guide": {
+    image: opic55DifficultyGuideCover,
+    imageAlt: "노트북을 켜 두고 OPIc 난이도와 답변 길이를 정리하는 책상",
+    sections: [
+      {
+        heading: "5-5가 어려운 단어를 뜻하지는 않는다",
+        paragraphs: [
+          "난이도 5-5를 고르면 갑자기 고급 단어를 써야 한다고 느끼기 쉽습니다. 하지만 연습 기준으로 볼 때 5-5의 핵심은 단어 수준보다 답변의 폭입니다.",
+          "한 질문에 장소, 행동, 이유, 변화가 들어가면 답변은 자연스럽게 길어집니다. 반대로 어려운 표현을 넣어도 장면이 비어 있으면 말은 금방 끊깁니다.",
+        ],
+      },
+      {
+        heading: "45초와 90초를 둘 다 준비하기",
+        paragraphs: [
+          "처음부터 모든 답변을 90초로 만들 필요는 없습니다. 먼저 45초로 핵심 장면을 말하고, 같은 답변에 이유와 최근 변화를 붙여 90초로 늘려 보세요.",
+          "이 연습은 시험장에서 질문이 짧게 느껴질 때와 길게 말할 수 있을 때를 모두 대비하게 해 줍니다. 길이 조절이 되면 난이도 선택도 덜 불안해집니다.",
+        ],
+        bullets: ["45초: 장소와 행동만 분명히 말한다", "60초: 이유나 감정을 하나 붙인다", "90초: 과거와 지금의 차이를 더한다"],
+      },
+      {
+        heading: "카페 답변 하나로 보는 밀도",
+        paragraphs: [
+          "카페 답변을 예로 들면 'I like cafes'에서 멈추는 답변과 '퇴근 후 조용한 자리에서 노트를 정리한다'고 말하는 답변은 완전히 다르게 들립니다.",
+          "5-5 연습에서는 두 번째 답변을 목표로 삼습니다. 화려한 표현보다 듣는 사람이 장면을 따라올 수 있는 구체성이 먼저입니다.",
+        ],
+        example: {
+          title: "답변 확장 예시",
+          lines: [
+            "There is a small cafe near my office, and I usually go there after work.",
+            "I sit near the window, order an iced latte, and write down what I need to do the next day.",
+            "It is not a special place, but that quiet routine helps me reset.",
+          ],
+        },
+      },
+      {
+        heading: "무리해서 길게 말할 때 생기는 문제",
+        paragraphs: [
+          "답변을 길게 만들겠다고 같은 말을 반복하면 오히려 불안정하게 들립니다. 'really nice', 'very good', 'I like it'이 계속 나오면 길이는 늘어도 정보는 늘지 않습니다.",
+          "한 문장을 더 말하고 싶을 때는 형용사를 반복하기보다 행동을 하나 넣으세요. 무엇을 주문했는지, 어디에 앉았는지, 왜 그 시간이 편했는지가 답변을 살립니다.",
+        ],
+      },
+      {
+        heading: "난이도 페이지에서 확인할 것",
+        paragraphs: [
+          "오픽온미의 난이도 페이지는 등급을 보장하는 화면이 아니라 답변 길이와 연습 밀도를 맞춰 보는 화면입니다. 현재 내 답변이 45초에서 멈추는지, 90초까지 버티는지 확인하는 기준으로 쓰면 좋습니다.",
+          "난이도를 정한 뒤에는 스크립트 훈련으로 넘어가 같은 장면을 여러 질문에 붙여 보세요. 그때 난이도 선택이 실제 말하기 습관으로 바뀝니다.",
+        ],
+      },
+    ],
+  },
+  "opic-roleplay-6-step-template": {
+    image: opicRoleplay6StepTemplateCover,
+    imageAlt: "노트북과 휴대폰이 놓인 책상에서 롤플레이 요청 흐름을 정리하는 장면",
+    sections: [
+      {
+        heading: "롤플레이는 친절한 문장 암기가 아니다",
+        paragraphs: [
+          "롤플레이를 준비할 때 가장 먼저 외우는 말은 보통 'Could you...'입니다. 물론 필요한 표현이지만, 그 문장만 많아지면 정작 무엇을 요청하는지 흐려집니다.",
+          "롤플레이 답변은 작은 전화 한 통처럼 생각하는 편이 쉽습니다. 왜 연락했는지, 무엇을 확인해야 하는지, 어떤 대안을 원하는지 순서대로 말하면 됩니다.",
+        ],
+      },
+      {
+        heading: "6단계를 짧게 붙이는 순서",
+        paragraphs: [
+          "여섯 단계라고 해서 답변이 길어야 하는 것은 아닙니다. 상황 확인, 문제 설명, 정보 질문, 대안 요청, 조건 확인, 감사 표현을 짧게 붙이면 충분합니다.",
+          "중요한 건 단계 이름을 외우는 것이 아니라, 중간에 멈췄을 때 다음에 물어볼 정보가 무엇인지 떠올리는 것입니다.",
+        ],
+        bullets: ["상황을 받아들인다", "문제를 한 문장으로 말한다", "필요한 정보를 묻는다", "가능한 대안을 요청한다", "조건이나 시간을 확인한다", "감사 표현으로 닫는다"],
+      },
+      {
+        heading: "예약 변경 상황으로 연습하기",
+        paragraphs: [
+          "여행 예약이나 수업 예약은 6단계를 붙여 보기 좋은 소재입니다. 날짜와 시간이 있어 정보 질문이 자연스럽고, 대안 요청도 분명하게 만들 수 있습니다.",
+          "아래 예시는 시험용 정답이 아니라 흐름을 보는 예시입니다. 실제 연습에서는 room, class, court 같은 명사만 바꿔도 여러 상황에 쓸 수 있습니다.",
+        ],
+        example: {
+          title: "짧은 롤플레이 예시",
+          lines: [
+            "Hi, I booked a room for this Friday, but my schedule changed.",
+            "Could you check if I can move it to Saturday afternoon?",
+            "If there is an extra fee, please let me know. Thank you for your help.",
+          ],
+        },
+      },
+      {
+        heading: "말이 막히는 지점은 대부분 정보 질문이다",
+        paragraphs: [
+          "롤플레이에서 멈추는 이유는 영어 표현을 몰라서만은 아닙니다. 어떤 정보를 물어봐야 할지 정하지 않은 상태에서 문장을 찾으려 하기 때문에 멈춥니다.",
+          "연습할 때는 영어로 말하기 전 한국어로 '시간 확인', '비용 확인', '가능한 날짜 확인'처럼 질문 목적을 먼저 적어 보세요. 목적이 보이면 문장은 짧아도 이어집니다.",
+        ],
+      },
+      {
+        heading: "공식 페이지와 연결하기",
+        paragraphs: [
+          "오픽온미의 롤플레이 공식 페이지에서는 이 흐름을 상황별 카드로 다시 연습할 수 있습니다. 먼저 공식을 익히고, 여행·실내·운동·집 시나리오로 넘어가면 구조가 덜 흔들립니다.",
+          "처음에는 친절한 표현을 늘리기보다 문제 설명과 대안 요청 두 문장을 안정시키는 데 집중하세요.",
+        ],
+      },
+    ],
+  },
+  "opic-recording-review-routine": {
+    image: opicRecordingReviewRoutineCover,
+    imageAlt: "책상 위 마이크와 녹음 장비로 OPIc 답변을 다시 들어보는 장면",
+    sections: [
+      {
+        heading: "녹음 파일을 다시 들을 때 먼저 보이는 것",
+        paragraphs: [
+          "처음 녹음을 들으면 문법보다 먼저 '어, 여기서 왜 멈췄지?' 하는 지점이 들립니다. 바로 그 멈춤이 다음 연습의 출발점입니다.",
+          "녹음 복습은 완벽한 파일을 만드는 시간이 아닙니다. 내가 어느 부분에서 장면을 잃어버렸는지 확인하고, 다음 답변에서 하나만 고치는 시간입니다.",
+        ],
+      },
+      {
+        heading: "10분 안에 끝내는 이유",
+        paragraphs: [
+          "한 답변을 오래 붙잡으면 고칠 것이 끝없이 보입니다. 그러다 보면 다음 질문으로 넘어가지 못하고, 실제 시험처럼 즉석에서 회복하는 힘도 잘 생기지 않습니다.",
+          "10분 루틴은 일부러 짧습니다. 질문 읽기, 녹음하기, 한 번 듣기, 하나만 표시하기, 다시 말하기로 끝내면 연습이 가벼워집니다.",
+        ],
+        bullets: ["1분: 질문을 읽고 장면을 고른다", "2분: 멈추지 말고 녹음한다", "3분: 한 번만 듣고 끊긴 곳을 표시한다", "4분: 첫 문장이나 마무리만 바꿔 다시 녹음한다"],
+      },
+      {
+        heading: "문법보다 먼저 표시할 것",
+        paragraphs: [
+          "첫 복습에서 문법 오류를 모두 잡으려 하면 답변의 흐름을 놓치기 쉽습니다. 먼저 질문에 직접 답했는지, 장면이 보이는지, 마지막 문장이 닫혔는지 확인하세요.",
+          "문법은 두 번째나 세 번째 복습에서 다뤄도 늦지 않습니다. 말하기 시험 준비에서는 흐름을 잃지 않는 것이 먼저입니다.",
+        ],
+      },
+      {
+        heading: "수정 녹음은 같은 질문으로 한 번만",
+        paragraphs: [
+          "같은 질문을 세 번, 네 번 반복하면 점점 외운 말처럼 변합니다. 수정 녹음은 한 번만 하고, 바로 비슷한 질문으로 넘어가 보세요.",
+          "예를 들어 카페 답변에서 첫 문장을 고쳤다면, 다음에는 '최근에 간 장소' 질문으로 바꿔 같은 장면을 다시 써 보는 식입니다.",
+        ],
+        example: {
+          title: "복습 후 다시 말하기",
+          lines: [
+            "First try: I like this cafe because it is good.",
+            "Second try: I often go to a small cafe near my office after work.",
+            "Next question: A place I visited recently was that same cafe, but I can start from a different angle.",
+          ],
+        },
+      },
+      {
+        heading: "실전 연습 화면에서 이어가기",
+        paragraphs: [
+          "오픽온미의 실전 연습 화면은 질문, 타이머, 녹음을 한곳에 모아 둡니다. 답변을 저장해 오래 보관하는 도구라기보다, 지금 말한 답변을 바로 듣고 다음 답변으로 넘기는 흐름에 맞춰져 있습니다.",
+          "복습할 때마다 고칠 항목을 하나만 정해 보세요. 그렇게 쌓인 작은 수정이 실제 시험장에서 멈췄을 때 돌아오는 길이 됩니다.",
+        ],
+      },
+    ],
+  },
+  "opic-home-topic-script-guide": {
+    image: opicHomeTopicScriptGuideCover,
+    imageAlt: "집 안 책상과 창가를 배경으로 거주지 답변 장면을 떠올리는 홈 오피스",
+    sections: [
+      {
+        heading: "집 이야기는 특별하지 않아도 된다",
+        paragraphs: [
+          "집 주제에서 막히는 이유는 대단한 집을 설명하려 하기 때문입니다. 시험에서 필요한 것은 멋진 인테리어가 아니라 내가 그 공간에서 무엇을 하는지입니다.",
+          "책상, 창문, 침대 옆 작은 선반처럼 아주 좁은 공간도 괜찮습니다. 그곳에서 반복하는 행동이 있으면 답변은 충분히 살아납니다.",
+        ],
+      },
+      {
+        heading: "공간 하나만 고르기",
+        paragraphs: [
+          "집 전체를 소개하려 하면 답변이 금방 목록처럼 변합니다. 대신 한 공간을 고르고 그 공간에 머무는 시간을 말해 보세요.",
+          "예를 들어 '창가 책상'을 고르면 퇴근 후 노트를 정리하는 루틴, 주말 아침 커피, 최근 자리 배치를 바꾼 이야기까지 자연스럽게 이어집니다.",
+        ],
+        bullets: ["방 전체보다 책상 하나를 고른다", "언제 그곳에 앉는지 말한다", "그곳에서 하는 반복 행동을 붙인다"],
+      },
+      {
+        heading: "묘사에서 문제 해결까지 확장하기",
+        paragraphs: [
+          "집 주제는 묘사 질문에서 끝나지 않습니다. 예전 집과 지금 집 비교, 이사 경험, 고장이나 수리 요청 같은 문제 해결 질문으로도 자주 변합니다.",
+          "그래서 처음부터 작은 문제 하나를 준비해 두면 좋습니다. 인터넷이 느렸던 일, 책상이 좁았던 일, 창문 근처가 추웠던 일처럼 평범한 문제면 충분합니다.",
+        ],
+      },
+      {
+        heading: "집 주제 답변 예시",
+        paragraphs: [
+          "아래 예시는 집을 자랑하는 답변이 아니라, 공간과 루틴을 연결하는 방식입니다. 단어를 바꿔 내 방, 거실, 주방에도 그대로 적용할 수 있습니다.",
+          "문장이 길지 않아도 장면이 분명하면 듣는 사람이 따라오기 쉽습니다.",
+        ],
+        example: {
+          title: "창가 책상 답변",
+          lines: [
+            "My favorite spot at home is my desk near the window.",
+            "After work, I sit there for about twenty minutes and write down what I need to do the next day.",
+            "It is a small habit, but it makes my room feel like a place where I can slow down.",
+          ],
+        },
+      },
+      {
+        heading: "집 롤플레이로 넘어가기",
+        paragraphs: [
+          "스크립트에서 공간을 정했다면, 롤플레이에서는 같은 공간에 문제가 생겼다고 생각해 보세요. 싱크대 누수, 인터넷 문제, 청소 일정 변경 같은 소재가 바로 이어집니다.",
+          "오픽온미의 집 롤플레이 페이지에서 문제 위치, 증상, 원하는 시간을 짧게 말하는 연습을 붙이면 집 주제가 더 단단해집니다.",
+        ],
+      },
+    ],
+  },
+  "opic-travel-topic-script-guide": {
+    image: opicTravelTopicScriptGuideCover,
+    imageAlt: "여행 가방과 지도, 노트를 펼쳐 두고 여행 답변 소재를 정리하는 장면",
+    sections: [
+      {
+        heading: "여행지는 하나만 있어도 충분하다",
+        paragraphs: [
+          "여행 주제를 준비할 때 도시 이름을 많이 모으는 것보다 한 번의 여행을 제대로 말할 수 있는지가 더 중요합니다. 장소가 하나라도 출발, 분위기, 변수, 마무리가 있으면 여러 질문에 쓸 수 있습니다.",
+          "특히 OPIc에서는 같은 여행을 묘사, 비교, 문제 해결 질문으로 바꿔 물을 수 있습니다. 그래서 여행 리스트보다 장면 하나의 구조가 더 쓸모 있습니다.",
+        ],
+      },
+      {
+        heading: "계획과 달라진 일을 넣기",
+        paragraphs: [
+          "여행 답변은 계획대로 흘러간 이야기보다 작은 변수가 있을 때 말하기 쉬워집니다. 비가 왔다, 길을 잘못 들었다, 예약 시간이 바뀌었다 같은 일은 답변에 방향을 만들어 줍니다.",
+          "문제가 너무 극적일 필요는 없습니다. 오히려 작고 현실적인 변수가 자연스럽습니다. 그 변수를 어떻게 바꿨는지가 답변의 후반부가 됩니다.",
+        ],
+        bullets: ["처음 계획을 한 문장으로 말한다", "예상과 달라진 일을 넣는다", "바꾼 선택과 느낀 점으로 닫는다"],
+      },
+      {
+        heading: "묘사 질문과 비교 질문을 나누기",
+        paragraphs: [
+          "묘사 질문에서는 장소의 분위기와 내가 한 행동을 먼저 말합니다. 비교 질문에서는 예전의 여행 방식과 지금의 여행 방식을 나누면 답변이 깔끔해집니다.",
+          "한 여행 장면을 두 번 쓰더라도 시작 문장만 바꾸면 다른 답변처럼 들립니다. 이게 스크립트를 통째로 새로 만들지 않는 요령입니다.",
+        ],
+      },
+      {
+        heading: "여행 답변 예시",
+        paragraphs: [
+          "아래 예시는 바닷가 여행이지만, 산책길이나 당일치기 여행으로 바꿔도 흐름은 같습니다. 장소보다 변수와 선택이 핵심입니다.",
+          "답변을 녹음할 때는 'weather changed' 뒤에 바로 해결 행동이 나오는지 확인해 보세요.",
+        ],
+        example: {
+          title: "변수가 있는 여행 장면",
+          lines: [
+            "I still remember a short beach trip I took last spring.",
+            "We planned to walk outside, but the weather changed suddenly, so we found a small cafe near the beach.",
+            "That was not our original plan, but it made the trip more relaxed and memorable.",
+          ],
+        },
+      },
+      {
+        heading: "여행 롤플레이와 연결하기",
+        paragraphs: [
+          "여행 스크립트를 만들었다면 예약 변경이나 교통 문제 롤플레이로 바로 이어갈 수 있습니다. 같은 여행 장면에서 '문제가 생겼다'고 상상하면 롤플레이 소재가 자연스럽게 나옵니다.",
+          "오픽온미에서는 여행 스크립트와 여행 롤플레이를 따로 외우기보다 같은 장면을 두 방식으로 바꿔 말하는 연습을 추천합니다.",
+        ],
+      },
+    ],
+  },
+  "opic-indoor-topic-guide": {
+    image: opicIndoorTopicGuideCover,
+    imageAlt: "카페 테이블에서 노트북과 커피를 두고 실내 활동 답변을 정리하는 장면",
+    sections: [
+      {
+        heading: "카페 이야기가 짧아지는 이유",
+        paragraphs: [
+          "카페나 실내 활동은 너무 평범해서 말할 게 없다고 느끼기 쉽습니다. 하지만 평범한 장소일수록 루틴을 붙이면 답변이 안정됩니다.",
+          "어떤 메뉴를 주문하는지보다 언제 가는지, 어디에 앉는지, 그 시간이 왜 필요한지가 더 중요합니다. 그 세 가지가 있으면 카페 답변은 금방 길어집니다.",
+        ],
+      },
+      {
+        heading: "감각 단서 하나만 넣기",
+        paragraphs: [
+          "실내 주제는 소리, 조명, 좌석, 냄새 같은 감각 단서가 잘 맞습니다. 단, 모든 감각을 다 넣으려 하면 산만해집니다.",
+          "하나만 고르세요. 조용한 음악, 창가 자리, 낮은 조명처럼 장면을 보여 주는 단서 하나면 충분합니다.",
+        ],
+        bullets: ["시간대: 퇴근 후, 주말 아침, 점심시간", "장소 단서: 창가 자리, 벽 쪽 좌석, 조용한 구석", "감정: 머리가 정리된다, 쉬는 느낌이 든다"],
+      },
+      {
+        heading: "집과 카페를 함께 쓰는 법",
+        paragraphs: [
+          "실내 활동은 집 주제와 겹쳐도 괜찮습니다. 집에서는 혼자 정리하는 루틴을 말하고, 카페에서는 분위기와 외부 공간이 주는 차이를 말하면 됩니다.",
+          "같은 '노트 정리'라도 장소가 바뀌면 답변의 느낌이 달라집니다. 이 차이를 비교 질문에 활용할 수 있습니다.",
+        ],
+      },
+      {
+        heading: "실내 주제 답변 예시",
+        paragraphs: [
+          "예시는 일부러 단순하게 두는 편이 좋습니다. 실제 시험장에서 너무 꾸민 장면은 떠올리기 어렵기 때문입니다.",
+          "아래 답변처럼 루틴과 감정만 분명해도 실내 주제는 충분히 자연스럽게 들립니다.",
+        ],
+        example: {
+          title: "카페 루틴 답변",
+          lines: [
+            "There is a quiet cafe near my office, and I usually go there after work.",
+            "I sit near the wall, order coffee, and check my notes for a few minutes.",
+            "The place is not fancy, but the quiet music helps me slow down.",
+          ],
+        },
+      },
+      {
+        heading: "실내 서비스 롤플레이로 바꾸기",
+        paragraphs: [
+          "실내 주제는 롤플레이로도 쉽게 이어집니다. 주문이 잘못 나왔거나 예약 시간이 바뀌었거나 자리가 없는 상황을 붙이면 됩니다.",
+          "스크립트에서 만든 카페 장면을 롤플레이에서 다시 쓰면 새 소재를 만들지 않아도 됩니다. 오픽온미의 실내 롤플레이 페이지에서 같은 장소를 서비스 상황으로 바꿔 보세요.",
+        ],
+      },
+    ],
+  },
+  "opic-im-to-ih-practice-plan": {
+    image: opicImToIhPracticePlanCover,
+    imageAlt: "작은 노트에 답변 확장 계획을 적어 IM에서 IH로 가는 연습을 준비하는 장면",
+    sections: [
+      {
+        heading: "짧은 답변이 나쁜 건 아니다",
+        paragraphs: [
+          "IM 단계의 답변은 대체로 질문에 직접 답합니다. 이것 자체가 나쁜 것은 아닙니다. 문제는 거기서 바로 멈출 때 생깁니다.",
+          "IH를 목표로 연습한다면 짧은 답변 위에 행동, 이유, 감정을 한 겹씩 얹어야 합니다. 어려운 단어보다 이 확장 습관이 먼저입니다.",
+        ],
+      },
+      {
+        heading: "한 문장 뒤에 행동을 붙이기",
+        paragraphs: [
+          "'I like walking'이라고 말했다면 바로 다음 문장에는 언제, 어디서, 어떻게 걷는지가 나와야 합니다. 이 행동 문장이 답변을 장면으로 바꿉니다.",
+          "행동이 붙으면 이유도 자연스럽게 따라옵니다. 왜 걷는지, 걷고 나면 기분이 어떻게 달라지는지를 말할 수 있기 때문입니다.",
+        ],
+        bullets: ["직접 답변을 먼저 말한다", "반복 행동을 하나 붙인다", "그 행동이 나에게 주는 느낌을 말한다"],
+      },
+      {
+        heading: "같은 단어 반복 줄이기",
+        paragraphs: [
+          "IH를 준비할 때 단어를 많이 외우는 것보다 반복을 줄이는 편이 체감 효과가 큽니다. good, nice, like가 계속 나오면 답변이 납작하게 들립니다.",
+          "대신 quiet, crowded, familiar, relaxing처럼 장면을 보여 주는 단어를 조금씩 넣어 보세요. 단어 수는 적어도 답변의 표정이 달라집니다.",
+        ],
+      },
+      {
+        heading: "IM 답변을 IH 쪽으로 늘리는 예시",
+        paragraphs: [
+          "아래 예시는 답변을 어렵게 만드는 예시가 아닙니다. 이미 말할 수 있는 문장에 구체적 행동과 이유를 붙이는 방식입니다.",
+          "이런 확장은 스크립트 훈련보다 녹음 복습에서 더 잘 보입니다. 내 녹음을 들으며 비어 있는 행동 문장을 찾아 보세요.",
+        ],
+        example: {
+          title: "짧은 답변 확장",
+          lines: [
+            "Short answer: I like walking in my neighborhood.",
+            "Expanded answer: I usually walk after dinner because the streets are quiet, and that small routine helps me clear my head.",
+            "Next step: I can add a recent change, like a new park path I found last month.",
+          ],
+        },
+      },
+      {
+        heading: "오픽온미에서 2주만 반복하기",
+        paragraphs: [
+          "서베이에서 고른 소재 3개만 골라 같은 방식으로 확장해 보세요. 매일 새 질문을 많이 푸는 것보다, 같은 장면을 더 선명하게 만드는 연습이 도움이 됩니다.",
+          "실전 연습에서는 답변마다 '행동이 있는가'만 체크해도 충분합니다. 그 기준 하나가 IM에서 IH로 넘어가는 말하기 습관을 바꿉니다.",
+        ],
+      },
+    ],
+  },
+  "opic-last-week-study-plan": {
+    image: opicLastWeekStudyPlanCover,
+    imageAlt: "노트와 필기구를 펼쳐 시험 일주일 전 OPIc 연습 일정을 정리하는 장면",
+    sections: [
+      {
+        heading: "마지막 일주일에는 새 노트를 만들지 않는다",
+        paragraphs: [
+          "시험이 가까워지면 새 자료를 더 찾아보고 싶어집니다. 하지만 마지막 주에 소재를 늘리면 말할 장면이 오히려 흐려질 수 있습니다.",
+          "이 시기에는 이미 고른 장면을 시험장에서 바로 꺼낼 수 있게 만드는 쪽이 낫습니다. 새로움보다 회수율이 중요합니다.",
+        ],
+      },
+      {
+        heading: "하루 두 질문이면 충분하다",
+        paragraphs: [
+          "마지막 주 연습은 길게 잡지 않아도 됩니다. 하루에 질문 두 개를 고르고, 각각 한 번 녹음한 뒤 하나만 수정해 보세요.",
+          "이 루틴은 부담이 적어서 매일 이어 가기 쉽습니다. 컨디션이 흔들리는 주간에는 꾸준히 반복 가능한 양이 더 중요합니다.",
+        ],
+        bullets: ["새 주제 추가를 멈춘다", "기존 장면을 45초와 90초로 말한다", "롤플레이 공식은 하루 한 상황만 반복한다"],
+      },
+      {
+        heading: "D-7부터 D-1까지의 흐름",
+        paragraphs: [
+          "초반 3일은 서베이와 스크립트 장면을 정리합니다. 중간 2일은 롤플레이와 문제 해결 질문을 붙입니다. 마지막 2일은 녹음 복습만 가볍게 합니다.",
+          "시험 전날에는 새 표현을 외우기보다 첫 문장만 천천히 말해 보는 편이 좋습니다. 시작이 안정되면 뒤 문장도 따라올 가능성이 높습니다.",
+        ],
+      },
+      {
+        heading: "마지막 주 답변 예시",
+        paragraphs: [
+          "마지막 주에는 영어 문장을 많이 바꾸지 마세요. 이미 익숙한 장면을 길이만 다르게 말해 보는 것이 더 실전적입니다.",
+          "아래처럼 같은 이야기를 짧게, 길게 바꾸는 연습을 하면 질문 길이에 덜 흔들립니다.",
+        ],
+        example: {
+          title: "같은 장면 길이 조절",
+          lines: [
+            "Short version: I often go to a small cafe after work because it helps me relax.",
+            "Longer version: I sit near the window, order coffee, and write down my plan for the next day.",
+            "Closing: That simple routine makes my evening feel organized.",
+          ],
+        },
+      },
+      {
+        heading: "시험 전날 확인할 것",
+        paragraphs: [
+          "전날에는 전체 스크립트를 다시 외우려 하지 말고 첫 문장 목록만 확인하세요. 첫 문장이 떠오르면 답변의 방향을 잡기 쉽습니다.",
+          "오픽온미의 실전 연습에서 질문을 몇 개만 랜덤으로 돌려 보고, 녹음은 짧게 확인하세요. 많이 하는 것보다 무리하지 않는 것이 마지막 주에는 더 중요합니다.",
+        ],
+      },
+    ],
+  },
+  "opic-answer-checklist": {
+    image: opicAnswerChecklistCover,
+    imageAlt: "체크리스트 노트에 답변 녹음 후 확인할 항목을 적어 둔 장면",
+    sections: [
+      {
+        heading: "녹음을 들을 때 가장 먼저 볼 것",
+        paragraphs: [
+          "녹음을 다시 들으면 발음이나 문법부터 고치고 싶어집니다. 하지만 첫 번째 확인은 질문에 직접 답했는지입니다.",
+          "질문이 장소를 묻는데 취미 이야기로 오래 돌아가거나, 경험을 묻는데 일반 설명만 하면 답변이 약해집니다. 체크리스트의 첫 줄은 항상 질문 대응입니다.",
+        ],
+      },
+      {
+        heading: "문법보다 먼저 표시할 지점",
+        paragraphs: [
+          "문법 오류를 표시하기 전에 말이 멈춘 지점을 표시하세요. 그곳은 단어가 부족한 곳일 수도 있지만, 대개 다음 장면이 준비되지 않은 곳입니다.",
+          "멈춘 지점을 찾으면 다음 녹음에서 넣을 행동 하나를 정합니다. 예를 들어 '카페가 좋다'에서 멈췄다면 '창가에 앉아 노트를 정리한다'를 붙이는 식입니다.",
+        ],
+        bullets: ["질문에 바로 답했는가", "장소나 행동이 눈에 보이는가", "같은 표현이 세 번 이상 반복되는가", "마지막 문장이 닫혔는가"],
+      },
+      {
+        heading: "두 번째 녹음에서 하나만 바꾸기",
+        paragraphs: [
+          "첫 녹음을 듣고 모든 것을 고치려 하면 답변이 무거워집니다. 두 번째 녹음에서는 하나만 바꾸세요. 첫 문장, 연결어, 마무리 중 하나면 충분합니다.",
+          "이렇게 해야 다음 질문으로 넘어갈 수 있습니다. OPIc 연습은 한 답변을 완성하는 작업이 아니라 여러 질문에서 회복하는 연습에 가깝습니다.",
+        ],
+      },
+      {
+        heading: "체크리스트 적용 예시",
+        paragraphs: [
+          "체크리스트는 길게 쓰지 않아도 됩니다. 녹음 옆에 짧은 표시를 남기는 정도가 실제 연습에서는 더 잘 이어집니다.",
+          "아래처럼 한 줄씩만 적어도 다음 답변에서 무엇을 바꿀지 충분히 보입니다.",
+        ],
+        example: {
+          title: "녹음 메모 예시",
+          lines: [
+            "Question match: yes, but the opening was too slow.",
+            "Scene: cafe seat and coffee were clear.",
+            "Fix next time: add one closing sentence about why the routine matters.",
+          ],
+        },
+      },
+      {
+        heading: "실전 연습 화면에서 쓰는 법",
+        paragraphs: [
+          "오픽온미의 실전 연습에서 녹음한 뒤에는 체크리스트를 전부 채우려 하지 않아도 됩니다. 오늘은 질문 대응, 내일은 마무리처럼 하나씩만 봐도 좋습니다.",
+          "중요한 것은 점수표처럼 자신을 평가하는 것이 아니라, 다음 녹음에서 바로 바꿀 행동을 하나 남기는 것입니다.",
+        ],
+      },
+    ],
+  },
+};
 
 function makeStudyArticle(input: StudyArticleInput, index: number): MagazineArticle {
+  const detail = studyArticleDetails[input.id];
+
   return {
     id: input.id,
     category: "OPIc 훈련 가이드",
@@ -61,57 +574,11 @@ function makeStudyArticle(input: StudyArticleInput, index: number): MagazineArti
     date: `2026.07.${String(1 + index).padStart(2, "0")}`,
     readMinutes: "7분 읽기",
     summary: input.summary,
-    image: extraArticleImage,
-    imageAlt: "오픽온미 학습 흐름을 따라 답변 장면과 녹음 복습을 정리하는 노트",
+    image: detail.image,
+    imageAlt: detail.imageAlt,
     takeaway: input.takeaway,
     disclaimer: "이 글은 OPIc 말하기를 준비하는 학습자를 위한 연습용 참고 자료입니다. 공식 시험기관의 보증이나 특정 등급 취득을 의미하지 않습니다.",
-    sections: [
-      {
-        heading: "왜 이 주제를 먼저 정리해야 할까",
-        paragraphs: [
-          `${input.focus}은 OPIc 준비에서 답변의 범위를 줄이고 말할 장면을 빠르게 떠올리게 하는 기준입니다. 주제를 많이 아는 것보다 시험 중 바로 꺼낼 수 있는 장면을 갖는 것이 더 중요합니다.`,
-          `오픽온미에서는 ${input.scene}을 하나의 연습 장면으로 보고, 묘사·비교·문제 해결·롤플레이 질문에 맞춰 같은 소재를 변형해 보도록 안내합니다.`,
-        ],
-      },
-      {
-        heading: "오픽온미에서 적용하는 방법",
-        paragraphs: [
-          `먼저 훈련 단계에서 ${input.routine}을 정하고, 답변 전체를 외우기보다 첫 문장, 세부 행동, 마무리 감정으로 나눠 봅니다.`,
-          "그 다음 실전 연습에서 같은 소재를 녹음해 보고, 문법 전체를 고치기 전에 장면이 분명한지와 말이 끊기는 지점이 어디인지 확인합니다.",
-        ],
-        bullets: input.checklist,
-      },
-      {
-        heading: "연습용 예시 흐름",
-        paragraphs: [
-          "아래 예시는 그대로 외우기 위한 정답이 아니라, 내 경험에 맞춰 단어와 상황을 바꾸기 위한 뼈대입니다.",
-          "한 문장을 길게 늘리기보다 짧은 문장 여러 개가 자연스럽게 이어지도록 말하면 녹음 복습 때 수정할 지점이 더 잘 보입니다.",
-        ],
-        example: {
-          title: "답변 뼈대 예시",
-          description: "상황에 맞게 장소, 시간, 감정만 바꿔 말해 보세요.",
-          lines: input.example,
-        },
-      },
-      {
-        heading: "녹음 후 확인할 부분",
-        paragraphs: [
-          "녹음 파일을 들을 때는 발음, 문법, 단어를 한꺼번에 고치려 하지 않는 편이 좋습니다. 첫 복습에서는 질문에 직접 답했는지, 장면이 눈에 보이는지, 마지막 문장이 닫혔는지만 확인하세요.",
-          "두 번째 복습에서는 반복되는 연결어 하나를 줄이고, 비어 있는 부분에 구체적 행동 하나를 넣습니다. 이 작은 수정이 다음 질문에서 재사용할 수 있는 답변 블록이 됩니다.",
-        ],
-        note: {
-          title: "10분 복습 기준",
-          text: "한 질문을 오래 붙잡기보다 녹음 한 번, 표시 한 번, 수정 녹음 한 번으로 끝내고 다음 질문으로 이동하는 방식이 꾸준히 반복하기 좋습니다.",
-        },
-      },
-      {
-        heading: "다음 단계로 연결하기",
-        paragraphs: [
-          "이 글의 내용을 읽은 뒤에는 관련 훈련 페이지에서 실제로 한 번 말해 보는 것이 중요합니다. 읽기만 하면 지식은 남지만 시험장에서 바로 꺼낼 문장 순서는 만들어지지 않습니다.",
-          "오픽온미의 서베이, 스크립트, 롤플레이, 실전 연습 화면을 오가며 같은 장면을 여러 질문으로 바꾸는 연습을 이어 가세요.",
-        ],
-      },
-    ],
+    sections: detail.sections,
   };
 }
 

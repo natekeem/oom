@@ -69,7 +69,7 @@ Parent hubs explain the purpose of their child pages. Parent routes should not s
 | Role-play | `RoleplayHub`, `RoleplayFormulaView`, `RoleplayViewV2` | Formula page links to scenario groups; detailed examples appear only in group pages |
 | Practice | `PracticeView`, `PracticeTimer`, `Recorder` | Random question, timer, in-memory audio, text response, feedback request |
 | AI settings | `AiSettingsView`, `AiSettingsPanel` | Runtime-only LLM endpoint and request-shape configuration |
-| Legal pages | `LegalPageView` | About, privacy, contact, and terms content for static SEO and AdSense review |
+| Legal pages | `LegalPageView` | About, privacy, contact, terms, and image credit content for static SEO and AdSense review |
 
 Some older presentation components remain in the source tree for now. They are not route owners. Use `App.tsx` and `docs/ROUTING.md` to determine the active implementation before editing.
 
@@ -99,7 +99,7 @@ The choice is intentional:
 | `additionalScriptReplacementGuides.ts` | Replacement-block lookup for optional stories |
 | `questions.ts` | Random-practice question pool |
 | `magazine.ts` | OOM magazine article copy, learning examples, takeaways, and local editorial-image metadata |
-| `legalPages.ts` | About, privacy, contact, and terms page copy |
+| `legalPages.ts` | About, privacy, contact, terms, and image credit page copy |
 | `roleplays.ts` | Six-step formula, reusable phrases, core scenarios |
 | `additionalRoleplays.ts` | Additional indoor/rest, sports, and home scenarios |
 | `examFaq.ts` | Candidate-guide Q&A categories and answers |

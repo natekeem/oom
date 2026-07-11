@@ -44,6 +44,7 @@ Footer legal pages
 ├─ about
 ├─ privacy
 ├─ terms
+├─ image-credits
 └─ contact
 AI feedback / settings
 ```
@@ -94,6 +95,7 @@ Home, all `exam-*` views, `magazine-list` (including article detail URLs), foote
 | `privacy` | Footer legal page | `LegalPageView` | No | `/privacy` explains privacy, cookies, Google ads, and contact |
 | `contact` | Footer legal page | `LegalPageView` | No | `/contact` lists the inquiry email |
 | `terms` | Footer legal page | `LegalPageView` | No | `/terms` explains study-use terms and non-affiliation |
+| `image-credits` | Footer trust page | `LegalPageView` | No | `/image-credits` lists magazine cover image credits and license links |
 | `roleplay` | Compatibility route only | `RoleplayFormulaView` | Yes, 80% | Do not add new navigation links to this alias |
 
 ## Next-Step Contract

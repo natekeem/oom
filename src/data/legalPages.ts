@@ -1,4 +1,4 @@
-export type LegalPageId = "about" | "privacy" | "contact" | "terms";
+export type LegalPageId = "about" | "privacy" | "contact" | "terms" | "image-credits";
 
 export type LegalPage = {
   id: LegalPageId;
@@ -10,6 +10,7 @@ export type LegalPage = {
     heading: string;
     paragraphs: string[];
     bullets?: string[];
+    links?: { label: string; href: string }[];
   }[];
 };
 
@@ -127,6 +128,101 @@ export const legalPages: Record<LegalPageId, LegalPage> = {
         paragraphs: [
           "시험 운영 정보, 공식 링크, 학습 설명 중 부정확하거나 오래된 내용이 보이면 정정 요청을 보낼 수 있습니다. 오픽온미는 공식 기관이 아니므로 시험 관련 최종 판단은 반드시 공식 안내를 기준으로 해야 합니다.",
           "콘텐츠는 학습 참고용으로 제공되며, 개별 사용자의 등급 결과를 보장하거나 응시 전략을 확정적으로 제시하지 않습니다.",
+        ],
+      },
+    ],
+  },
+  "image-credits": {
+    id: "image-credits",
+    eyebrow: "이미지 출처",
+    title: "이미지 출처",
+    description: "오픽온미 매거진 표지에 사용한 외부 이미지 중 저작자 표시가 필요한 이미지의 출처와 라이선스를 정리합니다.",
+    updatedAt: "2026-07-12",
+    sections: [
+      {
+        heading: "표기 기준",
+        paragraphs: [
+          "오픽온미는 매거진 표지 이미지를 외부 URL로 직접 연결하지 않고 프로젝트 asset으로 저장해 사용합니다. 이 페이지는 CC BY, CC BY-SA처럼 저작자 표시가 필요한 이미지의 출처를 공개하기 위한 페이지입니다.",
+          "아래 이미지는 OPIc 학습 콘텐츠의 표지 크기에 맞춰 로컬 파일로 저장해 사용하며, 별도의 AI 이미지 생성은 사용하지 않았습니다.",
+        ],
+        bullets: ["수정 여부: 웹 표지 표시를 위한 로컬 저장 및 빌드 번들링", "이미지 자체의 저작권과 라이선스는 각 원 출처와 라이선스 조건을 따릅니다.", "CC0 이미지는 별도 저작자 표시 의무가 없지만 내부 출처 문서에 기록해 둡니다."],
+      },
+      {
+        heading: "OPIc 서베이 선택, 답변 범위를 좁히는 기준",
+        paragraphs: [
+          "이미지 파일: src/assets/magazine/opic-survey-choice-guide-cover.jpg",
+          "저작자: Generationbass.com",
+          "수정 여부: 원본 이미지를 로컬 asset으로 저장하고 Vite 빌드 과정에서 번들링했습니다.",
+        ],
+        links: [
+          { label: "출처 이미지: Pen, Diary and Glasses", href: "https://www.flickr.com/photos/46959536@N04/4827013488" },
+          { label: "라이선스: CC BY 2.0", href: "https://creativecommons.org/licenses/by/2.0/" },
+        ],
+      },
+      {
+        heading: "녹음으로 답변을 고치는 10분 루틴",
+        paragraphs: [
+          "이미지 파일: src/assets/magazine/opic-recording-review-routine-cover.jpg",
+          "저작자: TimWilson",
+          "수정 여부: 원본 이미지를 로컬 asset으로 저장하고 Vite 빌드 과정에서 번들링했습니다.",
+        ],
+        links: [
+          { label: "출처 이미지: The Podcave", href: "https://www.flickr.com/photos/70816538@N00/76894378" },
+          { label: "라이선스: CC BY 2.0", href: "https://creativecommons.org/licenses/by/2.0/" },
+        ],
+      },
+      {
+        heading: "여행 주제를 묘사·비교·문제해결로 확장하는 법",
+        paragraphs: [
+          "이미지 파일: src/assets/magazine/opic-travel-topic-script-guide-cover.jpg",
+          "저작자: brewbooks",
+          "수정 여부: 원본 이미지를 로컬 asset으로 저장하고 Vite 빌드 과정에서 번들링했습니다.",
+        ],
+        links: [
+          { label: "출처 이미지: Whats' in My Bag? Packed", href: "https://www.flickr.com/photos/93452909@N00/4256613426" },
+          { label: "라이선스: CC BY-SA 2.0", href: "https://creativecommons.org/licenses/by-sa/2.0/" },
+        ],
+      },
+      {
+        heading: "카페·집·실내활동 답변 소재 만드는 법",
+        paragraphs: [
+          "이미지 파일: src/assets/magazine/opic-indoor-topic-guide-cover.jpg",
+          "저작자: Rawpixel Ltd",
+          "수정 여부: 원본 이미지를 로컬 asset으로 저장하고 Vite 빌드 과정에서 번들링했습니다.",
+        ],
+        links: [
+          { label: "출처 이미지: Business meeting at a cafe", href: "https://www.flickr.com/photos/147875007@N03/45739277852" },
+          { label: "라이선스: CC BY 2.0", href: "https://creativecommons.org/licenses/by/2.0/" },
+        ],
+      },
+      {
+        heading: "IM에서 IH로 올릴 때 바꿔야 할 답변 습관",
+        paragraphs: [
+          "이미지 파일: src/assets/magazine/opic-im-to-ih-practice-plan-cover.jpg",
+          "저작자: Bohman",
+          "수정 여부: 원본 이미지를 로컬 asset으로 저장하고 Vite 빌드 과정에서 번들링했습니다.",
+        ],
+        links: [
+          { label: "출처 이미지: moleskine-1", href: "https://www.flickr.com/photos/79729522@N00/3216438752" },
+          { label: "라이선스: CC BY 2.0", href: "https://creativecommons.org/licenses/by/2.0/" },
+        ],
+      },
+      {
+        heading: "시험 일주일 전 OPIc 학습 플랜",
+        paragraphs: [
+          "이미지 파일: src/assets/magazine/opic-last-week-study-plan-cover.jpg",
+          "저작자: Infodad",
+          "수정 여부: 원본 이미지를 로컬 asset으로 저장하고 Vite 빌드 과정에서 번들링했습니다.",
+        ],
+        links: [
+          { label: "출처 이미지: Moleskine", href: "https://www.flickr.com/photos/39154012@N00/4072560067" },
+          { label: "라이선스: CC BY-SA 2.0", href: "https://creativecommons.org/licenses/by-sa/2.0/" },
+        ],
+      },
+      {
+        heading: "CC0 이미지",
+        paragraphs: [
+          "난이도 5-5 가이드, 롤플레이 6단계 템플릿, 집/거주지 주제 가이드, 답변 체크리스트 표지에는 CC0 이미지가 사용되었습니다. CC0 이미지는 저작자 표시 의무가 없지만, 투명성을 위해 docs/image-sources.md에 출처와 다운로드 정보를 기록했습니다.",
         ],
       },
     ],

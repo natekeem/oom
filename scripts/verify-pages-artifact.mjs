@@ -24,6 +24,7 @@ const requiredRouteFiles = [
   "about/index.html",
   "contact/index.html",
   "terms/index.html",
+  "image-credits/index.html",
 ];
 const pathsToVerify = [
   ...assetPaths.map((assetPath) => assetPath.replace(/^(?:\.\/|\/)/, "")),
@@ -44,7 +45,7 @@ for (const [path, routeHtml] of routeHtmlFiles) {
   if (path.startsWith("magazine/") && (!routeHtml.includes("<article>") || sectionCount < 4)) {
     throw new Error(`${path} does not contain enough generated article body sections.`);
   }
-  if (["privacy/index.html", "about/index.html", "contact/index.html", "terms/index.html"].includes(path) && sectionCount < 4) {
+  if (["privacy/index.html", "about/index.html", "contact/index.html", "terms/index.html", "image-credits/index.html"].includes(path) && sectionCount < 4) {
     throw new Error(`${path} does not contain enough legal page body sections.`);
   }
 }

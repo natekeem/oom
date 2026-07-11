@@ -27,7 +27,8 @@
   | "about"
   | "privacy"
   | "contact"
-  | "terms";
+  | "terms"
+  | "image-credits";
 
 export const viewTitles: Record<ViewId, string> = {
   home: "홈 / 전략 개요",
@@ -59,4 +60,5 @@ export const viewTitles: Record<ViewId, string> = {
   privacy: "개인정보처리방침",
   contact: "문의",
   terms: "이용약관",
+  "image-credits": "이미지 출처",
 };

@@ -26,6 +26,17 @@ export function LegalPageView({ pageId }: LegalPageViewProps) {
               ))}
             </div>
             {section.bullets ? <ul className="mt-4 space-y-2">{section.bullets.map((bullet) => <li className="text-sm leading-6 text-zinc-600 dark:text-zinc-300" key={bullet}>- {bullet}</li>)}</ul> : null}
+            {section.links ? (
+              <ul className="mt-4 space-y-2">
+                {section.links.map((link) => (
+                  <li className="text-sm leading-6" key={link.href}>
+                    <a className="font-medium text-indigo-700 underline-offset-4 hover:underline dark:text-indigo-300" href={link.href} rel="noreferrer" target="_blank">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </Card>
         ))}
       </div>

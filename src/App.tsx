@@ -92,6 +92,7 @@ export default function App() {
     if (p === "/privacy") return "privacy";
     if (p === "/contact") return "contact";
     if (p === "/terms") return "terms";
+    if (p === "/image-credits") return "image-credits";
     return "home";
   };
 
@@ -125,6 +126,7 @@ export default function App() {
     privacy: "/privacy",
     contact: "/contact",
     terms: "/terms",
+    "image-credits": "/image-credits",
   };
 
   const activeView = viewIdForPath(location.pathname);
@@ -170,6 +172,7 @@ export default function App() {
       <Route path="/privacy" element={<LegalPageView pageId="privacy" />} />
       <Route path="/contact" element={<LegalPageView pageId="contact" />} />
       <Route path="/terms" element={<LegalPageView pageId="terms" />} />
+      <Route path="/image-credits" element={<LegalPageView pageId="image-credits" />} />
     </Routes>
   );
   const isStepView = ["training-hub", "survey", "difficulty", "script-hub", "script-outdoor", "script-indoor", "script-sports", "script-home", "roleplay", "roleplay-hub", "roleplay-formula", "roleplay-travel", "roleplay-indoor", "roleplay-sports", "roleplay-home", "practice"].includes(activeView);

@@ -55,6 +55,7 @@ export function AppShell({ activeView, children, darkMode, mobileOpen, nextStep,
               <a className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white" href="/about/">소개</a>
               <a className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white" href="/privacy/">개인정보처리방침</a>
               <a className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white" href="/terms/">이용약관</a>
+              <a className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white" href="/image-credits/">이미지 출처</a>
               <a className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white" href="/contact/">문의</a>
             </nav>
           </div>

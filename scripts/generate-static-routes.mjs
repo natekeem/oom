@@ -1,3 +1,4 @@
+import { createRequire } from "module";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
 
@@ -5,7 +6,8 @@ const projectRoot = process.cwd();
 const distDir = join(projectRoot, "dist");
 const distIndexPath = join(distDir, "index.html");
 const siteUrl = "https://opic-on-me.com";
-const lastmod = "2026-06-29";
+const lastmod = "2026-07-11";
+const require = createRequire(import.meta.url);
 
 const baseRoutes = [
   {
@@ -179,81 +181,78 @@ const baseRoutes = [
   },
 ];
 
-const magazineRoutes = [
-  {
-    path: "/magazine/opic-2026-strategy/",
-    title: "OPIc 2026 준비 전략 | 오픽온미",
-    description: "2026년 OPIc 시험을 준비하는 학습자를 위한 목표 등급별 연습 전략과 스크립트 훈련 방법을 정리했습니다.",
-    heading: "2026 OPIc 준비 전략, 기출 질문보다 먼저 잡아야 할 3가지",
-    content: ["최근 문제를 많이 찾아보는 것보다 하나의 장면을 여러 질문에 맞게 변형하는 연습이 중요합니다.", "60-90초로 말할 수 있는 개인 경험을 정하고, 묘사, 비교, 문제 해결 질문에 같은 장면을 연결해 보세요."],
-    type: "article",
-  },
-  {
-    path: "/magazine/opic-self-introduction-strategy/",
-    title: "OPIc 자기소개 전략 | 오픽온미",
-    description: "OPIc 자기소개를 길게 외우기보다 첫 목소리를 안정시키는 짧은 워밍업으로 준비하는 방법입니다.",
-    heading: "OPIc 자기소개, 꼭 해야 할까? 외워도 될까?",
-    content: ["자기소개는 점수를 만드는 긴 답변이라기보다 시험 첫 목소리를 안정시키는 워밍업에 가깝습니다.", "20-30초 안에 현재 상태, 연결 소재, 말하기 태도를 간단히 보여 주세요."],
-    type: "article",
-  },
-  {
-    path: "/magazine/opic-grade-guide/",
-    title: "OPIc 등급별 답변 차이 | 오픽온미",
-    description: "IM, IH, AL 목표에 따라 OPIc 답변의 구체성, 길이, 연결 방식이 어떻게 달라지는지 정리했습니다.",
-    heading: "IM·IH·AL, 답변에서 실제로 달라지는 차이",
-    content: ["등급 목표가 올라갈수록 어려운 단어보다 경험의 구체성, 감정, 변화, 연결 방식이 중요해집니다.", "같은 질문도 장소, 행동, 이유, 결과를 얼마나 자연스럽게 이어 가는지가 답변 인상을 바꿉니다."],
-    type: "article",
-  },
-  {
-    path: "/magazine/oom-full-guide/",
-    title: "오픽온미 사용법 | 오픽온미",
-    description: "서베이 고정부터 스크립트, 롤플레이, 실전 녹음까지 오픽온미 학습 흐름을 안내합니다.",
-    heading: "오픽온미 100% 사용법",
-    content: ["오픽온미는 체크리스트를 끝내는 도구가 아니라 하나의 장면을 고르고, 바꿔 말하고, 녹음으로 확인하는 연습 흐름입니다.", "STEP 1부터 STEP 5까지 반복하면 같은 경험을 여러 질문에 맞게 조립하는 감각을 만들 수 있습니다."],
-    type: "article",
-  },
-  {
-    path: "/magazine/opic-filler-tips/",
-    title: "OPIc 필러 표현 팁 | 오픽온미",
-    description: "OPIc 답변에서 시간을 벌기보다 생각을 자연스럽게 연결하는 필러 표현 사용법을 정리했습니다.",
-    heading: "필러는 시간을 버는 말이 아니라 생각을 연결하는 말",
-    content: ["좋은 필러는 빈 소리를 채우는 말이 아니라 다음 장면으로 넘어갈 방향을 알려 주는 표현입니다.", "Let me think, actually, the thing is 같은 표현을 상황에 맞게 한두 개만 골라 연습하세요."],
-    type: "article",
-  },
-];
 
-const legalRoutes = [
-  {
-    path: "/about/",
-    title: "소개 | 오픽온미",
-    description: "OPIc 학습 도구 오픽온미의 목적, 제공 기능, 대상 사용자를 안내합니다.",
-    heading: "오픽온미 소개",
-    content: ["오픽온미는 OPIc 말하기 시험을 준비하는 학습자를 위한 개인 연습용 웹 도구입니다.", "공식 시험기관과 제휴하거나 인증받은 서비스가 아니며, 등급 취득이나 특정 결과를 보장하지 않습니다."],
-  },
-  {
-    path: "/privacy/",
-    title: "개인정보처리방침 | 오픽온미",
-    description: "오픽온미의 개인정보 처리, 쿠키, Google 광고 쿠키, 제3자 광고 및 문의 방법을 안내합니다.",
-    heading: "개인정보처리방침",
-    content: ["오픽온미는 회원가입이나 자체 서버 로그인을 제공하지 않습니다. 사용자가 입력한 내부 LLM 설정은 현재 브라우저의 localStorage에만 저장됩니다.", "Google AdSense를 포함한 광고 서비스는 쿠키 또는 유사 기술을 사용해 광고를 게재할 수 있습니다.", "개인정보 관련 문의는 contact@opic-on-me.com 으로 보내 주세요. 이 방침의 시행일은 2026년 6월 29일입니다."],
-  },
-  {
-    path: "/contact/",
-    title: "문의 | 오픽온미",
-    description: "오픽온미 서비스 관련 문의와 콘텐츠 정정 요청을 보내는 방법입니다.",
-    heading: "문의",
-    content: ["서비스 이용 문의, 콘텐츠 오류 제보, 개인정보 관련 요청은 contact@opic-on-me.com 으로 보내 주세요.", "문의 시 확인이 필요한 페이지 주소와 상황을 함께 적어 주시면 더 정확히 확인할 수 있습니다."],
-  },
-  {
-    path: "/terms/",
-    title: "이용약관 | 오픽온미",
-    description: "오픽온미 이용 시 주의사항, 학습 참고용 고지, 비공식 관계를 안내합니다.",
-    heading: "이용약관",
-    content: ["오픽온미는 OPIc 말하기 연습을 돕는 학습 참고용 서비스입니다.", "ETS, ACTFL, OPIc 운영기관 또는 관련 공식 기관과 제휴, 인증, 후원 관계에 있지 않습니다.", "특정 등급, 합격, 성적 향상은 보장하지 않습니다."],
-  },
-];
+const pageGuides = {
+  "/": { purpose: "오픽온미는 OPIc 말하기를 준비하는 학습자가 서베이 선택, 난이도 설정, 스크립트 훈련, 롤플레이, 녹음 복습을 한 흐름으로 이어 가도록 만든 연습용 도구입니다.", how: "처음에는 훈련 허브에서 STEP 1부터 STEP 5까지 순서대로 이동하고, 이후에는 부족한 단계만 반복합니다. 한 번에 많은 주제를 외우기보다 하나의 장면을 여러 질문에 맞게 바꾸는 방식으로 사용하세요.", benefit: "학습자는 답변 범위를 좁히고, 같은 경험을 묘사·비교·문제 해결 질문으로 확장하는 감각을 얻을 수 있습니다.", checklist: ["서베이 선택을 고정했다", "60-90초로 말할 장면 하나를 정했다", "녹음 후 첫 문장과 마무리를 확인했다"], links: [["/training/", "OPIc 실전 훈련하기"], ["/magazine/", "오픽 매거진"], ["/exam-guide/", "OPIc 수험 가이드"]] },
+  "/training/": { purpose: "훈련 허브는 OPIc 준비를 암기량이 아니라 답변 설계 순서로 나누어 보여 주는 중심 페이지입니다.", how: "STEP 1에서 답변 소재를 줄이고, STEP 2에서 답변 길이를 정한 뒤, STEP 3과 STEP 4에서 실제 말하기 구조를 만들고 STEP 5에서 녹음으로 점검합니다.", benefit: "각 단계가 끊어지지 않아 같은 장면을 여러 질문에 재사용하는 연습을 자연스럽게 반복할 수 있습니다.", checklist: ["오늘 연습할 STEP 하나를 고른다", "새 주제보다 기존 장면을 먼저 변형한다", "녹음 복습은 한 가지 수정만 남긴다"], links: [["/training/survey/", "STEP 1 서베이 고정"], ["/training/difficulty/", "STEP 2 난이도 설정"], ["/practice/", "STEP 5 실전 연습"]] },
+  "/training/survey/": { purpose: "서베이 페이지는 실제 관심사를 모두 고르는 곳이 아니라 답변 범위를 좁히기 위한 연습용 선택표입니다.", how: "10초 안에 경험이 떠오르는 선택지, 장소와 행동과 감정을 붙일 수 있는 선택지를 우선 확인합니다.", benefit: "응시 전 말할 소재가 줄어들어 질문을 받았을 때 장면을 더 빨리 떠올릴 수 있습니다.", checklist: ["경험 하나가 즉시 떠오른다", "장소·사람·행동 중 두 가지 이상을 말할 수 있다", "과거 경험이나 최근 변화로 확장 가능하다"], mistakes: ["남들이 많이 고른다는 이유만으로 선택한다", "선택지를 자주 바꿔 스크립트 장면이 흔들린다"], links: [["/training/difficulty/", "난이도 설정으로 이동"], ["/magazine/opic-survey-choice-guide/", "서베이 선택 가이드"]] },
+  "/training/difficulty/": { purpose: "난이도 페이지는 어려운 단어를 고르는 곳이 아니라 답변 길이와 구체성의 기준을 정하는 곳입니다.", how: "5-5를 기본 연습 기준으로 삼고 장소, 행동, 이유, 변화가 들어간 60-90초 답변을 만들어 봅니다.", benefit: "목표 등급에 맞는 답변 밀도를 의식하면서도 과장된 표현 대신 익숙한 경험을 안정적으로 말할 수 있습니다.", example: "집 근처 카페를 말한다면 위치 소개에서 끝내지 말고, 언제 가는지, 무엇을 하는지, 왜 편한지까지 이어 말합니다.", checklist: ["답변 길이를 정했다", "구체적 행동 하나를 넣었다", "마무리 감정을 붙였다"], links: [["/training/scripts/", "스크립트 훈련으로 이동"], ["/magazine/opic-55-difficulty-guide/", "난이도 5-5 가이드"]] },
+  "/training/scripts/": { purpose: "스크립트 허브는 답변을 통째로 외우기보다 질문이 바뀌어도 재사용할 장면 블록을 고르는 곳입니다.", how: "내 생활과 가까운 그룹 하나를 고른 뒤 전체 보기, 키워드 보기, 질문 변형 순서로 반복합니다.", benefit: "하나의 60-90초 장면을 묘사, 비교, 문제 해결 질문으로 바꾸는 감각을 만들 수 있습니다.", checklist: ["그룹 하나만 고른다", "첫 문장과 마무리를 분리해 연습한다", "질문 변형에서 전체 답변을 새로 만들지 않는다"], links: [["/training/scripts/home/", "집/거주지"], ["/training/scripts/indoor/", "실내/휴식"], ["/training/scripts/outdoor/", "야외/여행"], ["/training/scripts/sports/", "운동/취미"]] },
+  "/training/scripts/home/": { purpose: "집과 거주지 주제는 평범한 공간을 구체적인 생활 장면으로 바꾸는 연습입니다.", how: "방 구조, 책상, 창문, 동네, 청소나 이사처럼 자주 겪는 요소를 하나의 장면으로 묶습니다.", benefit: "묘사와 비교 질문뿐 아니라 집 관련 문제 해결 질문으로도 확장하기 쉽습니다.", example: "I live in a small apartment, but the part I like most is my desk near the window. I sit there after work and plan the next day.", checklist: ["공간 하나를 고른다", "반복 행동을 붙인다", "최근 변화나 문제 상황을 준비한다"], links: [["/roleplay/home/", "집 관련 롤플레이"], ["/magazine/opic-home-topic-script-guide/", "집 주제 가이드"]] },
+  "/training/scripts/indoor/": { purpose: "실내와 휴식 주제는 카페, 음악, 영화, 집 근처 휴식처럼 감각 묘사와 루틴을 붙이기 좋은 답변 소재입니다.", how: "장소를 짧게 소개한 뒤 언제 가는지, 무엇을 하는지, 왜 편한지까지 이어 말합니다.", benefit: "평범한 일상을 OPIc 답변용 장면으로 만들 수 있어 준비 부담이 줄어듭니다.", example: "A cafe near my office is my usual place to take a break. It is quiet in the afternoon, so I order coffee and check my notes.", checklist: ["시간대를 넣었다", "소리·조명·좌석 같은 감각 단서를 넣었다", "내 감정으로 마무리했다"], links: [["/roleplay/indoor/", "실내 서비스 롤플레이"], ["/magazine/opic-indoor-topic-guide/", "실내 주제 가이드"]] },
+  "/training/scripts/outdoor/": { purpose: "야외와 여행 주제는 묘사, 과거 경험, 비교, 문제 해결 질문으로 확장하기 좋은 장면을 만드는 연습입니다.", how: "장소, 동행, 예상과 달랐던 일, 마무리 감정을 블록으로 나눠 말합니다.", benefit: "여행지를 많이 외우지 않아도 한 장면으로 여러 질문에 대응할 수 있습니다.", example: "One short trip I remember is a beach trip last spring. The weather changed suddenly, so we found a small cafe instead, and the trip became more relaxed.", checklist: ["왜 갔는지 말한다", "계획과 실제 상황을 비교한다", "작은 문제와 해결을 넣는다"], links: [["/roleplay/travel/", "여행 롤플레이"], ["/magazine/opic-travel-topic-script-guide/", "여행 주제 가이드"]] },
+  "/training/scripts/sports/": { purpose: "운동과 취미 주제는 시작 계기, 반복 루틴, 장소, 최근 변화를 말하는 연습입니다.", how: "잘하는 운동을 증명하기보다 왜 시작했고 왜 계속하는지 설명합니다.", benefit: "운동 실력과 무관하게 개인 경험 중심의 답변을 만들 수 있습니다.", example: "I started jogging because I needed a simple way to clear my mind. I run around a small park in the evening, and it gives me a break after work.", checklist: ["시작 계기를 넣었다", "반복 루틴을 넣었다", "몸 상태나 작은 목표를 붙였다"], links: [["/roleplay/sports/", "운동 시설 롤플레이"], ["/practice/", "실전 연습"]] },
+  "/roleplay/": { purpose: "롤플레이 허브는 상황을 듣고 필요한 정보를 순서대로 묻는 연습을 제공합니다.", how: "문제 설명, 정보 질문, 대안 요청, 감사 마무리 흐름을 반복합니다.", benefit: "친절한 표현을 많이 외우지 않아도 요청 목적을 잃지 않는 답변 구조를 만들 수 있습니다.", example: "I'm calling because I have a problem with my reservation. Could you check my booking first? If possible, I would like to change it to tomorrow afternoon.", checklist: ["문제를 한 문장으로 다시 말한다", "필요한 정보를 묻는다", "가능한 대안을 요청한다"], links: [["/roleplay/formula/", "롤플레이 공식"], ["/roleplay/travel/", "여행 롤플레이"]] },
+  "/roleplay/formula/": { purpose: "공식 페이지는 긴장했을 때 답변 순서를 잃지 않기 위한 구조를 정리합니다.", how: "상황을 받아들이고, 필요한 정보를 묻고, 가능한 대안을 요청하고, 정중하게 마무리합니다.", benefit: "상황이 바뀌어도 같은 구조를 적용할 수 있어 답변이 짧게 끊기는 문제를 줄일 수 있습니다.", checklist: ["누구에게 말하는지 정했다", "무엇을 확인해야 하는지 정했다", "원하는 대안을 말했다"], links: [["/roleplay/travel/", "여행"], ["/roleplay/indoor/", "실내"], ["/roleplay/home/", "집/거주지"]] },
+  "/roleplay/travel/": { purpose: "여행 롤플레이는 예약, 일정 변경, 교통, 숙소 문제처럼 실제 서비스 상황을 연습합니다.", how: "예약 기준 정보를 먼저 말하고, 확인 질문과 대안 요청을 분리합니다.", benefit: "상대가 도와줄 수 있는 정보를 빠뜨리지 않는 답변 습관을 만들 수 있습니다.", example: "I booked a room for this Friday, but my flight schedule changed. Could you check if I can move the reservation to Saturday?", checklist: ["예약 정보를 말했다", "문제 원인을 짧게 설명했다", "가능한 변경안을 물었다"], links: [["/practice/", "실전 연습"], ["/magazine/opic-roleplay-6-step-template/", "롤플레이 6단계 글"]] },
+  "/roleplay/indoor/": { purpose: "실내 서비스 롤플레이는 카페, 식당, 수업, 실내 활동에서 생기는 작은 문제를 정중히 해결하는 연습입니다.", how: "주문이나 예약 정보를 먼저 말하고, 무엇이 다른지 설명한 뒤 가능한 조치를 묻습니다.", benefit: "불만을 길게 말하지 않고도 필요한 요청을 명확하게 전달할 수 있습니다.", example: "I ordered a hot coffee, but I received an iced one. Could you check my order and change it if possible?", checklist: ["기준 정보를 말했다", "다른 점을 설명했다", "조치 요청으로 끝냈다"], links: [["/practice/", "실전 연습"], ["/training/scripts/indoor/", "실내 스크립트"]] },
+  "/roleplay/sports/": { purpose: "운동 시설과 수업 롤플레이는 예약 변경, 장비 문제, 일정 확인처럼 조건을 묻는 연습입니다.", how: "날짜, 시간, 필요한 장비나 수업명을 말한 뒤 대안을 요청합니다.", benefit: "문제 설명만 길어지고 요청이 빠지는 실수를 줄일 수 있습니다.", example: "I reserved a tennis court for tonight, but it may rain heavily. Could I change the time or book the same time next week?", checklist: ["날짜와 시간을 말했다", "문제 상황을 설명했다", "대체 시간을 요청했다"], links: [["/practice/", "실전 연습"], ["/training/scripts/sports/", "운동 스크립트"]] },
+  "/roleplay/home/": { purpose: "집 관련 롤플레이는 이사, 수리, 청소, 배달, 관리실 문의처럼 생활 문제를 말하는 연습입니다.", how: "문제 위치, 증상, 원하는 방문 시간이나 조치를 순서대로 말합니다.", benefit: "평범한 생활 문제도 충분히 구체적인 롤플레이 답변으로 만들 수 있습니다.", example: "The kitchen sink in my apartment is leaking. Could someone come and check it today? If not, please let me know the earliest available time.", checklist: ["문제 위치를 말했다", "증상을 짧게 설명했다", "방문 가능 시간을 물었다"], links: [["/practice/", "실전 연습"], ["/training/scripts/home/", "집 스크립트"]] },
+  "/practice/": { purpose: "실전 연습 페이지는 무작위 질문, 제한 시간, 녹음, 텍스트 답변으로 내가 실제로 말한 답변을 확인하는 공간입니다.", how: "한 질문을 고른 뒤 바로 완벽하게 고치려 하지 말고, 녹음 한 번과 수정 한 번만 반복합니다.", benefit: "문법 오류 전체보다 첫 문장, 장면 선명도, 마무리를 우선 확인해 다음 답변으로 넘어갈 수 있습니다.", checklist: ["질문을 읽고 장면을 정했다", "타이머에 맞춰 녹음했다", "끊긴 지점 하나만 표시했다", "첫 문장 또는 마무리만 고쳐 다시 말했다"], mistakes: ["녹음 후 모든 문법을 한 번에 고치려 한다", "답변 버튼과 입력창 주변에서 학습 흐름을 끊는다"], links: [["/training/scripts/", "스크립트 훈련"], ["/roleplay/formula/", "롤플레이 공식"]] },
+};
 
-const routes = [...baseRoutes, ...magazineRoutes, ...legalRoutes];
+function loadTypeScriptExport(relativePath, exportName) {
+  const fullPath = join(projectRoot, relativePath);
+  let code = readFileSync(fullPath, "utf8");
+  code = code.replace(/const\s+(\w+)\s*=\s*new URL\([^;]+;\r?\n/g, 'const $1 = "";\n');
+  const ts = require("typescript");
+  const compiled = ts.transpileModule(code, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+  const module = { exports: {} };
+  const fn = new Function("module", "exports", "require", compiled);
+  fn(module, module.exports, require);
+  return module.exports[exportName];
+}
+
+function sectionsFromGuide(guide) {
+  if (!guide) return undefined;
+  const sections = [
+    { heading: "페이지 목적", paragraphs: [guide.purpose] },
+    { heading: "사용 방법", paragraphs: [guide.how] },
+    { heading: "학습자가 얻는 이점", paragraphs: [guide.benefit] },
+  ];
+  if (guide.example) sections.push({ heading: "예시 흐름", paragraphs: [guide.example] });
+  if (guide.checklist) sections.push({ heading: "체크리스트", paragraphs: ["다음 항목을 기준으로 답변을 점검하세요."], bullets: guide.checklist });
+  if (guide.mistakes) sections.push({ heading: "흔한 실수", paragraphs: guide.mistakes });
+  if (guide.links) sections.push({ heading: "다음으로 이동할 내부 링크", paragraphs: ["관련 훈련 페이지와 학습 글로 이어서 연습할 수 있습니다."], links: guide.links.map(([href, label]) => ({ href, label })) });
+  return sections;
+}
+
+const enrichedBaseRoutes = baseRoutes.map((route) => ({
+  ...route,
+  sections: route.sections ?? sectionsFromGuide(pageGuides[route.path]),
+  adExcluded: route.noindex || route.path === "/ai-settings/" || route.path === "/practice/",
+}));
+
+const magazineRoutes = loadTypeScriptExport("src/data/magazine.ts", "magazineArticles").map((article) => ({
+  path: "/magazine/" + article.id + "/",
+  title: article.title + " | 오픽온미",
+  description: article.summary,
+  heading: article.title,
+  content: [article.subtitle, article.summary],
+  type: "article",
+  article,
+}));
+
+const legalRoutes = Object.values(loadTypeScriptExport("src/data/legalPages.ts", "legalPages")).map((page) => ({
+  path: "/" + page.id + "/",
+  title: page.title + " | 오픽온미",
+  description: page.description,
+  heading: page.title,
+  content: [page.description],
+  legalPage: page,
+}));
+
+const routes = [...enrichedBaseRoutes, ...magazineRoutes, ...legalRoutes];
 
 function ensureDir(path) {
   if (!existsSync(path)) mkdirSync(path, { recursive: true });
@@ -271,11 +270,91 @@ function canonicalFor(path) {
   return `${siteUrl}${path}`;
 }
 
+function renderParagraphs(paragraphs = [], indent = "      ") {
+  return paragraphs.map((paragraph) => `${indent}<p>${escapeHtml(paragraph)}</p>`).join("\n");
+}
+
+function renderBullets(bullets = [], indent = "      ") {
+  if (!bullets.length) return "";
+  const items = bullets.map((bullet) => `${indent}  <li>${escapeHtml(bullet)}</li>`).join("\n");
+  return `${indent}<ul>\n${items}\n${indent}</ul>`;
+}
+
+function renderLinks(links = [], indent = "      ") {
+  if (!links.length) return "";
+  const items = links
+    .map((link) => `${indent}  <li><a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a></li>`)
+    .join("\n");
+  return `${indent}<ul>\n${items}\n${indent}</ul>`;
+}
+
+function renderExample(example, indent = "      ") {
+  if (!example) return "";
+  const lines = example.lines.map((line) => `${indent}  <p>${escapeHtml(line)}</p>`).join("\n");
+  const description = example.description ? `${indent}  <p>${escapeHtml(example.description)}</p>\n` : "";
+  return `${indent}<blockquote>\n${indent}  <strong>${escapeHtml(example.title)}</strong>\n${description}${lines}\n${indent}</blockquote>`;
+}
+
+function renderNote(note, indent = "      ") {
+  if (!note) return "";
+  return `${indent}<blockquote>\n${indent}  <strong>${escapeHtml(note.title)}</strong>\n${indent}  <p>${escapeHtml(note.text)}</p>\n${indent}</blockquote>`;
+}
+
+function renderSections(sections = []) {
+  return sections
+    .map((section) => {
+      const pieces = [
+        `    <section>\n      <h2>${escapeHtml(section.heading)}</h2>`,
+        renderParagraphs(section.paragraphs),
+        renderBullets(section.bullets),
+        renderExample(section.example),
+        renderNote(section.note),
+        renderLinks(section.links),
+        "    </section>",
+      ].filter(Boolean);
+      return pieces.join("\n");
+    })
+    .join("\n");
+}
+
+function articleBody(route) {
+  const article = route.article;
+  return `<main class="seo-static-content" aria-label="${escapeHtml(article.title)}">
+    <article>
+      <p>${escapeHtml(article.category)} · ${escapeHtml(article.date)} · ${escapeHtml(article.readMinutes)}</p>
+      <h1>${escapeHtml(article.title)}</h1>
+      <p>${escapeHtml(article.subtitle)}</p>
+      <p>${escapeHtml(article.summary)}</p>
+      <blockquote>
+        <strong>핵심 요약</strong>
+        <p>${escapeHtml(article.takeaway)}</p>
+      </blockquote>
+${article.disclaimer ? `      <p>${escapeHtml(article.disclaimer)}</p>\n` : ""}${renderSections(article.sections)}
+    </article>
+  </main>`;
+}
+
+function legalBody(route) {
+  const page = route.legalPage;
+  return `<main class="seo-static-content" aria-label="${escapeHtml(page.title)}">
+    <article>
+      <p>${escapeHtml(page.eyebrow)} · ${escapeHtml(page.updatedAt)}</p>
+      <h1>${escapeHtml(page.title)}</h1>
+      <p>${escapeHtml(page.description)}</p>
+${renderSections(page.sections)}
+    </article>
+  </main>`;
+}
+
 function staticBody(route) {
-  const paragraphs = route.content.map((paragraph) => `      <p>${escapeHtml(paragraph)}</p>`).join("\n");
+  if (route.article) return articleBody(route);
+  if (route.legalPage) return legalBody(route);
+  const paragraphs = renderParagraphs(route.content);
+  const sections = route.sections ? `\n${renderSections(route.sections)}` : "";
+  const adNote = route.adExcluded ? `\n      <p>이 페이지는 설정 또는 상호작용 중심 화면이므로 광고 슬롯 배치보다 학습 흐름과 입력 영역의 간격을 우선합니다.</p>` : "";
   return `<main class="seo-static-content" aria-label="${escapeHtml(route.heading)}">
     <h1>${escapeHtml(route.heading)}</h1>
-${paragraphs}
+${paragraphs}${sections}${adNote}
   </main>`;
 }
 

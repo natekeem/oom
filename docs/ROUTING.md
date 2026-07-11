@@ -4,7 +4,7 @@
 
 OOM uses `BrowserRouter` and `Routes` for clean URL matching. `src/App.tsx` derives the active `ViewId` from `location.pathname` so the shell, sidebar, training header, and next-step controls stay synchronized.
 
-GitHub Pages cannot rewrite unknown paths to the SPA shell. `scripts/generate-static-routes.mjs` therefore runs after Vite build and creates real `dist/**/index.html` files for sitemap routes. These files keep the Vite bundle and include route-specific SEO metadata plus a small static body.
+GitHub Pages cannot rewrite unknown paths to the SPA shell. `scripts/generate-static-routes.mjs` therefore runs after Vite build and creates real `dist/**/index.html` files for sitemap routes. These files keep the Vite bundle and include route-specific SEO metadata plus meaningful static body content. Magazine article routes are generated from `src/data/magazine.ts` so the built HTML includes the full article structure instead of a short summary-only placeholder.
 
 `ViewId` and the page-title map are defined in `src/components/layout/Sidebar.tsx`. When adding a view, update all of the following together:
 

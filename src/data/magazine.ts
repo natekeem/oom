@@ -37,6 +37,237 @@ export type MagazineArticle = {
   sections: MagazineArticleSection[];
 };
 
+type StudyArticleInput = {
+  id: string;
+  title: string;
+  subtitle: string;
+  summary: string;
+  takeaway: string;
+  focus: string;
+  scene: string;
+  routine: string;
+  example: string[];
+  checklist: string[];
+};
+
+const extraArticleImage = oomStudyWorkflow;
+
+function makeStudyArticle(input: StudyArticleInput, index: number): MagazineArticle {
+  return {
+    id: input.id,
+    category: "OPIc 훈련 가이드",
+    title: input.title,
+    subtitle: input.subtitle,
+    date: `2026.07.${String(1 + index).padStart(2, "0")}`,
+    readMinutes: "7분 읽기",
+    summary: input.summary,
+    image: extraArticleImage,
+    imageAlt: "오픽온미 학습 흐름을 따라 답변 장면과 녹음 복습을 정리하는 노트",
+    takeaway: input.takeaway,
+    disclaimer: "이 글은 OPIc 말하기를 준비하는 학습자를 위한 연습용 참고 자료입니다. 공식 시험기관의 보증이나 특정 등급 취득을 의미하지 않습니다.",
+    sections: [
+      {
+        heading: "왜 이 주제를 먼저 정리해야 할까",
+        paragraphs: [
+          `${input.focus}은 OPIc 준비에서 답변의 범위를 줄이고 말할 장면을 빠르게 떠올리게 하는 기준입니다. 주제를 많이 아는 것보다 시험 중 바로 꺼낼 수 있는 장면을 갖는 것이 더 중요합니다.`,
+          `오픽온미에서는 ${input.scene}을 하나의 연습 장면으로 보고, 묘사·비교·문제 해결·롤플레이 질문에 맞춰 같은 소재를 변형해 보도록 안내합니다.`,
+        ],
+      },
+      {
+        heading: "오픽온미에서 적용하는 방법",
+        paragraphs: [
+          `먼저 훈련 단계에서 ${input.routine}을 정하고, 답변 전체를 외우기보다 첫 문장, 세부 행동, 마무리 감정으로 나눠 봅니다.`,
+          "그 다음 실전 연습에서 같은 소재를 녹음해 보고, 문법 전체를 고치기 전에 장면이 분명한지와 말이 끊기는 지점이 어디인지 확인합니다.",
+        ],
+        bullets: input.checklist,
+      },
+      {
+        heading: "연습용 예시 흐름",
+        paragraphs: [
+          "아래 예시는 그대로 외우기 위한 정답이 아니라, 내 경험에 맞춰 단어와 상황을 바꾸기 위한 뼈대입니다.",
+          "한 문장을 길게 늘리기보다 짧은 문장 여러 개가 자연스럽게 이어지도록 말하면 녹음 복습 때 수정할 지점이 더 잘 보입니다.",
+        ],
+        example: {
+          title: "답변 뼈대 예시",
+          description: "상황에 맞게 장소, 시간, 감정만 바꿔 말해 보세요.",
+          lines: input.example,
+        },
+      },
+      {
+        heading: "녹음 후 확인할 부분",
+        paragraphs: [
+          "녹음 파일을 들을 때는 발음, 문법, 단어를 한꺼번에 고치려 하지 않는 편이 좋습니다. 첫 복습에서는 질문에 직접 답했는지, 장면이 눈에 보이는지, 마지막 문장이 닫혔는지만 확인하세요.",
+          "두 번째 복습에서는 반복되는 연결어 하나를 줄이고, 비어 있는 부분에 구체적 행동 하나를 넣습니다. 이 작은 수정이 다음 질문에서 재사용할 수 있는 답변 블록이 됩니다.",
+        ],
+        note: {
+          title: "10분 복습 기준",
+          text: "한 질문을 오래 붙잡기보다 녹음 한 번, 표시 한 번, 수정 녹음 한 번으로 끝내고 다음 질문으로 이동하는 방식이 꾸준히 반복하기 좋습니다.",
+        },
+      },
+      {
+        heading: "다음 단계로 연결하기",
+        paragraphs: [
+          "이 글의 내용을 읽은 뒤에는 관련 훈련 페이지에서 실제로 한 번 말해 보는 것이 중요합니다. 읽기만 하면 지식은 남지만 시험장에서 바로 꺼낼 문장 순서는 만들어지지 않습니다.",
+          "오픽온미의 서베이, 스크립트, 롤플레이, 실전 연습 화면을 오가며 같은 장면을 여러 질문으로 바꾸는 연습을 이어 가세요.",
+        ],
+      },
+    ],
+  };
+}
+
+const additionalStudyArticles: MagazineArticle[] = [
+  makeStudyArticle(
+    {
+      id: "opic-survey-choice-guide",
+      title: "OPIc 서베이 선택, 답변 범위를 좁히는 기준",
+      subtitle: "많이 고르는 선택지가 아니라 내가 바로 말할 수 있는 장면을 기준으로 서베이를 정리하는 방법입니다.",
+      summary: "OPIc 서베이는 관심사 목록처럼 보이지만 연습에서는 답변 소재를 줄이는 장치로 써야 합니다. 오픽온미의 고정 서베이를 활용해 말할 범위를 좁히는 기준을 정리했습니다.",
+      takeaway: "좋은 서베이 선택은 멋진 취미가 아니라 10초 안에 장소, 행동, 감정이 떠오르는 선택입니다.",
+      focus: "서베이 선택",
+      scene: "자주 가는 장소나 반복하는 활동",
+      routine: "내가 실제로 말할 수 있는 선택지 5-7개",
+      checklist: ["10초 안에 경험 하나가 떠오른다", "장소와 행동을 함께 말할 수 있다", "최근 변화나 문제 상황으로 확장할 수 있다"],
+      example: ["I usually choose topics that are close to my real routine.", "For example, walking and cafes are easy for me because I can describe a real place.", "That way, I do not need to invent a new story during the test."],
+    },
+    0,
+  ),
+  makeStudyArticle(
+    {
+      id: "opic-55-difficulty-guide",
+      title: "오픽 난이도 5-5, 누구에게 맞고 어떻게 연습할까",
+      subtitle: "난이도 5-5를 어려운 단어의 문제가 아니라 답변 길이와 구체성의 기준으로 이해하는 가이드입니다.",
+      summary: "5-5 연습은 긴 답변을 무조건 만들기 위한 단계가 아닙니다. 한 장면을 60-90초로 설명하고 이유와 변화를 붙이는 기준으로 활용해야 합니다.",
+      takeaway: "난이도 5-5는 말할 내용을 크게 만드는 설정이 아니라 답변 안의 장면을 더 구체적으로 만드는 연습 기준입니다.",
+      focus: "난이도 5-5",
+      scene: "60-90초로 설명할 수 있는 생활 장면",
+      routine: "장소, 행동, 이유, 변화가 들어간 답변 길이",
+      checklist: ["답변 시작 전에 장면 하나를 정한다", "구체적 행동을 한 문장 이상 넣는다", "마지막에 느낌이나 변화로 닫는다"],
+      example: ["I would choose level 5-5 as a practice target because it pushes me to explain more clearly.", "Instead of using difficult words, I try to add a specific action and a reason.", "That makes my answer easier to follow."],
+    },
+    1,
+  ),
+  makeStudyArticle(
+    {
+      id: "opic-roleplay-6-step-template",
+      title: "롤플레이 6단계 답변 구조와 예시",
+      subtitle: "문제 설명, 정보 질문, 대안 요청, 감사 표현으로 이어지는 OPIc 롤플레이 답변 뼈대입니다.",
+      summary: "롤플레이는 표현을 많이 외우는 것보다 상황을 정리하고 필요한 정보를 묻는 순서가 중요합니다. 여섯 단계로 답변을 안정시키는 방법을 정리했습니다.",
+      takeaway: "롤플레이 답변은 친절한 문장 모음이 아니라 상대가 도와줄 수 있게 정보를 정리하는 순서입니다.",
+      focus: "롤플레이 6단계",
+      scene: "예약 변경이나 서비스 문제 상황",
+      routine: "문제 확인, 정보 질문, 대안 요청, 감사 마무리",
+      checklist: ["누구에게 연락하는지 말한다", "문제를 한 문장으로 설명한다", "원하는 대안을 분명히 요청한다"],
+      example: ["I'm calling because I have a problem with my reservation.", "Could you check if I can change it to tomorrow afternoon?", "If that is not possible, please let me know another available time."],
+    },
+    2,
+  ),
+  makeStudyArticle(
+    {
+      id: "opic-recording-review-routine",
+      title: "녹음으로 답변을 고치는 10분 루틴",
+      subtitle: "녹음 후 모든 실수를 고치려 하지 않고 다음 답변으로 이어지는 수정 포인트만 찾는 연습법입니다.",
+      summary: "녹음 복습은 평가가 아니라 다음 답변을 설계하는 과정입니다. 10분 안에 질문, 녹음, 표시, 재녹음을 끝내는 실전 루틴을 소개합니다.",
+      takeaway: "녹음 복습의 목표는 완벽한 파일이 아니라 다음 질문에서 바로 써먹을 수정 포인트 하나를 찾는 것입니다.",
+      focus: "녹음 복습",
+      scene: "실전 연습 화면에서 말한 60초 답변",
+      routine: "질문 선택, 첫 녹음, 끊긴 지점 표시, 수정 녹음",
+      checklist: ["첫 문장이 질문에 직접 답한다", "중간에 같은 단어가 반복되지 않는다", "마지막 문장이 자연스럽게 닫힌다"],
+      example: ["First, I record my answer without stopping.", "Then I listen once and mark only one weak point.", "Finally, I record the same answer again with a clearer opening."],
+    },
+    3,
+  ),
+  makeStudyArticle(
+    {
+      id: "opic-home-topic-script-guide",
+      title: "집/거주지 주제 답변을 하나의 장면으로 만드는 법",
+      subtitle: "평범한 집 이야기를 위치, 루틴, 변화, 문제 해결로 확장하는 스크립트 가이드입니다.",
+      summary: "집 주제는 특별한 사건보다 익숙한 공간을 구체적으로 말하는 힘이 중요합니다. 한 공간을 골라 여러 질문으로 바꾸는 방법을 설명합니다.",
+      takeaway: "집 답변은 멋진 집 소개가 아니라 내가 자주 머무는 공간과 반복 행동을 보여 주는 장면입니다.",
+      focus: "집/거주지 주제",
+      scene: "책상, 창문, 방 구조, 동네 길 같은 익숙한 공간",
+      routine: "공간 하나와 반복 행동 하나",
+      checklist: ["공간 이름을 정한다", "언제 그곳에 머무는지 말한다", "최근 변화나 불편한 문제를 붙인다"],
+      example: ["My favorite part of my home is my desk near the window.", "I usually sit there after work and write down my plan for the next day.", "It is a small space, but it helps me feel calm."],
+    },
+    4,
+  ),
+  makeStudyArticle(
+    {
+      id: "opic-travel-topic-script-guide",
+      title: "여행 주제를 묘사·비교·문제해결로 확장하는 법",
+      subtitle: "하나의 여행 장면을 여러 질문 유형으로 바꾸는 OPIc 스크립트 훈련법입니다.",
+      summary: "여행 글을 많이 외우는 대신 한 번의 여행 장면을 묘사, 비교, 문제 해결 질문으로 변형하는 연습이 필요합니다.",
+      takeaway: "여행 주제는 장소명보다 계획, 예상과 다른 일, 해결 과정이 있어야 여러 질문에 버팁니다.",
+      focus: "여행 주제",
+      scene: "짧은 여행이나 당일치기 경험",
+      routine: "출발 이유, 장소 묘사, 예상과 다른 일, 마무리 감정",
+      checklist: ["왜 갔는지 말한다", "예상과 달랐던 일을 넣는다", "문제를 어떻게 바꾸었는지 설명한다"],
+      example: ["I still remember a short beach trip I took last spring.", "We planned to walk outside, but the weather changed suddenly.", "So we found a small cafe, and that actually made the trip more relaxing."],
+    },
+    5,
+  ),
+  makeStudyArticle(
+    {
+      id: "opic-indoor-topic-guide",
+      title: "카페·집·실내활동 답변 소재 만드는 법",
+      subtitle: "실내 주제를 감각 묘사와 루틴으로 바꿔 말하는 오픽온미식 답변 설계입니다.",
+      summary: "실내활동은 평범해 보이지만 소리, 조명, 좌석, 시간대 같은 단서를 넣으면 충분히 구체적인 답변 소재가 됩니다.",
+      takeaway: "실내 주제는 장소의 화려함보다 내가 그곳에서 반복하는 행동과 느끼는 안정감이 핵심입니다.",
+      focus: "실내활동 주제",
+      scene: "카페, 방, 영화관, 음악 듣는 공간",
+      routine: "장소 감각, 반복 행동, 쉬는 이유",
+      checklist: ["시간대를 정한다", "감각 단서 하나를 넣는다", "내가 쉬는 이유를 말한다"],
+      example: ["There is a quiet cafe near my office.", "I usually go there in the afternoon, order coffee, and check my notes.", "The soft music helps me slow down before going home."],
+    },
+    6,
+  ),
+  makeStudyArticle(
+    {
+      id: "opic-im-to-ih-practice-plan",
+      title: "IM에서 IH로 올릴 때 바꿔야 할 답변 습관",
+      subtitle: "짧은 직접 답변에서 장면 중심 답변으로 넘어가기 위한 연습 계획입니다.",
+      summary: "IM에서 IH를 목표로 할 때는 어려운 단어보다 답변 안의 정보 밀도와 연결 방식이 중요합니다. 짧은 답변을 장면으로 확장하는 습관을 정리했습니다.",
+      takeaway: "IH를 목표로 할수록 답변은 더 어려워지는 것이 아니라 더 선명해져야 합니다.",
+      focus: "IM에서 IH로 가는 연습",
+      scene: "짧은 답변을 60초 장면으로 확장하는 과정",
+      routine: "직접 답변, 구체적 행동, 이유, 감정 추가",
+      checklist: ["한 문장 답변에서 멈추지 않는다", "행동을 하나 더 붙인다", "개인적인 이유로 마무리한다"],
+      example: ["I like walking in my neighborhood.", "I usually walk after dinner because the streets are quiet.", "That small routine helps me clear my head after a long day."],
+    },
+    7,
+  ),
+  makeStudyArticle(
+    {
+      id: "opic-last-week-study-plan",
+      title: "시험 일주일 전 OPIc 학습 플랜",
+      subtitle: "새 자료를 늘리기보다 기존 장면을 정리하고 녹음 루틴을 유지하는 마지막 주 계획입니다.",
+      summary: "시험 일주일 전에는 새 스크립트를 많이 추가하기보다 이미 고른 장면을 짧게 말하고 다시 녹음하는 루틴이 필요합니다.",
+      takeaway: "마지막 주의 목표는 더 많이 아는 것이 아니라 이미 아는 장면을 시험장에서 바로 꺼내는 것입니다.",
+      focus: "시험 일주일 전 계획",
+      scene: "이미 준비한 서베이와 스크립트 장면",
+      routine: "하루 2개 질문 녹음과 한 가지 수정",
+      checklist: ["새 주제 추가를 줄인다", "기존 장면을 45초와 90초로 말한다", "롤플레이 공식만 짧게 반복한다"],
+      example: ["During the last week, I try not to add too many new topics.", "Instead, I record the same story in different lengths.", "That helps me stay calm when the question changes."],
+    },
+    8,
+  ),
+  makeStudyArticle(
+    {
+      id: "opic-answer-checklist",
+      title: "답변 녹음 후 확인할 체크리스트",
+      subtitle: "OPIc 답변을 들은 뒤 무엇부터 고쳐야 할지 정리하는 실전 점검표입니다.",
+      summary: "녹음 후에는 모든 오류를 찾기보다 질문 대응, 장면 선명도, 연결, 마무리 순서로 확인해야 합니다. 실전 연습과 바로 연결되는 체크리스트를 제공합니다.",
+      takeaway: "좋은 체크리스트는 실수를 많이 찾는 표가 아니라 다음 녹음에서 하나를 고치게 만드는 표입니다.",
+      focus: "답변 녹음 체크리스트",
+      scene: "실전 연습에서 저장한 답변 녹음",
+      routine: "질문 대응, 장면, 연결어, 마무리 점검",
+      checklist: ["질문에 직접 답했다", "장소나 행동이 눈에 보인다", "중간에 멈춘 이유를 표시했다", "마지막 문장이 닫혔다"],
+      example: ["After recording, I first check if I answered the question directly.", "Then I listen for one missing detail, not every grammar mistake.", "For the next try, I only fix that one point."],
+    },
+    9,
+  ),
+];
+
 export const magazineArticles: MagazineArticle[] = [
   {
     id: "opic-self-introduction-strategy",
@@ -369,4 +600,5 @@ export const magazineArticles: MagazineArticle[] = [
       },
     ],
   },
+  ...additionalStudyArticles,
 ];

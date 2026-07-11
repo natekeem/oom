@@ -14,7 +14,7 @@ OOM is a browser-only React application built by Vite. It has no server route, d
   - `oom-llm-settings` for the user-entered LLM configuration
 - Deployment target: GitHub Pages or any static host serving `dist/`
 
-GitHub Pages has no server rewrite. `scripts/generate-static-routes.mjs` runs after Vite build and writes route-specific `dist/**/index.html` files with SEO metadata, canonical URLs, Open Graph tags, and a small static body while preserving the built JavaScript bundle.
+GitHub Pages has no server rewrite. `scripts/generate-static-routes.mjs` runs after Vite build and writes route-specific `dist/**/index.html` files with SEO metadata, canonical URLs, Open Graph tags, and static body content while preserving the built JavaScript bundle. Magazine routes read `src/data/magazine.ts` and render the article title, summary, takeaway, disclaimer, sections, paragraphs, bullets, examples, and notes into the route HTML so `view-source:` contains the learning article body.
 
 ## App Shell
 

@@ -98,35 +98,35 @@ export default function App() {
 
   const viewPathForId: Record<ViewId, string> = {
     home: "/",
-    "exam-guide": "/exam-guide",
-    "exam-overview": "/exam-guide/overview",
-    "exam-apply": "/exam-guide/apply",
-    "exam-day": "/exam-guide/day",
-    "exam-results": "/exam-guide/results",
-    "exam-faq": "/exam-guide/faq",
-    "training-hub": "/training",
-    survey: "/training/survey",
-    difficulty: "/training/difficulty",
-    "script-hub": "/training/scripts",
-    "script-outdoor": "/training/scripts/outdoor",
-    "script-indoor": "/training/scripts/indoor",
-    "script-sports": "/training/scripts/sports",
-    "script-home": "/training/scripts/home",
-    roleplay: "/roleplay",
-    "roleplay-hub": "/roleplay",
-    "roleplay-formula": "/roleplay/formula",
-    "roleplay-travel": "/roleplay/travel",
-    "roleplay-indoor": "/roleplay/indoor",
-    "roleplay-sports": "/roleplay/sports",
-    "roleplay-home": "/roleplay/home",
-    practice: "/practice",
-    "ai-settings": "/ai-settings",
-    "magazine-list": "/magazine",
-    about: "/about",
-    privacy: "/privacy",
-    contact: "/contact",
-    terms: "/terms",
-    "image-credits": "/image-credits",
+    "exam-guide": "/exam-guide/",
+    "exam-overview": "/exam-guide/overview/",
+    "exam-apply": "/exam-guide/apply/",
+    "exam-day": "/exam-guide/day/",
+    "exam-results": "/exam-guide/results/",
+    "exam-faq": "/exam-guide/faq/",
+    "training-hub": "/training/",
+    survey: "/training/survey/",
+    difficulty: "/training/difficulty/",
+    "script-hub": "/training/scripts/",
+    "script-outdoor": "/training/scripts/outdoor/",
+    "script-indoor": "/training/scripts/indoor/",
+    "script-sports": "/training/scripts/sports/",
+    "script-home": "/training/scripts/home/",
+    roleplay: "/roleplay/",
+    "roleplay-hub": "/roleplay/",
+    "roleplay-formula": "/roleplay/formula/",
+    "roleplay-travel": "/roleplay/travel/",
+    "roleplay-indoor": "/roleplay/indoor/",
+    "roleplay-sports": "/roleplay/sports/",
+    "roleplay-home": "/roleplay/home/",
+    practice: "/practice/",
+    "ai-settings": "/ai-settings/",
+    "magazine-list": "/magazine/",
+    about: "/about/",
+    privacy: "/privacy/",
+    contact: "/contact/",
+    terms: "/terms/",
+    "image-credits": "/image-credits/",
   };
 
   const activeView = viewIdForPath(location.pathname);
@@ -141,12 +141,12 @@ export default function App() {
   const screen = (
     <Routes>
       <Route path="/" element={<HomeView onNavigate={onNavigate} />} />
-      <Route path="/exam-guide" element={<ExamGuideHub onNavigate={onNavigate} />} />
-      <Route path="/exam-guide/overview" element={<ExamGuideOverview onSectionChange={(v) => navigate(viewPathForId[v])} />} />
-      <Route path="/exam-guide/day" element={<ExamGuideDay onSectionChange={(v) => navigate(viewPathForId[v])} />} />
-      <Route path="/exam-guide/apply" element={<ExamGuideDashboard initialSection={"exam-apply"} onNavigate={onNavigate} onSectionChange={(v) => navigate(viewPathForId[v])} />} />
-      <Route path="/exam-guide/results" element={<ExamGuideDashboard initialSection={"exam-results"} onNavigate={onNavigate} onSectionChange={(v) => navigate(viewPathForId[v])} />} />
-      <Route path="/exam-guide/faq" element={<ExamGuideFaq onSectionChange={(v) => navigate(viewPathForId[v])} />} />
+      <Route path="/exam-guide/" element={<ExamGuideHub onNavigate={onNavigate} />} />
+      <Route path="/exam-guide/overview/" element={<ExamGuideOverview onSectionChange={(v) => navigate(viewPathForId[v])} />} />
+      <Route path="/exam-guide/day/" element={<ExamGuideDay onSectionChange={(v) => navigate(viewPathForId[v])} />} />
+      <Route path="/exam-guide/apply/" element={<ExamGuideDashboard initialSection={"exam-apply"} onNavigate={onNavigate} onSectionChange={(v) => navigate(viewPathForId[v])} />} />
+      <Route path="/exam-guide/results/" element={<ExamGuideDashboard initialSection={"exam-results"} onNavigate={onNavigate} onSectionChange={(v) => navigate(viewPathForId[v])} />} />
+      <Route path="/exam-guide/faq/" element={<ExamGuideFaq onSectionChange={(v) => navigate(viewPathForId[v])} />} />
 
       <Route path="/training" element={<TrainingHub onNavigate={onNavigate} />} />
       <Route path="/training/survey" element={<BackgroundSurveySheet />} />
@@ -166,8 +166,8 @@ export default function App() {
 
       <Route path="/practice" element={<PracticeView onToast={showToast} settings={settings} />} />
       <Route path="/ai-settings" element={<AiSettingsView onChange={setSettings} onSave={saveSettings} settings={settings} />} />
-      <Route path="/magazine" element={<MagazineList />} />
-      <Route path="/magazine/:id" element={<MagazineDetail />} />
+      <Route path="/magazine/" element={<MagazineList />} />
+      <Route path="/magazine/:id/" element={<MagazineDetail />} />
       <Route path="/about" element={<LegalPageView pageId="about" />} />
       <Route path="/privacy" element={<LegalPageView pageId="privacy" />} />
       <Route path="/contact" element={<LegalPageView pageId="contact" />} />

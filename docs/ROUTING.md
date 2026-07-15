@@ -65,6 +65,8 @@ Home, all `exam-*` views, `magazine-list` (including article detail URLs), foote
 
 ## Route Table
 
+Public route targets use the canonical `https://opic-on-me.com/path/` form. Internal navigation must preserve the trailing slash; the root route remains `https://opic-on-me.com/`.
+
 | ViewId | Sidebar location | Screen owner | Header | Notes |
 | --- | --- | --- | --- | --- |
 | `home` | Home | `HomeView` | No | Strategy overview |
@@ -89,13 +91,13 @@ Home, all `exam-*` views, `magazine-list` (including article detail URLs), foote
 | `roleplay-sports` | Training / STEP 4 child | `RoleplayViewV2` | Yes, 80% | Court and class scenarios |
 | `roleplay-home` | Training / STEP 4 child | `RoleplayViewV2` | Yes, 80% | Moving, cleaning, repair scenarios |
 | `practice` | Training / STEP 5 | `PracticeView` | Yes, 100% | Random prompt, timer, recording, feedback |
-| `magazine-list` | Top-level magazine | `MagazineList` / `MagazineDetail` | No | `/magazine` lists static articles; `/magazine/:id` renders the selected article |
+| `magazine-list` | Top-level magazine | `MagazineList` / `MagazineDetail` | No | `/magazine/` lists static articles; `/magazine/:id/` renders the selected article |
 | `ai-settings` | Top-level utility | `AiSettingsView` | No | LLM runtime configuration |
-| `about` | Footer legal page | `LegalPageView` | No | `/about` introduces OOM as a study tool |
-| `privacy` | Footer legal page | `LegalPageView` | No | `/privacy` explains privacy, cookies, Google ads, and contact |
-| `contact` | Footer legal page | `LegalPageView` | No | `/contact` lists the inquiry email |
-| `terms` | Footer legal page | `LegalPageView` | No | `/terms` explains study-use terms and non-affiliation |
-| `image-credits` | Footer trust page | `LegalPageView` | No | `/image-credits` lists magazine cover image credits and license links |
+| `about` | Footer legal page | `LegalPageView` | No | `/about/` introduces OOM as a study tool |
+| `privacy` | Footer legal page | `LegalPageView` | No | `/privacy/` explains privacy, cookies, Google ads, and contact |
+| `contact` | Footer legal page | `LegalPageView` | No | `/contact/` lists the inquiry email |
+| `terms` | Footer legal page | `LegalPageView` | No | `/terms/` explains study-use terms and non-affiliation |
+| `image-credits` | Footer trust page | `LegalPageView` | No | `/image-credits/` lists magazine cover image credits and license links |
 | `roleplay` | Compatibility route only | `RoleplayFormulaView` | Yes, 80% | Do not add new navigation links to this alias |
 
 ## Next-Step Contract

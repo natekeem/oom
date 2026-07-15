@@ -267,7 +267,8 @@ function escapeHtml(value) {
 }
 
 function canonicalFor(path) {
-  return `${siteUrl}${path}`;
+  const canonicalPath = path === "/" ? "/" : `/${path.replace(/^\/+|\/+$/g, "")}/`;
+  return `${siteUrl}${canonicalPath}`;
 }
 
 function renderParagraphs(paragraphs = [], indent = "      ") {

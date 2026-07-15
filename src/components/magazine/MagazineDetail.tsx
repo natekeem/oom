@@ -13,7 +13,7 @@ export function MagazineDetail() {
       <Card className="p-6">
         <h1 className="text-2xl font-semibold text-zinc-950 dark:text-white">게시물을 찾을 수 없습니다.</h1>
         <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">다시 목록으로 이동하여 다른 글을 확인해 주세요.</p>
-        <div className="mt-6"><Link className="inline-flex rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-900" to="/magazine">매거진 목록으로</Link></div>
+        <div className="mt-6"><Link className="inline-flex rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-900" to="/magazine/">매거진 목록으로</Link></div>
       </Card>
     );
   }
@@ -21,7 +21,7 @@ export function MagazineDetail() {
   return (
     <article className="pb-4">
       <header className="mx-auto max-w-4xl">
-        <Link className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-600 transition hover:text-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:text-zinc-300 dark:hover:text-indigo-300 dark:focus-visible:ring-offset-zinc-950" to="/magazine">
+        <Link className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-600 transition hover:text-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:text-zinc-300 dark:hover:text-indigo-300 dark:focus-visible:ring-offset-zinc-950" to="/magazine/">
           <ArrowLeft aria-hidden="true" className="h-4 w-4" /> 매거진 목록
         </Link>
         <div className="mt-7 flex flex-wrap items-center gap-2">
@@ -85,7 +85,7 @@ export function MagazineDetail() {
         </aside>
 
         <div className="border-t border-zinc-200 pt-7 dark:border-zinc-800">
-          <Link className="inline-flex rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:focus-visible:ring-offset-zinc-950" to="/magazine">다른 매거진 글 보기</Link>
+          <Link className="inline-flex rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:focus-visible:ring-offset-zinc-950" to="/magazine/">다른 매거진 글 보기</Link>
         </div>
       </div>
     </article>

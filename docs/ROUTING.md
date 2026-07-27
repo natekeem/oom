@@ -44,6 +44,7 @@ Footer legal pages
 ├─ about
 ├─ privacy
 ├─ terms
+├─ editorial-policy
 ├─ image-credits
 └─ contact
 AI feedback / settings
@@ -97,6 +98,7 @@ Public route targets use the canonical `https://opic-on-me.com/path/` form. Inte
 | `privacy` | Footer legal page | `LegalPageView` | No | `/privacy/` explains privacy, cookies, Google ads, and contact |
 | `contact` | Footer legal page | `LegalPageView` | No | `/contact/` lists the inquiry email |
 | `terms` | Footer legal page | `LegalPageView` | No | `/terms/` explains study-use terms and non-affiliation |
+| `editorial-policy` | Footer trust page | `LegalPageView` | No | `/editorial-policy/` identifies operator/author responsibility and explains sourcing, review, corrections, and AI-assistance rules |
 | `image-credits` | Footer trust page | `LegalPageView` | No | `/image-credits/` lists magazine cover image credits and license links |
 | `roleplay` | Compatibility route only | `RoleplayFormulaView` | Yes, 80% | Do not add new navigation links to this alias |
 

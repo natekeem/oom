@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { Link, type LinkProps } from "react-router-dom";
 import { cn } from "../../lib/utils";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -22,19 +23,33 @@ const sizes = {
   icon: "h-10 w-10 p-0",
 };
 
+function buttonClassName(variant: keyof typeof variants, size: keyof typeof sizes, className?: string) {
+  return cn(
+    "inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950",
+    variants[variant],
+    sizes[size],
+    className,
+  );
+}
+
 export function Button({ className, variant = "primary", size = "md", type = "button", children, ...props }: ButtonProps) {
   return (
     <button
-      className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950",
-        variants[variant],
-        sizes[size],
-        className,
-      )}
+      className={buttonClassName(variant, size, className)}
       type={type}
       {...props}
     >
       {children}
     </button>
   );
+}
+
+type ButtonLinkProps = LinkProps & {
+  variant?: keyof typeof variants;
+  size?: keyof typeof sizes;
+  children: ReactNode;
+};
+
+export function ButtonLink({ className, variant = "primary", size = "md", children, ...props }: ButtonLinkProps) {
+  return <Link className={buttonClassName(variant, size, className)} {...props}>{children}</Link>;
 }

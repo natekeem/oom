@@ -1,4 +1,5 @@
-import { ArrowLeft, Clock3, Lightbulb } from "lucide-react";
+import { useEffect } from "react";
+import { ArrowLeft, Clock3, ExternalLink, Lightbulb, UserRoundCheck } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { magazineArticles } from "../../data/magazine";
 import { Badge } from "../ui/Badge";
@@ -7,6 +8,31 @@ import { Card } from "../ui/Card";
 export function MagazineDetail() {
   const { id } = useParams<{ id: string }>();
   const article = magazineArticles.find((item) => item.id === id);
+  const articleIndex = article ? magazineArticles.findIndex((item) => item.id === article.id) : -1;
+  const relatedArticle = articleIndex >= 0 ? magazineArticles[(articleIndex + 1) % magazineArticles.length] : undefined;
+
+  useEffect(() => {
+    const scriptId = "oom-article-structured-data";
+    document.getElementById(scriptId)?.remove();
+    if (!article) return;
+
+    const script = document.createElement("script");
+    script.id = scriptId;
+    script.type = "application/ld+json";
+    script.text = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: article.title,
+      description: article.summary,
+      datePublished: article.publishedAt,
+      dateModified: article.modifiedAt,
+      mainEntityOfPage: `https://opic-on-me.com/magazine/${article.id}/`,
+      author: { "@type": "Person", name: article.author },
+      publisher: { "@type": "Organization", name: "오픽온미", url: "https://opic-on-me.com/" },
+    });
+    document.head.appendChild(script);
+    return () => script.remove();
+  }, [article]);
 
   if (!article) {
     return (
@@ -26,23 +52,33 @@ export function MagazineDetail() {
         </Link>
         <div className="mt-7 flex flex-wrap items-center gap-2">
           <Badge tone="indigo">{article.category}</Badge>
-          <span className="text-xs text-zinc-500 dark:text-zinc-400">{article.date}</span>
+          <time className="text-xs text-zinc-500 dark:text-zinc-400" dateTime={article.publishedAt}>{article.date}</time>
           <span aria-hidden="true" className="text-zinc-300 dark:text-zinc-700">·</span>
           <span className="inline-flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400"><Clock3 aria-hidden="true" className="h-3.5 w-3.5" />{article.readMinutes}</span>
         </div>
         <h1 className="mt-4 text-balance text-3xl font-bold tracking-tight text-zinc-950 sm:text-4xl lg:text-5xl dark:text-white">{article.title}</h1>
         <p className="mt-4 text-balance text-lg leading-8 text-zinc-600 dark:text-zinc-300">{article.subtitle}</p>
+        <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+          <span className="inline-flex items-center gap-1.5"><UserRoundCheck aria-hidden="true" className="h-3.5 w-3.5" />작성·검수 {article.author}</span>
+          <span>최종 수정 <time dateTime={article.modifiedAt}>{article.modifiedAt.replaceAll("-", ".")}</time></span>
+        </div>
       </header>
 
       <figure className="mx-auto mt-8 max-w-5xl overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900">
         <img alt={article.imageAlt} className="aspect-[16/8] w-full object-cover" src={article.image} />
-        <figcaption className="px-4 py-2.5 text-xs text-zinc-500 dark:text-zinc-400">OOM 매거진을 위해 생성한 에디토리얼 이미지</figcaption>
+        <figcaption className="px-4 py-2.5 text-xs text-zinc-500 dark:text-zinc-400">OOM 매거진 편집용 이미지 · 출처와 라이선스는 이미지 출처 페이지에서 확인할 수 있습니다.</figcaption>
       </figure>
 
       <div className="mx-auto mt-10 max-w-3xl space-y-10">
         <p className="border-l-4 border-indigo-500 pl-5 text-lg font-medium leading-8 text-zinc-800 dark:text-zinc-100">{article.summary}</p>
 
         {article.disclaimer ? <aside className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900 dark:border-amber-900/70 dark:bg-amber-950/40 dark:text-amber-100"><span className="font-semibold">읽기 전 참고.</span> {article.disclaimer}</aside> : null}
+
+        <aside className="rounded-xl border border-zinc-200 bg-zinc-50 p-5 text-sm leading-7 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+          <p className="font-semibold text-zinc-950 dark:text-white">작성·검수 메모</p>
+          <p className="mt-2">{article.creationNote}</p>
+          <Link className="mt-3 inline-flex font-semibold text-indigo-700 underline-offset-4 hover:underline dark:text-indigo-300" to="/editorial-policy/">오픽온미 편집 원칙 확인</Link>
+        </aside>
 
         {article.sections.map((section) => (
           <section className="space-y-4" key={section.heading}>
@@ -84,8 +120,18 @@ export function MagazineDetail() {
           <p className="mt-3 text-lg font-medium leading-8">{article.takeaway}</p>
         </aside>
 
-        <div className="border-t border-zinc-200 pt-7 dark:border-zinc-800">
-          <Link className="inline-flex rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:focus-visible:ring-offset-zinc-950" to="/magazine/">다른 매거진 글 보기</Link>
+        <section className="rounded-xl border border-zinc-200 p-5 dark:border-zinc-800" aria-labelledby="article-sources">
+          <h2 className="text-lg font-bold text-zinc-950 dark:text-white" id="article-sources">확인한 공식 자료</h2>
+          <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">시험 운영 정보는 응시 전에 공식 사이트의 최신 내용을 다시 확인하세요. 아래 자료는 이 글의 시험 구조와 숙련도 설명을 검토할 때 사용했습니다.</p>
+          <ul className="mt-4 space-y-2">
+            {article.sources.map((source) => <li key={source.href}><a className="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-700 underline-offset-4 hover:underline dark:text-indigo-300" href={source.href} rel="noreferrer" target="_blank">{source.label}<ExternalLink aria-hidden="true" className="h-3.5 w-3.5" /></a></li>)}
+          </ul>
+        </section>
+
+        <div className="flex flex-wrap gap-3 border-t border-zinc-200 pt-7 dark:border-zinc-800">
+          <Link className="inline-flex rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:focus-visible:ring-offset-zinc-950" to="/training/">훈련 화면에서 적용하기</Link>
+          {relatedArticle ? <Link className="inline-flex rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:focus-visible:ring-offset-zinc-950" to={`/magazine/${relatedArticle.id}/`}>다음 글: {relatedArticle.title}</Link> : null}
+          <Link className="inline-flex rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:focus-visible:ring-offset-zinc-950" to="/magazine/">전체 매거진 보기</Link>
         </div>
       </div>
     </article>

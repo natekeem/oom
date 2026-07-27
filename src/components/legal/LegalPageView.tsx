@@ -30,7 +30,7 @@ export function LegalPageView({ pageId }: LegalPageViewProps) {
               <ul className="mt-4 space-y-2">
                 {section.links.map((link) => (
                   <li className="text-sm leading-6" key={link.href}>
-                    <a className="font-medium text-indigo-700 underline-offset-4 hover:underline dark:text-indigo-300" href={link.href} rel="noreferrer" target="_blank">
+                    <a className="font-medium text-indigo-700 underline-offset-4 hover:underline dark:text-indigo-300" href={link.href} rel={link.href.startsWith("http") ? "noreferrer" : undefined} target={link.href.startsWith("http") ? "_blank" : undefined}>
                       {link.label}
                     </a>
                   </li>

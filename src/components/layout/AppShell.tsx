@@ -52,9 +52,14 @@ export function AppShell({ activeView, children, darkMode, mobileOpen, nextStep,
           <div className="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p>© 2026 오픽온미</p>
             <nav aria-label="서비스 정보" className="flex flex-wrap gap-x-4 gap-y-2">
+              <a className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white" href="/">홈</a>
+              <a className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white" href="/exam-guide/">수험 가이드</a>
+              <a className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white" href="/training/">실전 훈련</a>
+              <a className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white" href="/magazine/">매거진</a>
               <a className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white" href="/about/">소개</a>
               <a className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white" href="/privacy/">개인정보처리방침</a>
               <a className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white" href="/terms/">이용약관</a>
+              <a className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white" href="/editorial-policy/">편집 원칙</a>
               <a className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white" href="/image-credits/">이미지 출처</a>
               <a className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white" href="/contact/">문의</a>
             </nav>

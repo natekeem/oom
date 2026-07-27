@@ -39,6 +39,12 @@ export type MagazineArticle = {
   subtitle: string;
   date: string;
   readMinutes: string;
+  publishedAt: string;
+  modifiedAt: string;
+  author: string;
+  reviewer: string;
+  creationNote: string;
+  sources: { label: string; href: string }[];
   summary: string;
   image: string;
   imageAlt: string;
@@ -563,7 +569,7 @@ const studyArticleDetails: Record<string, { image: string; imageAlt: string; sec
   },
 };
 
-function makeStudyArticle(input: StudyArticleInput, index: number): MagazineArticle {
+function makeStudyArticle(input: StudyArticleInput): Omit<MagazineArticle, "publishedAt" | "modifiedAt" | "author" | "reviewer" | "creationNote" | "sources"> {
   const detail = studyArticleDetails[input.id];
 
   return {
@@ -571,7 +577,7 @@ function makeStudyArticle(input: StudyArticleInput, index: number): MagazineArti
     category: "OPIc 훈련 가이드",
     title: input.title,
     subtitle: input.subtitle,
-    date: `2026.07.${String(1 + index).padStart(2, "0")}`,
+    date: "2026.07.12",
     readMinutes: "7분 읽기",
     summary: input.summary,
     image: detail.image,
@@ -582,7 +588,7 @@ function makeStudyArticle(input: StudyArticleInput, index: number): MagazineArti
   };
 }
 
-const additionalStudyArticles: MagazineArticle[] = [
+const additionalStudyArticles: Array<Omit<MagazineArticle, "publishedAt" | "modifiedAt" | "author" | "reviewer" | "creationNote" | "sources">> = [
   makeStudyArticle(
     {
       id: "opic-survey-choice-guide",
@@ -596,7 +602,6 @@ const additionalStudyArticles: MagazineArticle[] = [
       checklist: ["10초 안에 경험 하나가 떠오른다", "장소와 행동을 함께 말할 수 있다", "최근 변화나 문제 상황으로 확장할 수 있다"],
       example: ["I usually choose topics that are close to my real routine.", "For example, walking and cafes are easy for me because I can describe a real place.", "That way, I do not need to invent a new story during the test."],
     },
-    0,
   ),
   makeStudyArticle(
     {
@@ -611,7 +616,6 @@ const additionalStudyArticles: MagazineArticle[] = [
       checklist: ["답변 시작 전에 장면 하나를 정한다", "구체적 행동을 한 문장 이상 넣는다", "마지막에 느낌이나 변화로 닫는다"],
       example: ["I would choose level 5-5 as a practice target because it pushes me to explain more clearly.", "Instead of using difficult words, I try to add a specific action and a reason.", "That makes my answer easier to follow."],
     },
-    1,
   ),
   makeStudyArticle(
     {
@@ -626,7 +630,6 @@ const additionalStudyArticles: MagazineArticle[] = [
       checklist: ["누구에게 연락하는지 말한다", "문제를 한 문장으로 설명한다", "원하는 대안을 분명히 요청한다"],
       example: ["I'm calling because I have a problem with my reservation.", "Could you check if I can change it to tomorrow afternoon?", "If that is not possible, please let me know another available time."],
     },
-    2,
   ),
   makeStudyArticle(
     {
@@ -641,7 +644,6 @@ const additionalStudyArticles: MagazineArticle[] = [
       checklist: ["첫 문장이 질문에 직접 답한다", "중간에 같은 단어가 반복되지 않는다", "마지막 문장이 자연스럽게 닫힌다"],
       example: ["First, I record my answer without stopping.", "Then I listen once and mark only one weak point.", "Finally, I record the same answer again with a clearer opening."],
     },
-    3,
   ),
   makeStudyArticle(
     {
@@ -656,7 +658,6 @@ const additionalStudyArticles: MagazineArticle[] = [
       checklist: ["공간 이름을 정한다", "언제 그곳에 머무는지 말한다", "최근 변화나 불편한 문제를 붙인다"],
       example: ["My favorite part of my home is my desk near the window.", "I usually sit there after work and write down my plan for the next day.", "It is a small space, but it helps me feel calm."],
     },
-    4,
   ),
   makeStudyArticle(
     {
@@ -671,7 +672,6 @@ const additionalStudyArticles: MagazineArticle[] = [
       checklist: ["왜 갔는지 말한다", "예상과 달랐던 일을 넣는다", "문제를 어떻게 바꾸었는지 설명한다"],
       example: ["I still remember a short beach trip I took last spring.", "We planned to walk outside, but the weather changed suddenly.", "So we found a small cafe, and that actually made the trip more relaxing."],
     },
-    5,
   ),
   makeStudyArticle(
     {
@@ -686,7 +686,6 @@ const additionalStudyArticles: MagazineArticle[] = [
       checklist: ["시간대를 정한다", "감각 단서 하나를 넣는다", "내가 쉬는 이유를 말한다"],
       example: ["There is a quiet cafe near my office.", "I usually go there in the afternoon, order coffee, and check my notes.", "The soft music helps me slow down before going home."],
     },
-    6,
   ),
   makeStudyArticle(
     {
@@ -701,7 +700,6 @@ const additionalStudyArticles: MagazineArticle[] = [
       checklist: ["한 문장 답변에서 멈추지 않는다", "행동을 하나 더 붙인다", "개인적인 이유로 마무리한다"],
       example: ["I like walking in my neighborhood.", "I usually walk after dinner because the streets are quiet.", "That small routine helps me clear my head after a long day."],
     },
-    7,
   ),
   makeStudyArticle(
     {
@@ -716,7 +714,6 @@ const additionalStudyArticles: MagazineArticle[] = [
       checklist: ["새 주제 추가를 줄인다", "기존 장면을 45초와 90초로 말한다", "롤플레이 공식만 짧게 반복한다"],
       example: ["During the last week, I try not to add too many new topics.", "Instead, I record the same story in different lengths.", "That helps me stay calm when the question changes."],
     },
-    8,
   ),
   makeStudyArticle(
     {
@@ -731,11 +728,10 @@ const additionalStudyArticles: MagazineArticle[] = [
       checklist: ["질문에 직접 답했다", "장소나 행동이 눈에 보인다", "중간에 멈춘 이유를 표시했다", "마지막 문장이 닫혔다"],
       example: ["After recording, I first check if I answered the question directly.", "Then I listen for one missing detail, not every grammar mistake.", "For the next try, I only fix that one point."],
     },
-    9,
   ),
 ];
 
-export const magazineArticles: MagazineArticle[] = [
+const magazineArticleDrafts: Array<Omit<MagazineArticle, "publishedAt" | "modifiedAt" | "author" | "reviewer" | "creationNote" | "sources">> = [
   {
     id: "opic-self-introduction-strategy",
     category: "시험 전략",
@@ -1069,3 +1065,43 @@ export const magazineArticles: MagazineArticle[] = [
   },
   ...additionalStudyArticles,
 ];
+
+const batchPublishedArticleIds = new Set(additionalStudyArticles.map((article) => article.id));
+
+const officialArticleSources = [
+  {
+    label: "OPIc 공식 수험자 가이드",
+    href: "https://www.opic.or.kr/opics/servlet/controller.opic.site.guide.GuideServlet?p_process=move-exam-guide",
+  },
+  {
+    label: "ACTFL Proficiency Guidelines 2024",
+    href: "https://www.opic.or.kr/senior/img/com_2/ACTFL_Proficiency_Guidelines_2024.pdf",
+  },
+];
+
+function estimateReadMinutes(article: Omit<MagazineArticle, "publishedAt" | "modifiedAt" | "author" | "reviewer" | "creationNote" | "sources">) {
+  const sectionText = article.sections.flatMap((section) => [
+    section.heading,
+    ...section.paragraphs,
+    ...(section.bullets ?? []),
+    ...(section.example?.lines ?? []),
+    section.note?.text ?? "",
+  ]).join(" ");
+  const characterCount = [article.title, article.subtitle, article.summary, article.takeaway, sectionText].join(" ").length;
+  return `${Math.max(4, Math.ceil(characterCount / 550))}분 읽기`;
+}
+
+export const magazineArticles: MagazineArticle[] = magazineArticleDrafts.map((article) => {
+  const publishedAt = batchPublishedArticleIds.has(article.id) ? "2026-07-12" : article.date.replaceAll(".", "-");
+  return {
+    ...article,
+    date: publishedAt.replaceAll("-", "."),
+    readMinutes: estimateReadMinutes(article),
+    publishedAt,
+    modifiedAt: "2026-07-27",
+    author: "나태킴",
+    reviewer: "나태킴",
+    creationNote: "운영자 나태킴이 오픽온미의 실제 훈련 흐름에 맞춰 직접 작성하고, 공개된 OPIc·ACTFL 공식 안내와 사이트 예시를 교차 확인했습니다.",
+    sources: officialArticleSources,
+  };
+});

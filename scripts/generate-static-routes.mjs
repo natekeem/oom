@@ -6,7 +6,7 @@ const projectRoot = process.cwd();
 const distDir = join(projectRoot, "dist");
 const distIndexPath = join(distDir, "index.html");
 const siteUrl = "https://opic-on-me.com";
-const lastmod = "2026-07-11";
+const lastmod = "2026-07-27";
 const require = createRequire(import.meta.url);
 
 const baseRoutes = [
@@ -184,6 +184,13 @@ const baseRoutes = [
 
 const pageGuides = {
   "/": { purpose: "오픽온미는 OPIc 말하기를 준비하는 학습자가 서베이 선택, 난이도 설정, 스크립트 훈련, 롤플레이, 녹음 복습을 한 흐름으로 이어 가도록 만든 연습용 도구입니다.", how: "처음에는 훈련 허브에서 STEP 1부터 STEP 5까지 순서대로 이동하고, 이후에는 부족한 단계만 반복합니다. 한 번에 많은 주제를 외우기보다 하나의 장면을 여러 질문에 맞게 바꾸는 방식으로 사용하세요.", benefit: "학습자는 답변 범위를 좁히고, 같은 경험을 묘사·비교·문제 해결 질문으로 확장하는 감각을 얻을 수 있습니다.", checklist: ["서베이 선택을 고정했다", "60-90초로 말할 장면 하나를 정했다", "녹음 후 첫 문장과 마무리를 확인했다"], links: [["/training/", "OPIc 실전 훈련하기"], ["/magazine/", "오픽 매거진"], ["/exam-guide/", "OPIc 수험 가이드"]] },
+  "/exam-guide/": { purpose: "OPIc 수험 가이드는 시험의 기본 구조부터 신청, 시험 당일 준비, 성적 확인까지 처음 응시하는 학습자가 확인할 내용을 순서대로 정리한 허브입니다.", how: "소개·등급에서 평가 방식을 이해한 뒤 신청·응시료, 신분증·입실, 성적·인증서 순서로 확인합니다. 날짜와 비용처럼 바뀔 수 있는 정보는 각 페이지의 공식 링크에서 응시 직전에 다시 확인합니다.", benefit: "학습 정보와 시험 운영 정보를 구분해 준비 누락을 줄이고, 공식 확인이 필요한 항목을 빠르게 찾을 수 있습니다.", checklist: ["시험 구조와 등급 체계를 확인했다", "접수 상태와 응시료를 공식 화면에서 확인했다", "규정 신분증과 입실 시간을 확인했다", "성적 발표와 인증서 사용 일정을 확인했다"], mistakes: ["학습 예시를 공식 규정으로 오해한다", "오래된 후기만 보고 응시료나 신분증을 결정한다"], links: [["/exam-guide/overview/", "OPIc 소개·등급"], ["/exam-guide/apply/", "신청·응시료"], ["/exam-guide/day/", "시험 당일"], ["/exam-guide/results/", "성적·인증서"], ["/exam-guide/faq/", "자주 묻는 질문"]] },
+  "/exam-guide/overview/": { purpose: "OPIc 소개·등급 페이지는 컴퓨터 기반 말하기 평가의 흐름과 Novice, Intermediate, Advanced 등급대에서 연습할 발화 기준을 설명합니다.", how: "등급 이름만 외우지 말고 질문에 직접 답하는지, 시간·장소·행동·이유를 이어 말하는지, 예상 밖 상황을 설명하고 해결하는지를 기준으로 현재 답변을 확인합니다.", benefit: "어려운 단어 수보다 답변의 구체성, 시간 흐름, 연결과 회복 능력을 중심으로 연습 목표를 세울 수 있습니다.", example: "I usually go to a small park on Sunday mornings because it helps me slow down after a busy week.처럼 장소, 시간, 행동과 이유를 한 장면으로 연결합니다.", checklist: ["목표 등급의 발화 초점을 확인했다", "45초와 90초 답변을 각각 녹음했다", "공식 숙련도 자료 링크를 확인했다"], links: [["/training/difficulty/", "난이도 설정"], ["/magazine/opic-grade-guide/", "등급별 답변 차이 읽기"], ["/exam-guide/apply/", "신청 안내로 이동"]] },
+  "/exam-guide/apply/": { purpose: "신청·응시료 페이지는 회원가입, 본인인증, 시험 일정과 센터 선택, 결제, 접수 완료 확인까지 신청 과정에서 놓치기 쉬운 항목을 정리합니다.", how: "일정과 센터를 선택하기 전에 변경·취소 조건을 읽고, 결제 직전 공식 신청 화면의 최종 응시료와 할인 적용 여부를 확인합니다. 접수 후에는 나의 OPIc에서 상태를 다시 확인합니다.", benefit: "오래된 블로그 정보나 기억에 의존하지 않고 실제 신청 화면을 기준으로 비용과 일정을 결정할 수 있습니다.", checklist: ["본인인증 수단을 준비했다", "센터와 입실 시간을 확인했다", "결제 화면의 최종 금액을 확인했다", "접수 완료 상태를 확인했다"], mistakes: ["고정된 응시료로 단정한다", "단체·할인 시험 조건을 일반 시험과 혼동한다"], links: [["/exam-guide/day/", "시험 당일 준비"], ["/exam-guide/faq/", "신청 관련 질문"], ["/contact/", "사이트 내용 정정 요청"]] },
+  "/exam-guide/day/": { purpose: "시험 당일 페이지는 규정 신분증, 입실 통제 시간, 오리엔테이션과 본시험 흐름, 현장 오류 대응을 한곳에서 점검하도록 만든 준비 목록입니다.", how: "응시자 유형에 맞는 신분증 원본을 준비하고 시험 시작보다 여유 있게 도착합니다. 입실 직전에는 공식 수험자 가이드에서 신분증 인정 범위와 입실 시간을 다시 확인합니다.", benefit: "학습 내용과 무관한 신분증·지각 문제로 응시하지 못하는 위험을 줄이고 시험실에서의 진행 순서를 미리 이해할 수 있습니다.", checklist: ["유효한 규정 신분증 원본을 준비했다", "시험 센터와 입실 시간을 확인했다", "헤드셋과 녹음 오류 시 감독관에게 알릴 것을 기억한다"], mistakes: ["신분증 사진이나 사본을 준비한다", "시험 시작 시간에 맞춰 도착하면 된다고 생각한다"], links: [["/exam-guide/faq/", "시험장 질문 확인"], ["/exam-guide/results/", "성적 확인 안내"], ["/training/", "실전 훈련으로 이동"]] },
+  "/exam-guide/results/": { purpose: "성적·인증서 페이지는 성적 발표 시점, 확인 가능 기간, 인증서 출력과 제출, 세이빙 쿠폰과 UR 안내를 구분해 설명합니다.", how: "시험 후 공식 홈페이지에서 발표 상태를 확인하고 기관 제출 시 등급, Test ID와 응시일을 다시 대조합니다. 쿠폰이나 재시험 조건은 개인 상황에 따라 달라질 수 있으므로 공식 문의를 우선합니다.", benefit: "성적 확인과 기관 제출에 필요한 정보를 빠뜨리지 않고, 예외 상황을 일반적인 결과 보장으로 오해하지 않을 수 있습니다.", checklist: ["공식 성적 발표 화면을 확인했다", "인증서의 Test ID와 응시일을 확인했다", "제출 기관의 유효기간 기준을 확인했다"], mistakes: ["사이트 안내를 실제 성적 조회로 오해한다", "예외 쿠폰이 모든 미응시 상황에 적용된다고 생각한다"], links: [["/exam-guide/faq/", "성적 관련 질문"], ["/exam-guide/", "수험 가이드 전체 보기"], ["/contact/", "오류 제보"]] },
+  "/exam-guide/faq/": { purpose: "자주 묻는 질문 페이지는 신청, 시험장, 신분증, 답변 방식, 성적 확인 과정에서 반복해서 혼동되는 내용을 짧은 문답으로 정리합니다.", how: "질문을 범주별로 확인하고 공식 기준 표시가 있는 답변은 연결된 공식 페이지에서 최신 내용을 다시 읽습니다. 개인 경험이나 학습 팁은 공식 운영 규정과 구분합니다.", benefit: "긴 가이드를 모두 다시 읽지 않고도 현재 막힌 지점을 찾고, 추가 확인이 필요한 공식 자료로 이동할 수 있습니다.", checklist: ["내 질문의 범주를 먼저 확인했다", "공식 기준과 학습 팁을 구분했다", "변동 가능한 정보는 최신 공식 페이지에서 확인했다"], mistakes: ["FAQ 한 문장만 보고 예외 조건을 생략한다", "커뮤니티 후기를 공식 정책보다 우선한다"], links: [["/exam-guide/overview/", "시험 구조"], ["/exam-guide/apply/", "신청 안내"], ["/exam-guide/day/", "시험 당일"], ["/exam-guide/results/", "성적 안내"]] },
+  "/magazine/": { purpose: "오픽 매거진은 오픽온미의 훈련 화면을 실제로 활용하는 방법을 설명하는 학습 노트 모음입니다. 각 글은 서로 다른 연습 문제를 다루고 작성자, 공개일, 수정일과 확인한 공식 자료를 표시합니다.", how: "현재 필요한 문제에 가까운 글 한 편을 고른 뒤 예시를 그대로 외우지 말고 자신의 장소, 행동, 이유와 변화로 바꿉니다. 글 마지막의 관련 훈련 화면에서 같은 구조를 직접 말하고 녹음합니다.", benefit: "검색어별 답안을 늘리는 대신 하나의 장면을 여러 질문에 옮기는 오픽온미의 학습 방식을 글과 도구 사이에서 반복할 수 있습니다.", checklist: ["글의 작성·검수자와 수정일을 확인했다", "예문에서 바꿀 요소를 정했다", "관련 훈련 화면에서 직접 녹음했다", "공식 자료와 OOM 학습 조언을 구분했다"], mistakes: ["예문을 정답으로 외운다", "비슷한 글을 여러 편 읽고도 직접 말하지 않는다"], links: [["/magazine/opic-survey-choice-guide/", "서베이 선택 가이드"], ["/magazine/opic-recording-review-routine/", "10분 녹음 복습"], ["/magazine/opic-roleplay-6-step-template/", "롤플레이 6단계"], ["/magazine/opic-answer-checklist/", "답변 체크리스트"], ["/editorial-policy/", "콘텐츠 편집 원칙"]] },
   "/training/": { purpose: "훈련 허브는 OPIc 준비를 암기량이 아니라 답변 설계 순서로 나누어 보여 주는 중심 페이지입니다.", how: "STEP 1에서 답변 소재를 줄이고, STEP 2에서 답변 길이를 정한 뒤, STEP 3과 STEP 4에서 실제 말하기 구조를 만들고 STEP 5에서 녹음으로 점검합니다.", benefit: "각 단계가 끊어지지 않아 같은 장면을 여러 질문에 재사용하는 연습을 자연스럽게 반복할 수 있습니다.", checklist: ["오늘 연습할 STEP 하나를 고른다", "새 주제보다 기존 장면을 먼저 변형한다", "녹음 복습은 한 가지 수정만 남긴다"], links: [["/training/survey/", "STEP 1 서베이 고정"], ["/training/difficulty/", "STEP 2 난이도 설정"], ["/practice/", "STEP 5 실전 연습"]] },
   "/training/survey/": { purpose: "서베이 페이지는 실제 관심사를 모두 고르는 곳이 아니라 답변 범위를 좁히기 위한 연습용 선택표입니다.", how: "10초 안에 경험이 떠오르는 선택지, 장소와 행동과 감정을 붙일 수 있는 선택지를 우선 확인합니다.", benefit: "응시 전 말할 소재가 줄어들어 질문을 받았을 때 장면을 더 빨리 떠올릴 수 있습니다.", checklist: ["경험 하나가 즉시 떠오른다", "장소·사람·행동 중 두 가지 이상을 말할 수 있다", "과거 경험이나 최근 변화로 확장 가능하다"], mistakes: ["남들이 많이 고른다는 이유만으로 선택한다", "선택지를 자주 바꿔 스크립트 장면이 흔들린다"], links: [["/training/difficulty/", "난이도 설정으로 이동"], ["/magazine/opic-survey-choice-guide/", "서베이 선택 가이드"]] },
   "/training/difficulty/": { purpose: "난이도 페이지는 어려운 단어를 고르는 곳이 아니라 답변 길이와 구체성의 기준을 정하는 곳입니다.", how: "5-5를 기본 연습 기준으로 삼고 장소, 행동, 이유, 변화가 들어간 60-90초 답변을 만들어 봅니다.", benefit: "목표 등급에 맞는 답변 밀도를 의식하면서도 과장된 표현 대신 익숙한 경험을 안정적으로 말할 수 있습니다.", example: "집 근처 카페를 말한다면 위치 소개에서 끝내지 말고, 언제 가는지, 무엇을 하는지, 왜 편한지까지 이어 말합니다.", checklist: ["답변 길이를 정했다", "구체적 행동 하나를 넣었다", "마무리 감정을 붙였다"], links: [["/training/scripts/", "스크립트 훈련으로 이동"], ["/magazine/opic-55-difficulty-guide/", "난이도 5-5 가이드"]] },
@@ -193,7 +200,7 @@ const pageGuides = {
   "/training/scripts/outdoor/": { purpose: "야외와 여행 주제는 묘사, 과거 경험, 비교, 문제 해결 질문으로 확장하기 좋은 장면을 만드는 연습입니다.", how: "장소, 동행, 예상과 달랐던 일, 마무리 감정을 블록으로 나눠 말합니다.", benefit: "여행지를 많이 외우지 않아도 한 장면으로 여러 질문에 대응할 수 있습니다.", example: "One short trip I remember is a beach trip last spring. The weather changed suddenly, so we found a small cafe instead, and the trip became more relaxed.", checklist: ["왜 갔는지 말한다", "계획과 실제 상황을 비교한다", "작은 문제와 해결을 넣는다"], links: [["/roleplay/travel/", "여행 롤플레이"], ["/magazine/opic-travel-topic-script-guide/", "여행 주제 가이드"]] },
   "/training/scripts/sports/": { purpose: "운동과 취미 주제는 시작 계기, 반복 루틴, 장소, 최근 변화를 말하는 연습입니다.", how: "잘하는 운동을 증명하기보다 왜 시작했고 왜 계속하는지 설명합니다.", benefit: "운동 실력과 무관하게 개인 경험 중심의 답변을 만들 수 있습니다.", example: "I started jogging because I needed a simple way to clear my mind. I run around a small park in the evening, and it gives me a break after work.", checklist: ["시작 계기를 넣었다", "반복 루틴을 넣었다", "몸 상태나 작은 목표를 붙였다"], links: [["/roleplay/sports/", "운동 시설 롤플레이"], ["/practice/", "실전 연습"]] },
   "/roleplay/": { purpose: "롤플레이 허브는 상황을 듣고 필요한 정보를 순서대로 묻는 연습을 제공합니다.", how: "문제 설명, 정보 질문, 대안 요청, 감사 마무리 흐름을 반복합니다.", benefit: "친절한 표현을 많이 외우지 않아도 요청 목적을 잃지 않는 답변 구조를 만들 수 있습니다.", example: "I'm calling because I have a problem with my reservation. Could you check my booking first? If possible, I would like to change it to tomorrow afternoon.", checklist: ["문제를 한 문장으로 다시 말한다", "필요한 정보를 묻는다", "가능한 대안을 요청한다"], links: [["/roleplay/formula/", "롤플레이 공식"], ["/roleplay/travel/", "여행 롤플레이"]] },
-  "/roleplay/formula/": { purpose: "공식 페이지는 긴장했을 때 답변 순서를 잃지 않기 위한 구조를 정리합니다.", how: "상황을 받아들이고, 필요한 정보를 묻고, 가능한 대안을 요청하고, 정중하게 마무리합니다.", benefit: "상황이 바뀌어도 같은 구조를 적용할 수 있어 답변이 짧게 끊기는 문제를 줄일 수 있습니다.", checklist: ["누구에게 말하는지 정했다", "무엇을 확인해야 하는지 정했다", "원하는 대안을 말했다"], links: [["/roleplay/travel/", "여행"], ["/roleplay/indoor/", "실내"], ["/roleplay/home/", "집/거주지"]] },
+  "/roleplay/formula/": { purpose: "공식 페이지는 긴장했을 때 답변 순서를 잃지 않기 위한 여섯 단계 구조를 정리합니다. 친절한 표현을 많이 외우는 대신 상대가 문제를 이해하고 도와줄 수 있도록 필요한 정보를 배열하는 데 초점을 둡니다.", how: "상황을 받아들이고, 문제를 한 문장으로 설명한 뒤 필요한 정보를 묻습니다. 가능한 대안을 요청하고 조건을 확인한 다음 정중하게 마무리합니다. 처음에는 단계 이름을 보며 말하고, 익숙해지면 상황·질문·대안 세 단어만 보고 답합니다.", benefit: "여행, 카페, 운동 시설, 집 수리처럼 상황이 바뀌어도 같은 구조를 적용할 수 있어 답변이 짧게 끊기거나 요청이 빠지는 문제를 줄일 수 있습니다.", example: "Hi, I booked a room for Friday, but my schedule changed. Could you check whether Saturday afternoon is available? If there is an extra fee, please let me know.", checklist: ["누구에게 말하는지 정했다", "문제를 한 문장으로 설명했다", "무엇을 확인해야 하는지 정했다", "원하는 대안과 조건을 말했다", "감사 표현으로 닫았다"], mistakes: ["Could you만 반복하고 실제 문제를 설명하지 않는다", "대안을 요청하지 않고 불편한 점만 길게 말한다"], links: [["/roleplay/travel/", "여행"], ["/roleplay/indoor/", "실내"], ["/roleplay/home/", "집/거주지"], ["/magazine/opic-roleplay-6-step-template/", "롤플레이 6단계 글"]] },
   "/roleplay/travel/": { purpose: "여행 롤플레이는 예약, 일정 변경, 교통, 숙소 문제처럼 실제 서비스 상황을 연습합니다.", how: "예약 기준 정보를 먼저 말하고, 확인 질문과 대안 요청을 분리합니다.", benefit: "상대가 도와줄 수 있는 정보를 빠뜨리지 않는 답변 습관을 만들 수 있습니다.", example: "I booked a room for this Friday, but my flight schedule changed. Could you check if I can move the reservation to Saturday?", checklist: ["예약 정보를 말했다", "문제 원인을 짧게 설명했다", "가능한 변경안을 물었다"], links: [["/practice/", "실전 연습"], ["/magazine/opic-roleplay-6-step-template/", "롤플레이 6단계 글"]] },
   "/roleplay/indoor/": { purpose: "실내 서비스 롤플레이는 카페, 식당, 수업, 실내 활동에서 생기는 작은 문제를 정중히 해결하는 연습입니다.", how: "주문이나 예약 정보를 먼저 말하고, 무엇이 다른지 설명한 뒤 가능한 조치를 묻습니다.", benefit: "불만을 길게 말하지 않고도 필요한 요청을 명확하게 전달할 수 있습니다.", example: "I ordered a hot coffee, but I received an iced one. Could you check my order and change it if possible?", checklist: ["기준 정보를 말했다", "다른 점을 설명했다", "조치 요청으로 끝냈다"], links: [["/practice/", "실전 연습"], ["/training/scripts/indoor/", "실내 스크립트"]] },
   "/roleplay/sports/": { purpose: "운동 시설과 수업 롤플레이는 예약 변경, 장비 문제, 일정 확인처럼 조건을 묻는 연습입니다.", how: "날짜, 시간, 필요한 장비나 수업명을 말한 뒤 대안을 요청합니다.", benefit: "문제 설명만 길어지고 요청이 빠지는 실수를 줄일 수 있습니다.", example: "I reserved a tennis court for tonight, but it may rain heavily. Could I change the time or book the same time next week?", checklist: ["날짜와 시간을 말했다", "문제 상황을 설명했다", "대체 시간을 요청했다"], links: [["/practice/", "실전 연습"], ["/training/scripts/sports/", "운동 스크립트"]] },
@@ -230,7 +237,7 @@ function sectionsFromGuide(guide) {
 const enrichedBaseRoutes = baseRoutes.map((route) => ({
   ...route,
   sections: route.sections ?? sectionsFromGuide(pageGuides[route.path]),
-  adExcluded: route.noindex || route.path === "/ai-settings/" || route.path === "/practice/",
+  adExcluded: route.noindex || ["/ai-settings/", "/practice/", "/magazine/"].includes(route.path),
 }));
 
 const magazineRoutes = loadTypeScriptExport("src/data/magazine.ts", "magazineArticles").map((article) => ({
@@ -241,6 +248,7 @@ const magazineRoutes = loadTypeScriptExport("src/data/magazine.ts", "magazineArt
   content: [article.subtitle, article.summary],
   type: "article",
   article,
+  lastmod: article.modifiedAt,
 }));
 
 const legalRoutes = Object.values(loadTypeScriptExport("src/data/legalPages.ts", "legalPages")).map((page) => ({
@@ -250,6 +258,8 @@ const legalRoutes = Object.values(loadTypeScriptExport("src/data/legalPages.ts",
   heading: page.title,
   content: [page.description],
   legalPage: page,
+  adExcluded: true,
+  lastmod: page.updatedAt,
 }));
 
 const routes = [...enrichedBaseRoutes, ...magazineRoutes, ...legalRoutes];
@@ -320,17 +330,38 @@ function renderSections(sections = []) {
 
 function articleBody(route) {
   const article = route.article;
+  const sources = renderLinks(article.sources);
+  const relatedLinks = renderLinks([
+    { href: "/training/", label: "훈련 화면에서 적용하기" },
+    { href: "/magazine/", label: "전체 매거진 보기" },
+    { href: "/editorial-policy/", label: "콘텐츠 편집 원칙" },
+  ]);
   return `<main class="seo-static-content" aria-label="${escapeHtml(article.title)}">
     <article>
-      <p>${escapeHtml(article.category)} · ${escapeHtml(article.date)} · ${escapeHtml(article.readMinutes)}</p>
+      <p>${escapeHtml(article.category)} · <time datetime="${escapeHtml(article.publishedAt)}">${escapeHtml(article.date)}</time> · ${escapeHtml(article.readMinutes)}</p>
       <h1>${escapeHtml(article.title)}</h1>
       <p>${escapeHtml(article.subtitle)}</p>
       <p>${escapeHtml(article.summary)}</p>
+      <p>작성·검수: <span rel="author">${escapeHtml(article.author)}</span> · 최종 수정: <time datetime="${escapeHtml(article.modifiedAt)}">${escapeHtml(article.modifiedAt)}</time></p>
+      <section>
+        <h2>작성·검수 메모</h2>
+        <p>${escapeHtml(article.creationNote)}</p>
+        <p><a href="/editorial-policy/">오픽온미 편집 원칙 확인</a></p>
+      </section>
       <blockquote>
         <strong>핵심 요약</strong>
         <p>${escapeHtml(article.takeaway)}</p>
       </blockquote>
 ${article.disclaimer ? `      <p>${escapeHtml(article.disclaimer)}</p>\n` : ""}${renderSections(article.sections)}
+      <section>
+        <h2>확인한 공식 자료</h2>
+        <p>시험 운영 정보는 응시 전에 공식 사이트의 최신 내용을 다시 확인하세요.</p>
+${sources}
+      </section>
+      <section>
+        <h2>관련 학습 경로</h2>
+${relatedLinks}
+      </section>
     </article>
   </main>`;
 }
@@ -352,10 +383,9 @@ function staticBody(route) {
   if (route.legalPage) return legalBody(route);
   const paragraphs = renderParagraphs(route.content);
   const sections = route.sections ? `\n${renderSections(route.sections)}` : "";
-  const adNote = route.adExcluded ? `\n      <p>이 페이지는 설정 또는 상호작용 중심 화면이므로 광고 슬롯 배치보다 학습 흐름과 입력 영역의 간격을 우선합니다.</p>` : "";
   return `<main class="seo-static-content" aria-label="${escapeHtml(route.heading)}">
     <h1>${escapeHtml(route.heading)}</h1>
-${paragraphs}${sections}${adNote}
+${paragraphs}${sections}
   </main>`;
 }
 
@@ -363,6 +393,18 @@ function injectSeo(html, route) {
   const canonical = canonicalFor(route.path);
   const ogType = route.type ?? "website";
   const robots = route.noindex ? '    <meta name="robots" content="noindex,follow" />\n' : "";
+  const adsense = route.adExcluded ? "" : `    <script id="oom-adsense-script" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8734087248170812" crossorigin="anonymous"></script>\n`;
+  const structuredData = route.article ? `    <script type="application/ld+json">${JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: route.article.title,
+    description: route.article.summary,
+    datePublished: route.article.publishedAt,
+    dateModified: route.article.modifiedAt,
+    mainEntityOfPage: canonical,
+    author: { "@type": "Person", name: route.article.author },
+    publisher: { "@type": "Organization", name: "오픽온미", url: siteUrl + "/" },
+  }).replaceAll("<", "\\u003c")}</script>\n` : "";
   const meta = `    <title>${escapeHtml(route.title)}</title>
     <meta name="description" content="${escapeHtml(route.description)}" />
     <link rel="canonical" href="${escapeHtml(canonical)}" />
@@ -370,7 +412,7 @@ function injectSeo(html, route) {
     <meta property="og:description" content="${escapeHtml(route.description)}" />
     <meta property="og:url" content="${escapeHtml(canonical)}" />
     <meta property="og:type" content="${escapeHtml(ogType)}" />
-${robots}`;
+${robots}${structuredData}${adsense}`;
   let next = html
     .replace(/\s*<title>[\s\S]*?<\/title>\s*/g, "\n")
     .replace(/\s*<meta name="description"[^>]*>\s*/g, "\n")
@@ -407,7 +449,7 @@ function generateSitemap() {
       const priority = route.path === "/" ? "1.0" : depth <= 2 ? "0.8" : "0.6";
       return `  <url>
     <loc>${canonicalFor(route.path)}</loc>
-    <lastmod>${lastmod}</lastmod>
+    <lastmod>${route.lastmod ?? lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>${priority}</priority>
   </url>`;

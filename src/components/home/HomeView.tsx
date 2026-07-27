@@ -2,12 +2,7 @@ import { ArrowRight, BookOpenCheck, Gauge, Lightbulb, MessageCircleMore, Mic2, R
 import { motion } from "framer-motion";
 import { Card } from "../ui/Card";
 import { Badge } from "../ui/Badge";
-import { Button } from "../ui/Button";
-import type { ViewId } from "../layout/Sidebar";
-
-type HomeViewProps = {
-  onNavigate: (view: ViewId) => void;
-};
+import { ButtonLink } from "../ui/Button";
 
 const flows = [
   "서베이 고정",
@@ -24,7 +19,7 @@ const levels = [
   { level: "AL", tone: "amber" as const, text: "구체적인 장면과 변화, 문제 해결을 유연하게 엮어 깊이를 만듭니다." },
 ];
 
-export function HomeView({ onNavigate }: HomeViewProps) {
+export function HomeView() {
   return (
     <div className="space-y-6">
       <motion.section animate={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 10 }} className="grid gap-5 xl:grid-cols-[1.3fr_0.7fr]">
@@ -35,13 +30,13 @@ export function HomeView({ onNavigate }: HomeViewProps) {
           </span>
           <h1 className="mt-4 max-w-3xl text-balance text-3xl font-bold leading-tight sm:text-4xl">오픽온미와 함께 오픽은 나에게 맡기고, 반복 가능한 구조로 말합니다.</h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-300 sm:text-base">OOM은 답을 통째로 암기하는 도구가 아닙니다. 익숙한 장면을 여러 질문에 맞게 자연스럽게 변형해 말하는 훈련 대시보드입니다.</p>
-          <div className="mt-6 flex flex-wrap gap-3"><Button onClick={() => onNavigate("survey")}><Route className="h-4 w-4" />서베이 고정 시작</Button><Button onClick={() => onNavigate("script-outdoor")} variant="secondary"><Mic2 className="h-4 w-4" />스크립트 보기</Button></div>
+          <div className="mt-6 flex flex-wrap gap-3"><ButtonLink to="/training/survey/"><Route className="h-4 w-4" />서베이 고정 시작</ButtonLink><ButtonLink to="/training/scripts/outdoor/" variant="secondary"><Mic2 className="h-4 w-4" />스크립트 보기</ButtonLink></div>
         </Card>
         <Card className="p-6">
           <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400"><Gauge className="h-5 w-5" /><p className="text-sm font-semibold">추천 시작점</p></div>
           <p className="mt-5 text-4xl font-bold text-zinc-950 dark:text-white">5 <span className="text-zinc-400">→</span> 5</p>
           <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">충분히 다양한 질문을 받으면서도, 초반부터 지나치게 추상적인 질문으로 흔들리지 않는 설정입니다.</p>
-          <Button className="mt-6 w-full" onClick={() => onNavigate("difficulty")} variant="secondary">난이도 가이드 <ArrowRight className="h-4 w-4" /></Button>
+          <ButtonLink className="mt-6 w-full" to="/training/difficulty/" variant="secondary">난이도 가이드 <ArrowRight className="h-4 w-4" /></ButtonLink>
         </Card>
       </motion.section>
 
@@ -103,19 +98,19 @@ export function HomeView({ onNavigate }: HomeViewProps) {
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-600 dark:text-emerald-300">Step 1 · 고정</p>
                 <h4 className="mt-2 text-base font-bold text-zinc-950 dark:text-white">서베이와 난이도로 내 재료를 좁힙니다.</h4>
                 <p className="mt-3 text-sm leading-7 text-zinc-600 dark:text-zinc-300">먼저 서베이에서 실제로 설명할 수 있는 관심사를 고르고, 난이도 화면에서 목표 발화 길이를 정합니다. 남들이 많이 고르는 주제보다 내 기억 속에 장소·사람·사건이 남아 있는 주제가 좋습니다. 한 주제를 고른 뒤에는 자주 바꾸지 말고, 그 안에서 말할 수 있는 장면 세 개를 메모하세요. 이 선택이 이후 스크립트와 롤플레이의 공통 재료가 됩니다.</p>
-                <Button className="mt-4" onClick={() => onNavigate("survey")} size="sm" variant="secondary">서베이로 시작 <ArrowRight className="h-3.5 w-3.5" /></Button>
+                <ButtonLink className="mt-4" to="/training/survey/" size="sm" variant="secondary">서베이로 시작 <ArrowRight className="h-3.5 w-3.5" /></ButtonLink>
               </section>
               <section className="rounded-lg bg-zinc-50 p-5 dark:bg-zinc-950">
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-600 dark:text-emerald-300">Step 2 · 구조화</p>
                 <h4 className="mt-2 text-base font-bold text-zinc-950 dark:text-white">스크립트는 통째 암기 대신 블록으로 익힙니다.</h4>
                 <p className="mt-3 text-sm leading-7 text-zinc-600 dark:text-zinc-300">OOM의 스크립트 그룹에서는 가장 나와 닮은 스토리 하나를 고른 뒤, 시작·구체적 디테일·작은 변화·마무리 블록을 나누어 읽습니다. 처음에는 전체 문장을 보며 말하고, 다음에는 키워드만 보며 같은 장면을 설명해 보세요. 질문 변형에서는 첫 문장만 질문에 맞게 바꾸고 나머지 장면을 이어 말합니다. 이렇게 하면 외운 문장이 아니라 움직일 수 있는 답변 구조가 남습니다.</p>
-                <Button className="mt-4" onClick={() => onNavigate("script-hub")} size="sm" variant="secondary">스크립트 구조 보기 <ArrowRight className="h-3.5 w-3.5" /></Button>
+                <ButtonLink className="mt-4" to="/training/scripts/" size="sm" variant="secondary">스크립트 구조 보기 <ArrowRight className="h-3.5 w-3.5" /></ButtonLink>
               </section>
               <section className="rounded-lg bg-zinc-50 p-5 dark:bg-zinc-950">
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-600 dark:text-emerald-300">Step 3 · 전이</p>
                 <h4 className="mt-2 text-base font-bold text-zinc-950 dark:text-white">롤플레이와 녹음으로 즉답력을 확인합니다.</h4>
                 <p className="mt-3 text-sm leading-7 text-zinc-600 dark:text-zinc-300">롤플레이에서는 상황 설명, 정보 질문, 대안 요청, 감사의 순서를 반복해 요청의 목적을 잃지 않는 연습을 합니다. 이후 실전 연습에서 랜덤 질문을 듣고 타이머 안에 답한 뒤 녹음을 재생하세요. 첫 재생에서는 긴 정적을, 두 번째 재생에서는 반복한 표현 하나만 찾습니다. 수정한 연결어를 비슷한 다른 질문에 다시 적용하면 스크립트가 실제 말하기 실력으로 옮겨갑니다.</p>
-                <Button className="mt-4" onClick={() => onNavigate("roleplay-hub")} size="sm" variant="secondary">롤플레이 공식 보기 <ArrowRight className="h-3.5 w-3.5" /></Button>
+                <ButtonLink className="mt-4" to="/roleplay/" size="sm" variant="secondary">롤플레이 공식 보기 <ArrowRight className="h-3.5 w-3.5" /></ButtonLink>
               </section>
             </div>
           </div>

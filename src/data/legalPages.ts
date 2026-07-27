@@ -1,4 +1,4 @@
-export type LegalPageId = "about" | "privacy" | "contact" | "terms" | "image-credits";
+export type LegalPageId = "about" | "privacy" | "contact" | "terms" | "editorial-policy" | "image-credits";
 
 export type LegalPage = {
   id: LegalPageId;
@@ -20,8 +20,16 @@ export const legalPages: Record<LegalPageId, LegalPage> = {
     eyebrow: "소개",
     title: "오픽온미 소개",
     description: "오픽온미는 OPIc 말하기 시험을 준비하는 학습자를 위한 개인 연습용 웹 도구입니다.",
-    updatedAt: "2026-06-29",
+    updatedAt: "2026-07-27",
     sections: [
+      {
+        heading: "운영자와 작성 책임",
+        paragraphs: [
+          "오픽온미는 운영자 나태킴이 직접 설계하고 관리하는 개인 OPIc 학습 프로젝트입니다. 사이트의 학습 흐름, 예시 답변, 매거진 글과 정정 내역의 최종 책임도 나태킴에게 있습니다.",
+          "나태킴은 서베이 선택부터 스크립트 변형, 롤플레이, 녹음 복습까지 이어지는 학습 흐름을 실제 서비스 화면으로 구현하고 반복 점검합니다. 공개된 OPIc·ACTFL 공식 안내와 사이트 안의 훈련 예시를 교차 확인하되, 공식 기관의 자격이나 보증이 있는 것처럼 표현하지 않습니다.",
+        ],
+        links: [{ label: "콘텐츠 작성·검수 원칙 보기", href: "/editorial-policy/" }],
+      },
       {
         heading: "서비스 목적",
         paragraphs: [
@@ -59,7 +67,7 @@ export const legalPages: Record<LegalPageId, LegalPage> = {
     eyebrow: "개인정보처리방침",
     title: "개인정보처리방침",
     description: "오픽온미의 개인정보 처리, 쿠키, Google 광고 쿠키, 제3자 광고 및 문의 방법을 안내합니다.",
-    updatedAt: "2026-06-29",
+    updatedAt: "2026-07-27",
     sections: [
       {
         heading: "수집하는 정보",
@@ -82,7 +90,7 @@ export const legalPages: Record<LegalPageId, LegalPage> = {
       },
       {
         heading: "문의 및 시행일",
-        paragraphs: ["개인정보 관련 문의는 contact@opic-on-me.com 으로 보내 주세요.", "이 개인정보처리방침의 시행일은 2026년 6월 29일입니다."],
+        paragraphs: ["개인정보 관련 문의는 86seongmin.kim@gmail.com 으로 보내 주세요.", "이 개인정보처리방침의 시행일은 2026년 6월 29일이며, 연락처와 광고 노출 범위는 2026년 7월 27일 갱신했습니다."],
       },
       {
         heading: "브라우저 localStorage",
@@ -95,7 +103,7 @@ export const legalPages: Record<LegalPageId, LegalPage> = {
         heading: "광고와 콘텐츠 분리",
         paragraphs: [
           "오픽온미는 Google AdSense 승인 여부와 무관하게 학습 기능을 우선합니다. 광고가 표시되는 경우에도 녹음 버튼, 답변 입력창, 설정 입력창처럼 사용자가 직접 조작하는 영역과 혼동되지 않도록 배치하는 것을 원칙으로 합니다.",
-          "AI 설정처럼 민감한 설정을 입력하는 페이지는 검색 색인에서 제외되며 광고 노출 대상으로 삼지 않는 방향으로 운영합니다.",
+          "AI 설정, 실전 녹음, 문의, 개인정보처리방침, 이용약관, 편집 원칙, 이미지 출처처럼 입력·정책·신뢰 확인이 중심인 페이지에는 AdSense 스크립트를 로드하지 않습니다.",
         ],
       },
     ],
@@ -105,11 +113,12 @@ export const legalPages: Record<LegalPageId, LegalPage> = {
     eyebrow: "문의",
     title: "문의",
     description: "오픽온미 서비스 관련 문의와 콘텐츠 정정 요청을 보내는 방법입니다.",
-    updatedAt: "2026-06-29",
+    updatedAt: "2026-07-27",
     sections: [
       {
         heading: "연락 방법",
-        paragraphs: ["서비스 이용 문의, 콘텐츠 오류 제보, 개인정보 관련 요청은 contact@opic-on-me.com 으로 보내 주세요. 문의 시 확인이 필요한 페이지 주소와 상황을 함께 적어 주시면 더 정확히 확인할 수 있습니다."],
+        paragraphs: ["서비스 이용 문의, 콘텐츠 오류 제보, 개인정보 관련 요청은 86seongmin.kim@gmail.com 으로 보내 주세요. 문의 시 확인이 필요한 페이지 주소와 상황을 함께 적어 주시면 더 정확히 확인할 수 있습니다."],
+        links: [{ label: "운영자 나태킴에게 이메일 보내기", href: "mailto:86seongmin.kim@gmail.com" }],
       },
       {
         heading: "응답 안내",
@@ -118,10 +127,10 @@ export const legalPages: Record<LegalPageId, LegalPage> = {
       {
         heading: "문의 이메일",
         paragraphs: [
-          "오픽온미 관련 문의 이메일은 contact@opic-on-me.com 입니다. 서비스 이용 문의, 콘텐츠 오류 제보, 개인정보 관련 요청, 광고 또는 정책 관련 문의를 이 주소로 보낼 수 있습니다.",
+          "오픽온미 관련 문의 이메일은 86seongmin.kim@gmail.com 입니다. 서비스 이용 문의, 콘텐츠 오류 제보, 개인정보 관련 요청, 광고 또는 정책 관련 문의를 이 주소로 보낼 수 있습니다.",
           "문의할 때는 확인이 필요한 페이지 주소, 사용 중인 브라우저, 오류가 발생한 상황을 함께 적어 주면 문제를 더 정확히 확인할 수 있습니다.",
         ],
-        bullets: ["이메일: contact@opic-on-me.com", "권장 포함 정보: 페이지 URL, 브라우저, 오류 상황", "민감한 API key나 개인 토큰은 이메일에 포함하지 마세요."],
+        bullets: ["운영자: 나태킴", "이메일: 86seongmin.kim@gmail.com", "권장 포함 정보: 페이지 URL, 브라우저, 오류 상황", "민감한 API key나 개인 토큰은 이메일에 포함하지 마세요."],
       },
       {
         heading: "콘텐츠 정정 요청",
@@ -129,6 +138,55 @@ export const legalPages: Record<LegalPageId, LegalPage> = {
           "시험 운영 정보, 공식 링크, 학습 설명 중 부정확하거나 오래된 내용이 보이면 정정 요청을 보낼 수 있습니다. 오픽온미는 공식 기관이 아니므로 시험 관련 최종 판단은 반드시 공식 안내를 기준으로 해야 합니다.",
           "콘텐츠는 학습 참고용으로 제공되며, 개별 사용자의 등급 결과를 보장하거나 응시 전략을 확정적으로 제시하지 않습니다.",
         ],
+      },
+    ],
+  },
+  "editorial-policy": {
+    id: "editorial-policy",
+    eyebrow: "편집 원칙",
+    title: "콘텐츠 작성·검수 원칙",
+    description: "오픽온미의 작성 책임, 공식 자료 확인, 예시 답변 제작, 수정 기록과 AI 보조 도구 사용 기준을 공개합니다.",
+    updatedAt: "2026-07-27",
+    sections: [
+      {
+        heading: "작성자와 책임",
+        paragraphs: [
+          "오픽온미의 운영자이자 기본 작성자는 나태킴입니다. 매거진 글과 학습 가이드는 익명 대량 게시물이 아니라, 오픽온미의 실제 훈련 화면에서 어떤 순서로 연습할지 설명하기 위해 작성합니다.",
+          "각 글에는 작성자, 최초 공개일, 최종 수정일과 참고 자료를 표시합니다. 외부 필자가 참여하거나 별도 검수가 이루어지는 경우에는 해당 책임자를 글에 추가로 밝힙니다.",
+        ],
+      },
+      {
+        heading: "공식 정보와 학습 조언의 구분",
+        paragraphs: [
+          "시험 시간, 응시료, 신분증, 등급 체계처럼 확인 가능한 사실은 OPIc 공식 수험자 가이드와 ACTFL 공개 자료를 우선 확인합니다. 변동 가능한 항목은 확인 기준일과 공식 링크를 함께 제공합니다.",
+          "장면 중심 스크립트, 녹음 복습, 필러 사용처럼 오픽온미가 제안하는 연습법은 공식 채점 기준과 구분해 표시하며 특정 등급이나 점수 향상을 보장하지 않습니다.",
+        ],
+        links: [
+          { label: "OPIc 공식 수험자 가이드", href: "https://www.opic.or.kr/opics/servlet/controller.opic.site.guide.GuideServlet?p_process=move-exam-guide" },
+          { label: "ACTFL Proficiency Guidelines 2024", href: "https://www.opic.or.kr/senior/img/com_2/ACTFL_Proficiency_Guidelines_2024.pdf" },
+        ],
+      },
+      {
+        heading: "예시 답변과 독자적 가치",
+        paragraphs: [
+          "영어 예문은 외부 답안을 복사하지 않고 오픽온미의 장면·변형·회복 훈련 구조에 맞춰 직접 작성합니다. 예문을 정답처럼 외우게 하기보다 장소, 행동, 이유, 변화 중 무엇을 바꾸어 자기 경험으로 옮길지 설명합니다.",
+          "글을 추가할 때는 비슷한 검색어를 늘리는 것보다 기존 글과 다른 학습 문제를 해결하는지 먼저 확인합니다. 중복이 큰 글은 새 글로 만들지 않고 기존 글에 통합하거나 관련 훈련 화면으로 연결합니다.",
+        ],
+      },
+      {
+        heading: "AI 보조 도구 사용",
+        paragraphs: [
+          "초안 정리, 맞춤법 확인 또는 코드 구현에 AI 보조 도구를 사용할 수 있습니다. 다만 운영자 나태킴이 최종 문장, 예시의 질문 적합성, 공식 링크와 공개일을 직접 확인한 뒤 게시합니다.",
+          "AI가 생성했다는 이유만으로 내용을 사실로 취급하지 않으며, 확인할 수 없는 응시 경험, 성과, 통계, 전문가 경력은 만들지 않습니다.",
+        ],
+      },
+      {
+        heading: "수정과 정정 요청",
+        paragraphs: [
+          "사실 오류, 오래된 공식 정보, 작동하지 않는 링크, 출처 누락이 확인되면 해당 글의 수정일과 내용을 갱신합니다. 중요한 변경은 글 본문이나 편집 원칙에 이유를 남깁니다.",
+          "정정 요청은 86seongmin.kim@gmail.com 으로 받을 수 있습니다. 페이지 URL과 수정이 필요한 문장을 함께 보내면 운영자 나태킴이 확인합니다.",
+        ],
+        links: [{ label: "정정 요청 이메일 보내기", href: "mailto:86seongmin.kim@gmail.com" }],
       },
     ],
   },

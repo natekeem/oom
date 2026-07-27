@@ -28,6 +28,7 @@
   | "privacy"
   | "contact"
   | "terms"
+  | "editorial-policy"
   | "image-credits";
 
 export const viewTitles: Record<ViewId, string> = {
@@ -60,5 +61,6 @@ export const viewTitles: Record<ViewId, string> = {
   privacy: "개인정보처리방침",
   contact: "문의",
   terms: "이용약관",
+  "editorial-policy": "편집 원칙",
   "image-credits": "이미지 출처",
 };

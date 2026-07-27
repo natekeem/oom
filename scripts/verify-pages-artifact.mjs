@@ -41,6 +41,7 @@ const requiredRouteFiles = [
   "about/index.html",
   "contact/index.html",
   "terms/index.html",
+  "editorial-policy/index.html",
   "image-credits/index.html",
 ];
 const pathsToVerify = [
@@ -55,8 +56,8 @@ const sitemapUrls = [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match)
 if (sitemapUrls.length === 0) {
   throw new Error("The generated sitemap does not contain any URLs.");
 }
-if (!sitemapUrls.includes(`${canonicalOrigin}/`) || !sitemapUrls.includes(`${canonicalOrigin}/image-credits/`)) {
-  throw new Error("The generated sitemap must include the canonical root and image credits URLs.");
+if (!sitemapUrls.includes(`${canonicalOrigin}/`) || !sitemapUrls.includes(`${canonicalOrigin}/image-credits/`) || !sitemapUrls.includes(`${canonicalOrigin}/editorial-policy/`)) {
+  throw new Error("The generated sitemap must include the canonical root, editorial policy, and image credits URLs.");
 }
 
 for (const sitemapUrl of sitemapUrls) {
@@ -78,6 +79,15 @@ for (const sitemapUrl of sitemapUrls) {
   }
   if (!/<h1(?:\s[^>]*)?>[\s\S]*?<\/h1>/.test(routeHtml)) {
     throw new Error(`${routeArtifact} does not contain an h1.`);
+  }
+  const visibleText = routeHtml
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (visibleText.length < 450) {
+    throw new Error(`${routeArtifact} contains too little crawler-visible body text (${visibleText.length} characters).`);
   }
 }
 
@@ -112,6 +122,40 @@ for (const routeFile of generatedIndexFiles) {
   }
 }
 
+const adExcludedRoutes = [
+  "practice/index.html",
+  "ai-settings/index.html",
+  "magazine/index.html",
+  "about/index.html",
+  "privacy/index.html",
+  "contact/index.html",
+  "terms/index.html",
+  "editorial-policy/index.html",
+  "image-credits/index.html",
+];
+for (const routePath of adExcludedRoutes) {
+  const routeHtml = await readFile(join(distDirectory, routePath), "utf8");
+  if (routeHtml.includes("pagead2.googlesyndication.com")) {
+    throw new Error(`${routePath} must not load AdSense on an interaction or trust page.`);
+  }
+}
+
+const articleRouteFiles = generatedIndexFiles.filter((path) => relative(distDirectory, path).replaceAll("\\", "/").startsWith("magazine/") && !relative(distDirectory, path).replaceAll("\\", "/").endsWith("magazine/index.html"));
+for (const articlePath of articleRouteFiles) {
+  const articleHtml = await readFile(articlePath, "utf8");
+  const articleName = relative(distDirectory, articlePath);
+  for (const requiredSignal of ['"@type":"Article"', "작성·검수:", "작성·검수 메모", "확인한 공식 자료", "콘텐츠 편집 원칙", "<time datetime="]) {
+    if (!articleHtml.includes(requiredSignal)) {
+      throw new Error(`${articleName} is missing article trust signal: ${requiredSignal}`);
+    }
+  }
+  const externalLinkCount = (articleHtml.match(/<a\b[^>]*href="https?:\/\//g) ?? []).length;
+  const internalLinkCount = (articleHtml.match(/<a\b[^>]*href="\//g) ?? []).length;
+  if (externalLinkCount < 2 || internalLinkCount < 3) {
+    throw new Error(`${articleName} needs at least 2 official source links and 3 internal learning links.`);
+  }
+}
+
 const routeHtmlFiles = await Promise.all(requiredRouteFiles.map(async (path) => [path, await readFile(join(distDirectory, path), "utf8")]));
 for (const [path, routeHtml] of routeHtmlFiles) {
   if (!routeHtml.includes("<main class=\"seo-static-content\"")) {
@@ -121,7 +165,7 @@ for (const [path, routeHtml] of routeHtmlFiles) {
   if (path.startsWith("magazine/") && (!routeHtml.includes("<article>") || !routeHtml.includes("<p>") || sectionCount < 4)) {
     throw new Error(`${path} does not contain enough generated article body sections.`);
   }
-  if (["privacy/index.html", "about/index.html", "contact/index.html", "terms/index.html", "image-credits/index.html"].includes(path) && sectionCount < 4) {
+  if (["privacy/index.html", "about/index.html", "contact/index.html", "terms/index.html", "editorial-policy/index.html", "image-credits/index.html"].includes(path) && sectionCount < 4) {
     throw new Error(`${path} does not contain enough legal page body sections.`);
   }
 }

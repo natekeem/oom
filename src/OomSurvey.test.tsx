@@ -30,7 +30,7 @@ describe("OOM survey rehearsal", () => {
       </MemoryRouter>
     );
 
-    await user.click(screen.getByRole("button", { name: "스크립트 보기" }));
+    await user.click(screen.getByRole("link", { name: "스크립트 보기" }));
     const indoorTitle = await screen.findByText("조용한 카페와 집에서의 휴식 루틴");
     await user.click(indoorTitle);
 

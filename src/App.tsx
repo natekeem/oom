@@ -23,10 +23,13 @@ import { TrainingHub } from "./components/training/TrainingHub";
 import { Toast } from "./components/ui/Toast";
 import { MagazineList } from "./components/magazine/MagazineList";
 import { MagazineDetail } from "./components/magazine/MagazineDetail";
+import { viewIdForPath, viewPathForId } from "./lib/routes";
 import type { LlmSettings, ToastMessage } from "./types";
 
 const SETTINGS_KEY = "oom-llm-settings";
 const THEME_KEY = "oom-theme";
+const ADSENSE_SCRIPT_ID = "oom-adsense-script";
+const ADSENSE_CLIENT = "ca-pub-8734087248170812";
 const defaultSettings: LlmSettings = { endpoint: "", apiKey: "", model: "", mode: "openai-compatible", authType: "bearer", customBodyTemplate: '{"model":{model},"messages":{messages},"temperature":0.4}' };
 const scriptViewById: Record<string, ViewId> = {
   "outdoor-travel": "script-outdoor",
@@ -61,77 +64,27 @@ export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [toast, setToast] = useState<ToastMessage | null>(null);
 
-  // Map paths to ViewId for app shell and navigation state
-  const viewIdForPath = (path: string): ViewId => {
-    const p = path.replace(/\/*$/, "");
-    if (p === "" || p === "/") return "home";
-    if (p === "/exam-guide") return "exam-guide";
-    if (p === "/exam-guide/overview") return "exam-overview";
-    if (p === "/exam-guide/apply") return "exam-apply";
-    if (p === "/exam-guide/day") return "exam-day";
-    if (p === "/exam-guide/results") return "exam-results";
-    if (p === "/exam-guide/faq") return "exam-faq";
-    if (p === "/training") return "training-hub";
-    if (p === "/training/survey") return "survey";
-    if (p === "/training/difficulty") return "difficulty";
-    if (p === "/training/scripts") return "script-hub";
-    if (p === "/training/scripts/outdoor") return "script-outdoor";
-    if (p === "/training/scripts/indoor") return "script-indoor";
-    if (p === "/training/scripts/sports") return "script-sports";
-    if (p === "/training/scripts/home") return "script-home";
-    if (p === "/roleplay" || p === "/roleplay/hub") return "roleplay-hub";
-    if (p === "/roleplay/formula") return "roleplay-formula";
-    if (p === "/roleplay/travel") return "roleplay-travel";
-    if (p === "/roleplay/indoor") return "roleplay-indoor";
-    if (p === "/roleplay/sports") return "roleplay-sports";
-    if (p === "/roleplay/home") return "roleplay-home";
-    if (p === "/practice") return "practice";
-    if (p === "/ai-settings") return "ai-settings";
-    if (p === "/magazine" || p.startsWith("/magazine/")) return "magazine-list";
-    if (p === "/about") return "about";
-    if (p === "/privacy") return "privacy";
-    if (p === "/contact") return "contact";
-    if (p === "/terms") return "terms";
-    if (p === "/image-credits") return "image-credits";
-    return "home";
-  };
-
-  const viewPathForId: Record<ViewId, string> = {
-    home: "/",
-    "exam-guide": "/exam-guide/",
-    "exam-overview": "/exam-guide/overview/",
-    "exam-apply": "/exam-guide/apply/",
-    "exam-day": "/exam-guide/day/",
-    "exam-results": "/exam-guide/results/",
-    "exam-faq": "/exam-guide/faq/",
-    "training-hub": "/training/",
-    survey: "/training/survey/",
-    difficulty: "/training/difficulty/",
-    "script-hub": "/training/scripts/",
-    "script-outdoor": "/training/scripts/outdoor/",
-    "script-indoor": "/training/scripts/indoor/",
-    "script-sports": "/training/scripts/sports/",
-    "script-home": "/training/scripts/home/",
-    roleplay: "/roleplay/",
-    "roleplay-hub": "/roleplay/",
-    "roleplay-formula": "/roleplay/formula/",
-    "roleplay-travel": "/roleplay/travel/",
-    "roleplay-indoor": "/roleplay/indoor/",
-    "roleplay-sports": "/roleplay/sports/",
-    "roleplay-home": "/roleplay/home/",
-    practice: "/practice/",
-    "ai-settings": "/ai-settings/",
-    "magazine-list": "/magazine/",
-    about: "/about/",
-    privacy: "/privacy/",
-    contact: "/contact/",
-    terms: "/terms/",
-    "image-credits": "/image-credits/",
-  };
-
   const activeView = viewIdForPath(location.pathname);
+  const isMagazineDetail = /^\/magazine\/[^/]+\/?$/.test(location.pathname);
+  const adExcluded = ["practice", "ai-settings", "about", "privacy", "contact", "terms", "editorial-policy", "image-credits"].includes(activeView)
+    || (activeView === "magazine-list" && !isMagazineDetail);
 
   useEffect(() => { document.documentElement.classList.toggle("dark", darkMode); window.localStorage.setItem(THEME_KEY, darkMode ? "dark" : "light"); }, [darkMode]);
+  useEffect(() => {
+    const existing = document.getElementById(ADSENSE_SCRIPT_ID);
+    if (adExcluded) {
+      existing?.remove();
+      return;
+    }
+    if (existing) return;
+    const script = document.createElement("script");
+    script.id = ADSENSE_SCRIPT_ID;
+    script.async = true;
+    script.crossOrigin = "anonymous";
+    script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`;
+    document.head.appendChild(script);
+    return () => script.remove();
+  }, [adExcluded]);
   useEffect(() => { window.scrollTo(0, 0); document.querySelector("main")?.scrollTo?.(0, 0); }, [location.pathname]);
   useEffect(() => { if (!toast) return; const timeout = window.setTimeout(() => setToast(null), 4400); return () => window.clearTimeout(timeout); }, [toast]);
   const showToast = (title: string, description?: string, tone: ToastMessage["tone"] = "info") => setToast({ id: Date.now(), title, description, tone });
@@ -140,7 +93,7 @@ export default function App() {
 
   const screen = (
     <Routes>
-      <Route path="/" element={<HomeView onNavigate={onNavigate} />} />
+      <Route path="/" element={<HomeView />} />
       <Route path="/exam-guide/" element={<ExamGuideHub onNavigate={onNavigate} />} />
       <Route path="/exam-guide/overview/" element={<ExamGuideOverview onSectionChange={(v) => navigate(viewPathForId[v])} />} />
       <Route path="/exam-guide/day/" element={<ExamGuideDay onSectionChange={(v) => navigate(viewPathForId[v])} />} />
@@ -172,6 +125,7 @@ export default function App() {
       <Route path="/privacy" element={<LegalPageView pageId="privacy" />} />
       <Route path="/contact" element={<LegalPageView pageId="contact" />} />
       <Route path="/terms" element={<LegalPageView pageId="terms" />} />
+      <Route path="/editorial-policy" element={<LegalPageView pageId="editorial-policy" />} />
       <Route path="/image-credits" element={<LegalPageView pageId="image-credits" />} />
     </Routes>
   );

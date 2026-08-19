@@ -64,7 +64,8 @@ Parent hubs explain the purpose of their child pages. Parent routes should not s
 | Home | `HomeView` | Product overview and entry points |
 | OOM magazine | `MagazineList`, `MagazineDetail` | Static learning articles with local editorial images, author/reviewer identity, honest publish/modified dates, official sources, structured data, examples, and practice takeaways |
 | Candidate guide | `ExamGuideHub`, `ExamGuideOverview`, `ExamGuideDashboard`, `ExamGuideDay`, `ExamGuideFaq`, `ExamGuideTabs` | Informational content, Q&A, and official-source links for time-sensitive rules |
-| Training overview | `TrainingHub`, `TrainingSetupView` | STEP 1: Target level and course selection + 6 STEP overview roadmap |
+| Training overview | `TrainingHub` | Overview Hub: 6 STEP overview roadmap, concept explanation |
+| Training setup | `TrainingSetupView` | STEP 1: Target level and course selection |
 | Survey | `BackgroundSurveySheet` | STEP 2: Full survey-like list, course-specific recommendation view, rehearsal mode and scoring |
 | Difficulty | `DifficultyGuide` | STEP 3: Level-specific difficulty presets (5-5, 4-4, 3-3) and goal guidance |
 | Script training | `ScriptHub`, `ScriptDashboardV2`, `ScriptTrainingTabs`, `ScriptTrainingGuide`, `MemoryModeToggle`, `TtsControls` | STEP 4: Canonical storyline per group, question variations, and answer blueprint |

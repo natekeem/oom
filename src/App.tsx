@@ -23,7 +23,10 @@ import { MagazineList } from "./components/magazine/MagazineList";
 import { MagazineDetail } from "./components/magazine/MagazineDetail";
 import { LegalPageView } from "./components/legal/LegalPageView";
 import { TrainingHub } from "./components/training/TrainingHub";
-import { TrainingSelectionProvider } from "./training/TrainingSelectionContext";
+import { TrainingSetupView } from "./components/training/TrainingSetupView";
+import { TrainingSelectionProvider, useTrainingSelection } from "./training/TrainingSelectionContext";
+import { discoveredCourses } from "./training/courseRegistry";
+import { TRAINING_LEVELS } from "./training/levels";
 import type { LlmSettings, ToastMessage } from "./types";
 
 const SETTINGS_KEY = "oom-llm-settings";
@@ -54,8 +57,8 @@ const roleplaySlotViewIds: ViewId[] = [
 ];
 
 const nextViewById: Partial<Record<ViewId, { view: ViewId; label: string }>> = {
-  home: { view: "training-hub", label: "STEP 1" },
-  "training-hub": { view: "survey", label: "STEP 2" },
+  home: { view: "training-hub", label: "훈련 허브" },
+  "training-setup": { view: "survey", label: "STEP 2" },
   survey: { view: "difficulty", label: "STEP 3" },
   difficulty: { view: "script-outdoor", label: "STEP 4" },
   "script-outdoor": { view: "roleplay-hub", label: "STEP 5" },
@@ -79,6 +82,19 @@ function loadSettings(): LlmSettings {
   } catch {
     return defaultSettings;
   }
+}
+
+function TrainingSetupRoute({ onNavigate }: { onNavigate: (view: ViewId) => void }) {
+  const { selection, select } = useTrainingSelection();
+  return (
+    <TrainingSetupView
+      courses={discoveredCourses}
+      currentSelection={selection}
+      levels={TRAINING_LEVELS}
+      onConfirm={select}
+      onContinueToNextStep={() => onNavigate("survey")}
+    />
+  );
 }
 
 export default function App() {
@@ -147,23 +163,74 @@ export default function App() {
 
   const onNavigate = (view: ViewId) => navigate(viewPathForId[view]);
 
+  const renderScriptSlot = (slotIndex: 0 | 1 | 2 | 3) => (
+    <ScriptDashboardV2
+      key={`script-slot-${slotIndex}`}
+      onNavigate={onNavigate}
+      onSlotChange={(slot) => onNavigate(scriptSlotViewIds[slot] ?? "script-outdoor")}
+      onToast={showToast}
+      settings={settings}
+      slotIndex={slotIndex}
+    />
+  );
+
+  const renderRoleplaySlot = (slotIndex: 0 | 1 | 2 | 3) => (
+    <RoleplayViewV2
+      key={`rp-slot-${slotIndex}`}
+      onNavigate={onNavigate}
+      onSlotChange={(slot) => onNavigate(roleplaySlotViewIds[slot] ?? "roleplay-travel")}
+      onToast={showToast}
+      settings={settings}
+      slotIndex={slotIndex}
+    />
+  );
+
   const screen = (
     <Routes>
       <Route path="/" element={<HomeView />} />
+      <Route path="/exam-guide" element={<ExamGuideHub onNavigate={onNavigate} />} />
       <Route path="/exam-guide/" element={<ExamGuideHub onNavigate={onNavigate} />} />
+      <Route
+        path="/exam-guide/overview"
+        element={<ExamGuideOverview onSectionChange={(v) => navigate(viewPathForId[v])} />}
+      />
       <Route
         path="/exam-guide/overview/"
         element={<ExamGuideOverview onSectionChange={(v) => navigate(viewPathForId[v])} />}
+      />
+      <Route
+        path="/exam-guide/day"
+        element={<ExamGuideDay onSectionChange={(v) => navigate(viewPathForId[v])} />}
       />
       <Route
         path="/exam-guide/day/"
         element={<ExamGuideDay onSectionChange={(v) => navigate(viewPathForId[v])} />}
       />
       <Route
+        path="/exam-guide/apply"
+        element={
+          <ExamGuideDashboard
+            initialSection={"exam-apply"}
+            onNavigate={onNavigate}
+            onSectionChange={(v) => navigate(viewPathForId[v])}
+          />
+        }
+      />
+      <Route
         path="/exam-guide/apply/"
         element={
           <ExamGuideDashboard
             initialSection={"exam-apply"}
+            onNavigate={onNavigate}
+            onSectionChange={(v) => navigate(viewPathForId[v])}
+          />
+        }
+      />
+      <Route
+        path="/exam-guide/results"
+        element={
+          <ExamGuideDashboard
+            initialSection={"exam-results"}
             onNavigate={onNavigate}
             onSectionChange={(v) => navigate(viewPathForId[v])}
           />
@@ -180,143 +247,84 @@ export default function App() {
         }
       />
       <Route
+        path="/exam-guide/faq"
+        element={<ExamGuideFaq onSectionChange={(v) => navigate(viewPathForId[v])} />}
+      />
+      <Route
         path="/exam-guide/faq/"
         element={<ExamGuideFaq onSectionChange={(v) => navigate(viewPathForId[v])} />}
       />
 
       <Route path="/training" element={<TrainingHub onNavigate={onNavigate} />} />
+      <Route path="/training/" element={<TrainingHub onNavigate={onNavigate} />} />
+      <Route path="/training/setup" element={<TrainingSetupRoute onNavigate={onNavigate} />} />
+      <Route path="/training/setup/" element={<TrainingSetupRoute onNavigate={onNavigate} />} />
       <Route path="/training/survey" element={<BackgroundSurveySheet onNavigate={onNavigate} />} />
+      <Route path="/training/survey/" element={<BackgroundSurveySheet onNavigate={onNavigate} />} />
       <Route path="/training/difficulty" element={<DifficultyGuide onNavigate={onNavigate} />} />
+      <Route path="/training/difficulty/" element={<DifficultyGuide onNavigate={onNavigate} />} />
       <Route path="/training/scripts" element={<ScriptHub onNavigate={onNavigate} />} />
-      <Route
-        path="/training/scripts/outdoor"
-        element={
-          <ScriptDashboardV2
-            key="script-slot-0"
-            onNavigate={onNavigate}
-            onSlotChange={(slot) => onNavigate(scriptSlotViewIds[slot] ?? "script-outdoor")}
-            onToast={showToast}
-            settings={settings}
-            slotIndex={0}
-          />
-        }
-      />
-      <Route
-        path="/training/scripts/indoor"
-        element={
-          <ScriptDashboardV2
-            key="script-slot-1"
-            onNavigate={onNavigate}
-            onSlotChange={(slot) => onNavigate(scriptSlotViewIds[slot] ?? "script-indoor")}
-            onToast={showToast}
-            settings={settings}
-            slotIndex={1}
-          />
-        }
-      />
-      <Route
-        path="/training/scripts/sports"
-        element={
-          <ScriptDashboardV2
-            key="script-slot-2"
-            onNavigate={onNavigate}
-            onSlotChange={(slot) => onNavigate(scriptSlotViewIds[slot] ?? "script-sports")}
-            onToast={showToast}
-            settings={settings}
-            slotIndex={2}
-          />
-        }
-      />
-      <Route
-        path="/training/scripts/home"
-        element={
-          <ScriptDashboardV2
-            key="script-slot-3"
-            onNavigate={onNavigate}
-            onSlotChange={(slot) => onNavigate(scriptSlotViewIds[slot] ?? "script-home")}
-            onToast={showToast}
-            settings={settings}
-            slotIndex={3}
-          />
-        }
-      />
+      <Route path="/training/scripts/" element={<ScriptHub onNavigate={onNavigate} />} />
+      <Route path="/training/scripts/outdoor" element={renderScriptSlot(0)} />
+      <Route path="/training/scripts/outdoor/" element={renderScriptSlot(0)} />
+      <Route path="/training/scripts/indoor" element={renderScriptSlot(1)} />
+      <Route path="/training/scripts/indoor/" element={renderScriptSlot(1)} />
+      <Route path="/training/scripts/sports" element={renderScriptSlot(2)} />
+      <Route path="/training/scripts/sports/" element={renderScriptSlot(2)} />
+      <Route path="/training/scripts/home" element={renderScriptSlot(3)} />
+      <Route path="/training/scripts/home/" element={renderScriptSlot(3)} />
 
       <Route path="/roleplay" element={<RoleplayHub onNavigate={onNavigate} />} />
+      <Route path="/roleplay/" element={<RoleplayHub onNavigate={onNavigate} />} />
       <Route path="/roleplay/formula" element={<RoleplayHub onNavigate={onNavigate} />} />
-      <Route
-        path="/roleplay/travel"
-        element={
-          <RoleplayViewV2
-            key="rp-slot-0"
-            onNavigate={onNavigate}
-            onSlotChange={(slot) => onNavigate(roleplaySlotViewIds[slot] ?? "roleplay-travel")}
-            onToast={showToast}
-            settings={settings}
-            slotIndex={0}
-          />
-        }
-      />
-      <Route
-        path="/roleplay/indoor"
-        element={
-          <RoleplayViewV2
-            key="rp-slot-1"
-            onNavigate={onNavigate}
-            onSlotChange={(slot) => onNavigate(roleplaySlotViewIds[slot] ?? "roleplay-indoor")}
-            onToast={showToast}
-            settings={settings}
-            slotIndex={1}
-          />
-        }
-      />
-      <Route
-        path="/roleplay/sports"
-        element={
-          <RoleplayViewV2
-            key="rp-slot-2"
-            onNavigate={onNavigate}
-            onSlotChange={(slot) => onNavigate(roleplaySlotViewIds[slot] ?? "roleplay-sports")}
-            onToast={showToast}
-            settings={settings}
-            slotIndex={2}
-          />
-        }
-      />
-      <Route
-        path="/roleplay/home"
-        element={
-          <RoleplayViewV2
-            key="rp-slot-3"
-            onNavigate={onNavigate}
-            onSlotChange={(slot) => onNavigate(roleplaySlotViewIds[slot] ?? "roleplay-home")}
-            onToast={showToast}
-            settings={settings}
-            slotIndex={3}
-          />
-        }
-      />
+      <Route path="/roleplay/formula/" element={<RoleplayHub onNavigate={onNavigate} />} />
+      <Route path="/roleplay/travel" element={renderRoleplaySlot(0)} />
+      <Route path="/roleplay/travel/" element={renderRoleplaySlot(0)} />
+      <Route path="/roleplay/indoor" element={renderRoleplaySlot(1)} />
+      <Route path="/roleplay/indoor/" element={renderRoleplaySlot(1)} />
+      <Route path="/roleplay/sports" element={renderRoleplaySlot(2)} />
+      <Route path="/roleplay/sports/" element={renderRoleplaySlot(2)} />
+      <Route path="/roleplay/home" element={renderRoleplaySlot(3)} />
+      <Route path="/roleplay/home/" element={renderRoleplaySlot(3)} />
 
       <Route
         path="/practice"
         element={<PracticeView onNavigate={onNavigate} onToast={showToast} settings={settings} />}
       />
       <Route
+        path="/practice/"
+        element={<PracticeView onNavigate={onNavigate} onToast={showToast} settings={settings} />}
+      />
+      <Route
         path="/ai-settings"
         element={<AiSettingsView onChange={setSettings} onSave={saveSettings} settings={settings} />}
       />
+      <Route
+        path="/ai-settings/"
+        element={<AiSettingsView onChange={setSettings} onSave={saveSettings} settings={settings} />}
+      />
+      <Route path="/magazine" element={<MagazineList />} />
       <Route path="/magazine/" element={<MagazineList />} />
+      <Route path="/magazine/:id" element={<MagazineDetail />} />
       <Route path="/magazine/:id/" element={<MagazineDetail />} />
       <Route path="/about" element={<LegalPageView pageId="about" />} />
+      <Route path="/about/" element={<LegalPageView pageId="about" />} />
       <Route path="/privacy" element={<LegalPageView pageId="privacy" />} />
+      <Route path="/privacy/" element={<LegalPageView pageId="privacy" />} />
       <Route path="/contact" element={<LegalPageView pageId="contact" />} />
+      <Route path="/contact/" element={<LegalPageView pageId="contact" />} />
       <Route path="/terms" element={<LegalPageView pageId="terms" />} />
+      <Route path="/terms/" element={<LegalPageView pageId="terms" />} />
       <Route path="/editorial-policy" element={<LegalPageView pageId="editorial-policy" />} />
+      <Route path="/editorial-policy/" element={<LegalPageView pageId="editorial-policy" />} />
       <Route path="/image-credits" element={<LegalPageView pageId="image-credits" />} />
+      <Route path="/image-credits/" element={<LegalPageView pageId="image-credits" />} />
     </Routes>
   );
 
   const isStepView = [
     "training-hub",
+    "training-setup",
     "survey",
     "difficulty",
     "script-hub",

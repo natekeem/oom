@@ -192,6 +192,7 @@ export function ExpandableSidebar({
     roleplayItems.some((item) => item.id === activeView);
   const trainingActive =
     activeView === "training-hub" ||
+    activeView === "training-setup" ||
     activeView === "survey" ||
     activeView === "difficulty" ||
     scriptActive ||
@@ -248,11 +249,13 @@ export function ExpandableSidebar({
           </button>
         ) : null}
       </div>
+
       <nav aria-label="OOM 메뉴" className="space-y-1">
         <NavigationButton active={activeView === "home"} onClick={() => navigate("home")}>
           <House className="h-4 w-4" />
           홈 / 전략 개요
         </NavigationButton>
+
         <CollapsibleSection
           active={guideActive}
           icon={BookOpenCheck}
@@ -291,15 +294,15 @@ export function ExpandableSidebar({
           open={trainingOpen}
         >
           <NavigationButton
-            active={activeView === "training-hub"}
+            active={activeView === "training-setup"}
             nested
             onClick={() => {
               setExpanded("training");
-              navigate("training-hub");
+              navigate("training-setup");
             }}
           >
             <SlidersHorizontal className="h-3.5 w-3.5" />
-            STEP 1. 목표 구간 · 코스
+            STEP 1. 목표 구간 · 코스 설정
           </NavigationButton>
           <NavigationButton
             active={activeView === "survey"}

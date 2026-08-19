@@ -31,7 +31,7 @@ Before changing code, read these in order:
 - Shell: `src/components/layout/AppShell.tsx` and `ExpandableSidebar.tsx`
 - Training selection: `src/training/` (types, levels, storage, courseRegistry, TrainingSelectionContext)
 - Course data: `src/data/training/courses/course-N/` (manifest, survey, storylines, roleplays, questions, variants, replacementGuides)
-- Training hub: `src/components/training/TrainingHub.tsx` (STEP 1: Target Level & Course selection)
+- Training hub: `src/components/training/TrainingHub.tsx` (Training Overview Hub) and `TrainingSetupView.tsx` (STEP 1: Target Level & Course selection)
 - Script flow: `ScriptHub` -> canonical storyline per course in `ScriptDashboardV2` -> `ScriptTrainingTabs` (STEP 4)
 - Role-play flow: `RoleplayHub` (integrated 6-step formula, flow, phrases, scenarios) -> `RoleplayViewV2` (STEP 5)
 - Candidate guide: `ExamGuideHub` plus overview, application, day-of-exam, and results views

@@ -20,7 +20,7 @@ type AppShellProps = {
 };
 
 const progressMap: Partial<Record<ViewId, number>> = {
-  "training-hub": 0,
+  "training-setup": 0,
   survey: 20,
   difficulty: 40,
   "script-hub": 60,
@@ -53,7 +53,8 @@ export function AppShell({
   const { selection } = useTrainingSelection();
   const resolved = selection ? resolveTrainingContext(selection.courseId, selection.levelId) : null;
 
-  const progress = progressMap[activeView] ?? 0;
+  const isOverview = activeView === "training-hub";
+  const progress = progressMap[activeView];
   const themeLabel = darkMode ? "라이트 모드로 전환" : "다크 모드로 전환";
 
   const mobileControls = (
@@ -106,16 +107,24 @@ export function AppShell({
                 <p className="truncate text-sm font-semibold text-zinc-900 dark:text-white">
                   {getViewTitle(activeView, resolved)}
                 </p>
-                <div className="mt-2 h-1 overflow-hidden rounded bg-zinc-200 dark:bg-zinc-800">
-                  <div
-                    className="h-full rounded bg-indigo-600 transition-all duration-500"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
+                {!isOverview && typeof progress === "number" ? (
+                  <div className="mt-2 h-1 overflow-hidden rounded bg-zinc-200 dark:bg-zinc-800">
+                    <div
+                      className="h-full rounded bg-indigo-600 transition-all duration-500"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                ) : null}
               </div>
-              <span className="hidden text-xs font-medium text-zinc-500 lg:block">
-                훈련 진행 {progress}%
-              </span>
+              {!isOverview && typeof progress === "number" ? (
+                <span className="hidden text-xs font-medium text-zinc-500 lg:block">
+                  훈련 진행 {progress}%
+                </span>
+              ) : isOverview ? (
+                <span className="hidden text-xs font-medium text-indigo-600 dark:text-indigo-400 lg:block">
+                  6 STEP 로드맵
+                </span>
+              ) : null}
               {nextStep ? (
                 <>
                   <Button

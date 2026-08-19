@@ -57,11 +57,12 @@ The candidate guide and training hub are independent top-level branches. STEP 1-
 
 `AppShell` renders the sticky title/progress header only for the following route family:
 
-- `training-hub`
-- `survey`, `difficulty`
-- `script-hub` and `script-*`
-- `roleplay`, `roleplay-hub`, `roleplay-formula`, and `roleplay-*`
-- `practice`
+- `training-hub` (shows 6 STEP overview title and roadmap status)
+- `training-setup` (STEP 1, 0%)
+- `survey` (STEP 2, 20%), `difficulty` (STEP 3, 40%)
+- `script-hub` and `script-*` (STEP 4, 60%)
+- `roleplay`, `roleplay-hub`, `roleplay-formula`, and `roleplay-*` (STEP 5, 80%)
+- `practice` (STEP 6, 100%)
 
 The header dynamically shows the current course group title and progress percentage (0% -> 20% -> 40% -> 60% -> 80% -> 100%).
 Home, all `exam-*` views, `magazine-list` (including article detail URLs), footer legal pages, and `ai-settings` do not render the sticky training header. Their mobile experience uses compact floating controls instead.
@@ -78,7 +79,8 @@ Public route targets use the canonical `https://opic-on-me.com/path/` form. Inte
 | `exam-day` | Candidate guide child | `ExamGuideDay` | No | ID, admission cutoff, OT/test visual flow |
 | `exam-results` | Candidate guide child | `ExamGuideDashboard` | No | Results, certificate, coupons |
 | `exam-faq` | Candidate guide child | `ExamGuideFaq` | No | Frequently asked OPIc questions |
-| `training-hub` | Training / STEP 1 | `TrainingHub` | Yes, 0% | Target level & course setup + 6 STEP overview |
+| `training-hub` | Training Overview Hub | `TrainingHub` | Yes, Overview | 6 STEP overview, concept cards, roadmap |
+| `training-setup` | Training / STEP 1 | `TrainingSetupView` | Yes, 0% | Target level & course setup |
 | `survey` | Training / STEP 2 | `BackgroundSurveySheet` | Yes, 20% | Course-specific recommendation and rehearsal |
 | `difficulty` | Training / STEP 3 | `DifficultyGuide` | Yes, 40% | Level difficulty presets (5-5, 4-4, 3-3) |
 | `script-hub` | Training / STEP 4 | `ScriptHub` | Yes, 60% | Explains canonical storyline structure |

@@ -28,17 +28,20 @@ export function ScriptHub({ onNavigate }: { onNavigate: (view: ViewId) => void }
 
         return (
           <div className="space-y-6">
-            <section className="border-l-4 border-indigo-500 pl-4">
-              <Badge tone="indigo">STEP 4. 만능 스크립트</Badge>
-              <h1 className="mt-3 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
+            <div>
+              <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+                <Layers3 className="h-5 w-5" />
+                <Badge tone="indigo">STEP 4. 만능 스크립트</Badge>
+              </div>
+              <h1 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
                 질문을 통째로 외우지 말고, 핵심 장면을 연습하세요.
               </h1>
-              <p className="mt-3 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">
+              <p className="mt-2 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">
                 {resolved.course.title} ({resolved.level.displayName})의 4개 핵심 스토리를 연습하고,
                 질문에 따라 유연하게 변형합니다. 선택지가 늘어나는 것이지 외워야 할 양이 두 배가 되는
                 것은 아닙니다.
               </p>
-            </section>
+            </div>
 
             <Card className="border-indigo-200 bg-indigo-50/60 p-5 dark:border-indigo-900 dark:bg-indigo-950/30">
               <div className="flex gap-3">

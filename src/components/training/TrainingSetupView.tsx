@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
+import { ArrowRight, CheckCircle2, SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 import type {
   TrainingCourseDefinition,
@@ -55,16 +55,20 @@ export function TrainingSetupView({
 
   return (
     <div className="space-y-8">
-      <section className="border-l-4 border-indigo-500 pl-4">
-        <Badge tone="indigo">STEP 1. 목표 구간 · 코스 설정</Badge>
-        <h1 className="mt-3 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
+      {/* Header */}
+      <div>
+        <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+          <SlidersHorizontal className="h-5 w-5" />
+          <Badge tone="indigo">STEP 1. 목표 구간 · 코스 설정</Badge>
+        </div>
+        <h1 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
           목표 구간과 학습 코스를 먼저 설정합니다.
         </h1>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">
+        <p className="mt-2 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">
           목표 등급에 따라 서베이 추천 조합과 스크립트 발화량, 롤플레이 및 실전 연습 질문이 자동으로 구성됩니다.
           훈련 도중 언제든지 설정을 변경할 수 있습니다.
         </p>
-      </section>
+      </div>
 
       {currentSelection && activeSavedLevel && activeSavedCourse && !isEditing ? (
         <Card className="border-indigo-200 bg-indigo-50/50 p-6 dark:border-indigo-900/60 dark:bg-indigo-950/20">
@@ -91,14 +95,18 @@ export function TrainingSetupView({
             </div>
             <div className="flex flex-wrap gap-2">
               <Button
-                onClick={() => setIsEditing(true)}
+                onClick={() => {
+                  setLevelId(currentSelection.levelId);
+                  setCourseId(currentSelection.courseId);
+                  setIsEditing(true);
+                }}
                 variant="secondary"
               >
                 목표/코스 변경
               </Button>
               {onContinueToNextStep ? (
                 <Button onClick={onContinueToNextStep}>
-                  STEP 2 서베이 고정으로 계속 <ArrowRight className="h-4 w-4" />
+                  STEP 2 서베이 고정으로 이동 <ArrowRight className="h-4 w-4" />
                 </Button>
               ) : null}
             </div>
@@ -109,7 +117,7 @@ export function TrainingSetupView({
       {(!currentSelection || isEditing) && (
         <>
           <section>
-            <div className="flex items-center justify-between mb-4">
+            <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-bold text-zinc-950 dark:text-white">
                 1. 목표 구간 선택
               </h2>
@@ -135,7 +143,7 @@ export function TrainingSetupView({
                     aria-pressed={isSelected}
                     className={`flex h-full flex-col rounded-md border p-5 text-left shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
                       isSelected
-                        ? "border-indigo-600 bg-indigo-50/60 dark:border-indigo-500 dark:bg-indigo-950/40 ring-1 ring-indigo-500"
+                        ? "border-indigo-600 bg-indigo-50/60 ring-1 ring-indigo-500 dark:border-indigo-500 dark:bg-indigo-950/40"
                         : "border-zinc-200 bg-white hover:border-indigo-200 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-indigo-800"
                     }`}
                     key={level.id}
@@ -173,7 +181,7 @@ export function TrainingSetupView({
                       aria-pressed={isSelected}
                       className={`flex h-full flex-col rounded-md border p-5 text-left shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
                         isSelected
-                          ? "border-emerald-600 bg-emerald-50/60 dark:border-emerald-500 dark:bg-emerald-950/40 ring-1 ring-emerald-500"
+                          ? "border-emerald-600 bg-emerald-50/60 ring-1 ring-emerald-500 dark:border-emerald-500 dark:bg-emerald-950/40"
                           : "border-zinc-200 bg-white hover:border-emerald-200 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-emerald-800"
                       }`}
                       key={course.id}
@@ -224,20 +232,6 @@ export function TrainingSetupView({
           </div>
         </>
       )}
-
-      <Card className="border-indigo-100 bg-indigo-50/30 p-5 dark:border-indigo-950 dark:bg-indigo-950/20">
-        <div className="flex gap-3">
-          <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-indigo-600 dark:text-indigo-400" />
-          <div className="space-y-1">
-            <p className="text-sm font-bold text-indigo-950 dark:text-indigo-100">
-              OOM 6 STEP 훈련 구조 안내
-            </p>
-            <p className="text-xs leading-5 text-indigo-800/90 dark:text-indigo-200/90">
-              STEP 1 목표/코스 설정 → STEP 2 서베이 고정 → STEP 3 난이도 설정 → STEP 4 만능 스크립트 → STEP 5 롤플레이 공식 → STEP 6 실전 연습으로 이어집니다.
-            </p>
-          </div>
-        </div>
-      </Card>
     </div>
   );
 }

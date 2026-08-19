@@ -18,7 +18,6 @@ describe("OOM survey rehearsal", () => {
 
     expect(screen.getByRole("heading", { name: "실제 형식으로 보고, OOM 추천 조합을 그대로 기억합니다." })).toBeInTheDocument();
     expect(screen.getByText("일 경험 없음")).toBeInTheDocument();
-    expect(screen.getByText("공원 가기")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "연습 모드" }));
     await user.click(screen.getByRole("button", { name: "선택한 서베이 답안 채점하기" }));

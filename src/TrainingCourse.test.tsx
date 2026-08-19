@@ -19,7 +19,7 @@ import {
 import { scripts } from './data/scripts';
 import { getViewTitle } from './components/layout/Sidebar';
 
-describe('Training Course Architecture & Regression Suite (6 STEP Flow)', () => {
+describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Separation)', () => {
   beforeEach(() => {
     localStorage.clear();
   });
@@ -269,16 +269,39 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow)', () => 
     expect(discoveredCourses.length).toBeGreaterThanOrEqual(3);
   });
 
-  /* 15. STEP 1 setup view renders selection cards when unselected */
-  it('15. STEP 1 TrainingHub renders target level and course setup when no selection exists', async () => {
-    const user = userEvent.setup();
+  /* 15. TrainingHub (/training) is pure overview hub with 6 roadmap cards and concept cards */
+  it('15. TrainingHub renders 6 roadmap cards and 3 concept areas', () => {
     render(
       <MemoryRouter initialEntries={['/training']}>
         <App />
       </MemoryRouter>
     );
 
-    expect(screen.getAllByText('STEP 1. 목표 구간 · 코스 설정').length).toBeGreaterThan(0);
+    expect(screen.getByText('최소한의 스토리로, 더 많은 질문에 답하는 6 STEP 훈련')).toBeInTheDocument();
+    expect(screen.getByText('훈련 목적')).toBeInTheDocument();
+    expect(screen.getByText('코스 & 레벨 컨셉')).toBeInTheDocument();
+    expect(screen.getByText('학습 방법')).toBeInTheDocument();
+    expect(screen.getByText('OPIc 실전 훈련 6 STEP 로드맵')).toBeInTheDocument();
+
+    // Exactly 6 STEP cards
+    expect(screen.getByText('STEP 1')).toBeInTheDocument();
+    expect(screen.getByText('STEP 2')).toBeInTheDocument();
+    expect(screen.getByText('STEP 3')).toBeInTheDocument();
+    expect(screen.getByText('STEP 4')).toBeInTheDocument();
+    expect(screen.getByText('STEP 5')).toBeInTheDocument();
+    expect(screen.getByText('STEP 6')).toBeInTheDocument();
+  });
+
+  /* 16. STEP 1 (/training/setup) renders setup selector and saves to localStorage */
+  it('16. STEP 1 TrainingSetupView renders selector and commits selection', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/training/setup']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('목표 구간과 학습 코스를 먼저 설정합니다.')).toBeInTheDocument();
     expect(screen.getByText('1. 목표 구간 선택')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /이 구성으로 학습 시작/ })).toBeDisabled();
 
@@ -292,31 +315,18 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow)', () => 
     expect(startBtn).toBeEnabled();
     await user.click(startBtn);
 
-    // After selection, active configuration card appears
+    // Selection is saved
+    const saved = loadTrainingSelection();
+    expect(saved?.courseId).toBe('course-2');
+    expect(saved?.levelId).toBe('advanced');
+
+    // After selection, active configuration card appears in setup
     expect(await screen.findByText('현재 학습 설정')).toBeInTheDocument();
     expect(screen.getByText(/1구간 · AL/)).toBeInTheDocument();
     expect(screen.getByText('Culture & City')).toBeInTheDocument();
   });
 
-  /* 16. STEP 1 preserves selection and allows inline change */
-  it('16. STEP 1 shows current selection summary and allows reconfiguration', async () => {
-    saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
-    const user = userEvent.setup();
-    render(
-      <MemoryRouter initialEntries={['/training']}>
-        <App />
-      </MemoryRouter>
-    );
-
-    expect(screen.getByText('현재 학습 설정')).toBeInTheDocument();
-    expect(screen.getByText('Everyday & Getaway')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'STEP 2 서베이 고정으로 계속' })).toBeInTheDocument();
-
-    await user.click(screen.getByRole('button', { name: '목표/코스 변경' }));
-    expect(screen.getByText('1. 목표 구간 선택')).toBeInTheDocument();
-  });
-
-  /* 17. Training Selection Guard blocks unselected STEP 2 (survey) */
+  /* 17. Training Selection Guard blocks unselected STEP 2 (survey) and routes to setup */
   it('17. TrainingSelectionGuard prevents implicit fallback on STEP 2 (/training/survey)', () => {
     render(
       <MemoryRouter initialEntries={['/training/survey']}>
@@ -325,7 +335,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow)', () => 
     );
 
     expect(screen.getByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'STEP 1 목표/코스 설정하러 가기' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'STEP 1 설정하러 가기' })).toBeInTheDocument();
   });
 
   /* 18. Training Selection Guard blocks unselected STEP 3 (difficulty) */
@@ -372,8 +382,8 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow)', () => 
     expect(screen.getByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
   });
 
-  /* 22. STEP 5 RoleplayHub integrates formula and course scenarios */
-  it('22. STEP 5 RoleplayHub merges 6-step formula, question flow, phrases, and scenarios', () => {
+  /* 22. STEP 5 RoleplayHub integrates formula and course scenarios without absolute score guarantee */
+  it('22. STEP 5 RoleplayHub merges 6-step formula and has non-guaranteeing tip phrasing', () => {
     saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
     render(
       <MemoryRouter initialEntries={['/roleplay']}>
@@ -386,6 +396,8 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow)', () => 
     expect(screen.getByText('2. 6단계 만능 해결 공식')).toBeInTheDocument();
     expect(screen.getByText('3. 자주 쓰는 롤플레이 만능 표현')).toBeInTheDocument();
     expect(screen.getByText(/4. Everyday & Getaway 코스 실전 시나리오/)).toBeInTheDocument();
+    expect(screen.getByText(/문제를 분명히 설명하고, 가능한 대안을 1~2개 제시하는 연습은/)).toBeInTheDocument();
+    expect(screen.queryByText(/가장 높은 점수를 받습니다/)).not.toBeInTheDocument();
   });
 
   /* 23. RoleplayViewV2 has compact formula reminder and back-link */
@@ -403,7 +415,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow)', () => 
   });
 
   /* 24. Progress mapping across 6 steps */
-  it('24. Progress mapping correctly calculates 0%, 20%, 40%, 60%, 80%, 100%', async () => {
+  it('24. Progress mapping correctly calculates neutral for overview, 0%, 20%, 40%, 60%, 80%, 100%', async () => {
     saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
     const user = userEvent.setup();
     render(
@@ -412,7 +424,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow)', () => 
       </MemoryRouter>
     );
 
-    expect(screen.getByText('훈련 진행 0%')).toBeInTheDocument();
+    expect(screen.getByText('6 STEP 로드맵')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'STEP 2 서베이 고정으로 계속' }));
     expect(await screen.findByText('훈련 진행 20%')).toBeInTheDocument();
@@ -430,8 +442,32 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow)', () => 
     expect(screen.getAllByRole('button', { name: '다음 단계: STEP 4' })).toHaveLength(2);
   });
 
-  /* 26. Invalid localStorage JSON recovery */
-  it('26. Recovers safely from corrupted localStorage JSON', () => {
+  /* 26. STEP 2 Background Survey Sheet pagination and mode toggle */
+  it('26. STEP 2 Background Survey renders single paginated container and resets on mode toggle', async () => {
+    saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/training/survey']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    // Check Part 1 of 7
+    expect(screen.getByText('Part 1 of 7 (1 / 7)')).toBeInTheDocument();
+    expect(screen.getByText('이 코스의 4개 핵심 스토리 묶음 (Everyday & Getaway)')).toBeInTheDocument();
+
+    // Navigate to Part 2
+    await user.click(screen.getByRole('button', { name: '다음' }));
+    expect(screen.getByText('Part 2 of 7 (2 / 7)')).toBeInTheDocument();
+
+    // Switch to Practice Mode
+    await user.click(screen.getByRole('button', { name: '연습 모드' }));
+    expect(screen.getByText('Part 1 of 7 (1 / 7)')).toBeInTheDocument();
+    expect(screen.getByText(/답을 보지 말고 OOM 조합을 다시 체크해 보세요/)).toBeInTheDocument();
+  });
+
+  /* 27. Invalid localStorage JSON recovery */
+  it('27. Recovers safely from corrupted localStorage JSON', () => {
     localStorage.setItem(TRAINING_SELECTION_STORAGE_KEY, 'invalid-json-string');
     expect(loadTrainingSelection()).toBeNull();
   });

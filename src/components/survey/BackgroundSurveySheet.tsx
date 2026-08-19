@@ -9,6 +9,7 @@ import {
 import { allSurveyPresets } from "../../training/courseRegistry";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
+import { Badge } from "../ui/Badge";
 import { TrainingSelectionGuard } from "../training/TrainingSelectionGuard";
 import type { ViewId } from "../layout/Sidebar";
 import type { ResolvedTrainingContext } from "../../training/types";
@@ -24,13 +25,6 @@ type GradeResult = {
 const optionLabelById = new Map(
   backgroundSurveySections.flatMap((section) => section.options.map((item) => [item.id, item.label]))
 );
-
-const compactStrategies = [
-  { title: "야외 / 여행", detail: "공원 · 해변 · 걷기 · 조깅 · 국내/해외 여행" },
-  { title: "실내 / 휴식", detail: "음악 · 카페 · 집에서 보내는 휴가" },
-  { title: "운동 / 취미", detail: "테니스 · 쇼핑" },
-  { title: "집 / 거주지", detail: "가족과 거주 · 요리 · 집에서 쉬기" },
-];
 
 type SurveyQuestionProps = {
   mode: SurveyMode;
@@ -76,12 +70,12 @@ function SurveyQuestion({
           const isRecommended = recommendedSet.has(item.id);
           return (
             <label
-              className={`group flex items-center gap-3 rounded-md border p-3 text-xs leading-5 transition-colors ${
+              className={`flex items-center gap-3 rounded-md px-3 py-2 text-xs leading-5 transition-colors ${
                 !isPractice && isRecommended
-                  ? "border-indigo-500 bg-indigo-50/70 font-semibold text-indigo-950 dark:border-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-100"
+                  ? "bg-indigo-50/80 font-semibold text-indigo-950 dark:bg-indigo-950/60 dark:text-indigo-100"
                   : checked
-                  ? "border-indigo-600 bg-indigo-50/50 text-indigo-900 dark:border-indigo-500 dark:bg-indigo-950/40 dark:text-indigo-200"
-                  : "border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-700"
+                  ? "bg-indigo-50/50 text-indigo-900 dark:bg-indigo-950/40 dark:text-indigo-200"
+                  : "text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-900"
               } ${isPractice ? "cursor-pointer" : "cursor-default"}`}
               key={item.id}
             >
@@ -96,23 +90,23 @@ function SurveyQuestion({
               />
               <span
                 aria-hidden="true"
-                className={`grid h-5 w-5 shrink-0 place-items-center border-2 transition-colors ${
+                className={`grid h-4 w-4 shrink-0 place-items-center border transition-colors ${
                   section.selection === "single" ? "rounded-full" : "rounded-sm"
                 } ${
                   checked
                     ? "border-indigo-600 bg-indigo-600 text-white"
-                    : "border-zinc-300 bg-white group-hover:border-indigo-400 dark:border-zinc-600 dark:bg-zinc-950"
+                    : "border-zinc-300 bg-white dark:border-zinc-600 dark:bg-zinc-950"
                 }`}
               >
                 {checked ? (
                   section.selection === "single" ? (
-                    <span className="h-2 w-2 rounded-full bg-white" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-white" />
                   ) : (
-                    <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                    <Check className="h-3 w-3" strokeWidth={3} />
                   )
                 ) : null}
               </span>
-              <span>{item.label}</span>
+              <span className="select-none">{item.label}</span>
             </label>
           );
         })}
@@ -167,13 +161,13 @@ function SurveySheetContent({
     ["leisure", "interests", "sports", "vacation"].includes(section.id)
   );
   const pages = [
-    { part: 1, title: "Part 1 of 7", sections: [profileSections[0]], gridClass: "sm:grid-cols-1 xl:grid-cols-1" },
-    { part: 2, title: "Part 2 of 7", sections: [profileSections[1], profileSections[2]], gridClass: "sm:grid-cols-1 xl:grid-cols-1" },
-    { part: 3, title: "Part 3 of 7", sections: [profileSections[3]], gridClass: "sm:grid-cols-1 xl:grid-cols-1" },
+    { part: 1, title: "Part 1 of 7", sections: [profileSections[0]], gridClass: "sm:grid-cols-2 xl:grid-cols-4" },
+    { part: 2, title: "Part 2 of 7", sections: [profileSections[1], profileSections[2]], gridClass: "sm:grid-cols-2 xl:grid-cols-3" },
+    { part: 3, title: "Part 3 of 7", sections: [profileSections[3]], gridClass: "sm:grid-cols-2 xl:grid-cols-3" },
     { part: 4, title: "Part 4 of 7", sections: [activitySections[0]], gridClass: "sm:grid-cols-2 xl:grid-cols-4" },
-    { part: 5, title: "Part 5 of 7", sections: [activitySections[1]], gridClass: "sm:grid-cols-2 xl:grid-cols-2" },
+    { part: 5, title: "Part 5 of 7", sections: [activitySections[1]], gridClass: "sm:grid-cols-2 xl:grid-cols-3" },
     { part: 6, title: "Part 6 of 7", sections: [activitySections[2]], gridClass: "sm:grid-cols-2 xl:grid-cols-4" },
-    { part: 7, title: "Part 7 of 7", sections: [activitySections[3]], gridClass: "sm:grid-cols-1 xl:grid-cols-1" },
+    { part: 7, title: "Part 7 of 7", sections: [activitySections[3]], gridClass: "sm:grid-cols-2 xl:grid-cols-3" },
   ];
 
   const beginPractice = () => {
@@ -187,6 +181,7 @@ function SurveySheetContent({
     setMode("guide");
     setSelectedIds(currentRecommendedIds);
     setResult(null);
+    setCurrentPart(1);
   };
 
   const updateSelection = (section: BackgroundSurveySection, option: BackgroundSurveyOption) => {
@@ -220,6 +215,7 @@ function SurveySheetContent({
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div>
         <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
           <ClipboardCheck className="h-5 w-5" />
@@ -229,11 +225,12 @@ function SurveySheetContent({
           실제 형식으로 보고, OOM 추천 조합을 그대로 기억합니다.
         </h1>
         <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-          모든 선택지를 먼저 눈에 익힌 뒤, 현재 <strong>{resolved.course.title}</strong> 코스에 맞춘
-          고정 추천 조합을 연습합니다. 실제 시험의 운영 시점과 언어에 따라 문구는 조금 달라질 수 있습니다.
+          서베이를 많이 선택하기 위한 단계가 아니라, 뒤에서 같은 스토리를 반복 활용할 수 있도록 말할 범위를 고정하는 단계입니다.
+          현재 <strong>{resolved.course.title}</strong> 코스 추천 조합을 확인하고 연습하세요.
         </p>
       </div>
 
+      {/* Course Recommendation Banner */}
       <Card className="border-indigo-200 bg-indigo-50 p-4 dark:border-indigo-900 dark:bg-indigo-950">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
@@ -242,7 +239,7 @@ function SurveySheetContent({
             </span>
             <div>
               <p className="text-sm font-semibold text-indigo-950 dark:text-indigo-100">
-                {resolved.course.title} 코스 추천 조합: 기본 {currentRecommendedIds.length}개 선택
+                {resolved.course.title} 추천 조합: 기본 {currentRecommendedIds.length}개 선택
               </p>
               <p className="text-xs leading-5 text-indigo-700 dark:text-indigo-300">
                 최신 문항 순서에 맞춰 선택지를 확인해 보세요.
@@ -354,92 +351,89 @@ function SurveySheetContent({
         </Card>
       ) : null}
 
-      {mode === "guide" ? (
+      {/* Main Background Survey Card Container (Shared for Guide and Practice modes) */}
+      <Card className="p-5 sm:p-6">
+        <div className="mb-5 flex items-center justify-between border-b border-zinc-100 pb-4 dark:border-zinc-800">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+              Background Survey
+            </span>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              {currentPage.title} ({currentPart} / {pages.length})
+            </p>
+          </div>
+          <div className="flex gap-1.5">
+            <Button disabled={currentPart === 1} onClick={goBack} size="sm" variant="secondary">
+              이전
+            </Button>
+            <Button
+              disabled={currentPart === pages.length}
+              onClick={goNext}
+              size="sm"
+              variant="secondary"
+            >
+              다음
+            </Button>
+          </div>
+        </div>
+
         <div className="space-y-6">
-          {pages.map((page) => (
-            <Card className="p-5" key={page.part}>
-              <div className="mb-4 flex items-center justify-between border-b border-zinc-100 pb-3 dark:border-zinc-800">
-                <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
-                  {page.title}
-                </span>
-                <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                  {page.sections.map((s) => s.title).join(" · ")}
-                </span>
-              </div>
-              <div className="space-y-6">
-                {page.sections.map((section) => (
-                  <SurveyQuestion
-                    gridClass={page.gridClass}
-                    key={section.id}
-                    mode="guide"
-                    onChange={() => {}}
-                    recommendedSet={recommendedSet}
-                    section={section}
-                    selected={recommendedSet}
-                  />
-                ))}
-              </div>
-            </Card>
+          {currentPage.sections.map((section) => (
+            <SurveyQuestion
+              gridClass={currentPage.gridClass}
+              key={section.id}
+              mode={mode}
+              onChange={updateSelection}
+              recommendedSet={recommendedSet}
+              section={section}
+              selected={mode === "guide" ? recommendedSet : selected}
+            />
           ))}
         </div>
-      ) : (
-        <Card className="p-5">
-          <div className="mb-4 flex items-center justify-between border-b border-zinc-100 pb-3 dark:border-zinc-800">
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
-              {currentPage.title} ({currentPart} / {pages.length})
-            </span>
-            <div className="flex gap-1.5">
-              <Button disabled={currentPart === 1} onClick={goBack} size="sm" variant="secondary">
-                이전
-              </Button>
-              <Button
-                disabled={currentPart === pages.length}
-                onClick={goNext}
-                size="sm"
-                variant="secondary"
-              >
-                다음
-              </Button>
-            </div>
-          </div>
-          <div className="space-y-6">
-            {currentPage.sections.map((section) => (
-              <SurveyQuestion
-                gridClass={currentPage.gridClass}
-                key={section.id}
-                mode="practice"
-                onChange={updateSelection}
-                recommendedSet={recommendedSet}
-                section={section}
-                selected={selected}
-              />
-            ))}
-          </div>
-          <div className="mt-6 flex justify-between border-t border-zinc-100 pt-4 dark:border-zinc-800">
-            <Button disabled={currentPart === 1} onClick={goBack} size="sm" variant="secondary">
-              이전 파트
-            </Button>
-            {currentPart === pages.length ? (
-              <Button onClick={grade} size="sm">
-                <ClipboardCheck className="h-3.5 w-3.5" />
-                답안 채점하기
-              </Button>
-            ) : (
-              <Button onClick={goNext} size="sm">
-                다음 파트 <Check className="h-3.5 w-3.5" />
-              </Button>
-            )}
-          </div>
-        </Card>
-      )}
 
+        <div className="mt-6 flex justify-between border-t border-zinc-100 pt-4 dark:border-zinc-800">
+          <Button disabled={currentPart === 1} onClick={goBack} size="sm" variant="secondary">
+            이전 파트
+          </Button>
+          {mode === "practice" && currentPart === pages.length ? (
+            <Button onClick={grade} size="sm">
+              <ClipboardCheck className="h-3.5 w-3.5" />
+              답안 채점하기
+            </Button>
+          ) : (
+            <Button disabled={currentPart === pages.length} onClick={goNext} size="sm">
+              다음 파트 <Check className="h-3.5 w-3.5" />
+            </Button>
+          )}
+        </div>
+      </Card>
+
+      {/* Course-aware Storyline Grouping Section */}
       <section className="space-y-3 pt-2">
-        <h2 className="text-base font-bold text-zinc-900 dark:text-white">OOM 4대 그룹별 묶음 원리</h2>
+        <h2 className="text-base font-bold text-zinc-900 dark:text-white">
+          이 코스의 4개 핵심 스토리 묶음 ({resolved.course.title})
+        </h2>
+        <p className="text-xs leading-5 text-zinc-600 dark:text-zinc-400">
+          서베이에서 선택한 활동들은 아래 4개의 스토리 그룹으로 묶여 STEP 4 만능 스크립트와 STEP 5 롤플레이에서 반복 활용됩니다.
+        </p>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {compactStrategies.map((item) => (
-            <Card className="p-4" key={item.title}>
-              <p className="text-sm font-bold text-zinc-950 dark:text-white">{item.title}</p>
-              <p className="mt-1 text-xs leading-5 text-zinc-600 dark:text-zinc-400">{item.detail}</p>
+          {resolved.storylines.map((storyline) => (
+            <Card className="p-4" key={storyline.id}>
+              <div className="flex items-center justify-between">
+                <Badge tone="indigo">{storyline.group}</Badge>
+              </div>
+              <p className="mt-2 text-sm font-bold text-zinc-950 dark:text-white">
+                {storyline.title}
+              </p>
+              <p className="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+                연계 설문:{" "}
+                {storyline.surveyOptionIds
+                  .map((id) => optionLabelById.get(id) ?? id)
+                  .join(" · ")}
+              </p>
+              <p className="mt-2 text-xs leading-5 text-zinc-600 dark:text-zinc-300">
+                → {storyline.core.anchorScene}
+              </p>
             </Card>
           ))}
         </div>

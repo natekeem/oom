@@ -31,6 +31,8 @@ describe("ScriptTrainingTabs", () => {
     const user = userEvent.setup();
     render(<ScriptTrainingTabs onToast={() => undefined} script={scripts[0]} settings={settings} />);
 
+    expect(screen.queryByText("INTRO")).not.toBeInTheDocument();
+    await user.click(screen.getByRole("checkbox", { name: "문단 구조 보기" }));
     expect(screen.getByText("INTRO")).toBeInTheDocument();
     expect(screen.getByText("MAIN")).toBeInTheDocument();
     expect(screen.getByText("FINISH")).toBeInTheDocument();

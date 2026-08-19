@@ -3,11 +3,18 @@ import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
 import { BackgroundSurveySheet } from "./components/survey/BackgroundSurveySheet";
+import { saveTrainingSelection } from "./training/storage";
+import { TrainingSelectionProvider } from "./training/TrainingSelectionContext";
 
 describe("OOM survey rehearsal", () => {
   it("shows the complete recommended survey and grades a blank practice attempt", async () => {
+    saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
     const user = userEvent.setup();
-    render(<BackgroundSurveySheet />);
+    render(
+      <TrainingSelectionProvider>
+        <BackgroundSurveySheet />
+      </TrainingSelectionProvider>
+    );
 
     expect(screen.getByRole("heading", { name: "실제 형식으로 보고, OOM 조합을 그대로 기억합니다." })).toBeInTheDocument();
     expect(screen.getByText("Background Survey")).toBeInTheDocument();
@@ -29,6 +36,7 @@ describe("OOM survey rehearsal", () => {
   });
 
   it("keeps the sidebar active item in sync with script selection", async () => {
+    saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
     const user = userEvent.setup();
     render(
       <MemoryRouter>

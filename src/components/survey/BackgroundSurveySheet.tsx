@@ -7,6 +7,8 @@ import {
   type BackgroundSurveyOption,
   type BackgroundSurveySection,
 } from "../../data/fixedSurvey";
+import { useTrainingSelection } from "../../training/TrainingSelectionContext";
+import { allSurveyPresets } from "../../training/courseRegistry";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
 
@@ -34,6 +36,7 @@ type SurveyQuestionProps = {
   onChange: (section: BackgroundSurveySection, option: BackgroundSurveyOption) => void;
   section: BackgroundSurveySection;
   selected: Set<string>;
+  recommendedSet: Set<string>;
   gridClass?: string;
 };
 
@@ -42,6 +45,7 @@ function SurveyQuestion({
   onChange,
   section,
   selected,
+  recommendedSet,
   gridClass,
 }: SurveyQuestionProps) {
   const isPractice = mode === "practice";
@@ -57,7 +61,7 @@ function SurveyQuestion({
       </div>
       <div className={`mt-4 grid gap-x-7 gap-y-2 ${gridClass ?? "sm:grid-cols-2 xl:grid-cols-4"}`}>
         {section.options.map((item) => {
-          const checked = isPractice ? selected.has(item.id) : Boolean(item.recommended);
+          const checked = isPractice ? selected.has(item.id) : recommendedSet.has(item.id);
           const inputId = `${mode}-${section.id}-${item.id}`;
           return (
             <label
@@ -91,8 +95,27 @@ function SurveyQuestion({
 }
 
 export function BackgroundSurveySheet() {
+  const { selection } = useTrainingSelection();
+  
+  const currentCoursePreset = useMemo(() => {
+    if (!selection) return null;
+    return allSurveyPresets.find((p) => p.courseId === selection.courseId) || null;
+  }, [selection]);
+
+  const currentRecommendedIds = useMemo(() => {
+    if (!currentCoursePreset) return recommendedSurveyIds;
+    return [
+      ...currentCoursePreset.profileOptionIds,
+      ...currentCoursePreset.residenceOptionIds,
+      ...currentCoursePreset.activityOptionIds,
+    ];
+  }, [currentCoursePreset]);
+
+  const currentRecommendedCount = currentCoursePreset ? currentCoursePreset.activityOptionIds.length : recommendedActivityCount;
+  const recommendedSet = useMemo(() => new Set(currentRecommendedIds), [currentRecommendedIds]);
+
   const [mode, setMode] = useState<SurveyMode>("guide");
-  const [selectedIds, setSelectedIds] = useState<string[]>(recommendedSurveyIds);
+  const [selectedIds, setSelectedIds] = useState<string[]>(currentRecommendedIds);
   const [result, setResult] = useState<GradeResult | null>(null);
   const [currentPart, setCurrentPart] = useState(1);
   const selected = useMemo(() => new Set(selectedIds), [selectedIds]);
@@ -122,7 +145,7 @@ export function BackgroundSurveySheet() {
 
   const returnToGuide = () => {
     setMode("guide");
-    setSelectedIds(recommendedSurveyIds);
+    setSelectedIds(currentRecommendedIds);
     setResult(null);
   };
 
@@ -143,10 +166,10 @@ export function BackgroundSurveySheet() {
   };
 
   const grade = () => {
-    const expected = new Set(recommendedSurveyIds);
-    const missing = recommendedSurveyIds.filter((id) => !selected.has(id));
+    const expected = new Set(currentRecommendedIds);
+    const missing = currentRecommendedIds.filter((id) => !selected.has(id));
     const extra = selectedIds.filter((id) => !expected.has(id));
-    setResult({ correctCount: recommendedSurveyIds.length - missing.length, extra, missing });
+    setResult({ correctCount: currentRecommendedIds.length - missing.length, extra, missing });
   };
 
   const isExact = result !== null && result.missing.length === 0 && result.extra.length === 0;
@@ -171,7 +194,9 @@ export function BackgroundSurveySheet() {
           <div className="flex items-center gap-3">
             <span className="grid h-9 w-9 place-items-center rounded-md bg-indigo-600 text-white"><LockKeyhole className="h-4 w-4" /></span>
             <div>
-              <p className="text-sm font-semibold text-indigo-950 dark:text-indigo-100">추천 선택 조합: 기본 {recommendedSurveyIds.length}개 선택</p>
+              <p className="text-sm font-semibold text-indigo-950 dark:text-indigo-100">
+                {currentCoursePreset ? `${currentCoursePreset.courseId.toUpperCase()} 코스 추천 조합: 기본 ${currentRecommendedIds.length}개 선택` : `추천 선택 조합: 기본 ${currentRecommendedIds.length}개 선택`}
+              </p>
               <p className="text-xs leading-5 text-indigo-700 dark:text-indigo-300">최신 문항 순서에 맞춰 선택지를 확인해 보세요.</p>
             </div>
           </div>
@@ -187,11 +212,37 @@ export function BackgroundSurveySheet() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="flex items-center gap-2 text-sm font-bold text-amber-950 dark:text-amber-100"><Sparkles className="h-4 w-4" />답을 보지 말고 OOM 조합을 다시 체크해 보세요.</p>
-              <p className="mt-1 text-xs text-amber-800 dark:text-amber-200">여가·관심사·운동·휴가/출장 선택: <strong>{activitySelected} / {recommendedActivityCount}</strong></p>
+              <p className="mt-1 text-xs text-amber-800 dark:text-amber-200">여가·관심사·운동·휴가/출장 선택: <strong>{activitySelected} / {currentRecommendedCount}</strong></p>
             </div>
             <div className="flex gap-2">
               <Button aria-label="서베이 답안 다시 풀기" onClick={() => { setSelectedIds([]); setResult(null); }} size="sm" variant="secondary"><RotateCcw className="h-3.5 w-3.5" />다시 풀기</Button>
               <Button aria-label="선택한 서베이 답안 채점하기" onClick={grade} size="sm"><ClipboardCheck className="h-3.5 w-3.5" />채점하기</Button>
+            </div>
+          </div>
+        </Card>
+      ) : null}
+
+      {result ? (
+        <Card
+          className={`p-4 ${isExact ? "border-emerald-300 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950" : "border-indigo-200 bg-indigo-50 dark:border-indigo-900 dark:bg-indigo-950"}`}
+          role="status"
+        >
+          <div className="flex items-start gap-3">
+            <Trophy className={`mt-0.5 h-5 w-5 shrink-0 ${isExact ? "text-emerald-600 dark:text-emerald-400" : "text-indigo-600 dark:text-indigo-400"}`} />
+            <div className="flex-1 text-sm leading-6">
+              <p className={`font-bold ${isExact ? "text-emerald-950 dark:text-emerald-100" : "text-indigo-950 dark:text-indigo-100"}`}>
+                {isExact ? "추천 답안과 100% 일치합니다!" : `추천 답안 일치: ${result.correctCount} / ${currentRecommendedIds.length}`}
+              </p>
+              {result.missing.length > 0 ? (
+                <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-300">
+                  누락된 추천 선택지: {result.missing.map((id) => optionLabelById.get(id) ?? id).join(", ")}
+                </p>
+              ) : null}
+              {result.extra.length > 0 ? (
+                <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-300">
+                  추가 선택된 항목: {result.extra.map((id) => optionLabelById.get(id) ?? id).join(", ")}
+                </p>
+              ) : null}
             </div>
           </div>
         </Card>
@@ -220,7 +271,7 @@ export function BackgroundSurveySheet() {
 
                     <div className="mt-6 flex-1 space-y-6">
                       {currentPage.sections.map((section) => (
-                        <SurveyQuestion key={section.id} mode={mode} onChange={updateSelection} section={section} selected={selected} gridClass={currentPage.gridClass} />
+                        <SurveyQuestion key={section.id} mode={mode} onChange={updateSelection} section={section} selected={selected} recommendedSet={recommendedSet} gridClass={currentPage.gridClass} />
                       ))}
                     </div>
                   </div>
@@ -236,23 +287,13 @@ export function BackgroundSurveySheet() {
         </Card>
       </div>
 
-      {mode === "practice" && result ? (
-        <Card aria-live="polite" className={`p-5 ${isExact ? "border-emerald-300 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950" : "border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950"}`} role="status">
-          <div className="flex items-start gap-3">
-            <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-md text-white ${isExact ? "bg-emerald-600" : "bg-amber-500"}`}>{isExact ? <Trophy className="h-4 w-4" /> : <ClipboardCheck className="h-4 w-4" />}</span>
-            <div>
-              <p className={`text-sm font-bold ${isExact ? "text-emerald-950 dark:text-emerald-100" : "text-amber-950 dark:text-amber-100"}`}>{isExact ? "정답입니다. OOM 고정 조합을 기억하고 있네요." : `추천 답안 ${result.correctCount} / ${recommendedSurveyIds.length}개 일치`}</p>
-              {!isExact ? <div className="mt-2 space-y-1 text-xs leading-5 text-zinc-700 dark:text-zinc-200">
-                {result.missing.length ? <p><strong>빠진 추천 항목:</strong> {result.missing.map((id) => optionLabelById.get(id)).join(" · ")}</p> : null}
-                {result.extra.length ? <p><strong>추가로 고른 항목:</strong> {result.extra.map((id) => optionLabelById.get(id)).join(" · ")}</p> : null}
-              </div> : null}
-            </div>
-          </div>
-        </Card>
-      ) : null}
-
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {compactStrategies.map((strategy) => <div className="border-l-2 border-indigo-400 pl-3" key={strategy.title}><p className="text-sm font-semibold text-zinc-900 dark:text-white">{strategy.title}</p><p className="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">{strategy.detail}</p></div>)}
+        {compactStrategies.map((strategy) => (
+          <div className="border-l-2 border-indigo-400 pl-3" key={strategy.title}>
+            <p className="text-sm font-semibold text-zinc-900 dark:text-white">{strategy.title}</p>
+            <p className="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">{strategy.detail}</p>
+          </div>
+        ))}
       </div>
     </div>
   );

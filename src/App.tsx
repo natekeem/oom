@@ -1,42 +1,59 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import { AiSettingsView } from "./components/ai/AiSettingsView";
-import { DifficultyGuide } from "./components/difficulty/DifficultyGuide";
-import { ExamGuideDashboard } from "./components/guide/ExamGuideDashboard";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { AppShell } from "./components/layout/AppShell";
+import { Toast } from "./components/ui/Toast";
+import type { ViewId } from "./components/layout/Sidebar";
+import { viewIdForPath, viewPathForId } from "./lib/routes";
+import { HomeView } from "./components/home/HomeView";
 import { ExamGuideHub } from "./components/guide/ExamGuideHub";
 import { ExamGuideOverview } from "./components/guide/ExamGuideOverview";
 import { ExamGuideDay } from "./components/guide/ExamGuideDay";
+import { ExamGuideDashboard } from "./components/guide/ExamGuideDashboard";
 import { ExamGuideFaq } from "./components/guide/ExamGuideFaq";
-import { HomeView } from "./components/home/HomeView";
-import { AppShell } from "./components/layout/AppShell";
-import type { ViewId } from "./components/layout/Sidebar";
-import { LegalPageView } from "./components/legal/LegalPageView";
-import { PracticeView } from "./components/practice/PracticeView";
+import { BackgroundSurveySheet } from "./components/survey/BackgroundSurveySheet";
+import { DifficultyGuide } from "./components/difficulty/DifficultyGuide";
+import { ScriptHub } from "./components/script/ScriptHub";
+import { ScriptDashboardV2 } from "./components/script/ScriptDashboardV2";
 import { RoleplayHub } from "./components/roleplay/RoleplayHub";
 import { RoleplayFormulaView } from "./components/roleplay/RoleplayFormulaView";
 import { RoleplayViewV2 } from "./components/roleplay/RoleplayViewV2";
-import { ScriptDashboardV2 } from "./components/script/ScriptDashboardV2";
-import { ScriptHub } from "./components/script/ScriptHub";
-import { BackgroundSurveySheet } from "./components/survey/BackgroundSurveySheet";
-import { TrainingHub } from "./components/training/TrainingHub";
-import { Toast } from "./components/ui/Toast";
+import { PracticeView } from "./components/practice/PracticeView";
+import { AiSettingsView } from "./components/ai/AiSettingsView";
 import { MagazineList } from "./components/magazine/MagazineList";
 import { MagazineDetail } from "./components/magazine/MagazineDetail";
-import { viewIdForPath, viewPathForId } from "./lib/routes";
+import { LegalPageView } from "./components/legal/LegalPageView";
+import { TrainingHub } from "./components/training/TrainingHub";
+import { TrainingSelectionProvider } from "./training/TrainingSelectionContext";
 import type { LlmSettings, ToastMessage } from "./types";
 
 const SETTINGS_KEY = "oom-llm-settings";
 const THEME_KEY = "oom-theme";
 const ADSENSE_SCRIPT_ID = "oom-adsense-script";
 const ADSENSE_CLIENT = "ca-pub-8734087248170812";
-const defaultSettings: LlmSettings = { endpoint: "", apiKey: "", model: "", mode: "openai-compatible", authType: "bearer", customBodyTemplate: '{"model":{model},"messages":{messages},"temperature":0.4}' };
-const scriptViewById: Record<string, ViewId> = {
-  "outdoor-travel": "script-outdoor",
-  "indoor-rest": "script-indoor",
-  "sports-hobby": "script-sports",
-  "home-residence": "script-home",
+const defaultSettings: LlmSettings = {
+  endpoint: "",
+  apiKey: "",
+  model: "",
+  mode: "openai-compatible",
+  authType: "bearer",
+  customBodyTemplate: '{"model":{model},"messages":{messages},"temperature":0.4}',
 };
+
+const scriptSlotViewIds: ViewId[] = [
+  "script-outdoor",
+  "script-indoor",
+  "script-sports",
+  "script-home",
+];
+
+const roleplaySlotViewIds: ViewId[] = [
+  "roleplay-travel",
+  "roleplay-indoor",
+  "roleplay-sports",
+  "roleplay-home",
+];
+
 const nextViewById: Partial<Record<ViewId, { view: ViewId; label: string }>> = {
   home: { view: "training-hub", label: "실전 훈련" },
   survey: { view: "difficulty", label: "STEP 2" },
@@ -53,23 +70,36 @@ function loadSettings(): LlmSettings {
   try {
     const stored = window.localStorage.getItem(SETTINGS_KEY);
     return stored ? { ...defaultSettings, ...(JSON.parse(stored) as Partial<LlmSettings>) } : defaultSettings;
-  } catch { return defaultSettings; }
+  } catch {
+    return defaultSettings;
+  }
 }
 
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const [settings, setSettings] = useState<LlmSettings>(loadSettings);
-  const [darkMode, setDarkMode] = useState(() => window.localStorage.getItem(THEME_KEY) === "dark" || (window.localStorage.getItem(THEME_KEY) === null && window.matchMedia("(prefers-color-scheme: dark)").matches));
+  const [darkMode, setDarkMode] = useState(
+    () =>
+      window.localStorage.getItem(THEME_KEY) === "dark" ||
+      (window.localStorage.getItem(THEME_KEY) === null &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+  );
   const [mobileOpen, setMobileOpen] = useState(false);
   const [toast, setToast] = useState<ToastMessage | null>(null);
 
   const activeView = viewIdForPath(location.pathname);
   const isMagazineDetail = /^\/magazine\/[^/]+\/?$/.test(location.pathname);
-  const adExcluded = ["practice", "ai-settings", "about", "privacy", "contact", "terms", "editorial-policy", "image-credits"].includes(activeView)
-    || (activeView === "magazine-list" && !isMagazineDetail);
+  const adExcluded =
+    ["practice", "ai-settings", "about", "privacy", "contact", "terms", "editorial-policy", "image-credits"].includes(
+      activeView
+    ) || (activeView === "magazine-list" && !isMagazineDetail);
 
-  useEffect(() => { document.documentElement.classList.toggle("dark", darkMode); window.localStorage.setItem(THEME_KEY, darkMode ? "dark" : "light"); }, [darkMode]);
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", darkMode);
+    window.localStorage.setItem(THEME_KEY, darkMode ? "dark" : "light");
+  }, [darkMode]);
+
   useEffect(() => {
     const existing = document.getElementById(ADSENSE_SCRIPT_ID);
     if (adExcluded) {
@@ -85,40 +115,178 @@ export default function App() {
     document.head.appendChild(script);
     return () => script.remove();
   }, [adExcluded]);
-  useEffect(() => { window.scrollTo(0, 0); document.querySelector("main")?.scrollTo?.(0, 0); }, [location.pathname]);
-  useEffect(() => { if (!toast) return; const timeout = window.setTimeout(() => setToast(null), 4400); return () => window.clearTimeout(timeout); }, [toast]);
-  const showToast = (title: string, description?: string, tone: ToastMessage["tone"] = "info") => setToast({ id: Date.now(), title, description, tone });
-  const saveSettings = () => { window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); showToast("AI 설정을 브라우저에 저장했습니다.", "공유 PC에서는 사용 후 설정을 지워 주세요.", "success"); };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.querySelector("main")?.scrollTo?.(0, 0);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!toast) return;
+    const timeout = window.setTimeout(() => setToast(null), 4400);
+    return () => window.clearTimeout(timeout);
+  }, [toast]);
+
+  const showToast = (title: string, description?: string, tone: ToastMessage["tone"] = "info") =>
+    setToast({ id: Date.now(), title, description, tone });
+
+  const saveSettings = () => {
+    window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    showToast(
+      "AI 설정을 브라우저에 저장했습니다.",
+      "공유 PC에서는 사용 후 설정을 지워 주세요.",
+      "success"
+    );
+  };
+
   const onNavigate = (view: ViewId) => navigate(viewPathForId[view]);
 
   const screen = (
     <Routes>
       <Route path="/" element={<HomeView />} />
       <Route path="/exam-guide/" element={<ExamGuideHub onNavigate={onNavigate} />} />
-      <Route path="/exam-guide/overview/" element={<ExamGuideOverview onSectionChange={(v) => navigate(viewPathForId[v])} />} />
-      <Route path="/exam-guide/day/" element={<ExamGuideDay onSectionChange={(v) => navigate(viewPathForId[v])} />} />
-      <Route path="/exam-guide/apply/" element={<ExamGuideDashboard initialSection={"exam-apply"} onNavigate={onNavigate} onSectionChange={(v) => navigate(viewPathForId[v])} />} />
-      <Route path="/exam-guide/results/" element={<ExamGuideDashboard initialSection={"exam-results"} onNavigate={onNavigate} onSectionChange={(v) => navigate(viewPathForId[v])} />} />
-      <Route path="/exam-guide/faq/" element={<ExamGuideFaq onSectionChange={(v) => navigate(viewPathForId[v])} />} />
+      <Route
+        path="/exam-guide/overview/"
+        element={<ExamGuideOverview onSectionChange={(v) => navigate(viewPathForId[v])} />}
+      />
+      <Route
+        path="/exam-guide/day/"
+        element={<ExamGuideDay onSectionChange={(v) => navigate(viewPathForId[v])} />}
+      />
+      <Route
+        path="/exam-guide/apply/"
+        element={
+          <ExamGuideDashboard
+            initialSection={"exam-apply"}
+            onNavigate={onNavigate}
+            onSectionChange={(v) => navigate(viewPathForId[v])}
+          />
+        }
+      />
+      <Route
+        path="/exam-guide/results/"
+        element={
+          <ExamGuideDashboard
+            initialSection={"exam-results"}
+            onNavigate={onNavigate}
+            onSectionChange={(v) => navigate(viewPathForId[v])}
+          />
+        }
+      />
+      <Route
+        path="/exam-guide/faq/"
+        element={<ExamGuideFaq onSectionChange={(v) => navigate(viewPathForId[v])} />}
+      />
 
       <Route path="/training" element={<TrainingHub onNavigate={onNavigate} />} />
       <Route path="/training/survey" element={<BackgroundSurveySheet />} />
       <Route path="/training/difficulty" element={<DifficultyGuide />} />
       <Route path="/training/scripts" element={<ScriptHub onNavigate={onNavigate} />} />
-      <Route path="/training/scripts/outdoor" element={<ScriptDashboardV2 initialScriptId={"outdoor-travel"} key={"outdoor-travel"} onScriptChange={(nextScriptId) => navigate(viewPathForId[scriptViewById[nextScriptId]])} onToast={showToast} settings={settings} />} />
-      <Route path="/training/scripts/indoor" element={<ScriptDashboardV2 initialScriptId={"indoor-rest"} key={"indoor-rest"} onScriptChange={(nextScriptId) => navigate(viewPathForId[scriptViewById[nextScriptId]])} onToast={showToast} settings={settings} />} />
-      <Route path="/training/scripts/sports" element={<ScriptDashboardV2 initialScriptId={"sports-hobby"} key={"sports-hobby"} onScriptChange={(nextScriptId) => navigate(viewPathForId[scriptViewById[nextScriptId]])} onToast={showToast} settings={settings} />} />
-      <Route path="/training/scripts/home" element={<ScriptDashboardV2 initialScriptId={"home-residence"} key={"home-residence"} onScriptChange={(nextScriptId) => navigate(viewPathForId[scriptViewById[nextScriptId]])} onToast={showToast} settings={settings} />} />
+      <Route
+        path="/training/scripts/outdoor"
+        element={
+          <ScriptDashboardV2
+            key="script-slot-0"
+            onSlotChange={(slot) => onNavigate(scriptSlotViewIds[slot] ?? "script-outdoor")}
+            onToast={showToast}
+            settings={settings}
+            slotIndex={0}
+          />
+        }
+      />
+      <Route
+        path="/training/scripts/indoor"
+        element={
+          <ScriptDashboardV2
+            key="script-slot-1"
+            onSlotChange={(slot) => onNavigate(scriptSlotViewIds[slot] ?? "script-indoor")}
+            onToast={showToast}
+            settings={settings}
+            slotIndex={1}
+          />
+        }
+      />
+      <Route
+        path="/training/scripts/sports"
+        element={
+          <ScriptDashboardV2
+            key="script-slot-2"
+            onSlotChange={(slot) => onNavigate(scriptSlotViewIds[slot] ?? "script-sports")}
+            onToast={showToast}
+            settings={settings}
+            slotIndex={2}
+          />
+        }
+      />
+      <Route
+        path="/training/scripts/home"
+        element={
+          <ScriptDashboardV2
+            key="script-slot-3"
+            onSlotChange={(slot) => onNavigate(scriptSlotViewIds[slot] ?? "script-home")}
+            onToast={showToast}
+            settings={settings}
+            slotIndex={3}
+          />
+        }
+      />
 
       <Route path="/roleplay" element={<RoleplayHub onNavigate={onNavigate} />} />
       <Route path="/roleplay/formula" element={<RoleplayFormulaView onNavigate={onNavigate} />} />
-      <Route path="/roleplay/travel" element={<RoleplayViewV2 initialGroup={"야외 / 여행"} key={"roleplay-travel"} onToast={showToast} settings={settings} />} />
-      <Route path="/roleplay/indoor" element={<RoleplayViewV2 initialGroup={"실내 / 휴식"} key={"roleplay-indoor"} onToast={showToast} settings={settings} />} />
-      <Route path="/roleplay/sports" element={<RoleplayViewV2 initialGroup={"운동 / 취미"} key={"roleplay-sports"} onToast={showToast} settings={settings} />} />
-      <Route path="/roleplay/home" element={<RoleplayViewV2 initialGroup={"집 / 거주지"} key={"roleplay-home"} onToast={showToast} settings={settings} />} />
+      <Route
+        path="/roleplay/travel"
+        element={
+          <RoleplayViewV2
+            key="rp-slot-0"
+            onSlotChange={(slot) => onNavigate(roleplaySlotViewIds[slot] ?? "roleplay-travel")}
+            onToast={showToast}
+            settings={settings}
+            slotIndex={0}
+          />
+        }
+      />
+      <Route
+        path="/roleplay/indoor"
+        element={
+          <RoleplayViewV2
+            key="rp-slot-1"
+            onSlotChange={(slot) => onNavigate(roleplaySlotViewIds[slot] ?? "roleplay-indoor")}
+            onToast={showToast}
+            settings={settings}
+            slotIndex={1}
+          />
+        }
+      />
+      <Route
+        path="/roleplay/sports"
+        element={
+          <RoleplayViewV2
+            key="rp-slot-2"
+            onSlotChange={(slot) => onNavigate(roleplaySlotViewIds[slot] ?? "roleplay-sports")}
+            onToast={showToast}
+            settings={settings}
+            slotIndex={2}
+          />
+        }
+      />
+      <Route
+        path="/roleplay/home"
+        element={
+          <RoleplayViewV2
+            key="rp-slot-3"
+            onSlotChange={(slot) => onNavigate(roleplaySlotViewIds[slot] ?? "roleplay-home")}
+            onToast={showToast}
+            settings={settings}
+            slotIndex={3}
+          />
+        }
+      />
 
       <Route path="/practice" element={<PracticeView onToast={showToast} settings={settings} />} />
-      <Route path="/ai-settings" element={<AiSettingsView onChange={setSettings} onSave={saveSettings} settings={settings} />} />
+      <Route
+        path="/ai-settings"
+        element={<AiSettingsView onChange={setSettings} onSave={saveSettings} settings={settings} />}
+      />
       <Route path="/magazine/" element={<MagazineList />} />
       <Route path="/magazine/:id/" element={<MagazineDetail />} />
       <Route path="/about" element={<LegalPageView pageId="about" />} />
@@ -129,7 +297,62 @@ export default function App() {
       <Route path="/image-credits" element={<LegalPageView pageId="image-credits" />} />
     </Routes>
   );
-  const isStepView = ["training-hub", "survey", "difficulty", "script-hub", "script-outdoor", "script-indoor", "script-sports", "script-home", "roleplay", "roleplay-hub", "roleplay-formula", "roleplay-travel", "roleplay-indoor", "roleplay-sports", "roleplay-home", "practice"].includes(activeView);
+
+  const isStepView = [
+    "training-hub",
+    "survey",
+    "difficulty",
+    "script-hub",
+    "script-outdoor",
+    "script-indoor",
+    "script-sports",
+    "script-home",
+    "roleplay",
+    "roleplay-hub",
+    "roleplay-formula",
+    "roleplay-travel",
+    "roleplay-indoor",
+    "roleplay-sports",
+    "roleplay-home",
+    "practice",
+  ].includes(activeView);
+
   const nextStep = nextViewById[activeView];
-  return <AppShell activeView={activeView} darkMode={darkMode} mobileOpen={mobileOpen} nextStep={nextStep ? { label: nextStep.label, onClick: () => navigate(viewPathForId[nextStep.view]) } : undefined} onCloseMobileMenu={() => setMobileOpen(false)} onNavigate={onNavigate} onToggleDarkMode={() => setDarkMode((value) => !value)} onToggleMobileMenu={() => setMobileOpen((value) => !value)} showTrainingHeader={isStepView}><AnimatePresence mode="wait"><motion.div animate={{ opacity: 1, y: 0 }} className={isStepView ? "step-page" : undefined} exit={{ opacity: 0, y: -6 }} initial={{ opacity: 0, y: 8 }} key={location.pathname} transition={{ duration: 0.2 }}>{screen}</motion.div></AnimatePresence><Toast onDismiss={() => setToast(null)} toast={toast} /></AppShell>;
+
+  return (
+    <TrainingSelectionProvider>
+      <AppShell
+        activeView={activeView}
+        darkMode={darkMode}
+        mobileOpen={mobileOpen}
+        nextStep={
+          nextStep
+            ? {
+                label: nextStep.label,
+                onClick: () => navigate(viewPathForId[nextStep.view]),
+              }
+            : undefined
+        }
+        onCloseMobileMenu={() => setMobileOpen(false)}
+        onNavigate={onNavigate}
+        onToggleDarkMode={() => setDarkMode((value) => !value)}
+        onToggleMobileMenu={() => setMobileOpen((value) => !value)}
+        showTrainingHeader={isStepView}
+      >
+        <AnimatePresence mode="wait">
+          <motion.div
+            animate={{ opacity: 1, y: 0 }}
+            className={isStepView ? "step-page" : undefined}
+            exit={{ opacity: 0, y: -6 }}
+            initial={{ opacity: 0, y: 8 }}
+            key={location.pathname}
+            transition={{ duration: 0.2 }}
+          >
+            {screen}
+          </motion.div>
+        </AnimatePresence>
+        <Toast onDismiss={() => setToast(null)} toast={toast} />
+      </AppShell>
+    </TrainingSelectionProvider>
+  );
 }

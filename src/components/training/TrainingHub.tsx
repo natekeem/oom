@@ -3,6 +3,10 @@ import type { ViewId } from "../layout/Sidebar";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
+import { useTrainingSelection } from "../../training/TrainingSelectionContext";
+import { discoveredCourses } from "../../training/courseRegistry";
+import { TRAINING_LEVELS } from "../../training/levels";
+import { TrainingSetupView } from "./TrainingSetupView";
 
 const trainingSteps: Array<{ id: ViewId; title: string; description: string; icon: typeof ClipboardList; badge: string }> = [
   { id: "survey", title: "STEP 1. 서베이 고정", description: "실제형 설문에서 OOM 추천 조합을 확인하고, 연습 모드에서 직접 체크해 봅니다.", icon: ClipboardList, badge: "설문 통제" },
@@ -13,8 +17,35 @@ const trainingSteps: Array<{ id: ViewId; title: string; description: string; ico
 ];
 
 export function TrainingHub({ onNavigate }: { onNavigate: (view: ViewId) => void }) {
+  const { selection, select, clear } = useTrainingSelection();
+
+  if (!selection) {
+    return (
+      <TrainingSetupView 
+        levels={TRAINING_LEVELS} 
+        courses={discoveredCourses} 
+        onConfirm={select} 
+      />
+    );
+  }
+
+  const selectedLevel = TRAINING_LEVELS.find(l => l.id === selection.levelId);
+  const selectedCourse = discoveredCourses.find(c => c.id === selection.courseId);
+
   return (
     <div className="space-y-6">
+      <section className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-md border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50">
+        <div>
+          <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">현재 선택된 학습 구성</p>
+          <p className="mt-1 font-bold text-zinc-950 dark:text-white">
+            {selectedLevel?.displayName} {selectedLevel?.targetGrades[0]} · {selectedCourse?.title}
+          </p>
+        </div>
+        <Button variant="secondary" size="sm" onClick={clear}>
+          구간/코스 변경
+        </Button>
+      </section>
+
       <section className="border-l-4 border-indigo-500 pl-4">
         <Badge tone="indigo">OPIc 실전 훈련하기</Badge>
         <h1 className="mt-3 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">서베이부터 실전 답변까지, 같은 흐름으로 반복합니다.</h1>

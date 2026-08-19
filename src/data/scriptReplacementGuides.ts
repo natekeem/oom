@@ -1,5 +1,4 @@
 import type { ScriptReplacementGuide } from "../types";
-import { getAdditionalReplacementGuide } from "./additionalScriptReplacementGuides";
 
 const key = (scriptId: string, variantId: string) => `${scriptId}:${variantId}`;
 
@@ -26,5 +25,5 @@ export const scriptReplacementGuides: Record<string, ScriptReplacementGuide> = {
 };
 
 export function getReplacementGuide(scriptId: string, variantId: string) {
-  return scriptReplacementGuides[key(scriptId, variantId)] ?? getAdditionalReplacementGuide(scriptId, variantId);
+  return scriptReplacementGuides[key(scriptId, variantId)];
 }

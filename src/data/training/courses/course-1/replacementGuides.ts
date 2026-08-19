@@ -1,0 +1,235 @@
+import type { ScriptReplacementGuide } from "../../../../types";
+
+const key = (scriptId: string, variantId: string) => `${scriptId}:${variantId}`;
+
+export const replacementGuides: Record<string, ScriptReplacementGuide> = {
+  [key("outdoor-travel", "favorite-place")]: {
+    summary: "여행이라는 큰 사건 대신, 자주 가는 해변을 첫 장면으로 꺼냅니다.",
+    replacements: [
+      {
+        block: "opening",
+        instruction: "여행 출발 문단을 좋아하는 장소 소개로 바꿉니다.",
+        replacement:
+          "Actually, there is a beach not far from my home that I enjoy visiting when the weather is nice. It has a long walking path next to the water, so I usually go there with my family on weekend mornings.",
+      },
+    ],
+    keepBlocks: ["details", "closing"],
+  },
+  [key("outdoor-travel", "recent-trip")]: {
+    summary: "메인 스토리가 이미 최근 여행 답입니다. 시간과 기억 포인트를 조금 더 분명하게 만듭니다.",
+    replacements: [
+      {
+        block: "opening",
+        instruction: "최근성을 앞에 놓고 여행 전체를 바로 소개합니다.",
+        replacement:
+          "One memorable trip I took recently was a short family getaway to a resort near the beach. We left early on Saturday, and the quiet drive made the trip feel relaxed from the beginning.",
+      },
+    ],
+    keepBlocks: ["details", "closing"],
+  },
+  [key("outdoor-travel", "outdoor-routine")]: {
+    summary: "한 번의 여행이 아니라 매주 반복할 수 있는 야외 루틴처럼 시작합니다.",
+    replacements: [
+      {
+        block: "opening",
+        instruction: "최근 여행 대신 주말 야외 습관으로 출발합니다.",
+        replacement:
+          "When I visit an outdoor place, I usually keep my plan simple. I like going to a park or a beach in the morning, especially when the air is fresh and there are not many people around.",
+      },
+      {
+        block: "details",
+        instruction: "여행 활동을 루틴 순서로 바꿉니다.",
+        replacement:
+          "First, I take a slow walk and look at the trees or the water. If I feel energetic, I do a light jog for about twenty minutes. After that, I sit down for a while and drink water before going home.",
+      },
+    ],
+    keepBlocks: ["closing"],
+  },
+  [key("outdoor-travel", "travel-change")]: {
+    summary: "같은 가족 여행 장면으로 과거와 현재의 여행 선호를 대비합니다.",
+    replacements: [
+      {
+        block: "opening",
+        instruction: "현재 여행 한 번을 말하는 대신 과거와 현재를 함께 엽니다.",
+        replacement:
+          "My travel style has changed over time. I used to plan busy trips with many places to visit, but now I prefer a simple family getaway near the beach or a quiet park.",
+      },
+      {
+        block: "closing",
+        instruction: "감정을 변화의 결론으로 바꿉니다.",
+        replacement:
+          "These days, I care more about having time to slow down with my family than checking off many places. That is why a simple trip feels much more meaningful to me now.",
+      },
+    ],
+    keepBlocks: ["details"],
+  },
+
+  [key("indoor-rest", "favorite-cafe")]: {
+    summary: "집에서 쉬는 부분을 줄이고, 카페의 창가와 주문을 첫 장면으로 세웁니다.",
+    replacements: [
+      {
+        block: "opening",
+        instruction: "휴식 일반론을 자주 가는 카페 소개로 교체합니다.",
+        replacement:
+          "To be honest, there is a small corner cafe near my home that I visit quite often. It has large windows, soft lighting, and a quiet playlist in the background. I usually order an iced latte and choose the seat by the window.",
+      },
+    ],
+    keepBlocks: ["details", "closing"],
+  },
+  [key("indoor-rest", "home-routine")]: {
+    summary: "카페 대신 집의 저녁 루틴으로 첫 장면과 활동을 함께 바꿉니다.",
+    replacements: [
+      {
+        block: "opening",
+        instruction: "장소를 집으로 고정합니다.",
+        replacement:
+          "When I stay at home, I try to make the evening quiet and comfortable. I usually play a soft playlist while I make something simple for dinner.",
+      },
+      {
+        block: "details",
+        instruction: "카페 활동을 집의 정리와 소파 휴식으로 바꿉니다.",
+        replacement:
+          "After that, I clean up the kitchen a little and sit on the sofa with a drink. Sometimes I watch a short show, and sometimes I listen to music with the lights low.",
+      },
+    ],
+    keepBlocks: ["closing"],
+  },
+  [key("indoor-rest", "music-memory")]: {
+    summary: "장소 설명보다 최근 피곤했던 날과 음악이 바꾼 기분을 전면에 둡니다.",
+    replacements: [
+      {
+        block: "opening",
+        instruction: "최근 경험의 시간·상황을 먼저 답합니다.",
+        replacement:
+          "Recently, I had a busy day and felt tired on my way home, so I stopped by my usual cafe for a short break. I found a window seat, ordered an iced latte, and played a calm playlist through my earphones.",
+      },
+    ],
+    keepBlocks: ["details", "closing"],
+  },
+  [key("indoor-rest", "stress-relief")]: {
+    summary: "휴식이 필요한 이유와 주말 루틴을 먼저 말하면 질문에 직접 답하게 됩니다.",
+    replacements: [
+      {
+        block: "opening",
+        instruction: "바쁜 한 주 뒤라는 이유를 첫 문장에 답합니다.",
+        replacement:
+          "After a busy week, I relax by giving myself a quiet break at a cafe or at home. I usually choose one calm playlist, get a simple drink, and avoid making a big plan.",
+      },
+      {
+        block: "closing",
+        instruction: "감정의 변화를 질문의 답으로 마무리합니다.",
+        replacement:
+          "It is a small routine, but it helps me reset my mood and feel ready for the next week.",
+      },
+    ],
+    keepBlocks: ["details"],
+  },
+
+  [key("sports-hobby", "favorite-sport")]: {
+    summary: "시작 계기보다 지금 즐기는 코트 루틴을 첫 장면으로 옮깁니다.",
+    replacements: [
+      {
+        block: "opening",
+        instruction: "현재 좋아하는 운동을 바로 선언합니다.",
+        replacement:
+          "The sport I enjoy most is tennis. I usually go to a local court on weekend mornings with a friend, and we practice easy rallies before we play a real game.",
+      },
+    ],
+    keepBlocks: ["details", "closing"],
+  },
+  [key("sports-hobby", "how-it-started")]: {
+    summary: "메인 스토리의 출발이 이미 시작 계기입니다. 첫 랠리의 어려움만 의식해서 말합니다.",
+    replacements: [],
+    keepBlocks: ["opening", "details", "closing"],
+  },
+  [key("sports-hobby", "hobby-shopping")]: {
+    summary: "장비 구매가 질문의 중심이므로 구매 이유와 사용 후 변화를 먼저 말합니다.",
+    replacements: [
+      {
+        block: "opening",
+        instruction: "취미 시작 계기 대신 구매 경험으로 출발합니다.",
+        replacement:
+          "Recently, I bought a few simple things for tennis because my old equipment was getting uncomfortable. The overgrip on my racket was slippery, so I chose a new one that felt softer and easier to hold.",
+      },
+      {
+        block: "details",
+        instruction: "코트 활동은 장비가 만든 변화로 이어 줍니다.",
+        replacement:
+          "I also bought tennis shoes with better support because my regular sneakers did not feel stable on the court. They were not expensive, but they made a real difference during practice.",
+      },
+    ],
+    keepBlocks: ["closing"],
+  },
+  [key("sports-hobby", "improvement")]: {
+    summary: "예전의 실수와 지금의 백핸드를 대비하면 변화 질문의 구조가 완성됩니다.",
+    replacements: [
+      {
+        block: "opening",
+        instruction: "처음과 지금을 비교하는 문장으로 시작합니다.",
+        replacement:
+          "I have improved at tennis slowly through regular weekend practice. At first, I could barely keep the ball in the court, but now I can keep a rally going much longer with my friend.",
+      },
+      {
+        block: "closing",
+        instruction: "작은 진전을 명확하게 마무리합니다.",
+        replacement:
+          "My backhand is still not perfect, but it is more consistent than before. Seeing that small progress gives me confidence and keeps me motivated.",
+      },
+    ],
+    keepBlocks: ["details"],
+  },
+
+  [key("home-residence", "home-description")]: {
+    summary: "메인 스토리의 첫 문단이 집 묘사에 맞습니다. 동네·일정은 짧게 하거나 생략합니다.",
+    replacements: [],
+    keepBlocks: ["opening", "details", "closing"],
+  },
+  [key("home-residence", "neighborhood")]: {
+    summary: "집 내부보다 집 주변에서 할 수 있는 일을 첫 문단으로 이동합니다.",
+    replacements: [
+      {
+        block: "opening",
+        instruction: "거실 대신 동네의 편리함으로 시작합니다.",
+        replacement:
+          "One thing I like about my neighborhood is that most places I need are within walking distance. There is a small park near my apartment, a grocery store, and a few useful cafes.",
+      },
+    ],
+    keepBlocks: ["details", "closing"],
+  },
+  [key("home-residence", "household-chores")]: {
+    summary: "집안일의 순서를 구체적으로 보여 주고, 가족과 나누는 루틴으로 닫습니다.",
+    replacements: [
+      {
+        block: "opening",
+        instruction: "집 묘사 대신 주말 집안일 루틴으로 시작합니다.",
+        replacement:
+          "At home, I usually share simple chores with my family on weekends. I often vacuum the living room, organize my room, and help clean up the kitchen after meals.",
+      },
+      {
+        block: "details",
+        instruction: "공간 설명을 구체적인 순서와 역할로 교체합니다.",
+        replacement:
+          "We do not make it complicated. One person prepares the laundry, another person checks the groceries, and I make sure the common areas are tidy before we relax together.",
+      },
+    ],
+    keepBlocks: ["closing"],
+  },
+  [key("home-residence", "home-problem")]: {
+    summary: "청소 일정 변경이라는 한 사건을 문제·설명·대안·결과 순서로 꺼냅니다.",
+    replacements: [
+      {
+        block: "opening",
+        instruction: "집 묘사는 짧게 하고 문제 상황을 바로 말합니다.",
+        replacement:
+          "Once, my family had to change a cleaning appointment because we suddenly had a family event on the same day. I called the company and explained the situation politely.",
+      },
+      {
+        block: "details",
+        instruction: "문제 해결 과정과 대안을 넣습니다.",
+        replacement:
+          "First, I apologized for the late notice, and then I asked if there was another time available the following week. Luckily, the staff member offered two new options, and we chose a morning slot that worked for everyone.",
+      },
+    ],
+    keepBlocks: ["closing"],
+  },
+};

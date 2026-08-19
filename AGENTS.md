@@ -20,17 +20,19 @@ Before changing code, read these in order:
 - `BackgroundSurveySheet` must render the full survey-like list. Recommended answers and rehearsal scoring data are owned only by `src/data/fixedSurvey.ts`.
 - `OPIc 실전 훈련하기` owns STEP 1 through STEP 5 in the sidebar. STEP 3 and STEP 4 have a further nested group level; preserve this hierarchy.
 - The sticky title/progress header is a training-only affordance. It is visible for `training-hub` and its STEP descendants, but not for Home, the candidate guide, or AI settings.
-- A script group offers story choices, not additional mandatory memorization. The 60-90 second primary story and a short question-type variation must remain connected to the same scene.
+- Course owns survey/story context. Level owns difficulty/answer density. One canonical storyline per group per course. Same core scene across three levels. Story A/B choice UI is removed. Question-type variation training remains required.
 - Keep accessible names, keyboard focus states, loading/error states, and mobile navigation intact.
 - Avoid unrelated refactors. Existing legacy presentation files may remain in the repository; route ownership is defined by `src/App.tsx` and `docs/ROUTING.md`.
 
 ## Architecture At A Glance
 
 - Entry: `src/main.tsx` -> `src/App.tsx`
-- Routing: React state with `ViewId`; no React Router
+- Routing: React Router (`BrowserRouter` & `Routes`) coordinated with `ViewId`
 - Shell: `src/components/layout/AppShell.tsx` and `ExpandableSidebar.tsx`
+- Training selection: `src/training/` (types, levels, storage, courseRegistry, TrainingSelectionContext)
+- Course data: `src/data/training/courses/course-N/` (manifest, survey, storylines, roleplays, questions, variants, replacementGuides)
 - Training hub: `src/components/training/TrainingHub.tsx`
-- Script flow: `ScriptHub` -> `ScriptDashboardV2` -> `ScriptTrainingTabs`
+- Script flow: `ScriptHub` -> canonical storyline per course in `ScriptDashboardV2` -> `ScriptTrainingTabs`
 - Role-play flow: `RoleplayHub` -> `RoleplayFormulaView` or group-specific `RoleplayViewV2`
 - Candidate guide: `ExamGuideHub` plus overview, application, day-of-exam, and results views
 - Browser APIs: `src/lib/speech.ts`, `src/lib/recorder.ts`
@@ -38,13 +40,13 @@ Before changing code, read these in order:
 
 ## Data Ownership
 
+- `src/data/training/courses/course-N/`: training course data files and their ownership (manifest, survey, storylines, roleplays, questions, variants, replacementGuides)
 - `fixedSurvey.ts`: full survey structure, OOM fixed recommendations, rehearsal answer key
-- `scripts.ts`: default 60-90 second script stories
-- `additionalScripts.ts`: optional second story in each script group
-- `scriptTrainingData.ts` and `additionalScriptTraining.ts`: question-type variations and answer blueprints
-- `scriptReplacementGuides.ts` and `additionalScriptReplacementGuides.ts`: reusable replacement blocks
-- `questions.ts`: practice question pool
-- `roleplays.ts` and `additionalRoleplays.ts`: role-play formula, scenarios, and level guidance
+- `scripts.ts`: Course 1 advanced reference
+- `scriptTrainingData.ts`: legacy Course 1 variation and blueprint reference
+- `scriptReplacementGuides.ts`: legacy Course 1 replacement-block lookup reference
+- `questions.ts`: practice question pool fallback
+- `roleplays.ts`: role-play formula, scenarios, and level guidance
 - `examGuideContent.ts`: time-sensitive candidate-guide content and official links
 
 ## Required Validation

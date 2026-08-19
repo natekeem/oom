@@ -1,0 +1,258 @@
+import type { TrainingStoryline } from '../../../../training/types';
+
+export const storylines = [
+  {
+    "id": "culture-night",
+    "courseId": "course-2",
+    "group": "문화 / 음악",
+    "title": "도심 문화센터에서 보낸 영화·공연·콘서트 저녁",
+    "surveyOptionIds": [
+      "leisure-movie",
+      "leisure-performance",
+      "leisure-concert",
+      "interest-music"
+    ],
+    "core": {
+      "anchorScene": "친구와 도심 문화 복합공간에서 영화를 본 뒤 우연히 작은 라이브 공연까지 보고, 좋아하는 노래를 함께 들은 저녁",
+      "facts": [
+        "downtown cultural complex",
+        "close friend",
+        "movie",
+        "small live show",
+        "favorite song",
+        "crowd singing",
+        "playlist on way home",
+        "felt energized"
+      ],
+      "reusableFor": [
+        "영화",
+        "공연",
+        "콘서트",
+        "음악 취향",
+        "최근 문화 경험"
+      ]
+    },
+    "levels": {
+      "advanced": {
+        "koreanSummary": "친구와 도심 문화 복합공간에서 영화를 본 뒤 같은 건물의 작은 라이브 공연까지 보았습니다. 평소 듣던 가수의 노래를 관객들과 함께 듣고 따라 부르면서 평범한 주말이 특별한 기억으로 바뀌었습니다.",
+        "englishScript": "One of my favorite culture-related memories happened at a large cultural complex downtown. A close friend and I originally went there just to watch a movie, but after the movie we noticed that a small live performance was starting in the event hall downstairs. We had no special plan, so we bought two tickets and decided to stay.\n\nWhat made the night memorable was that the singer performed a song I already had on my playlist. The venue was much smaller than a huge concert hall, so I could hear the singer clearly and see the reactions of the people around me. During the last song, almost everyone started singing along, and the atmosphere suddenly felt very warm and energetic.\n\nOn the way home, my friend and I listened to the same song again and talked about our favorite parts of the night. Since then, I have enjoyed movies and live performances more because I realized that a simple cultural outing can turn into a surprisingly memorable experience.",
+        "skills": [
+          "예상 밖 전개",
+          "분위기",
+          "영화→공연→음악 연결",
+          "경험 후 변화"
+        ]
+      },
+      "intermediate": {
+        "koreanSummary": "친구와 영화를 보러 갔다가 같은 건물에서 작은 라이브 공연도 봤습니다. 좋아하던 노래가 나와서 관객과 함께 따라 불렀고, 집에 가면서 같은 음악을 다시 들었습니다.",
+        "englishScript": "I often enjoy movies and music with a close friend. Recently, we went to a cultural complex downtown to watch a movie. After the movie, we found a small live performance in the same building, so we decided to buy tickets.\n\nThe best part was hearing a song that I already liked. The place was small, so the sound felt close and the audience was very excited. We even sang along during the last song. On the way home, we listened to the same music again and talked about the performance. It was an unexpected but really fun evening.",
+        "skills": [
+          "최근 경험",
+          "이유",
+          "음악 연결",
+          "감정"
+        ]
+      },
+      "foundation": {
+        "koreanSummary": "친구와 영화를 보고 작은 공연을 봤습니다. 좋아하는 노래가 나와서 즐거웠고, 집에 가면서 그 노래를 다시 들었습니다.",
+        "englishScript": "I like watching movies and listening to music. Recently, I went to a movie with my friend. After the movie, we saw a small live show in the same building.\n\nThe singer played a song I really like, so I was very excited. We listened to that song again on the way home. It was a fun night, and I want to see another performance soon.",
+        "skills": [
+          "영화",
+          "공연",
+          "좋아하는 노래",
+          "감정"
+        ]
+      }
+    }
+  },
+  {
+    "id": "smart-shopping",
+    "courseId": "course-2",
+    "group": "쇼핑 / 생활",
+    "title": "도심 쇼핑몰에서 필요한 것만 고른 실용 쇼핑",
+    "surveyOptionIds": [
+      "leisure-shopping"
+    ],
+    "core": {
+      "anchorScene": "오래된 이어폰이 고장 나 쇼핑몰에서 두 제품의 가격·착용감·배터리·반품 조건을 비교한 뒤 실용적인 제품을 산 경험",
+      "facts": [
+        "large shopping mall",
+        "old earphones broke",
+        "two models",
+        "comfort",
+        "battery life",
+        "return policy",
+        "practical purchase",
+        "satisfied"
+      ],
+      "reusableFor": [
+        "쇼핑 루틴",
+        "최근 구매",
+        "제품 비교",
+        "교환/환불 롤플레이"
+      ]
+    },
+    "levels": {
+      "advanced": {
+        "koreanSummary": "오래 쓰던 이어폰이 고장 나서 대형 쇼핑몰에 가 두 모델의 가격과 착용감, 반품 조건을 비교한 뒤 필요한 제품 하나만 샀습니다. 예전처럼 충동구매하지 않고 실제 사용 조건을 확인하게 된 변화까지 연결합니다.",
+        "englishScript": "I do not shop just for fun very often, but I like going to a large shopping mall when I actually need something. A few months ago, my old wireless earphones started losing connection, so I went to an electronics store in a mall to replace them.\n\nInstead of buying the first model I saw, I compared two options. One was cheaper, but the other fit my ears better and had a longer battery life. I asked the staff if I could try them on, and I also checked the return policy because I wanted to make sure I could exchange them if they were uncomfortable after a few days.\n\nIn the end, I bought the more practical pair and skipped the other things I had looked at. I used to make quick purchases when something looked interesting, but now I prefer to compare a few details and buy only what I will actually use. That makes shopping less stressful and more satisfying.",
+        "skills": [
+          "비교",
+          "구매 이유",
+          "조건 질문",
+          "과거-현재 소비 습관 변화"
+        ]
+      },
+      "intermediate": {
+        "koreanSummary": "이어폰이 고장 나서 쇼핑몰에서 두 제품을 비교하고 착용해 본 뒤 더 편한 제품을 샀습니다. 가격뿐 아니라 배터리와 반품 조건도 확인했습니다.",
+        "englishScript": "I usually go shopping when I need something specific. Recently, my old earphones broke, so I went to a large shopping mall and visited an electronics store.\n\nI compared two models. One was cheaper, but the other was more comfortable and had better battery life. I tried them on and asked the staff about the return policy. Finally, I bought the more comfortable pair. I was happy because I did not rush, and I chose something that I could use every day.",
+        "skills": [
+          "최근 구매",
+          "두 제품 비교",
+          "질문",
+          "선택 이유"
+        ]
+      },
+      "foundation": {
+        "koreanSummary": "이어폰이 고장 나서 쇼핑몰에 갔습니다. 두 제품을 보고 더 편한 것을 샀습니다. 매일 사용할 수 있어서 만족했습니다.",
+        "englishScript": "I sometimes go to a big shopping mall near my home. Recently, my earphones broke, so I went there to buy new ones.\n\nI looked at two models and tried them on. One pair was more comfortable, so I bought it. I use the earphones every day, and I am happy with my choice.",
+        "skills": [
+          "어디",
+          "무엇",
+          "비교 한 가지",
+          "만족"
+        ]
+      }
+    }
+  },
+  {
+    "id": "light-fitness",
+    "courseId": "course-2",
+    "group": "공원 / 가벼운 운동",
+    "title": "운동을 싫어해도 계속할 수 있는 공원 걷기·가벼운 조깅",
+    "surveyOptionIds": [
+      "leisure-park",
+      "sport-walking",
+      "sport-jogging",
+      "sport-none"
+    ],
+    "core": {
+      "anchorScene": "운동을 즐기는 사람은 아니지만 집 근처 공원에서 음악을 들으며 30분 걷고, 컨디션이 좋을 때만 5~10분 조깅하는 저압력 루틴",
+      "facts": [
+        "not serious exercise person",
+        "nearby park",
+        "30-minute walk",
+        "comfortable shoes",
+        "music or podcast",
+        "short jog",
+        "less pressure",
+        "better mood"
+      ],
+      "reusableFor": [
+        "공원",
+        "걷기",
+        "조깅",
+        "운동 거의 안 함",
+        "건강 루틴 변화"
+      ]
+    },
+    "levels": {
+      "advanced": {
+        "koreanSummary": "운동을 좋아하는 사람은 아니지만, 부담이 적은 방식으로 공원 걷기와 짧은 조깅을 유지합니다. 헬스장 목표 대신 편한 신발과 음악, 30분 산책으로 습관을 만든 변화가 핵심입니다.",
+        "englishScript": "To be honest, I am not the kind of person who loves serious exercise. I used to make ambitious plans, like going to the gym five times a week, but I usually gave up after a short time. These days, I do something much simpler: I walk in a park near my apartment.\n\nI normally put on comfortable shoes, choose a playlist or a podcast, and walk for about thirty minutes. If the weather is good and I have enough energy, I jog for five or ten minutes in the middle of the walk. I do not worry about speed or distance, so the routine feels easy to continue.\n\nThe biggest change is that I no longer think exercise has to be intense to be useful. A short walk clears my head and improves my mood, and because there is less pressure, I actually do it more consistently than I did in the past.",
+        "skills": [
+          "운동 안 함+걷기 맥락 연결",
+          "과거-현재 변화",
+          "이유",
+          "지속 가능성"
+        ]
+      },
+      "intermediate": {
+        "koreanSummary": "운동을 많이 하지는 않지만 집 근처 공원에서 30분 정도 걷고 가끔 5~10분 조깅합니다. 강한 운동보다 부담이 적어서 꾸준히 할 수 있습니다.",
+        "englishScript": "I am not a serious exercise person, but I like walking in a park near my apartment. I usually walk for about thirty minutes while listening to music or a podcast.\n\nSometimes, when I feel good, I jog for five or ten minutes. I used to think I needed a hard workout, but that was difficult to continue. Now I prefer this simple routine because there is less pressure. It helps me clear my mind, and I can do it several times a week.",
+        "skills": [
+          "현재 루틴",
+          "가벼운 조깅",
+          "과거와 비교",
+          "이유"
+        ]
+      },
+      "foundation": {
+        "koreanSummary": "운동을 많이 하지는 않지만 근처 공원에서 걷습니다. 음악을 들으며 30분 정도 걷고 가끔 조금 뜁니다. 쉬워서 계속할 수 있습니다.",
+        "englishScript": "I do not exercise a lot, but I like walking in a park near my home. I usually walk for about thirty minutes and listen to music.\n\nSometimes I jog for a few minutes, but I do not run very fast. This routine is easy for me, and it helps me feel better.",
+        "skills": [
+          "운동 거의 안 함",
+          "걷기",
+          "짧은 조깅",
+          "간단한 효과"
+        ]
+      }
+    }
+  },
+  {
+    "id": "solo-staycation",
+    "courseId": "course-2",
+    "group": "집 / 휴가 / 여행",
+    "title": "혼자 사는 집에서 시작하는 스테이케이션과 짧은 도시 여행",
+    "surveyOptionIds": [
+      "residence-alone",
+      "vacation-home",
+      "vacation-domestic",
+      "vacation-overseas"
+    ],
+    "core": {
+      "anchorScene": "혼자 사는 작은 아파트에서 쉬는 휴가를 기본으로 하고, 가끔 기차로 가까운 도시를 하루 다녀오는 느린 여행 방식",
+      "facts": [
+        "live alone",
+        "small apartment",
+        "sofa and desk",
+        "staycation",
+        "simple food",
+        "movie",
+        "short train trip",
+        "one neighborhood",
+        "recharge"
+      ],
+      "reusableFor": [
+        "집 묘사",
+        "혼자 거주",
+        "집 휴가",
+        "국내 여행",
+        "해외 도시여행 방식",
+        "여행 취향 변화"
+      ]
+    },
+    "levels": {
+      "advanced": {
+        "koreanSummary": "혼자 사는 작은 아파트를 휴식의 기준점으로 두고, 집에서 영화와 간단한 음식으로 쉬거나 기차로 가까운 도시를 하루 다녀옵니다. 예전의 빡빡한 여행보다 한 동네를 천천히 보는 방식으로 취향이 바뀌었다는 흐름입니다.",
+        "englishScript": "I live alone in a small apartment, so my home has become an important place for me to recharge. It is not large, but I keep the living area simple: a sofa, a small table, and a desk near the window. When I have a few days off and do not want to spend much money, I turn my apartment into a kind of staycation spot.\n\nI clean the room first, order or cook something simple, and watch a movie without checking my schedule. If I want a change of scenery, I sometimes take a train to a nearby city for one day. Instead of trying to see every famous place, I choose one neighborhood, walk around, have a local meal, and come home in the evening.\n\nI used to think a good vacation had to involve a long trip, especially overseas. Now I care more about having enough time and less stress. Whether I stay home or take a short city trip, the goal is the same: slow down and return to my routine feeling refreshed.",
+        "skills": [
+          "집+휴가+여행 연결",
+          "과거-현재 여행관",
+          "선택 기준",
+          "목적 중심 마무리"
+        ]
+      },
+      "intermediate": {
+        "koreanSummary": "혼자 사는 아파트에서 영화 보고 간단히 먹으며 쉬거나, 기차로 가까운 도시를 하루 여행합니다. 많은 곳을 보려 하기보다 한 동네를 천천히 보는 걸 좋아합니다.",
+        "englishScript": "I live alone in a small apartment, and I like spending some vacations at home. I clean my room, order simple food, and watch a movie on the sofa. It is cheap and relaxing.\n\nSometimes I want to go somewhere, so I take a train to a nearby city for a day trip. I usually choose one neighborhood, walk around, and eat at a local restaurant. In the past, I tried to see too many places, but now I prefer a slower schedule. Both a staycation and a short trip help me recharge.",
+        "skills": [
+          "집 휴가",
+          "국내 짧은 여행",
+          "간단한 비교",
+          "공통 목적"
+        ]
+      },
+      "foundation": {
+        "koreanSummary": "혼자 아파트에 살며 휴가 때 집에서 영화를 보고 쉽니다. 가끔 기차로 가까운 도시를 가서 걷고 밥을 먹습니다. 둘 다 편안해서 좋아합니다.",
+        "englishScript": "I live alone in a small apartment. During a vacation, I sometimes stay home, watch a movie, and eat simple food. I like this because it is easy and relaxing.\n\nSometimes I take a train to a nearby city. I walk around, eat at a local restaurant, and come home the same day. Both kinds of vacation help me rest.",
+        "skills": [
+          "혼자 거주",
+          "집 휴가",
+          "짧은 여행",
+          "간단한 이유"
+        ]
+      }
+    }
+  }
+] as const satisfies readonly TrainingStoryline[];

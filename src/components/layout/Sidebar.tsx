@@ -1,4 +1,6 @@
-﻿export type ViewId =
+import type { ResolvedTrainingContext } from "../../training/types";
+
+export type ViewId =
   | "home"
   | "exam-guide"
   | "exam-overview"
@@ -43,17 +45,17 @@ export const viewTitles: Record<ViewId, string> = {
   survey: "STEP 1. 서베이 고정",
   difficulty: "STEP 2. 난이도 설정",
   "script-hub": "STEP 3. 만능 스크립트",
-  "script-outdoor": "STEP 3. 야외 / 여행",
-  "script-indoor": "STEP 3. 실내 / 휴식",
-  "script-sports": "STEP 3. 운동 / 취미",
-  "script-home": "STEP 3. 집 / 거주지",
+  "script-outdoor": "STEP 3. 그룹 1 스크립트",
+  "script-indoor": "STEP 3. 그룹 2 스크립트",
+  "script-sports": "STEP 3. 그룹 3 스크립트",
+  "script-home": "STEP 3. 그룹 4 스크립트",
   roleplay: "STEP 4. 롤플레이 공식",
   "roleplay-hub": "STEP 4. 롤플레이 공식",
   "roleplay-formula": "STEP 4. 공식 · 출제 구조",
-  "roleplay-travel": "STEP 4. 야외 / 여행",
-  "roleplay-indoor": "STEP 4. 실내 / 휴식",
-  "roleplay-sports": "STEP 4. 운동 / 취미",
-  "roleplay-home": "STEP 4. 집 / 거주지",
+  "roleplay-travel": "STEP 4. 그룹 1 롤플레이",
+  "roleplay-indoor": "STEP 4. 그룹 2 롤플레이",
+  "roleplay-sports": "STEP 4. 그룹 3 롤플레이",
+  "roleplay-home": "STEP 4. 그룹 4 롤플레이",
   practice: "STEP 5. 실전 연습",
   "ai-settings": "AI 피드백 / 설정",
   "magazine-list": "오픽 매거진",
@@ -64,3 +66,17 @@ export const viewTitles: Record<ViewId, string> = {
   "editorial-policy": "편집 원칙",
   "image-credits": "이미지 출처",
 };
+
+export function getViewTitle(viewId: ViewId, resolved?: ResolvedTrainingContext | null): string {
+  if (resolved) {
+    if (viewId === "script-outdoor") return `STEP 3. ${resolved.storylines[0]?.group ?? "그룹 1"}`;
+    if (viewId === "script-indoor") return `STEP 3. ${resolved.storylines[1]?.group ?? "그룹 2"}`;
+    if (viewId === "script-sports") return `STEP 3. ${resolved.storylines[2]?.group ?? "그룹 3"}`;
+    if (viewId === "script-home") return `STEP 3. ${resolved.storylines[3]?.group ?? "그룹 4"}`;
+    if (viewId === "roleplay-travel") return `STEP 4. ${resolved.roleplays[0]?.group ?? "그룹 1"}`;
+    if (viewId === "roleplay-indoor") return `STEP 4. ${resolved.roleplays[1]?.group ?? "그룹 2"}`;
+    if (viewId === "roleplay-sports") return `STEP 4. ${resolved.roleplays[2]?.group ?? "그룹 3"}`;
+    if (viewId === "roleplay-home") return `STEP 4. ${resolved.roleplays[3]?.group ?? "그룹 4"}`;
+  }
+  return viewTitles[viewId] ?? "";
+}

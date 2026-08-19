@@ -2,9 +2,11 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
+import { saveTrainingSelection } from "./training/storage";
 
 describe("OOM", () => {
   it.skip("renders the dashboard and navigates to the survey guide", async () => {
+    saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
     const user = userEvent.setup();
     render(<MemoryRouter><App /></MemoryRouter>);
     expect(screen.getByText("OOM")).toBeInTheDocument();
@@ -14,6 +16,7 @@ describe("OOM", () => {
   });
 
   it("keeps the sidebar in sync when a script group changes in the body", async () => {
+    saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
     const user = userEvent.setup();
     render(<MemoryRouter><App /></MemoryRouter>);
 

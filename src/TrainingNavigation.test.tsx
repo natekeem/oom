@@ -2,9 +2,11 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
+import { saveTrainingSelection } from "./training/storage";
 
 describe("training navigation", () => {
   it("shows progress only for training and keeps formula scenarios behind cards", async () => {
+    saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
     const user = userEvent.setup();
     render(
       <MemoryRouter>

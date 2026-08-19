@@ -1,0 +1,37 @@
+import type { SurveyPreset } from '../../../../training/types';
+
+export const survey = {
+  "id": "course-3-survey",
+  "courseId": "course-3",
+  "profileOptionIds": [
+    "work-none",
+    "student-no",
+    "education-over-five"
+  ],
+  "residenceOptionIds": [
+    "residence-roommate"
+  ],
+  "activityOptionIds": [
+    "leisure-camping",
+    "leisure-park",
+    "leisure-beach",
+    "leisure-drive",
+    "leisure-museum",
+    "interest-photo",
+    "interest-reading",
+    "sport-walking",
+    "sport-hiking",
+    "vacation-home",
+    "vacation-domestic",
+    "vacation-overseas"
+  ],
+  "displaySummary": [
+    "일 경험 없음 / 학생 아님 / 수강 후 5년 이상",
+    "친구나 룸메이트와 함께 주택 또는 아파트에 거주",
+    "캠핑 · 공원 · 해변 · 드라이브 · 박물관",
+    "사진 촬영 · 독서",
+    "걷기 · 하이킹/트레킹",
+    "집 휴가 · 국내 여행 · 해외 여행"
+  ],
+  "strategyNote": "아웃도어와 주말 경험을 선호하는 학습자를 위한 선택형 코스다. Course 2보다 고유 어휘가 조금 더 필요하므로 준비량 최소화만 놓고 보면 Course 2가 우선 추천이지만, 공원·걷기·하이킹·사진과 해변·캠핑·드라이브·국내여행을 각각 한 장면으로 묶어 범위를 통제한다."
+} as const satisfies SurveyPreset;

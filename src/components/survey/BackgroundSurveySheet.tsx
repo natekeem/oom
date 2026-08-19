@@ -239,10 +239,10 @@ function SurveySheetContent({
             </span>
             <div>
               <p className="text-sm font-semibold text-indigo-950 dark:text-indigo-100">
-                {resolved.course.title} 추천 조합: 기본 {currentRecommendedIds.length}개 선택
+                {resolved.course.title} 추천 서베이: 활동 {currentRecommendedCount}개 추천 + 기본 프로필 · 거주 설정
               </p>
               <p className="text-xs leading-5 text-indigo-700 dark:text-indigo-300">
-                최신 문항 순서에 맞춰 선택지를 확인해 보세요.
+                전체 {currentRecommendedIds.length}개 항목(활동 {currentRecommendedCount}개 및 프로필/거주지)을 고정하여 학습 범위를 줄입니다.
               </p>
             </div>
           </div>

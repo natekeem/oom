@@ -14,6 +14,9 @@ import type { ViewId } from "../layout/Sidebar";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
+import { useTrainingSelection } from "../../training/TrainingSelectionContext";
+import { discoveredCourses } from "../../training/courseRegistry";
+import { TRAINING_LEVELS } from "../../training/levels";
 
 const trainingSteps: Array<{
   id: ViewId;
@@ -27,7 +30,7 @@ const trainingSteps: Array<{
     id: "training-setup",
     stepNum: "STEP 1",
     title: "목표 구간 · 코스 설정",
-    description: "목표 등급과 사용할 이야기 세트를 정합니다.",
+    description: "목표 등급과 사용할 이야기 코스를 정합니다.",
     icon: SlidersHorizontal,
     badge: "설정",
   },
@@ -74,6 +77,15 @@ const trainingSteps: Array<{
 ];
 
 export function TrainingHub({ onNavigate }: { onNavigate: (view: ViewId) => void }) {
+  const { selection } = useTrainingSelection();
+
+  const activeSavedLevel = selection
+    ? TRAINING_LEVELS.find((l) => l.id === selection.levelId)
+    : null;
+  const activeSavedCourse = selection
+    ? discoveredCourses.find((c) => c.id === selection.courseId)
+    : null;
+
   return (
     <div className="space-y-8">
       {/* Hero Section */}
@@ -144,6 +156,8 @@ export function TrainingHub({ onNavigate }: { onNavigate: (view: ViewId) => void
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {trainingSteps.map((step, index) => {
             const Icon = step.icon;
+            const isStep1 = step.id === "training-setup";
+            const needsSetup = !selection && !isStep1;
 
             return (
               <Card
@@ -157,9 +171,13 @@ export function TrainingHub({ onNavigate }: { onNavigate: (view: ViewId) => void
                     </span>
                     <div className="flex items-center gap-1.5">
                       <Badge tone="default">{step.stepNum}</Badge>
-                      <Badge tone={index < 2 ? "default" : index === 5 ? "emerald" : "indigo"}>
-                        {step.badge}
-                      </Badge>
+                      {needsSetup ? (
+                        <Badge tone="amber">STEP 1 설정 후 이용</Badge>
+                      ) : (
+                        <Badge tone={index < 2 ? "default" : index === 5 ? "emerald" : "indigo"}>
+                          {step.badge}
+                        </Badge>
+                      )}
                     </div>
                   </div>
                   <h3 className="mt-4 text-lg font-bold text-zinc-950 dark:text-white">
@@ -168,6 +186,22 @@ export function TrainingHub({ onNavigate }: { onNavigate: (view: ViewId) => void
                   <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
                     {step.description}
                   </p>
+
+                  {/* Compact selection status for STEP 1 only */}
+                  {isStep1 && (
+                    <div className="mt-3">
+                      {selection && activeSavedLevel && activeSavedCourse ? (
+                        <div className="rounded-md bg-indigo-50/70 px-2.5 py-1.5 text-xs text-indigo-900 dark:bg-indigo-950/40 dark:text-indigo-200">
+                          <span className="font-semibold text-indigo-700 dark:text-indigo-300">설정 완료: </span>
+                          <span>{activeSavedLevel.displayName} · {activeSavedCourse.title}</span>
+                        </div>
+                      ) : (
+                        <div className="rounded-md bg-amber-50/70 px-2.5 py-1.5 text-xs text-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
+                          <span className="font-semibold text-amber-700 dark:text-amber-300">설정 필요</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <Button
                   className="mt-6 w-full"

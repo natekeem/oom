@@ -491,4 +491,44 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
     localStorage.setItem(TRAINING_SELECTION_STORAGE_KEY, 'invalid-json-string');
     expect(loadTrainingSelection()).toBeNull();
   });
+
+  /* 28. Overview STEP 1 card displays compact selection status and STEP 2-6 show setup indicator */
+  it('28. Overview displays compact status on STEP 1 card and setup badges on STEP 2-6 when unselected', () => {
+    render(
+      <MemoryRouter initialEntries={['/training']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    // Unselected state
+    expect(screen.getByText('설정 필요')).toBeInTheDocument();
+    expect(screen.getAllByText('STEP 1 설정 후 이용')).toHaveLength(5);
+  });
+
+  it('29. Overview displays compact course/level info on STEP 1 card when selected', () => {
+    saveTrainingSelection({ courseId: 'course-2', levelId: 'intermediate' });
+    render(
+      <MemoryRouter initialEntries={['/training']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/설정 완료:/)).toBeInTheDocument();
+    expect(screen.getByText(/2구간 · Culture & City/)).toBeInTheDocument();
+    expect(screen.queryByText('STEP 1 설정 후 이용')).not.toBeInTheDocument();
+  });
+
+  /* 30. Survey recommendation count distinguishes activities from total items */
+  it('30. Survey recommendation clearly distinguishes activity counts from profile/residence presets', () => {
+    saveTrainingSelection({ courseId: 'course-2', levelId: 'advanced' });
+    render(
+      <MemoryRouter initialEntries={['/training/survey']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    // Course 2 has 12 activities
+    expect(screen.getByText(/Culture & City 추천 서베이: 활동 12개 추천 \+ 기본 프로필 · 거주 설정/)).toBeInTheDocument();
+    expect(screen.getByText(/전체 16개 항목\(활동 12개 및 프로필\/거주지\)을 고정하여/)).toBeInTheDocument();
+  });
 });

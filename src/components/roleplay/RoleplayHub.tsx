@@ -85,7 +85,7 @@ export function RoleplayHub({ onNavigate }: { onNavigate: (view: ViewId) => void
             <Card className="p-5 sm:p-6">
               <p className="text-sm leading-7 text-zinc-700 dark:text-zinc-300">
                 OPIc 롤플레이는 일상 또는 서비스 상황에서 상대방에게 정보를 묻거나 발생한 문제를 해결하는 기능형 문항입니다.
-                정해진 스크립트를 그대로 말하기보다 <strong>상대방에게 대안을 제안하는 흐름</strong>이 평가의 핵심입니다.
+                정해진 스크립트를 그대로 말하기보다 <strong>상대방에게 상황을 설명하고 가능한 대안을 제시하는 연습</strong>이 문제 해결형 답변을 안정적으로 구성하는 데 도움이 됩니다.
               </p>
               <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 {flowSteps.map((f, i) => (

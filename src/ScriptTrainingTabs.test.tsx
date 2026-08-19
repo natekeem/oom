@@ -26,4 +26,19 @@ describe("ScriptTrainingTabs", () => {
     expect(screen.getByText("질문의 중심 명사 고르기")).toBeInTheDocument();
     expect(screen.getByText("질문이 바뀌어도, 장면을 새로 만들지 말고 출발점을 바꿉니다.")).toBeInTheDocument();
   });
+
+  it("labels story sections and highlights replacement paragraphs in the assembled answer", async () => {
+    const user = userEvent.setup();
+    render(<ScriptTrainingTabs onToast={() => undefined} script={scripts[0]} settings={settings} />);
+
+    expect(screen.getByText("INTRO")).toBeInTheDocument();
+    expect(screen.getByText("MAIN")).toBeInTheDocument();
+    expect(screen.getByText("FINISH")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("tab", { name: "질문별 변형" }));
+    await user.click(screen.getByText("조립된 답변 보기"));
+
+    expect(screen.getByText("교체 문단")).toBeInTheDocument();
+    expect(screen.getAllByText("유지 문단")).toHaveLength(2);
+  });
 });

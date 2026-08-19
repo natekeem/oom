@@ -67,11 +67,22 @@ function ReplacementRows({ blocks, script, variant }: { blocks: StoryBlock[]; sc
 
 function AssembledAnswer({ blocks, script, variant }: { blocks: StoryBlock[]; script: ScriptItem; variant: ScriptVariant }) {
   const guide = getReplacementGuide(script.id, variant.id);
-  const answer = blocks.map((block) => guide?.replacements.find((item) => item.block === block.id)?.replacement ?? block.content).filter(Boolean).join("\n\n");
   return <details className="group rounded-md border border-amber-200 bg-amber-50/70 p-4 dark:border-amber-900 dark:bg-amber-950/30">
     <summary className="cursor-pointer list-none text-sm font-bold text-amber-900 marker:hidden dark:text-amber-100"><Sparkles className="mr-2 inline h-4 w-4" />조립된 답변 보기 <span className="ml-1 text-xs font-normal">교체된 블록만 확인하세요</span></summary>
     <p className="mt-3 text-xs leading-5 text-amber-800 dark:text-amber-200">새 답안 전체를 추가 암기하라는 뜻이 아닙니다. 위에서 파란색으로 표시된 교체 블록만 익히고, 나머지는 메인 스토리를 그대로 연결하면 됩니다.</p>
-    <p className="mt-4 whitespace-pre-line text-sm leading-7 text-zinc-700 dark:text-zinc-200">{answer}</p>
+    <div className="mt-4 space-y-3">
+      {blocks.map((block) => {
+        const replacement = guide?.replacements.find((item) => item.block === block.id);
+        if (!replacement && !block.content) return null;
+        return <section className={`rounded-md border-l-4 p-4 ${replacement ? "border-indigo-500 bg-indigo-100/80 dark:border-indigo-400 dark:bg-indigo-950/70" : "border-zinc-300 bg-white/70 dark:border-zinc-700 dark:bg-zinc-950/60"}`} key={block.id}>
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <Badge tone={replacement ? "indigo" : "default"}>{replacement ? "교체 문단" : "유지 문단"}</Badge>
+            <span className={`text-xs font-bold ${replacement ? "text-indigo-700 dark:text-indigo-300" : "text-zinc-500 dark:text-zinc-400"}`}>{blockLabels[block.id]}</span>
+          </div>
+          <p className="whitespace-pre-line text-sm leading-7 text-zinc-700 dark:text-zinc-200">{replacement?.replacement ?? block.content}</p>
+        </section>;
+      })}
+    </div>
   </details>;
 }
 

@@ -42,9 +42,6 @@ export const membershipGuidance = [
 
 export const feeRows = [
   { exam: "OPIc", name: "Oral Proficiency Interview - computer", fee: "84,000원", emphasis: true },
-  { exam: "WPT", name: "Writing Proficiency Test", fee: "78,100원" },
-  { exam: "L&Rcat", name: "Listening and Reading Computer Adaptive Test", fee: "39,600원" },
-  { exam: "OPI", name: "Oral Proficiency Interview", fee: "231,000원" },
 ];
 
 export const applyStepsDetailed = [

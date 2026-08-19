@@ -41,6 +41,48 @@ function HighlightedText({ text, active }: { text: string; active: boolean }) {
   );
 }
 
+const paragraphStyles = [
+  {
+    label: "INTRO",
+    description: "장면 열기",
+    className: "border-indigo-400 bg-indigo-50/70 dark:border-indigo-500 dark:bg-indigo-950/30",
+    badgeClassName: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-200",
+  },
+  {
+    label: "MAIN",
+    description: "구체 활동",
+    className: "border-emerald-400 bg-emerald-50/70 dark:border-emerald-500 dark:bg-emerald-950/30",
+    badgeClassName: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-200",
+  },
+  {
+    label: "FINISH",
+    description: "느낌과 마무리",
+    className: "border-amber-400 bg-amber-50/70 dark:border-amber-500 dark:bg-amber-950/30",
+    badgeClassName: "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-200",
+  },
+] as const;
+
+function StructuredScript({ script, fillersVisible }: { script: ScriptItem; fillersVisible: boolean }) {
+  const paragraphs = script.englishScript.trim().split(/\n\s*\n/).filter(Boolean);
+
+  return (
+    <div className="space-y-3">
+      {paragraphs.map((paragraph, index) => {
+        const style = index === 0 ? paragraphStyles[0] : index === paragraphs.length - 1 ? paragraphStyles[2] : paragraphStyles[1];
+        return (
+          <section className={`rounded-md border-l-4 p-4 ${style.className}`} key={`${style.label}-${index}`}>
+            <div className="mb-2 flex items-center gap-2">
+              <span className={`rounded px-2 py-1 text-[11px] font-bold tracking-[0.12em] ${style.badgeClassName}`}>{style.label}</span>
+              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">{style.description}</span>
+            </div>
+            <p className="text-sm leading-7 text-zinc-700 dark:text-zinc-200"><HighlightedText active={fillersVisible} text={paragraph} /></p>
+          </section>
+        );
+      })}
+    </div>
+  );
+}
+
 export function ScriptDetail({ script, settings, onToast }: ScriptDetailProps) {
   const [memoryMode, setMemoryMode] = useState<MemoryMode>("full");
   const [fillersVisible, setFillersVisible] = useState(false);
@@ -135,7 +177,7 @@ export function ScriptDetail({ script, settings, onToast }: ScriptDetailProps) {
               <label className="flex cursor-pointer items-center gap-2 text-xs text-zinc-600 dark:text-zinc-300"><input checked={fillersVisible} className="accent-indigo-600" onChange={(event) => setFillersVisible(event.target.checked)} type="checkbox" /><Highlighter className="h-3.5 w-3.5" />Filler 강조</label>
             </div>
             <button aria-label="블라인드 스크립트 보기" className="w-full text-left" onClick={() => memoryMode === "blind" && setRevealBlind((value) => !value)} onMouseEnter={() => memoryMode === "blind" && setRevealBlind(true)} onMouseLeave={() => memoryMode === "blind" && setRevealBlind(false)} type="button">
-              <div className={cn("space-y-4 rounded-md border border-zinc-200 bg-zinc-50 p-5 transition-all dark:border-zinc-800 dark:bg-zinc-950", memoryMode === "blind" && !revealBlind && "select-none blur-md")}>{script.englishScript.split("\n\n").map((paragraph) => <p className="text-sm leading-7 text-zinc-700 dark:text-zinc-200" key={paragraph}><HighlightedText active={fillersVisible} text={paragraph} /></p>)}</div>
+              <div className={cn("rounded-md border border-zinc-200 bg-zinc-50 p-3 transition-all dark:border-zinc-800 dark:bg-zinc-950 sm:p-4", memoryMode === "blind" && !revealBlind && "select-none blur-md")}><StructuredScript fillersVisible={fillersVisible} script={script} /></div>
             </button>
             {memoryMode === "blind" ? <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">Hover 또는 클릭하면 잠깐 확인할 수 있습니다.</p> : null}
           </section>

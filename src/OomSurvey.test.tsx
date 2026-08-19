@@ -11,11 +11,17 @@ describe("OOM survey rehearsal", () => {
 
     expect(screen.getByRole("heading", { name: "실제 형식으로 보고, OOM 조합을 그대로 기억합니다." })).toBeInTheDocument();
     expect(screen.getByText("Background Survey")).toBeInTheDocument();
+    expect(screen.getByText("일 경험 없음")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Next" }));
     expect(screen.getByRole("heading", { name: "최근 5년 이내에 수강했습니까?" })).toBeInTheDocument();
     expect(screen.getByText("수강 후 5년 이상 지남")).toBeInTheDocument();
+
+    for (let part = 2; part < 7; part += 1) {
+      await user.click(screen.getByRole("button", { name: "Next" }));
+    }
     expect(screen.getByRole("heading", { name: "귀하는 어떤 휴가나 출장을 다녀온 경험이 있습니까? (1개 이상)" })).toBeInTheDocument();
-    expect(screen.getByText("일 경험 없음")).toBeInTheDocument();
-    expect(screen.getByText("테니스")).toBeInTheDocument();
+    expect(screen.getByText("국내 출장")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "연습 모드" }));
     await user.click(await screen.findByRole("button", { name: /채점하기$/ }));

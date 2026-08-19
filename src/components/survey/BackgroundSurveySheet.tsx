@@ -1,5 +1,5 @@
 import { Check, ClipboardCheck, LockKeyhole, RotateCcw, Sparkles, Trophy } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   backgroundSurveySections,
   recommendedActivityCount,
@@ -151,26 +151,9 @@ export function BackgroundSurveySheet() {
 
   const isExact = result !== null && result.missing.length === 0 && result.extra.length === 0;
 
-  const slidePanelRef = useRef<HTMLDivElement | null>(null);
-  const scrollToPart = (part: number, behavior: ScrollBehavior = "auto") => {
-    const wrapper = slidePanelRef.current;
-    if (!wrapper) return;
-    const slide = wrapper.children[part - 1] as HTMLElement | undefined;
-    if (!slide) return;
-    const position = { left: slide.offsetLeft, behavior };
-    if (typeof wrapper.scrollTo === "function") {
-      wrapper.scrollTo(position);
-      return;
-    }
-    wrapper.scrollLeft = slide.offsetLeft;
-  };
-
-  useEffect(() => {
-    scrollToPart(currentPart, "auto");
-  }, [currentPart]);
-
   const goNext = () => setCurrentPart((part) => Math.min(part + 1, pages.length));
   const goBack = () => setCurrentPart((part) => Math.max(part - 1, 1));
+  const currentPage = pages[currentPart - 1];
 
   return (
     <div className="space-y-6">
@@ -221,35 +204,33 @@ export function BackgroundSurveySheet() {
             <p className="mt-0.5 text-xs text-sky-800 dark:text-sky-200">{mode === "guide" ? "OOM 추천 답안이 체크되어 있습니다." : "연습 모드: 직접 고른 뒤 채점하세요."}</p>
           </div>
           <div className="relative overflow-hidden p-5 sm:p-7">
-            <div ref={slidePanelRef} className="flex w-full gap-6 overflow-x-hidden scroll-smooth pb-3 touch-pan-y snap-x snap-mandatory">
-              {pages.map(({ part, title, sections, gridClass }) => (
-                <div key={part} className="flex-none basis-full snap-start">
-                  <div className="relative min-h-[32rem] lg:min-h-[calc(100vh-18rem)] rounded-3xl border border-zinc-200 bg-zinc-50 p-5 pb-24 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-                    <div className="flex flex-col">
-                      <div>
-                        <div className="flex items-center justify-between gap-4">
-                          <div>
-                            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-indigo-600 dark:text-indigo-300">{title}</p>
-                            <p className="mt-3 text-2xl font-bold text-zinc-950 dark:text-white">{sections.length > 1 ? "연결된 두 문항을 함께 확인하세요." : "한 문항씩 천천히 답하세요."}</p>
-                          </div>
-                          <span className="min-w-[4rem] shrink-0 whitespace-nowrap rounded-full bg-zinc-200 px-3 py-1 text-center text-xs font-semibold uppercase tracking-normal text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 sm:min-w-[4.75rem] sm:tracking-[0.16em]">{part} / 7</span>
+            <div className="w-full pb-3">
+              <div key={currentPage.part}>
+                <div className="relative rounded-3xl border border-zinc-200 bg-zinc-50 p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 md:min-h-[32rem] md:pb-24 lg:min-h-[calc(100vh-18rem)]">
+                  <div className="flex flex-col">
+                    <div>
+                      <div className="flex items-center justify-between gap-4">
+                        <div>
+                          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-indigo-600 dark:text-indigo-300">{currentPage.title}</p>
+                          <p className="mt-3 text-2xl font-bold text-zinc-950 dark:text-white">{currentPage.sections.length > 1 ? "연결된 두 문항을 함께 확인하세요." : "한 문항씩 천천히 답하세요."}</p>
                         </div>
-                      </div>
-
-                      <div className="mt-6 flex-1 space-y-6">
-                        {sections.map((section) => (
-                          <SurveyQuestion key={section.id} mode={mode} onChange={updateSelection} section={section} selected={selected} gridClass={gridClass} />
-                        ))}
+                        <span className="min-w-[4rem] shrink-0 whitespace-nowrap rounded-full bg-zinc-200 px-3 py-1 text-center text-xs font-semibold uppercase tracking-normal text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 sm:min-w-[4.75rem] sm:tracking-[0.16em]">{currentPage.part} / 7</span>
                       </div>
                     </div>
 
-                    <div className="absolute inset-x-5 bottom-5 z-10 flex flex-wrap items-center justify-end gap-2 px-2 pt-4 border-t border-zinc-200 dark:border-zinc-800">
-                        <Button disabled={currentPart === 1} onClick={goBack} size="sm" variant="secondary">Back</Button>
-                        <Button onClick={goNext} size="sm">{currentPart === pages.length ? "완료" : "Next"}</Button>
+                    <div className="mt-6 flex-1 space-y-6">
+                      {currentPage.sections.map((section) => (
+                        <SurveyQuestion key={section.id} mode={mode} onChange={updateSelection} section={section} selected={selected} gridClass={currentPage.gridClass} />
+                      ))}
                     </div>
                   </div>
+
+                  <div className="mt-6 flex flex-wrap items-center justify-end gap-2 border-t border-zinc-200 px-2 pt-4 dark:border-zinc-800 md:absolute md:inset-x-5 md:bottom-5 md:z-10 md:mt-0">
+                    <Button disabled={currentPart === 1} onClick={goBack} size="sm" variant="secondary">Back</Button>
+                    <Button onClick={goNext} size="sm">{currentPart === pages.length ? "완료" : "Next"}</Button>
+                  </div>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </Card>

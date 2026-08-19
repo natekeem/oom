@@ -16,7 +16,6 @@ import { DifficultyGuide } from "./components/difficulty/DifficultyGuide";
 import { ScriptHub } from "./components/script/ScriptHub";
 import { ScriptDashboardV2 } from "./components/script/ScriptDashboardV2";
 import { RoleplayHub } from "./components/roleplay/RoleplayHub";
-import { RoleplayFormulaView } from "./components/roleplay/RoleplayFormulaView";
 import { RoleplayViewV2 } from "./components/roleplay/RoleplayViewV2";
 import { PracticeView } from "./components/practice/PracticeView";
 import { AiSettingsView } from "./components/ai/AiSettingsView";
@@ -55,14 +54,21 @@ const roleplaySlotViewIds: ViewId[] = [
 ];
 
 const nextViewById: Partial<Record<ViewId, { view: ViewId; label: string }>> = {
-  home: { view: "training-hub", label: "실전 훈련" },
-  survey: { view: "difficulty", label: "STEP 2" },
-  difficulty: { view: "script-outdoor", label: "STEP 3" },
-  "script-outdoor": { view: "roleplay-hub", label: "STEP 4" },
-  "script-indoor": { view: "roleplay-hub", label: "STEP 4" },
-  "script-sports": { view: "roleplay-hub", label: "STEP 4" },
-  "script-home": { view: "roleplay-hub", label: "STEP 4" },
-  roleplay: { view: "practice", label: "STEP 5" },
+  home: { view: "training-hub", label: "STEP 1" },
+  "training-hub": { view: "survey", label: "STEP 2" },
+  survey: { view: "difficulty", label: "STEP 3" },
+  difficulty: { view: "script-outdoor", label: "STEP 4" },
+  "script-outdoor": { view: "roleplay-hub", label: "STEP 5" },
+  "script-indoor": { view: "roleplay-hub", label: "STEP 5" },
+  "script-sports": { view: "roleplay-hub", label: "STEP 5" },
+  "script-home": { view: "roleplay-hub", label: "STEP 5" },
+  roleplay: { view: "practice", label: "STEP 6" },
+  "roleplay-hub": { view: "practice", label: "STEP 6" },
+  "roleplay-formula": { view: "practice", label: "STEP 6" },
+  "roleplay-travel": { view: "practice", label: "STEP 6" },
+  "roleplay-indoor": { view: "practice", label: "STEP 6" },
+  "roleplay-sports": { view: "practice", label: "STEP 6" },
+  "roleplay-home": { view: "practice", label: "STEP 6" },
   practice: { view: "ai-settings", label: "AI 설정" },
 };
 
@@ -179,14 +185,15 @@ export default function App() {
       />
 
       <Route path="/training" element={<TrainingHub onNavigate={onNavigate} />} />
-      <Route path="/training/survey" element={<BackgroundSurveySheet />} />
-      <Route path="/training/difficulty" element={<DifficultyGuide />} />
+      <Route path="/training/survey" element={<BackgroundSurveySheet onNavigate={onNavigate} />} />
+      <Route path="/training/difficulty" element={<DifficultyGuide onNavigate={onNavigate} />} />
       <Route path="/training/scripts" element={<ScriptHub onNavigate={onNavigate} />} />
       <Route
         path="/training/scripts/outdoor"
         element={
           <ScriptDashboardV2
             key="script-slot-0"
+            onNavigate={onNavigate}
             onSlotChange={(slot) => onNavigate(scriptSlotViewIds[slot] ?? "script-outdoor")}
             onToast={showToast}
             settings={settings}
@@ -199,6 +206,7 @@ export default function App() {
         element={
           <ScriptDashboardV2
             key="script-slot-1"
+            onNavigate={onNavigate}
             onSlotChange={(slot) => onNavigate(scriptSlotViewIds[slot] ?? "script-indoor")}
             onToast={showToast}
             settings={settings}
@@ -211,6 +219,7 @@ export default function App() {
         element={
           <ScriptDashboardV2
             key="script-slot-2"
+            onNavigate={onNavigate}
             onSlotChange={(slot) => onNavigate(scriptSlotViewIds[slot] ?? "script-sports")}
             onToast={showToast}
             settings={settings}
@@ -223,6 +232,7 @@ export default function App() {
         element={
           <ScriptDashboardV2
             key="script-slot-3"
+            onNavigate={onNavigate}
             onSlotChange={(slot) => onNavigate(scriptSlotViewIds[slot] ?? "script-home")}
             onToast={showToast}
             settings={settings}
@@ -232,12 +242,13 @@ export default function App() {
       />
 
       <Route path="/roleplay" element={<RoleplayHub onNavigate={onNavigate} />} />
-      <Route path="/roleplay/formula" element={<RoleplayFormulaView onNavigate={onNavigate} />} />
+      <Route path="/roleplay/formula" element={<RoleplayHub onNavigate={onNavigate} />} />
       <Route
         path="/roleplay/travel"
         element={
           <RoleplayViewV2
             key="rp-slot-0"
+            onNavigate={onNavigate}
             onSlotChange={(slot) => onNavigate(roleplaySlotViewIds[slot] ?? "roleplay-travel")}
             onToast={showToast}
             settings={settings}
@@ -250,6 +261,7 @@ export default function App() {
         element={
           <RoleplayViewV2
             key="rp-slot-1"
+            onNavigate={onNavigate}
             onSlotChange={(slot) => onNavigate(roleplaySlotViewIds[slot] ?? "roleplay-indoor")}
             onToast={showToast}
             settings={settings}
@@ -262,6 +274,7 @@ export default function App() {
         element={
           <RoleplayViewV2
             key="rp-slot-2"
+            onNavigate={onNavigate}
             onSlotChange={(slot) => onNavigate(roleplaySlotViewIds[slot] ?? "roleplay-sports")}
             onToast={showToast}
             settings={settings}
@@ -274,6 +287,7 @@ export default function App() {
         element={
           <RoleplayViewV2
             key="rp-slot-3"
+            onNavigate={onNavigate}
             onSlotChange={(slot) => onNavigate(roleplaySlotViewIds[slot] ?? "roleplay-home")}
             onToast={showToast}
             settings={settings}
@@ -282,7 +296,10 @@ export default function App() {
         }
       />
 
-      <Route path="/practice" element={<PracticeView onToast={showToast} settings={settings} />} />
+      <Route
+        path="/practice"
+        element={<PracticeView onNavigate={onNavigate} onToast={showToast} settings={settings} />}
+      />
       <Route
         path="/ai-settings"
         element={<AiSettingsView onChange={setSettings} onSave={saveSettings} settings={settings} />}

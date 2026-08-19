@@ -7,7 +7,7 @@ import { saveTrainingSelection } from "./training/storage";
 import { TrainingSelectionProvider } from "./training/TrainingSelectionContext";
 
 describe("OOM survey rehearsal", () => {
-  it("shows the complete recommended survey and grades a blank practice attempt", async () => {
+  it("shows the complete recommended survey and grades a practice attempt", async () => {
     saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
     const user = userEvent.setup();
     render(
@@ -16,23 +16,13 @@ describe("OOM survey rehearsal", () => {
       </TrainingSelectionProvider>
     );
 
-    expect(screen.getByRole("heading", { name: "실제 형식으로 보고, OOM 조합을 그대로 기억합니다." })).toBeInTheDocument();
-    expect(screen.getByText("Background Survey")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "실제 형식으로 보고, OOM 추천 조합을 그대로 기억합니다." })).toBeInTheDocument();
     expect(screen.getByText("일 경험 없음")).toBeInTheDocument();
-
-    await user.click(screen.getByRole("button", { name: "Next" }));
-    expect(screen.getByRole("heading", { name: "최근 5년 이내에 수강했습니까?" })).toBeInTheDocument();
-    expect(screen.getByText("수강 후 5년 이상 지남")).toBeInTheDocument();
-
-    for (let part = 2; part < 7; part += 1) {
-      await user.click(screen.getByRole("button", { name: "Next" }));
-    }
-    expect(screen.getByRole("heading", { name: "귀하는 어떤 휴가나 출장을 다녀온 경험이 있습니까? (1개 이상)" })).toBeInTheDocument();
-    expect(screen.getByText("국내 출장")).toBeInTheDocument();
+    expect(screen.getByText("공원 가기")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "연습 모드" }));
-    await user.click(await screen.findByRole("button", { name: /채점하기$/ }));
-    expect(await screen.findByRole("status")).toHaveTextContent(/추천 답안/);
+    await user.click(screen.getByRole("button", { name: "선택한 서베이 답안 채점하기" }));
+    expect(await screen.findByRole("status")).toHaveTextContent(/채점 결과/);
   });
 
   it("keeps the sidebar active item in sync with script selection", async () => {

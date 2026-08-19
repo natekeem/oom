@@ -1,4 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
+import App from './App';
 import { TRAINING_LEVELS } from './training/levels';
 import {
   discoveredCourses,
@@ -10,17 +14,18 @@ import {
   loadTrainingSelection,
   saveTrainingSelection,
   clearTrainingSelection,
+  TRAINING_SELECTION_STORAGE_KEY,
 } from './training/storage';
 import { scripts } from './data/scripts';
 import { getViewTitle } from './components/layout/Sidebar';
 
-describe('Training Course Architecture & Regression Suite', () => {
+describe('Training Course Architecture & Regression Suite (6 STEP Flow)', () => {
   beforeEach(() => {
     localStorage.clear();
   });
 
   /* 1. Level system integrity */
-  it('has exactly 3 levels with correct presets', () => {
+  it('1. has exactly 3 levels with correct presets', () => {
     expect(TRAINING_LEVELS).toHaveLength(3);
     expect(TRAINING_LEVELS.map((l) => l.id)).toEqual(['advanced', 'intermediate', 'foundation']);
 
@@ -33,7 +38,7 @@ describe('Training Course Architecture & Regression Suite', () => {
   });
 
   /* 2. Course discovery and standardized naming */
-  it('discovers all courses with standardized titles', () => {
+  it('2. discovers all courses with standardized titles', () => {
     expect(discoveredCourses.length).toBeGreaterThanOrEqual(3);
     expect(discoveredCourses[0].id).toBe('course-1');
     expect(discoveredCourses[0].title).toBe('Everyday & Getaway');
@@ -43,8 +48,8 @@ describe('Training Course Architecture & Regression Suite', () => {
     expect(discoveredCourses[2].title).toBe('Nature & Weekend');
   });
 
-  /* 3. STEP 3 variation data exists for all 3 courses */
-  it('1. Course 1/2/3 has STEP 3 variation data for all canonical storylines', () => {
+  /* 3. STEP 4 variation data exists for all 3 courses */
+  it('3. Course 1/2/3 has STEP 4 variation data for all canonical storylines', () => {
     const courses = ['course-1', 'course-2', 'course-3'] as const;
     for (const courseId of courses) {
       const ctx = resolveTrainingContext(courseId, 'advanced');
@@ -62,8 +67,8 @@ describe('Training Course Architecture & Regression Suite', () => {
     }
   });
 
-  /* 4. STEP 3 blueprint data exists for all 3 courses */
-  it('2. Course 1/2/3 has blueprint data for all canonical storylines', () => {
+  /* 4. STEP 4 blueprint data exists for all 3 courses */
+  it('4. Course 1/2/3 has blueprint data for all canonical storylines', () => {
     const courses = ['course-1', 'course-2', 'course-3'] as const;
     for (const courseId of courses) {
       const ctx = resolveTrainingContext(courseId, 'intermediate');
@@ -81,7 +86,7 @@ describe('Training Course Architecture & Regression Suite', () => {
   });
 
   /* 5. Course 2/3 does not use Course 1 fallback data */
-  it('3. Course 2/3 does not use Course 1 fallback data in storylines, roleplays, or variants', () => {
+  it('5. Course 2/3 does not use Course 1 fallback data in storylines, roleplays, or variants', () => {
     const ctx1 = resolveTrainingContext('course-1', 'advanced');
     const ctx2 = resolveTrainingContext('course-2', 'advanced');
     const ctx3 = resolveTrainingContext('course-3', 'advanced');
@@ -124,7 +129,7 @@ describe('Training Course Architecture & Regression Suite', () => {
   });
 
   /* 6. Generic slot routing changes storyline when course changes */
-  it('4. Slot 0 resolves to corresponding course storyline upon course change', () => {
+  it('6. Slot 0 resolves to corresponding course storyline upon course change', () => {
     const ctx1 = resolveTrainingContext('course-1', 'advanced');
     const ctx2 = resolveTrainingContext('course-2', 'advanced');
     const ctx3 = resolveTrainingContext('course-3', 'advanced');
@@ -139,22 +144,22 @@ describe('Training Course Architecture & Regression Suite', () => {
   });
 
   /* 7. Dynamic sidebar and header titles by Course */
-  it('5. Dynamic sidebar and header group titles reflect active course', () => {
+  it('7. Dynamic sidebar and header group titles reflect active course (STEP 4 & STEP 5)', () => {
     const ctx1 = resolveTrainingContext('course-1', 'advanced');
     const ctx2 = resolveTrainingContext('course-2', 'advanced');
     const ctx3 = resolveTrainingContext('course-3', 'advanced');
 
-    expect(getViewTitle('script-outdoor', ctx1)).toBe('STEP 3. 야외 / 여행');
-    expect(getViewTitle('script-outdoor', ctx2)).toBe('STEP 3. 문화 / 음악');
-    expect(getViewTitle('script-outdoor', ctx3)).toBe('STEP 3. 공원 / 걷기 / 하이킹');
+    expect(getViewTitle('script-outdoor', ctx1)).toBe('STEP 4. 야외 / 여행');
+    expect(getViewTitle('script-outdoor', ctx2)).toBe('STEP 4. 문화 / 음악');
+    expect(getViewTitle('script-outdoor', ctx3)).toBe('STEP 4. 공원 / 걷기 / 하이킹');
 
-    expect(getViewTitle('roleplay-travel', ctx1)).toBe('STEP 4. 야외 / 여행');
-    expect(getViewTitle('roleplay-travel', ctx2)).toBe('STEP 4. 문화 / 음악');
-    expect(getViewTitle('roleplay-travel', ctx3)).toBe('STEP 4. 캠핑 / 해변 / 드라이브');
+    expect(getViewTitle('roleplay-travel', ctx1)).toBe('STEP 5. 야외 / 여행');
+    expect(getViewTitle('roleplay-travel', ctx2)).toBe('STEP 5. 문화 / 음악');
+    expect(getViewTitle('roleplay-travel', ctx3)).toBe('STEP 5. 캠핑 / 해변 / 드라이브');
   });
 
-  /* 8. STEP 4 scenario IDs differ across courses */
-  it('6. Course 1/2/3 STEP 4 scenario IDs are properly distinct', () => {
+  /* 8. STEP 5 scenario IDs differ across courses */
+  it('8. Course 1/2/3 STEP 5 scenario IDs are properly distinct', () => {
     const ctx1 = resolveTrainingContext('course-1', 'intermediate');
     const ctx2 = resolveTrainingContext('course-2', 'intermediate');
     const ctx3 = resolveTrainingContext('course-3', 'intermediate');
@@ -165,7 +170,7 @@ describe('Training Course Architecture & Regression Suite', () => {
   });
 
   /* 9. Roleplay level variants change examples while preserving scenario */
-  it('7. Changing level on same roleplay scenario updates englishExample and focus', () => {
+  it('9. Changing level on same roleplay scenario updates englishExample and focus', () => {
     const ctxAdv = resolveTrainingContext('course-1', 'advanced');
     const ctxFou = resolveTrainingContext('course-1', 'foundation');
 
@@ -181,7 +186,7 @@ describe('Training Course Architecture & Regression Suite', () => {
   });
 
   /* 10. Question type internal IDs normalized across all courses */
-  it('8. STEP 5 question type internal IDs follow uniform schema across all courses', () => {
+  it('10. STEP 6 question type internal IDs follow uniform schema across all courses', () => {
     const allowedTypes = new Set([
       'description',
       'routine',
@@ -217,7 +222,7 @@ describe('Training Course Architecture & Regression Suite', () => {
   });
 
   /* 11. Practice question pool isolation */
-  it('9. Question pool is strictly isolated by Course and Level', () => {
+  it('11. Question pool is strictly isolated by Course and Level', () => {
     const ctx1A = resolveTrainingContext('course-1', 'advanced');
     const ctx2A = resolveTrainingContext('course-2', 'advanced');
     const ctx1F = resolveTrainingContext('course-1', 'foundation');
@@ -233,7 +238,7 @@ describe('Training Course Architecture & Regression Suite', () => {
   });
 
   /* 12. Course 1 advanced script text preservation */
-  it('10. Course 1 advanced script matches original text 100%', () => {
+  it('12. Course 1 advanced script matches original text 100%', () => {
     const ctx = resolveTrainingContext('course-1', 'advanced');
     for (let i = 0; i < scripts.length; i++) {
       const orig = scripts[i];
@@ -244,7 +249,7 @@ describe('Training Course Architecture & Regression Suite', () => {
   });
 
   /* 13. Persistence and storage fallback */
-  it('11. Persists and clears training selection in localStorage', () => {
+  it('13. Persists and clears training selection in localStorage', () => {
     expect(loadTrainingSelection()).toBeNull();
     const saved = saveTrainingSelection({ courseId: 'course-2', levelId: 'intermediate' });
     expect(saved.courseId).toBe('course-2');
@@ -258,9 +263,176 @@ describe('Training Course Architecture & Regression Suite', () => {
   });
 
   /* 14. Extensibility: future course ID template literal */
-  it('12. Course registry auto-discovery and template literal CourseId support future course', () => {
+  it('14. Course registry auto-discovery and template literal CourseId support future course', () => {
     const testId: import('./training/types').TrainingCourseId = 'course-99';
     expect(testId).toBe('course-99');
     expect(discoveredCourses.length).toBeGreaterThanOrEqual(3);
+  });
+
+  /* 15. STEP 1 setup view renders selection cards when unselected */
+  it('15. STEP 1 TrainingHub renders target level and course setup when no selection exists', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/training']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(screen.getAllByText('STEP 1. 목표 구간 · 코스 설정').length).toBeGreaterThan(0);
+    expect(screen.getByText('1. 목표 구간 선택')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /이 구성으로 학습 시작/ })).toBeDisabled();
+
+    // Select Level: 1구간
+    await user.click(screen.getByRole('button', { name: /1구간/ }));
+    expect(screen.getByText('2. 학습 코스 선택')).toBeInTheDocument();
+
+    // Select Course: Culture & City
+    await user.click(screen.getByRole('button', { name: /Culture & City/ }));
+    const startBtn = screen.getByRole('button', { name: /이 구성으로 학습 시작/ });
+    expect(startBtn).toBeEnabled();
+    await user.click(startBtn);
+
+    // After selection, active configuration card appears
+    expect(await screen.findByText('현재 학습 설정')).toBeInTheDocument();
+    expect(screen.getByText(/1구간 · AL/)).toBeInTheDocument();
+    expect(screen.getByText('Culture & City')).toBeInTheDocument();
+  });
+
+  /* 16. STEP 1 preserves selection and allows inline change */
+  it('16. STEP 1 shows current selection summary and allows reconfiguration', async () => {
+    saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/training']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('현재 학습 설정')).toBeInTheDocument();
+    expect(screen.getByText('Everyday & Getaway')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'STEP 2 서베이 고정으로 계속' })).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: '목표/코스 변경' }));
+    expect(screen.getByText('1. 목표 구간 선택')).toBeInTheDocument();
+  });
+
+  /* 17. Training Selection Guard blocks unselected STEP 2 (survey) */
+  it('17. TrainingSelectionGuard prevents implicit fallback on STEP 2 (/training/survey)', () => {
+    render(
+      <MemoryRouter initialEntries={['/training/survey']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'STEP 1 목표/코스 설정하러 가기' })).toBeInTheDocument();
+  });
+
+  /* 18. Training Selection Guard blocks unselected STEP 3 (difficulty) */
+  it('18. TrainingSelectionGuard prevents implicit fallback on STEP 3 (/training/difficulty)', () => {
+    render(
+      <MemoryRouter initialEntries={['/training/difficulty']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
+  });
+
+  /* 19. Training Selection Guard blocks unselected STEP 4 (scripts) */
+  it('19. TrainingSelectionGuard prevents implicit fallback on STEP 4 (/training/scripts)', () => {
+    render(
+      <MemoryRouter initialEntries={['/training/scripts']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
+  });
+
+  /* 20. Training Selection Guard blocks unselected STEP 5 (roleplay) */
+  it('20. TrainingSelectionGuard prevents implicit fallback on STEP 5 (/roleplay)', () => {
+    render(
+      <MemoryRouter initialEntries={['/roleplay']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
+  });
+
+  /* 21. Training Selection Guard blocks unselected STEP 6 (practice) */
+  it('21. TrainingSelectionGuard prevents implicit fallback on STEP 6 (/practice)', () => {
+    render(
+      <MemoryRouter initialEntries={['/practice']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
+  });
+
+  /* 22. STEP 5 RoleplayHub integrates formula and course scenarios */
+  it('22. STEP 5 RoleplayHub merges 6-step formula, question flow, phrases, and scenarios', () => {
+    saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
+    render(
+      <MemoryRouter initialEntries={['/roleplay']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(screen.getAllByText('STEP 5. 롤플레이 공식').length).toBeGreaterThan(0);
+    expect(screen.getByText('1. 롤플레이란? & 대표 출제 흐름')).toBeInTheDocument();
+    expect(screen.getByText('2. 6단계 만능 해결 공식')).toBeInTheDocument();
+    expect(screen.getByText('3. 자주 쓰는 롤플레이 만능 표현')).toBeInTheDocument();
+    expect(screen.getByText(/4. Everyday & Getaway 코스 실전 시나리오/)).toBeInTheDocument();
+  });
+
+  /* 23. RoleplayViewV2 has compact formula reminder and back-link */
+  it('23. RoleplayViewV2 renders compact formula reminder and back-link', () => {
+    saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
+    render(
+      <MemoryRouter initialEntries={['/roleplay/travel']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(screen.getAllByText('STEP 5. 롤플레이 공식').length).toBeGreaterThan(0);
+    expect(screen.getByText('6단계 문제 해결 공식 요약')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '롤플레이 공식 전체보기' })).toBeInTheDocument();
+  });
+
+  /* 24. Progress mapping across 6 steps */
+  it('24. Progress mapping correctly calculates 0%, 20%, 40%, 60%, 80%, 100%', async () => {
+    saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/training']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('훈련 진행 0%')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'STEP 2 서베이 고정으로 계속' }));
+    expect(await screen.findByText('훈련 진행 20%')).toBeInTheDocument();
+  });
+
+  /* 25. Next-step button labels follow 6 STEPs */
+  it('25. Next-step navigation buttons sequentially guide STEP 1 through STEP 6', () => {
+    saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
+    render(
+      <MemoryRouter initialEntries={['/training/difficulty']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(screen.getAllByRole('button', { name: '다음 단계: STEP 4' })).toHaveLength(2);
+  });
+
+  /* 26. Invalid localStorage JSON recovery */
+  it('26. Recovers safely from corrupted localStorage JSON', () => {
+    localStorage.setItem(TRAINING_SELECTION_STORAGE_KEY, 'invalid-json-string');
+    expect(loadTrainingSelection()).toBeNull();
   });
 });

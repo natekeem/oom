@@ -5,12 +5,12 @@ import { Badge } from "../ui/Badge";
 import { ButtonLink } from "../ui/Button";
 
 const flows = [
-  "서베이 고정",
-  "난이도 설정",
-  "스크립트 구조 익히기",
-  "암기 모드로 연습",
-  "녹음 후 피드백",
-  "롤플레이 패턴 반복",
+  "STEP 1 목표 구간 · 코스 설정",
+  "STEP 2 서베이 고정",
+  "STEP 3 난이도 설정",
+  "STEP 4 만능 스크립트",
+  "STEP 5 롤플레이 공식",
+  "STEP 6 실전 연습",
 ];
 
 const levels = [
@@ -30,7 +30,7 @@ export function HomeView() {
           </span>
           <h1 className="mt-4 max-w-3xl text-balance text-3xl font-bold leading-tight sm:text-4xl">오픽온미와 함께 오픽은 나에게 맡기고, 반복 가능한 구조로 말합니다.</h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-300 sm:text-base">OOM은 답을 통째로 암기하는 도구가 아닙니다. 익숙한 장면을 여러 질문에 맞게 자연스럽게 변형해 말하는 훈련 대시보드입니다.</p>
-          <div className="mt-6 flex flex-wrap gap-3"><ButtonLink to="/training/survey/"><Route className="h-4 w-4" />서베이 고정 시작</ButtonLink><ButtonLink to="/training/scripts/outdoor/" variant="secondary"><Mic2 className="h-4 w-4" />스크립트 보기</ButtonLink></div>
+          <div className="mt-6 flex flex-wrap gap-3"><ButtonLink to="/training/"><Route className="h-4 w-4" />STEP 1 실전 훈련 시작</ButtonLink><ButtonLink to="/training/scripts/outdoor/" variant="secondary"><Mic2 className="h-4 w-4" />스크립트 보기</ButtonLink></div>
         </Card>
         <Card className="p-6">
           <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400"><Gauge className="h-5 w-5" /><p className="text-sm font-semibold">추천 시작점</p></div>

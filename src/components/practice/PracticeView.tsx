@@ -1,9 +1,5 @@
 import { Bot, Dices, MessageSquareText, Play } from "lucide-react";
 import { useState } from "react";
-import { practiceQuestions } from "../../data/questions";
-import { scripts } from "../../data/scripts";
-import { useTrainingSelection } from "../../training/TrainingSelectionContext";
-import { resolveTrainingContext } from "../../training/courseRegistry";
 import { callInternalLlm } from "../../lib/llm";
 import type { LlmSettings } from "../../types";
 import { Badge } from "../ui/Badge";
@@ -11,10 +7,14 @@ import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
 import { Recorder } from "./Recorder";
 import { PracticeTimer } from "./PracticeTimer";
+import { TrainingSelectionGuard } from "../training/TrainingSelectionGuard";
+import type { ViewId } from "../layout/Sidebar";
+import type { ResolvedTrainingContext } from "../../training/types";
 
 type PracticeViewProps = {
   settings: LlmSettings;
   onToast: (title: string, description?: string, tone?: "success" | "error" | "info") => void;
+  onNavigate?: (view: ViewId) => void;
 };
 
 type PracticeItem = {
@@ -30,6 +30,12 @@ const questionTypeLabels: Record<string, string> = {
   description: "장소·대상 묘사",
   routine: "일상 루틴 / 활동",
   "recent-experience": "최근 경험",
+  "description-reason": "묘사 및 선호 이유",
+  "routine-detail": "세부 루틴 / 활동",
+  "experience-change": "경험과 변화",
+  "expanded-experience": "기억에 남는 경험",
+  "comparison-change": "과거·현재 비교 및 변화",
+  "problem-opinion": "문제 해결 및 의견",
   comparison: "과거·현재 비교",
   change: "변화와 선호",
   "unexpected-situation": "예상 밖 상황",
@@ -39,26 +45,22 @@ const questionTypeLabels: Record<string, string> = {
   shopping: "구매 / 쇼핑",
 };
 
-export function PracticeView({ settings, onToast }: PracticeViewProps) {
-  const { selection } = useTrainingSelection();
-  const resolved = selection ? resolveTrainingContext(selection.courseId, selection.levelId) : null;
-
-  const availableQuestions: PracticeItem[] =
-    resolved && resolved.questions.length > 0
-      ? resolved.questions.map((q) => ({
-          id: q.id,
-          group: q.group,
-          type: q.type,
-          prompt: q.prompt,
-          storylineId: q.storylineId,
-        }))
-      : practiceQuestions.map((q) => ({
-          id: q.id,
-          group: q.group,
-          type: q.type,
-          prompt: q.prompt,
-          scriptId: q.scriptId,
-        }));
+function PracticeViewContent({
+  resolved,
+  settings,
+  onToast,
+}: {
+  resolved: ResolvedTrainingContext;
+  settings: LlmSettings;
+  onToast: (title: string, description?: string, tone?: "success" | "error" | "info") => void;
+}) {
+  const availableQuestions: PracticeItem[] = resolved.questions.map((q) => ({
+    id: q.id,
+    group: q.group,
+    type: q.type,
+    prompt: q.prompt,
+    storylineId: q.storylineId,
+  }));
 
   const [question, setQuestion] = useState<PracticeItem | null>(null);
   const [timerSignal, setTimerSignal] = useState(0);
@@ -94,13 +96,9 @@ export function PracticeView({ settings, onToast }: PracticeViewProps) {
     }
     setIsLoading(true);
     try {
-      const levelLabel = resolved
-        ? `${resolved.level.displayName} (${resolved.level.targetLabel})`
-        : "AL, IH, IM3";
-      const criteria = resolved
-        ? resolved.level.learningFocus.join(", ")
-        : "발화량, 시제, 구체성";
-      const courseInfo = resolved ? `Course: ${resolved.course.title}` : "";
+      const levelLabel = `${resolved.level.displayName} (${resolved.level.targetLabel})`;
+      const criteria = resolved.level.learningFocus.join(", ");
+      const courseInfo = `Course: ${resolved.course.title}`;
 
       const result = await callInternalLlm(settings, [
         {
@@ -128,25 +126,18 @@ export function PracticeView({ settings, onToast }: PracticeViewProps) {
     }
   };
 
-  const recommended = question?.scriptId
-    ? scripts.find((script) => script.id === question.scriptId)
-    : null;
   const courseRecommended =
-    resolved && question?.storylineId
+    question?.storylineId
       ? resolved.storylines.find((story) => story.id === question.storylineId)
       : null;
-  const recommendedTitle = courseRecommended
-    ? courseRecommended.title
-    : recommended
-    ? recommended.title
-    : null;
+  const recommendedTitle = courseRecommended ? courseRecommended.title : null;
 
   return (
     <div className="space-y-6">
       <div>
         <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
           <MessageSquareText className="h-5 w-5" />
-          <span className="text-sm font-semibold">STEP 5. 실전 연습</span>
+          <span className="text-sm font-semibold">STEP 6. 실전 연습</span>
         </div>
         <h1 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
           질문을 받고, 말하고, 다시 듣습니다.
@@ -160,12 +151,10 @@ export function PracticeView({ settings, onToast }: PracticeViewProps) {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-sm font-bold text-zinc-900 dark:text-white">
-                {resolved ? `${resolved.course.title} 랜덤 질문` : "랜덤 질문 연습"}
+                {resolved.course.title} 랜덤 질문
               </p>
               <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                {resolved
-                  ? `현재 코스와 ${resolved.level.displayName} 레벨에 맞는 질문 풀입니다.`
-                  : "선택한 서베이 그룹을 넘나드는 질문 풀입니다."}
+                현재 코스와 {resolved.level.displayName} ({resolved.level.targetLabel}) 레벨에 맞는 질문 풀입니다.
               </p>
             </div>
             <Button onClick={drawQuestion} variant="secondary">
@@ -234,5 +223,23 @@ export function PracticeView({ settings, onToast }: PracticeViewProps) {
         </Card>
       </section>
     </div>
+  );
+}
+
+export function PracticeView({
+  settings,
+  onToast,
+  onNavigate,
+}: PracticeViewProps) {
+  return (
+    <TrainingSelectionGuard onNavigate={onNavigate} stepName="STEP 6. 실전 연습">
+      {(resolved) => (
+        <PracticeViewContent
+          onToast={onToast}
+          resolved={resolved}
+          settings={settings}
+        />
+      )}
+    </TrainingSelectionGuard>
   );
 }

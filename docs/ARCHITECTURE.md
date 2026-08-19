@@ -42,13 +42,14 @@ Home
 │  ├─ exam day
 │  └─ results and certificates
 ├─ OPIc training hub
-│  ├─ STEP 1 survey
-│  ├─ STEP 2 difficulty
-│  ├─ STEP 3 script hub
+│  ├─ STEP 1 target level & course setup
+│  ├─ STEP 2 survey
+│  ├─ STEP 3 difficulty
+│  ├─ STEP 4 script hub
 │  │  └─ four generic script slot views
-│  ├─ STEP 4 role-play hub
-│  │  └─ formula and four scenario slot views
-│  └─ STEP 5 practice
+│  ├─ STEP 5 role-play hub
+│  │  └─ four scenario slot views
+│  └─ STEP 6 practice
 ├─ OOM magazine
 ├─ legal pages
 └─ AI feedback and settings
@@ -63,12 +64,12 @@ Parent hubs explain the purpose of their child pages. Parent routes should not s
 | Home | `HomeView` | Product overview and entry points |
 | OOM magazine | `MagazineList`, `MagazineDetail` | Static learning articles with local editorial images, author/reviewer identity, honest publish/modified dates, official sources, structured data, examples, and practice takeaways |
 | Candidate guide | `ExamGuideHub`, `ExamGuideOverview`, `ExamGuideDashboard`, `ExamGuideDay`, `ExamGuideFaq`, `ExamGuideTabs` | Informational content, Q&A, and official-source links for time-sensitive rules |
-| Training overview | `TrainingHub` | Gated on training selection; renders `TrainingSetupView` if unselected, or STEP 1-5 hub cards |
-| Survey | `BackgroundSurveySheet` | Full survey-like list, course-specific recommendation view, rehearsal mode and scoring |
-| Difficulty | `DifficultyGuide` | Level-specific difficulty presets (5-5, 4-4, 3-3) and goal guidance |
-| Script training | `ScriptHub`, `ScriptDashboardV2`, `ScriptTrainingTabs`, `ScriptTrainingGuide`, `MemoryModeToggle`, `TtsControls` | Canonical storyline per group, question variations, and answer blueprint |
-| Role-play | `RoleplayHub`, `RoleplayFormulaView`, `RoleplayViewV2` | Formula page links to scenario groups; level-specific examples rendered dynamically |
-| Practice | `PracticeView`, `PracticeTimer`, `Recorder` | Random question filtered by Course × Level, timer, in-memory audio, text response, feedback request |
+| Training overview | `TrainingHub`, `TrainingSetupView` | STEP 1: Target level and course selection + 6 STEP overview roadmap |
+| Survey | `BackgroundSurveySheet` | STEP 2: Full survey-like list, course-specific recommendation view, rehearsal mode and scoring |
+| Difficulty | `DifficultyGuide` | STEP 3: Level-specific difficulty presets (5-5, 4-4, 3-3) and goal guidance |
+| Script training | `ScriptHub`, `ScriptDashboardV2`, `ScriptTrainingTabs`, `ScriptTrainingGuide`, `MemoryModeToggle`, `TtsControls` | STEP 4: Canonical storyline per group, question variations, and answer blueprint |
+| Role-play | `RoleplayHub`, `RoleplayViewV2` | STEP 5: Integrated formula, flow, phrases, and course-specific scenarios |
+| Practice | `PracticeView`, `PracticeTimer`, `Recorder` | STEP 6: Random question filtered by Course × Level, timer, in-memory audio, text response, feedback request |
 | AI settings | `AiSettingsView`, `AiSettingsPanel` | Runtime-only LLM endpoint and request-shape configuration |
 | Legal pages | `LegalPageView` | About, privacy, contact, terms, editorial policy, and image credit content for public trust and static SEO |
 

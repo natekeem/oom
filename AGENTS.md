@@ -18,7 +18,7 @@ Before changing code, read these in order:
 - Never hardcode an API key. Internal LLM settings live only in browser `localStorage` through the runtime settings UI.
 - Keep the UI Korean-first, with zinc/slate foundations and restrained indigo, emerald, and amber accents.
 - `BackgroundSurveySheet` must render the full survey-like list. Recommended answers and rehearsal scoring data are owned only by `src/data/fixedSurvey.ts`.
-- `OPIc 실전 훈련하기` owns STEP 1 through STEP 5 in the sidebar. STEP 3 and STEP 4 have a further nested group level; preserve this hierarchy.
+- `OPIc 실전 훈련하기` owns STEP 1 through STEP 6 in the sidebar. STEP 4 and STEP 5 have a further nested group level; preserve this hierarchy.
 - The sticky title/progress header is a training-only affordance. It is visible for `training-hub` and its STEP descendants, but not for Home, the candidate guide, or AI settings.
 - Course owns survey/story context. Level owns difficulty/answer density. One canonical storyline per group per course. Same core scene across three levels. Story A/B choice UI is removed. Question-type variation training remains required.
 - Keep accessible names, keyboard focus states, loading/error states, and mobile navigation intact.
@@ -31,9 +31,9 @@ Before changing code, read these in order:
 - Shell: `src/components/layout/AppShell.tsx` and `ExpandableSidebar.tsx`
 - Training selection: `src/training/` (types, levels, storage, courseRegistry, TrainingSelectionContext)
 - Course data: `src/data/training/courses/course-N/` (manifest, survey, storylines, roleplays, questions, variants, replacementGuides)
-- Training hub: `src/components/training/TrainingHub.tsx`
-- Script flow: `ScriptHub` -> canonical storyline per course in `ScriptDashboardV2` -> `ScriptTrainingTabs`
-- Role-play flow: `RoleplayHub` -> `RoleplayFormulaView` or group-specific `RoleplayViewV2`
+- Training hub: `src/components/training/TrainingHub.tsx` (STEP 1: Target Level & Course selection)
+- Script flow: `ScriptHub` -> canonical storyline per course in `ScriptDashboardV2` -> `ScriptTrainingTabs` (STEP 4)
+- Role-play flow: `RoleplayHub` (integrated 6-step formula, flow, phrases, scenarios) -> `RoleplayViewV2` (STEP 5)
 - Candidate guide: `ExamGuideHub` plus overview, application, day-of-exam, and results views
 - Browser APIs: `src/lib/speech.ts`, `src/lib/recorder.ts`
 - LLM adapter: `src/lib/llm.ts`

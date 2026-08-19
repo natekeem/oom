@@ -1,14 +1,14 @@
-import { Bot, ChartNoAxesCombined, CircleHelp, Sparkles } from "lucide-react";
+import { ArrowLeft, Bot, ChartNoAxesCombined, CircleHelp, Sparkles } from "lucide-react";
 import { useState } from "react";
-import { essentialRoleplayPhrases, roleplayFormula } from "../../data/roleplays";
-import { useTrainingSelection } from "../../training/TrainingSelectionContext";
-import { resolveTrainingContext } from "../../training/courseRegistry";
 import { TRAINING_LEVELS } from "../../training/levels";
 import { callInternalLlm } from "../../lib/llm";
 import type { LlmSettings } from "../../types";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
+import { TrainingSelectionGuard } from "../training/TrainingSelectionGuard";
+import type { ViewId } from "../layout/Sidebar";
+import type { ResolvedTrainingContext } from "../../training/types";
 
 type RoleplayViewV2Props = {
   slotIndex?: number;
@@ -16,22 +16,26 @@ type RoleplayViewV2Props = {
   settings: LlmSettings;
   onToast: (title: string, description?: string, tone?: "success" | "error" | "info") => void;
   onSlotChange?: (slotIndex: number) => void;
+  onNavigate?: (view: ViewId) => void;
 };
 
-export function RoleplayViewV2({
+function RoleplayViewV2Content({
+  resolved,
   slotIndex = 0,
   initialGroup,
   onToast,
   settings,
   onSlotChange,
-}: RoleplayViewV2Props) {
-  const { selection } = useTrainingSelection();
-  let resolved = selection ? resolveTrainingContext(selection.courseId, selection.levelId) : null;
-
-  if (!resolved) {
-    resolved = resolveTrainingContext("course-1", "advanced");
-  }
-
+  onNavigate,
+}: {
+  resolved: ResolvedTrainingContext;
+  slotIndex?: number;
+  initialGroup?: string;
+  settings: LlmSettings;
+  onToast: (title: string, description?: string, tone?: "success" | "error" | "info") => void;
+  onSlotChange?: (slotIndex: number) => void;
+  onNavigate?: (view: ViewId) => void;
+}) {
   const roleplays = resolved.roleplays;
   const selectedIndex =
     typeof slotIndex === "number" && slotIndex >= 0 && slotIndex < roleplays.length
@@ -50,7 +54,9 @@ export function RoleplayViewV2({
   const [isGenerating, setIsGenerating] = useState(false);
 
   const scenario =
-    roleplays.find((item) => item.id === selectedId) ?? roleplays[selectedIndex] ?? roleplays[0];
+    roleplays.find((item) => item.id === selectedId) ??
+    roleplays[selectedIndex] ??
+    roleplays[0];
 
   const handleSelectScenario = (idx: number, id: string) => {
     setSelectedId(id);
@@ -95,9 +101,20 @@ export function RoleplayViewV2({
   return (
     <div className="space-y-6">
       <div>
-        <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
-          <ChartNoAxesCombined className="h-5 w-5" />
-          <span className="text-sm font-semibold">STEP 4. 롤플레이 공식</span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+            <ChartNoAxesCombined className="h-5 w-5" />
+            <span className="text-sm font-semibold">STEP 5. 롤플레이 공식</span>
+          </div>
+          {onNavigate ? (
+            <Button
+              onClick={() => onNavigate("roleplay-hub")}
+              size="sm"
+              variant="ghost"
+            >
+              <ArrowLeft className="h-4 w-4" /> 롤플레이 공식 전체보기
+            </Button>
+          ) : null}
         </div>
         <h1 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
           {scenario.group} 상황을 6단계 공식으로 해결하세요.
@@ -130,7 +147,9 @@ export function RoleplayViewV2({
                 <Badge tone={active ? "indigo" : "default"}>{item.group}</Badge>
                 <Badge tone="emerald">{resolved.level.displayName}</Badge>
               </div>
-              <p className="mt-3 text-sm font-bold text-zinc-900 dark:text-white">{item.title}</p>
+              <p className="mt-3 text-sm font-bold text-zinc-900 dark:text-white">
+                {item.title}
+              </p>
               <p className="mt-2 line-clamp-2 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
                 {item.situation}
               </p>
@@ -139,25 +158,57 @@ export function RoleplayViewV2({
         })}
       </div>
 
+      {/* Compact 6-Step Formula Reminder */}
+      <Card className="border-indigo-100 bg-indigo-50/40 p-4 dark:border-indigo-900/50 dark:bg-indigo-950/20">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <span className="text-xs font-bold text-indigo-700 dark:text-indigo-300">
+              6단계 문제 해결 공식 요약
+            </span>
+            <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-300">
+              01 상황 시작 → 02 문제 설명 → 03 정보 질문 → 04 첫 번째 대안 → 05 두 번째 대안 → 06 감사/마무리
+            </p>
+          </div>
+          {onNavigate ? (
+            <button
+              className="text-xs font-semibold text-indigo-600 hover:underline dark:text-indigo-400 self-start sm:self-auto"
+              onClick={() => onNavigate("roleplay-hub")}
+              type="button"
+            >
+              공식 다시 보기
+            </button>
+          ) : null}
+        </div>
+      </Card>
+
       <section className="grid gap-5 xl:grid-cols-2">
         <Card className="p-5">
           <div className="flex items-center gap-2">
             <CircleHelp className="h-5 w-5 text-indigo-500" />
-            <h2 className="text-base font-bold text-zinc-900 dark:text-white">{scenario.title}</h2>
+            <h2 className="text-base font-bold text-zinc-900 dark:text-white">
+              {scenario.title}
+            </h2>
           </div>
           <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
             {scenario.situation}
           </p>
           <div className="mt-5 rounded-md bg-zinc-50 p-4 dark:bg-zinc-950">
-            <p className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">EVA QUESTION</p>
+            <p className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+              EVA QUESTION
+            </p>
             <p className="mt-2 text-sm leading-6 text-zinc-800 dark:text-zinc-200">
               {scenario.prompt}
             </p>
           </div>
-          <h3 className="mt-5 text-sm font-bold text-zinc-900 dark:text-zinc-100">답변 구조</h3>
+          <h3 className="mt-5 text-sm font-bold text-zinc-900 dark:text-zinc-100">
+            답변 구조
+          </h3>
           <ol className="mt-3 space-y-2">
             {scenario.answerStructure.map((item, index) => (
-              <li className="flex gap-2 text-sm text-zinc-600 dark:text-zinc-300" key={item}>
+              <li
+                className="flex gap-2 text-sm text-zinc-600 dark:text-zinc-300"
+                key={item}
+              >
                 <span className="font-semibold text-indigo-600 dark:text-indigo-400">
                   {index + 1}.
                 </span>
@@ -176,7 +227,10 @@ export function RoleplayViewV2({
           </div>
           <div className="mt-4 space-y-4">
             {scenario.active.englishExample.split("\n\n").map((paragraph) => (
-              <p className="text-sm leading-7 text-zinc-700 dark:text-zinc-200" key={paragraph}>
+              <p
+                className="text-sm leading-7 text-zinc-700 dark:text-zinc-200"
+                key={paragraph}
+              >
                 {paragraph}
               </p>
             ))}
@@ -214,10 +268,22 @@ export function RoleplayViewV2({
                 key={lvl.id}
               >
                 <div className="flex items-center justify-between">
-                  <Badge tone={lvl.id === "foundation" ? "emerald" : lvl.id === "intermediate" ? "indigo" : "amber"}>
+                  <Badge
+                    tone={
+                      lvl.id === "foundation"
+                        ? "emerald"
+                        : lvl.id === "intermediate"
+                        ? "indigo"
+                        : "amber"
+                    }
+                  >
                     {lvl.displayName} ({lvl.targetLabel})
                   </Badge>
-                  {isCurrent ? <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400">현재 목표</span> : null}
+                  {isCurrent ? (
+                    <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400">
+                      현재 목표
+                    </span>
+                  ) : null}
                 </div>
                 <div className="mt-3 space-y-2">
                   <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
@@ -230,38 +296,6 @@ export function RoleplayViewV2({
               </div>
             );
           })}
-        </div>
-      </Card>
-
-      <Card className="p-5 sm:p-6">
-        <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
-          <CircleHelp className="h-5 w-5" />
-          <h2 className="text-lg font-bold text-zinc-950 dark:text-white">6단계 만능 공식</h2>
-        </div>
-        <ol className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {roleplayFormula.map((item, index) => (
-            <li
-              className="flex gap-3 rounded-md border border-zinc-200 p-4 dark:border-zinc-800"
-              key={item.title}
-            >
-              <span className="grid h-6 w-6 shrink-0 place-items-center rounded bg-indigo-600 text-xs font-bold text-white">
-                {index + 1}
-              </span>
-              <div>
-                <p className="text-sm font-bold text-zinc-900 dark:text-white">{item.title}</p>
-                <p className="mt-1 text-xs leading-5 text-zinc-600 dark:text-zinc-300">
-                  {item.description}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ol>
-        <div className="mt-5 flex flex-wrap gap-2">
-          {essentialRoleplayPhrases.map((phrase) => (
-            <Badge key={phrase} tone="emerald">
-              {phrase}
-            </Badge>
-          ))}
         </div>
       </Card>
 
@@ -295,5 +329,13 @@ export function RoleplayViewV2({
         ) : null}
       </Card>
     </div>
+  );
+}
+
+export function RoleplayViewV2(props: RoleplayViewV2Props) {
+  return (
+    <TrainingSelectionGuard onNavigate={props.onNavigate} stepName="STEP 5. 롤플레이 시나리오">
+      {(resolved) => <RoleplayViewV2Content {...props} resolved={resolved} />}
+    </TrainingSelectionGuard>
   );
 }

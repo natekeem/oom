@@ -34,6 +34,6 @@ export function ExamGuideView({ onNavigate }: ExamGuideViewProps) {
       <Card className="p-5 sm:p-6"><div className="flex items-center gap-2 text-amber-600 dark:text-amber-400"><BookOpenCheck className="h-5 w-5" /><h2 className="text-lg font-bold text-zinc-950 dark:text-white">준비 팁</h2></div><div className="mt-5 space-y-4">{practicalTips.map((tip) => <div className="border-l-2 border-amber-300 pl-3 dark:border-amber-700" key={tip.title}><p className="text-sm font-bold text-zinc-900 dark:text-white">{tip.title}</p><p className="mt-1 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{tip.detail}</p></div>)}</div></Card>
     </section>
 
-    <div className="flex justify-end"><Button onClick={() => onNavigate("survey")} variant="secondary">STEP 1. 서베이 고정으로 이동 <ArrowRight className="h-4 w-4" /></Button></div>
+    <div className="flex justify-end"><Button onClick={() => onNavigate("training-hub")} variant="secondary">STEP 1. 목표/코스 설정으로 이동 <ArrowRight className="h-4 w-4" /></Button></div>
   </div>;
 }

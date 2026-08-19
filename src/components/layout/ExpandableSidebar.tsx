@@ -43,6 +43,20 @@ const guideItems: Item[] = [
   { id: "exam-faq", label: "자주 묻는 질문" },
 ];
 
+const scriptSlotIds: ViewId[] = [
+  "script-outdoor",
+  "script-indoor",
+  "script-sports",
+  "script-home",
+];
+
+const roleplaySlotIds: ViewId[] = [
+  "roleplay-travel",
+  "roleplay-indoor",
+  "roleplay-sports",
+  "roleplay-home",
+];
+
 const sidebarQuotes = [
   "서베이 한 장면을 정해서 90초 동안 말해 보세요.",
   "오늘은 하나의 경험을 중심으로 자연스럽게 연결해 보세요.",
@@ -150,23 +164,25 @@ export function ExpandableSidebar({
   const { selection } = useTrainingSelection();
   const resolved = selection ? resolveTrainingContext(selection.courseId, selection.levelId) : null;
 
-  const scriptItems: Item[] = [
-    { id: "script-outdoor", label: resolved?.storylines[0]?.group ?? "그룹 1" },
-    { id: "script-indoor", label: resolved?.storylines[1]?.group ?? "그룹 2" },
-    { id: "script-sports", label: resolved?.storylines[2]?.group ?? "그룹 3" },
-    { id: "script-home", label: resolved?.storylines[3]?.group ?? "그룹 4" },
-  ];
+  const scriptItems: Item[] = (resolved?.storylines ?? [
+    { id: "outdoor-travel", group: "그룹 1" },
+    { id: "indoor-rest", group: "그룹 2" },
+    { id: "sports-hobby", group: "그룹 3" },
+    { id: "home-residence", group: "그룹 4" },
+  ]).map((s, idx) => ({
+    id: scriptSlotIds[idx] ?? "script-outdoor",
+    label: s.group,
+  }));
 
-  const allRoleplayItems: Item[] = [
-    { id: "roleplay-formula", label: "공식 · 출제 구조" },
-    { id: "roleplay-travel", label: resolved?.roleplays[0]?.group ?? "그룹 1" },
-    { id: "roleplay-indoor", label: resolved?.roleplays[1]?.group ?? "그룹 2" },
-    { id: "roleplay-sports", label: resolved?.roleplays[2]?.group ?? "그룹 3" },
-    { id: "roleplay-home", label: resolved?.roleplays[3]?.group ?? "그룹 4" },
-  ];
-  const roleplayItems: Item[] = allRoleplayItems.filter(
-    (_item, idx) => idx <= 1 || (resolved ? idx - 1 < resolved.roleplays.length : true)
-  );
+  const roleplayItems: Item[] = (resolved?.roleplays ?? [
+    { id: "roleplay-1", group: "그룹 1" },
+    { id: "roleplay-2", group: "그룹 2" },
+    { id: "roleplay-3", group: "그룹 3" },
+    { id: "roleplay-4", group: "그룹 4" },
+  ]).map((rp, idx) => ({
+    id: roleplaySlotIds[idx] ?? "roleplay-travel",
+    label: rp.group,
+  }));
 
   const guideActive = activeView === "exam-guide" || guideItems.some((item) => item.id === activeView);
   const scriptActive = activeView === "script-hub" || scriptItems.some((item) => item.id === activeView);
@@ -275,6 +291,17 @@ export function ExpandableSidebar({
           open={trainingOpen}
         >
           <NavigationButton
+            active={activeView === "training-hub"}
+            nested
+            onClick={() => {
+              setExpanded("training");
+              navigate("training-hub");
+            }}
+          >
+            <SlidersHorizontal className="h-3.5 w-3.5" />
+            STEP 1. 목표 구간 · 코스
+          </NavigationButton>
+          <NavigationButton
             active={activeView === "survey"}
             nested
             onClick={() => {
@@ -283,7 +310,7 @@ export function ExpandableSidebar({
             }}
           >
             <ClipboardList className="h-3.5 w-3.5" />
-            STEP 1. 서베이 고정
+            STEP 2. 서베이 고정
           </NavigationButton>
           <NavigationButton
             active={activeView === "difficulty"}
@@ -294,12 +321,12 @@ export function ExpandableSidebar({
             }}
           >
             <SlidersHorizontal className="h-3.5 w-3.5" />
-            STEP 2. 난이도 설정
+            STEP 3. 난이도 설정
           </NavigationButton>
           <CollapsibleSection
             active={scriptActive}
             icon={BookOpenText}
-            label="STEP 3. 만능 스크립트"
+            label="STEP 4. 만능 스크립트"
             nested
             onNavigate={() => {
               setExpanded("script");
@@ -326,7 +353,7 @@ export function ExpandableSidebar({
           <CollapsibleSection
             active={roleplayActive}
             icon={ChartNoAxesCombined}
-            label="STEP 4. 롤플레이 공식"
+            label="STEP 5. 롤플레이 공식"
             nested
             onNavigate={() => {
               setExpanded("roleplay");
@@ -359,7 +386,7 @@ export function ExpandableSidebar({
             }}
           >
             <Mic className="h-3.5 w-3.5" />
-            STEP 5. 실전 연습
+            STEP 6. 실전 연습
           </NavigationButton>
         </CollapsibleSection>
         <NavigationButton active={activeView === "magazine-list"} onClick={() => navigate("magazine-list")}>

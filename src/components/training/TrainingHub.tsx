@@ -2,12 +2,10 @@ import {
   ArrowRight,
   BookOpenText,
   ChartNoAxesCombined,
-  CheckCircle2,
   ClipboardList,
   Compass,
   Layers3,
   Mic,
-  RotateCcw,
   Route as RouteIcon,
   SlidersHorizontal,
   Sparkles,
@@ -16,9 +14,6 @@ import type { ViewId } from "../layout/Sidebar";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
-import { useTrainingSelection } from "../../training/TrainingSelectionContext";
-import { discoveredCourses } from "../../training/courseRegistry";
-import { TRAINING_LEVELS } from "../../training/levels";
 
 const trainingSteps: Array<{
   id: ViewId;
@@ -79,15 +74,6 @@ const trainingSteps: Array<{
 ];
 
 export function TrainingHub({ onNavigate }: { onNavigate: (view: ViewId) => void }) {
-  const { selection, clear } = useTrainingSelection();
-
-  const activeSavedLevel = selection
-    ? TRAINING_LEVELS.find((l) => l.id === selection.levelId)
-    : null;
-  const activeSavedCourse = selection
-    ? discoveredCourses.find((c) => c.id === selection.courseId)
-    : null;
-
   return (
     <div className="space-y-8">
       {/* Hero Section */}
@@ -144,68 +130,6 @@ export function TrainingHub({ onNavigate }: { onNavigate: (view: ViewId) => void
         </Card>
       </div>
 
-      {/* Active Selection Summary Card */}
-      {selection && activeSavedLevel && activeSavedCourse ? (
-        <Card className="border-indigo-200 bg-indigo-50/50 p-6 dark:border-indigo-900/60 dark:bg-indigo-950/20">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-                <span className="text-xs font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
-                  현재 학습 설정
-                </span>
-              </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <p className="text-xl font-bold text-zinc-950 dark:text-white">
-                  {activeSavedLevel.displayName} · {activeSavedLevel.targetLabel}
-                </p>
-                <span className="text-zinc-300 dark:text-zinc-700">|</span>
-                <p className="text-xl font-bold text-zinc-950 dark:text-white">
-                  {activeSavedCourse.title}
-                </p>
-              </div>
-              <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                권장 난이도: <strong>{activeSavedLevel.difficulty.label}</strong> · {activeSavedCourse.subtitle}
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Button
-                onClick={() => onNavigate("training-setup")}
-                variant="secondary"
-              >
-                설정 변경
-              </Button>
-              <Button
-                onClick={() => clear()}
-                variant="ghost"
-              >
-                <RotateCcw className="h-3.5 w-3.5" />
-                설정 초기화
-              </Button>
-              <Button onClick={() => onNavigate("survey")}>
-                STEP 2 서베이 고정으로 계속 <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </Card>
-      ) : (
-        <Card className="border-indigo-200 bg-indigo-50/60 p-5 dark:border-indigo-900 dark:bg-indigo-950/30">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm font-bold text-indigo-950 dark:text-indigo-100">
-                훈련을 시작하기 전에 목표 구간과 코스를 먼저 설정하세요.
-              </p>
-              <p className="mt-1 text-xs text-indigo-700 dark:text-indigo-300">
-                STEP 1에서 설정한 목표에 맞추어 맞춤 서베이, 스크립트 발화량, 롤플레이 및 실전 문제가 제공됩니다.
-              </p>
-            </div>
-            <Button className="shrink-0" onClick={() => onNavigate("training-setup")}>
-              STEP 1 목표/코스 설정하기 <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </Card>
-      )}
-
       {/* 6 STEP Roadmap Grid */}
       <section className="space-y-4 pt-2">
         <div>
@@ -220,38 +144,22 @@ export function TrainingHub({ onNavigate }: { onNavigate: (view: ViewId) => void
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {trainingSteps.map((step, index) => {
             const Icon = step.icon;
-            const isStep1 = step.id === "training-setup";
-            const needsSetup = !selection && !isStep1;
 
             return (
               <Card
-                className={`flex h-full flex-col justify-between p-5 transition-colors ${
-                  isStep1 && !selection
-                    ? "border-indigo-400 bg-indigo-50/30 dark:border-indigo-600 dark:bg-indigo-950/20"
-                    : ""
-                }`}
+                className="flex h-full flex-col justify-between p-5"
                 key={step.id}
               >
                 <div>
                   <div className="flex items-center justify-between gap-3">
-                    <span
-                      className={`grid h-9 w-9 place-items-center rounded-md ${
-                        isStep1 && !selection
-                          ? "bg-indigo-600 text-white"
-                          : "bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300"
-                      }`}
-                    >
+                    <span className="grid h-9 w-9 place-items-center rounded-md bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300">
                       <Icon className="h-5 w-5" />
                     </span>
                     <div className="flex items-center gap-1.5">
-                      <Badge tone={isStep1 && !selection ? "indigo" : "default"}>{step.stepNum}</Badge>
-                      {needsSetup ? (
-                        <Badge tone="amber">설정 필요</Badge>
-                      ) : (
-                        <Badge tone={index < 2 ? "default" : index === 5 ? "emerald" : "indigo"}>
-                          {step.badge}
-                        </Badge>
-                      )}
+                      <Badge tone="default">{step.stepNum}</Badge>
+                      <Badge tone={index < 2 ? "default" : index === 5 ? "emerald" : "indigo"}>
+                        {step.badge}
+                      </Badge>
                     </div>
                   </div>
                   <h3 className="mt-4 text-lg font-bold text-zinc-950 dark:text-white">
@@ -264,7 +172,7 @@ export function TrainingHub({ onNavigate }: { onNavigate: (view: ViewId) => void
                 <Button
                   className="mt-6 w-full"
                   onClick={() => onNavigate(step.id)}
-                  variant={isStep1 && !selection ? "primary" : "secondary"}
+                  variant="secondary"
                 >
                   {step.stepNum} 이동 <ArrowRight className="h-4 w-4" />
                 </Button>

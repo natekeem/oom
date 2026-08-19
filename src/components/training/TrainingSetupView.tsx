@@ -105,6 +105,15 @@ export function TrainingSetupView({
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
+              {onReset ? (
+                <Button
+                  onClick={handleReset}
+                  variant="ghost"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  설정 초기화
+                </Button>
+              ) : null}
               <Button
                 onClick={() => {
                   setLevelId(currentSelection.levelId);
@@ -115,15 +124,6 @@ export function TrainingSetupView({
               >
                 목표/코스 변경
               </Button>
-              {onReset ? (
-                <Button
-                  onClick={handleReset}
-                  variant="ghost"
-                >
-                  <RotateCcw className="h-3.5 w-3.5" />
-                  설정 초기화
-                </Button>
-              ) : null}
               {onContinueToNextStep ? (
                 <Button onClick={onContinueToNextStep}>
                   STEP 2 서베이 고정으로 이동 <ArrowRight className="h-4 w-4" />

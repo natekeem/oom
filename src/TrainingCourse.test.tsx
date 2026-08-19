@@ -332,23 +332,18 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
     expect(screen.getByText('1. 목표 구간 선택')).toBeInTheDocument();
   });
 
-  /* 16b. TrainingHub shows reset button and clears active selection */
-  it('16b. TrainingHub active selection summary includes reset button that clears state', async () => {
+  /* 16b. TrainingHub is a clean overview without duplicate active selection cards */
+  it('16b. TrainingHub is a clean roadmap hub without duplicate selection summary banner', () => {
     saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
-    const user = userEvent.setup();
     render(
       <MemoryRouter initialEntries={['/training']}>
         <App />
       </MemoryRouter>
     );
 
-    expect(screen.getByText('현재 학습 설정')).toBeInTheDocument();
-    const resetBtn = screen.getByRole('button', { name: '설정 초기화' });
-    expect(resetBtn).toBeInTheDocument();
-
-    await user.click(resetBtn);
-    expect(loadTrainingSelection()).toBeNull();
-    expect(screen.getByText('훈련을 시작하기 전에 목표 구간과 코스를 먼저 설정하세요.')).toBeInTheDocument();
+    expect(screen.getByText('최소한의 스토리로, 더 많은 질문에 답하는 6 STEP 훈련')).toBeInTheDocument();
+    expect(screen.queryByText('현재 학습 설정')).not.toBeInTheDocument();
+    expect(screen.getByText('OPIc 실전 훈련 6 STEP 로드맵')).toBeInTheDocument();
   });
 
   /* 17. Training Selection Guard blocks unselected STEP 2 (survey) and routes to setup */
@@ -451,7 +446,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
 
     expect(screen.getByText('6 STEP 로드맵')).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'STEP 2 서베이 고정으로 계속' }));
+    await user.click(screen.getByRole('button', { name: 'STEP 2 이동' }));
     expect(await screen.findByText('훈련 진행 20%')).toBeInTheDocument();
   });
 

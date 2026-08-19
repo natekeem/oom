@@ -7,6 +7,7 @@ import {
   Compass,
   Layers3,
   Mic,
+  RotateCcw,
   Route as RouteIcon,
   SlidersHorizontal,
   Sparkles,
@@ -78,7 +79,7 @@ const trainingSteps: Array<{
 ];
 
 export function TrainingHub({ onNavigate }: { onNavigate: (view: ViewId) => void }) {
-  const { selection } = useTrainingSelection();
+  const { selection, clear } = useTrainingSelection();
 
   const activeSavedLevel = selection
     ? TRAINING_LEVELS.find((l) => l.id === selection.levelId)
@@ -167,12 +168,19 @@ export function TrainingHub({ onNavigate }: { onNavigate: (view: ViewId) => void
                 권장 난이도: <strong>{activeSavedLevel.difficulty.label}</strong> · {activeSavedCourse.subtitle}
               </p>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Button
                 onClick={() => onNavigate("training-setup")}
                 variant="secondary"
               >
                 설정 변경
+              </Button>
+              <Button
+                onClick={() => clear()}
+                variant="ghost"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                설정 초기화
               </Button>
               <Button onClick={() => onNavigate("survey")}>
                 STEP 2 서베이 고정으로 계속 <ArrowRight className="h-4 w-4" />
@@ -217,40 +225,42 @@ export function TrainingHub({ onNavigate }: { onNavigate: (view: ViewId) => void
 
             return (
               <Card
-                className={`flex h-full flex-col p-5 transition-colors ${
+                className={`flex h-full flex-col justify-between p-5 transition-colors ${
                   isStep1 && !selection
                     ? "border-indigo-400 bg-indigo-50/30 dark:border-indigo-600 dark:bg-indigo-950/20"
                     : ""
                 }`}
                 key={step.id}
               >
-                <div className="flex items-center justify-between gap-3">
-                  <span
-                    className={`grid h-9 w-9 place-items-center rounded-md ${
-                      isStep1 && !selection
-                        ? "bg-indigo-600 text-white"
-                        : "bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300"
-                    }`}
-                  >
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    <Badge tone={isStep1 && !selection ? "indigo" : "default"}>{step.stepNum}</Badge>
-                    {needsSetup ? (
-                      <Badge tone="amber">설정 필요</Badge>
-                    ) : (
-                      <Badge tone={index < 2 ? "default" : index === 5 ? "emerald" : "indigo"}>
-                        {step.badge}
-                      </Badge>
-                    )}
+                <div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span
+                      className={`grid h-9 w-9 place-items-center rounded-md ${
+                        isStep1 && !selection
+                          ? "bg-indigo-600 text-white"
+                          : "bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300"
+                      }`}
+                    >
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <Badge tone={isStep1 && !selection ? "indigo" : "default"}>{step.stepNum}</Badge>
+                      {needsSetup ? (
+                        <Badge tone="amber">설정 필요</Badge>
+                      ) : (
+                        <Badge tone={index < 2 ? "default" : index === 5 ? "emerald" : "indigo"}>
+                          {step.badge}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
+                  <h3 className="mt-4 text-lg font-bold text-zinc-950 dark:text-white">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+                    {step.description}
+                  </p>
                 </div>
-                <h3 className="mt-4 text-lg font-bold text-zinc-950 dark:text-white">
-                  {step.title}
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-                  {step.description}
-                </p>
                 <Button
                   className="mt-6 w-full"
                   onClick={() => onNavigate(step.id)}

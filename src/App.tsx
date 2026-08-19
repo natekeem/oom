@@ -85,7 +85,7 @@ function loadSettings(): LlmSettings {
 }
 
 function TrainingSetupRoute({ onNavigate }: { onNavigate: (view: ViewId) => void }) {
-  const { selection, select } = useTrainingSelection();
+  const { selection, select, clear } = useTrainingSelection();
   return (
     <TrainingSetupView
       courses={discoveredCourses}
@@ -93,6 +93,7 @@ function TrainingSetupRoute({ onNavigate }: { onNavigate: (view: ViewId) => void
       levels={TRAINING_LEVELS}
       onConfirm={select}
       onContinueToNextStep={() => onNavigate("survey")}
+      onReset={clear}
     />
   );
 }

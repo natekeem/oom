@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle2, SlidersHorizontal } from "lucide-react";
+import { ArrowRight, CheckCircle2, RotateCcw, SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 import type {
   TrainingCourseDefinition,
@@ -16,6 +16,7 @@ type Props = {
   currentSelection?: { levelId: TrainingLevelId; courseId: TrainingCourseId } | null;
   onConfirm: (selection: { levelId: TrainingLevelId; courseId: TrainingCourseId }) => void;
   onContinueToNextStep?: () => void;
+  onReset?: () => void;
 };
 
 export function TrainingSetupView({
@@ -24,6 +25,7 @@ export function TrainingSetupView({
   currentSelection,
   onConfirm,
   onContinueToNextStep,
+  onReset,
 }: Props) {
   const [levelId, setLevelId] = useState<TrainingLevelId | null>(
     () => currentSelection?.levelId ?? null
@@ -49,6 +51,15 @@ export function TrainingSetupView({
   const handleSave = () => {
     if (levelId && courseId) {
       onConfirm({ levelId, courseId });
+      setIsEditing(false);
+    }
+  };
+
+  const handleReset = () => {
+    if (onReset) {
+      onReset();
+      setLevelId(null);
+      setCourseId(null);
       setIsEditing(false);
     }
   };
@@ -93,7 +104,7 @@ export function TrainingSetupView({
                 난이도 권장 설정: <strong>{activeSavedLevel.difficulty.label}</strong> · {activeSavedCourse.subtitle}
               </p>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Button
                 onClick={() => {
                   setLevelId(currentSelection.levelId);
@@ -104,6 +115,15 @@ export function TrainingSetupView({
               >
                 목표/코스 변경
               </Button>
+              {onReset ? (
+                <Button
+                  onClick={handleReset}
+                  variant="ghost"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  설정 초기화
+                </Button>
+              ) : null}
               {onContinueToNextStep ? (
                 <Button onClick={onContinueToNextStep}>
                   STEP 2 서베이 고정으로 이동 <ArrowRight className="h-4 w-4" />

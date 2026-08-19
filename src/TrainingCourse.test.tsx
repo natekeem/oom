@@ -324,6 +324,31 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
     expect(await screen.findByText('현재 학습 설정')).toBeInTheDocument();
     expect(screen.getByText(/1구간 · AL/)).toBeInTheDocument();
     expect(screen.getByText('Culture & City')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '설정 초기화' })).toBeInTheDocument();
+
+    // Click Reset
+    await user.click(screen.getByRole('button', { name: '설정 초기화' }));
+    expect(loadTrainingSelection()).toBeNull();
+    expect(screen.getByText('1. 목표 구간 선택')).toBeInTheDocument();
+  });
+
+  /* 16b. TrainingHub shows reset button and clears active selection */
+  it('16b. TrainingHub active selection summary includes reset button that clears state', async () => {
+    saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/training']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('현재 학습 설정')).toBeInTheDocument();
+    const resetBtn = screen.getByRole('button', { name: '설정 초기화' });
+    expect(resetBtn).toBeInTheDocument();
+
+    await user.click(resetBtn);
+    expect(loadTrainingSelection()).toBeNull();
+    expect(screen.getByText('훈련을 시작하기 전에 목표 구간과 코스를 먼저 설정하세요.')).toBeInTheDocument();
   });
 
   /* 17. Training Selection Guard blocks unselected STEP 2 (survey) and routes to setup */

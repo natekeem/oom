@@ -395,7 +395,7 @@ export function ExamScreenShell({
             </div>
 
             {/* Recommended Storyline Hint */}
-            {recommendedStoryTitle && onToggleStoryHint ? (
+            {!recording && !isSpeaking && recommendedStoryTitle && onToggleStoryHint ? (
               <div className="rounded-md border border-indigo-900/40 bg-indigo-950/30 p-3.5">
                 <button
                   aria-expanded={showStoryHint}

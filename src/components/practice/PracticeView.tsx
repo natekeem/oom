@@ -190,6 +190,7 @@ function PracticeViewContent({
     stopSpeech();
     setIsSpeaking(false);
     setMicFailed(false);
+    setShowStoryHint(false);
 
     const success = (await recorderRef.current?.start()) ?? false;
     if (!success) {
@@ -205,6 +206,7 @@ function PracticeViewContent({
     stopSpeech();
     setIsSpeaking(false);
     setMicFailed(false);
+    setShowStoryHint(false);
     setElapsedSeconds(0);
     setSessionState("recording");
   };
@@ -282,6 +284,8 @@ function PracticeViewContent({
     attemptIdRef.current += 1;
     setListenCount(0);
     setIsSpeaking(false);
+    setShowQuestionText(false);
+    setShowStoryHint(false);
     setSessionState("ready");
     setElapsedSeconds(0);
     setMicFailed(false);

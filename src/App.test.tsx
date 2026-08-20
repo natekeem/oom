@@ -12,7 +12,7 @@ describe("OOM", () => {
     expect(screen.getAllByText("오픽온미").length).toBeGreaterThan(0);
     expect(screen.getByText(/오픽은 나에게 맡기고/)).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "OPIc 실전 훈련하기" }));
-    await user.click(screen.getByRole("button", { name: /STEP 2. 서베이 고정/ }));
+    await user.click(screen.getByRole("button", { name: /STEP 2. 추천 서베이 익히기/ }));
     expect(await screen.findByText("실제 형식으로 보고, OOM 추천 조합을 그대로 기억합니다.")).toBeInTheDocument();
   });
 

@@ -21,13 +21,14 @@ GitHub Pages cannot rewrite unknown paths to the SPA shell. `scripts/generate-st
 Home / strategy overview
 OPIc candidate guide
 ├─ overview and grades
+├─ exam screen & controls
 ├─ membership, application, and fees
 ├─ identification, admission, and exam flow
 ├─ results, certificate, and coupon
 └─ FAQ
 OPIc training hub
 ├─ STEP 1. target level & course setup
-├─ STEP 2. fixed survey
+├─ STEP 2. recommended survey
 ├─ STEP 3. difficulty
 ├─ STEP 4. reusable scripts
 │  ├─ group 1 storyline
@@ -51,7 +52,7 @@ Footer legal pages
 AI feedback / settings
 ```
 
-The candidate guide and training hub are independent top-level branches. STEP 1-6 belong to the training hub. The candidate guide also includes the `exam-faq` Q&A child page. Sidebar labels for STEP 4 and STEP 5 are rendered dynamically from the active Course's storylines and roleplays.
+The candidate guide and training hub are independent top-level branches. STEP 1-6 belong to the training hub. The candidate guide also includes the `exam-screen` exam console guide and `exam-faq` Q&A child page. Sidebar labels for STEP 4 and STEP 5 are rendered dynamically from the active Course's storylines and roleplays.
 
 ## Header Rule
 
@@ -75,6 +76,7 @@ Public route targets use the canonical `https://opic-on-me.com/path/` form. Inte
 | `home` | Home | `HomeView` | No | Strategy overview |
 | `exam-guide` | Candidate guide parent | `ExamGuideHub` | No | Explains the guide sections |
 | `exam-overview` | Candidate guide child | `ExamGuideOverview` | No | OPIc format and grade framework |
+| `exam-screen` | Candidate guide child | `ExamGuideScreen` | No | Annotated exam screen shell, 5-step flow, timer disclaimer |
 | `exam-apply` | Candidate guide child | `ExamGuideDashboard` | No | Membership, application, fees |
 | `exam-day` | Candidate guide child | `ExamGuideDay` | No | ID, admission cutoff, OT/test visual flow |
 | `exam-results` | Candidate guide child | `ExamGuideDashboard` | No | Results, certificate, coupons |

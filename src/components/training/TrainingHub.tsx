@@ -37,10 +37,10 @@ const trainingSteps: Array<{
   {
     id: "survey",
     stepNum: "STEP 2",
-    title: "서베이 고정",
-    description: "현재 코스가 최대한 재사용되도록 추천 서베이를 기억합니다.",
+    title: "추천 서베이 익히기",
+    description: "현재 코스의 추천 조합을 보고 직접 골라보며 시험 전에 익숙해집니다.",
     icon: ClipboardList,
-    badge: "설문 통제",
+    badge: "서베이",
   },
   {
     id: "difficulty",
@@ -137,7 +137,7 @@ export function TrainingHub({ onNavigate }: { onNavigate: (view: ViewId) => void
             <h2 className="text-sm font-bold text-zinc-950 dark:text-white">학습 방법</h2>
           </div>
           <p className="mt-3 text-xs leading-5 text-zinc-600 dark:text-zinc-400">
-            목표/코스 설정 → 서베이 고정 → 난이도 이해 → 스토리 재사용 → 롤플레이 공식 → 실전 녹음/피드백
+            목표/코스 설정 → 추천 서베이 익히기 → 난이도 이해 → 스토리 재사용 → 롤플레이 공식 → 실전 녹음/복기
           </p>
         </Card>
       </div>

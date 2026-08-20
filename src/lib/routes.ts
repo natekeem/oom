@@ -4,6 +4,7 @@ export const viewPathForId: Record<ViewId, string> = {
   home: "/",
   "exam-guide": "/exam-guide/",
   "exam-overview": "/exam-guide/overview/",
+  "exam-screen": "/exam-guide/screen/",
   "exam-apply": "/exam-guide/apply/",
   "exam-day": "/exam-guide/day/",
   "exam-results": "/exam-guide/results/",
@@ -40,6 +41,7 @@ export function viewIdForPath(path: string): ViewId {
   if (normalized === "" || normalized === "/") return "home";
   if (normalized === "/exam-guide") return "exam-guide";
   if (normalized === "/exam-guide/overview") return "exam-overview";
+  if (normalized === "/exam-guide/screen") return "exam-screen";
   if (normalized === "/exam-guide/apply") return "exam-apply";
   if (normalized === "/exam-guide/day") return "exam-day";
   if (normalized === "/exam-guide/results") return "exam-results";

@@ -1,13 +1,13 @@
-import { Bot, Dices, HelpCircle, Loader2, MessageSquareText, Play, RotateCcw } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { callInternalLlm } from "../../lib/llm";
 import { transcribeAudio } from "../../lib/stt";
+import { speakText, stopSpeech } from "../../lib/speech";
+import { formatTime } from "../../lib/utils";
 import type { LlmSettings, SttSettings } from "../../types";
-import { Badge } from "../ui/Badge";
-import { Button } from "../ui/Button";
-import { Card } from "../ui/Card";
 import { Recorder, type RecorderHandle, type RecordingResult } from "./Recorder";
-import { PracticeTimer } from "./PracticeTimer";
+import { ExamScreenShell, type ExamSessionState } from "./ExamScreenShell";
+import { PracticeReviewPanel } from "./PracticeReviewPanel";
+import { deriveSttUiStatus } from "./sttUiStatus";
 import { TrainingSelectionGuard } from "../training/TrainingSelectionGuard";
 import type { ViewId } from "../layout/Sidebar";
 import type { ResolvedTrainingContext } from "../../training/types";
@@ -25,7 +25,6 @@ type PracticeItem = {
   type: string;
   prompt: string;
   storylineId?: string;
-  scriptId?: string;
 };
 
 const questionTypeLabels: Record<string, string> = {
@@ -52,11 +51,13 @@ function PracticeViewContent({
   settings,
   sttSettings,
   onToast,
+  onNavigate,
 }: {
   resolved: ResolvedTrainingContext;
   settings: LlmSettings;
   sttSettings?: SttSettings;
   onToast: (title: string, description?: string, tone?: "success" | "error" | "info") => void;
+  onNavigate?: (view: ViewId) => void;
 }) {
   const availableQuestions: PracticeItem[] = resolved.questions.map((q) => ({
     id: q.id,
@@ -66,69 +67,172 @@ function PracticeViewContent({
     storylineId: q.storylineId,
   }));
 
-  const [question, setQuestion] = useState<PracticeItem | null>(null);
-  const [timerSignal, setTimerSignal] = useState(0);
+  const [question, setQuestion] = useState<PracticeItem | null>(() => {
+    return availableQuestions.length > 0 ? availableQuestions[0] : null;
+  });
+
+  const [listenCount, setListenCount] = useState(0);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [showQuestionText, setShowQuestionText] = useState(false);
+  const [showStoryHint, setShowStoryHint] = useState(false);
+
+  const [sessionState, setSessionState] = useState<ExamSessionState>("ready");
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [micFailed, setMicFailed] = useState(false);
+
   const [answer, setAnswer] = useState("");
   const [feedback, setFeedback] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
+  const [sttError, setSttError] = useState<string | null>(null);
+
   const [attemptKey, setAttemptKey] = useState(0);
   const [recordingResult, setRecordingResult] = useState<RecordingResult | null>(null);
-  const [showHint, setShowHint] = useState(false);
-  const [micFailed, setMicFailed] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
   const recorderRef = useRef<RecorderHandle | null>(null);
   const sttAbortRef = useRef<AbortController | null>(null);
-  // Secondary defense against stale STT: abort + id mismatch both required to discard.
   const attemptIdRef = useRef(0);
+  const timerIntervalRef = useRef<number | null>(null);
 
-  const targetDefaultSeconds = resolved.level.targetSeconds[1] || 90;
+  const targetRangeLabel = `${resolved.level.targetSeconds[0]}–${resolved.level.targetSeconds[1]}초`;
+  const levelLabel = `${resolved.level.displayName} (${resolved.level.targetLabel})`;
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      stopSpeech();
+      sttAbortRef.current?.abort();
+      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+      if (audioUrl) URL.revokeObjectURL(audioUrl);
+    };
+  }, [audioUrl]);
+
+  // Elapsed timer tick when recording
+  useEffect(() => {
+    if (sessionState === "recording") {
+      timerIntervalRef.current = window.setInterval(() => {
+        setElapsedSeconds((s) => s + 1);
+      }, 1000);
+    } else {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+        timerIntervalRef.current = null;
+      }
+    }
+    return () => {
+      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+    };
+  }, [sessionState]);
 
   const drawQuestion = () => {
+    stopSpeech();
     sttAbortRef.current?.abort();
-    const next = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl);
+      setAudioUrl(null);
+    }
+
+    const next =
+      availableQuestions.length > 0
+        ? availableQuestions[Math.floor(Math.random() * availableQuestions.length)]
+        : null;
+
     setQuestion(next);
-    setFeedback("");
-    setAnswer("");
-    setIsTranscribing(false);
-    setRecordingResult(null);
-    setShowHint(false);
+    setListenCount(0);
+    setIsSpeaking(false);
+    setShowQuestionText(false);
+    setShowStoryHint(false);
+    setSessionState("ready");
+    setElapsedSeconds(0);
     setMicFailed(false);
+    setAnswer("");
+    setFeedback("");
+    setIsFeedbackLoading(false);
+    setIsTranscribing(false);
+    setSttError(null);
+    setRecordingResult(null);
+
     attemptIdRef.current += 1;
     setAttemptKey((k) => k + 1);
   };
 
+  const handleListen = () => {
+    if (!question || sessionState === "recording" || listenCount >= 2) return;
+
+    setListenCount((count) => count + 1);
+    setIsSpeaking(true);
+
+    try {
+      speakText(question.prompt, 0.95);
+      // Automatically reset isSpeaking after approximate speech duration
+      const wordCount = question.prompt.split(/\s+/).length;
+      const durationMs = Math.max(2500, wordCount * 380);
+      window.setTimeout(() => {
+        setIsSpeaking(false);
+      }, durationMs);
+    } catch {
+      setIsSpeaking(false);
+      onToast(
+        "음성 읽기(TTS)를 지원하지 않는 브라우저입니다.",
+        "문제 텍스트 보기 버튼으로 질문을 확인하실 수 있습니다.",
+        "info"
+      );
+    }
+  };
+
   const startAnswer = async () => {
     if (!question) {
-      onToast("먼저 질문을 뽑아 주세요.", "랜덤 질문을 정한 뒤 타이머를 시작할 수 있습니다.", "info");
+      onToast("먼저 질문을 뽑아 주세요.", "랜덤 질문을 정한 뒤 답변을 시작할 수 있습니다.", "info");
       return;
     }
+
+    stopSpeech();
+    setIsSpeaking(false);
     setMicFailed(false);
-    const success = await recorderRef.current?.start() ?? false;
+
+    const success = (await recorderRef.current?.start()) ?? false;
     if (!success) {
-      // Mic failed — show inline UX; do NOT start timer.
       setMicFailed(true);
       return;
     }
-    setTimerSignal((value) => value + 1);
+
+    setElapsedSeconds(0);
+    setSessionState("recording");
   };
 
   const startTimerOnly = () => {
+    stopSpeech();
+    setIsSpeaking(false);
     setMicFailed(false);
-    setTimerSignal((value) => value + 1);
+    setElapsedSeconds(0);
+    setSessionState("recording");
   };
 
-  const handleTimerEnd = () => {
-    // Only stop if actually recording; avoids double-stop when mic was not started.
+  const stopAnswer = () => {
     if (recorderRef.current?.isRecording()) {
       recorderRef.current.stop();
-      onToast("목표 시간이 종료되어 녹음을 마쳤습니다.", undefined, "info");
     }
+    setSessionState("complete");
   };
 
   const handleRecordingReady = async (recording: RecordingResult) => {
     setRecordingResult(recording);
+    if (audioUrl) URL.revokeObjectURL(audioUrl);
+    const newUrl = URL.createObjectURL(recording.blob);
+    setAudioUrl(newUrl);
+    setSessionState("complete");
+
     if (!sttSettings?.endpoint?.trim() || !sttSettings.autoTranscribe) {
+      return;
+    }
+
+    await performTranscribe(recording.blob, recording.mimeType);
+  };
+
+  const performTranscribe = async (blob: Blob, mimeType: string) => {
+    if (!sttSettings?.endpoint?.trim()) {
+      onToast("STT 설정이 필요합니다.", "AI 설정에서 STT Endpoint를 먼저 저장해 주세요.", "info");
       return;
     }
 
@@ -136,16 +240,12 @@ function PracticeViewContent({
     const controller = new AbortController();
     sttAbortRef.current = controller;
     const requestAttemptId = attemptIdRef.current;
+
     setIsTranscribing(true);
+    setSttError(null);
 
     try {
-      const text = await transcribeAudio(
-        sttSettings,
-        recording.blob,
-        recording.mimeType,
-        controller.signal
-      );
-      // Double defense: abort signal + attempt id must both match.
+      const text = await transcribeAudio(sttSettings, blob, mimeType, controller.signal);
       if (!controller.signal.aborted && requestAttemptId === attemptIdRef.current) {
         setAnswer(text);
         onToast("음성을 텍스트로 변환했습니다.", "필요시 수정 후 AI 피드백을 요청하세요.", "success");
@@ -153,7 +253,8 @@ function PracticeViewContent({
     } catch (error) {
       if (!controller.signal.aborted && requestAttemptId === attemptIdRef.current) {
         const msg = error instanceof Error ? error.message : "STT 변환에 실패했습니다.";
-        onToast("STT 변환 실패", `${msg} (수동으로 답변을 입력할 수 있습니다)`, "error");
+        setSttError(msg);
+        onToast("STT 변환 실패", `${msg} (직접 입력하거나 다시 변환할 수 있습니다)`, "error");
       }
     } finally {
       if (!controller.signal.aborted && requestAttemptId === attemptIdRef.current) {
@@ -162,17 +263,37 @@ function PracticeViewContent({
     }
   };
 
+  const handleManualTranscribe = () => {
+    if (!recordingResult) {
+      onToast("변환할 녹음이 없습니다.", "먼저 답변을 녹음해 주세요.", "info");
+      return;
+    }
+    performTranscribe(recordingResult.blob, recordingResult.mimeType);
+  };
+
   const retryAttempt = () => {
+    stopSpeech();
     sttAbortRef.current?.abort();
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl);
+      setAudioUrl(null);
+    }
+
     attemptIdRef.current += 1;
-    setFeedback("");
-    setAnswer("");
-    setIsTranscribing(false);
-    setRecordingResult(null);
-    setShowHint(false);
+    setListenCount(0);
+    setIsSpeaking(false);
+    setSessionState("ready");
+    setElapsedSeconds(0);
     setMicFailed(false);
+    setAnswer("");
+    setFeedback("");
+    setIsFeedbackLoading(false);
+    setIsTranscribing(false);
+    setSttError(null);
+    setRecordingResult(null);
     setAttemptKey((k) => k + 1);
-    onToast("재도전 준비가 완료되었습니다.", "다시 '답변 시작'을 눌러 말해 보세요.", "info");
+
+    onToast("재도전 준비 완료", "질문을 다시 듣거나 '답변 시작'을 눌러 말해 보세요.", "info");
   };
 
   const getFeedback = async () => {
@@ -180,25 +301,27 @@ function PracticeViewContent({
       onToast("답변 텍스트가 비어 있습니다.", "음성을 녹음하거나 텍스트를 입력해 주세요.", "info");
       return;
     }
+
     if (!settings.endpoint.trim()) {
       setFeedback(
         "AI 설정이 아직 없습니다. AI 피드백 / STT 설정에서 Endpoint를 저장한 뒤 다시 시도해 주세요.\n\n" +
-          `[체크리스트 - ${resolved.level.displayName} (${resolved.level.targetLabel})]\n` +
+          `[체크리스트 - ${levelLabel}]\n` +
           `1. 목표 시간 (${resolved.level.targetSeconds.join("–")}초) 내에 주요 장면을 완성했는가?\n` +
           `2. 질문에 첫 문장부터 직접 답했는가?\n` +
           `3. 시제와 핵심 명사 2개 이상이 명확하게 들어갔는가?\n` +
           `4. 침묵 대신 자연스러운 필러로 문장을 연결했는가?`
       );
       onToast("AI 설정이 필요합니다.", "설정 화면으로 이동해 내부 LLM Endpoint를 입력해 주세요.", "info");
-      setShowHint(true);
+      setShowStoryHint(true);
       return;
     }
-    setIsLoading(true);
+
+    setIsFeedbackLoading(true);
+
     try {
-      const levelLabel = `${resolved.level.displayName} (${resolved.level.targetLabel})`;
       const criteria = resolved.level.learningFocus.join(", ");
       const courseInfo = `Course: ${resolved.course.title}`;
-      const durationSeconds = recordingResult?.durationSeconds ?? 0;
+      const durationSeconds = recordingResult?.durationSeconds ?? elapsedSeconds;
       const wordCount = answer.trim().split(/\s+/).filter(Boolean).length;
       const wpm = durationSeconds > 0 ? Math.round((wordCount / durationSeconds) * 60) : 0;
 
@@ -247,8 +370,9 @@ function PracticeViewContent({
             (storylineContext ? `- Associated Storyline: ${storylineContext}\n` : ""),
         },
       ]);
+
       setFeedback(result);
-      setShowHint(true);
+      setShowStoryHint(true);
       onToast("AI 피드백을 받았습니다.", "고칠 점과 다음 시도 미션을 확인해 보세요.", "success");
     } catch (error) {
       setFeedback(
@@ -256,214 +380,107 @@ function PracticeViewContent({
           error instanceof Error ? error.message : "설정과 CORS 정책을 확인해 주세요."
         }`
       );
-      setShowHint(true);
+      setShowStoryHint(true);
       onToast("AI 피드백에 실패했습니다.", "내장 체크리스트로 먼저 연습을 이어가세요.", "error");
     } finally {
-      setIsLoading(false);
+      setIsFeedbackLoading(false);
     }
   };
 
-  const courseRecommended =
-    question?.storylineId
-      ? resolved.storylines.find((story) => story.id === question.storylineId)
-      : null;
-  const recommendedTitle = courseRecommended ? courseRecommended.title : null;
+  const courseRecommended = question?.storylineId
+    ? resolved.storylines.find((story) => story.id === question.storylineId)
+    : null;
+
+  const sttStatus = deriveSttUiStatus({
+    endpoint: sttSettings?.endpoint,
+    isTranscribing,
+    transcript: answer,
+    error: sttError,
+  });
+
+  const showReviewPanel =
+    sessionState === "complete" ||
+    Boolean(recordingResult) ||
+    Boolean(audioUrl) ||
+    Boolean(answer.trim()) ||
+    Boolean(feedback);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Page Header */}
       <div>
         <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
-          <MessageSquareText className="h-5 w-5" />
-          <span className="text-sm font-semibold">STEP 6. 실전 연습</span>
+          <span className="text-xs font-bold uppercase tracking-wider">
+            STEP 6. 실전 연습
+          </span>
         </div>
-        <h1 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
-          질문을 받고, 말하고, 다시 듣습니다.
+        <h1 className="mt-1.5 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
+          시험 화면 스타일로 질문을 듣고, 말하고, 복기합니다.
         </h1>
         <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-          완벽한 문장보다 목표 시간 안에 장면을 끝까지 전달하는 연습이 우선입니다. 녹음 후 STT 변환과 AI 맞춤 피드백을 받아보세요.
+          실제 OPIc 시험 화면처럼 가상 인터뷰어의 질문을 최대 2회 듣고 답변을 녹음한 뒤, 내 발화를 다시 듣고 STT와 AI 맞춤 피드백으로 개선점을 점검합니다.
         </p>
       </div>
 
-      <section className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
-        <Card className="p-5 sm:p-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <p className="text-sm font-bold text-zinc-900 dark:text-white">
-                {resolved.course.title} 랜덤 질문
-              </p>
-              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                현재 코스와 {resolved.level.displayName} ({resolved.level.targetLabel}) 레벨에 맞는 질문 풀입니다.
-              </p>
-            </div>
-            <Button onClick={drawQuestion} variant="secondary">
-              <Dices className="h-4 w-4" />
-              랜덤 질문 뽑기
-            </Button>
-          </div>
-
-          {question ? (
-            <div className="mt-5 rounded-md border border-indigo-100 bg-indigo-50 p-5 dark:border-indigo-900 dark:bg-indigo-950">
-              <div className="flex flex-wrap gap-2">
-                <Badge tone="indigo">{question.group}</Badge>
-                <Badge tone="default">
-                  {questionTypeLabels[question.type] ?? question.type}
-                </Badge>
-              </div>
-              <p className="mt-4 text-base font-semibold leading-7 text-zinc-900 dark:text-white">
-                {question.prompt}
-              </p>
-
-              {recommendedTitle ? (
-                <div className="mt-4 border-t border-indigo-200/60 pt-3 dark:border-indigo-800/60">
-                  {showHint ? (
-                    <div className="space-y-1">
-                      <p className="text-xs font-semibold text-indigo-900 dark:text-indigo-200">
-                        💡 추천 스크립트: <strong>{recommendedTitle}</strong>
-                      </p>
-                      {courseRecommended?.core.anchorScene ? (
-                        <p className="text-xs text-indigo-700 dark:text-indigo-300">
-                          핵심 장면: {courseRecommended.core.anchorScene}
-                        </p>
-                      ) : null}
-                    </div>
-                  ) : (
-                    <button
-                      className="inline-flex items-center gap-1.5 text-xs text-indigo-700 hover:text-indigo-900 dark:text-indigo-300 dark:hover:text-indigo-100"
-                      onClick={() => setShowHint(true)}
-                      type="button"
-                    >
-                      <HelpCircle className="h-3.5 w-3.5" />
-                      추천 스크립트 힌트 보기
-                    </button>
-                  )}
-                </div>
-              ) : null}
-
-              <div className="mt-5 flex flex-wrap gap-2">
-                <Button onClick={startAnswer}>
-                  <Play className="h-4 w-4" />
-                  답변 시작 (녹음+타이머)
-                </Button>
-                {recordingResult || feedback ? (
-                  <Button onClick={retryAttempt} variant="secondary">
-                    <RotateCcw className="h-4 w-4" />
-                    다시 말하기 (재도전)
-                  </Button>
-                ) : null}
-              </div>
-
-              {micFailed ? (
-                <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 p-4 text-sm leading-6 dark:border-amber-900 dark:bg-amber-950">
-                  <p className="font-semibold text-amber-800 dark:text-amber-200">
-                    마이크를 사용할 수 없습니다.
-                  </p>
-                  <p className="mt-1 text-xs text-amber-700 dark:text-amber-300">
-                    브라우저 마이크 권한을 확인한 뒤 다시 시도하거나, 녹음 없이 타이머만 시작할 수 있습니다.
-                  </p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <Button onClick={startTimerOnly} size="sm" variant="secondary">
-                      타이머만 시작
-                    </Button>
-                    <Button onClick={startAnswer} size="sm">
-                      다시 시도
-                    </Button>
-                  </div>
-                </div>
-              ) : null}
-            </div>
-          ) : (
-            <div className="mt-5 rounded-md border border-dashed border-zinc-300 p-8 text-center text-sm text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
-              랜덤 질문을 뽑아 실전 답변을 시작하세요.
-            </div>
-          )}
-        </Card>
-
-        <PracticeTimer
-          autoStart={timerSignal > 0}
-          initialSeconds={targetDefaultSeconds}
-          key={`${timerSignal}-${attemptKey}`}
-          onTimerEnd={handleTimerEnd}
-        />
-      </section>
-
-      <section className="grid gap-5 xl:grid-cols-2">
+      {/* Invisible Recorder Engine */}
+      <div className="sr-only" aria-hidden="true">
         <Recorder
           onRecordingReady={handleRecordingReady}
           onToast={onToast}
           ref={recorderRef}
           resetKey={attemptKey}
         />
+      </div>
 
-        <Card className="p-5 sm:p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
-              <Bot className="h-5 w-5" />
-              <h2 className="text-base font-bold text-zinc-900 dark:text-white">AI 맞춤 피드백</h2>
-            </div>
-            {isTranscribing ? (
-              <span className="flex items-center gap-1.5 text-xs font-medium text-indigo-600 dark:text-indigo-400">
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                음성을 텍스트로 변환 중...
-              </span>
-            ) : null}
-          </div>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            녹음 후 변환된 transcript를 확인하고 수정한 뒤 AI 피드백을 요청하세요.
-          </p>
+      {/* Phase A: Exam Screen Console */}
+      <ExamScreenShell
+        courseLabel={resolved.course.title}
+        elapsedLabel={formatTime(elapsedSeconds)}
+        isSpeaking={isSpeaking}
+        levelLabel={levelLabel}
+        listenCount={listenCount}
+        maxListenCount={2}
+        micFailed={micFailed}
+        onDrawQuestion={drawQuestion}
+        onListen={handleListen}
+        onNavigateToGuide={onNavigate ? () => onNavigate("exam-screen") : undefined}
+        onStartAnswer={startAnswer}
+        onStartTimerOnly={startTimerOnly}
+        onStopAnswer={stopAnswer}
+        onToggleQuestionText={() => setShowQuestionText((s) => !s)}
+        onToggleStoryHint={() => setShowStoryHint((s) => !s)}
+        questionGroup={question?.group}
+        questionPrompt={question?.prompt}
+        questionTypeLabel={question ? questionTypeLabels[question.type] ?? question.type : undefined}
+        recommendedStoryScene={courseRecommended?.core.anchorScene}
+        recommendedStoryTitle={courseRecommended?.title}
+        showQuestionText={showQuestionText}
+        showStoryHint={showStoryHint}
+        state={sessionState}
+        targetRangeLabel={targetRangeLabel}
+      />
 
-          <textarea
-            aria-label="답변 텍스트 입력"
-            className="mt-4 h-36 w-full rounded-md border border-zinc-200 bg-zinc-50 p-3 text-sm leading-6 text-zinc-900 focus:border-indigo-500 focus:outline-none dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100"
-            disabled={isTranscribing}
-            onChange={(event) => setAnswer(event.target.value)}
-            placeholder={
-              isTranscribing
-                ? "음성을 텍스트로 변환하고 있습니다..."
-                : "내가 말한 답변을 영어로 적거나, 녹음 후 자동 변환된 내용을 확인해 보세요..."
-            }
-            value={answer}
+      {/* Phase B: Post-Answer Coaching Review Panel (visible when complete or answer exists) */}
+      {showReviewPanel ? (
+        <div className="pt-2">
+          <PracticeReviewPanel
+            answer={answer}
+            audioUrl={audioUrl}
+            autoTranscribe={sttSettings?.autoTranscribe ?? true}
+            durationSeconds={recordingResult?.durationSeconds ?? elapsedSeconds}
+            feedback={feedback}
+            hasRecording={Boolean(recordingResult || audioUrl)}
+            isFeedbackLoading={isFeedbackLoading}
+            onAnswerChange={setAnswer}
+            onFeedback={getFeedback}
+            onNavigateToSettings={onNavigate ? () => onNavigate("ai-settings") : undefined}
+            onRetryAttempt={retryAttempt}
+            onTranscribe={handleManualTranscribe}
+            sttError={sttError}
+            sttStatus={sttStatus}
           />
-
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-            <div className="text-xs text-zinc-500 dark:text-zinc-400">
-              {answer.trim() ? (
-                <span>
-                  단어 수: <strong>{answer.trim().split(/\s+/).filter(Boolean).length}단어</strong>
-                  {recordingResult?.durationSeconds
-                    ? ` · 녹음: ${recordingResult.durationSeconds}초`
-                    : ""}
-                </span>
-              ) : null}
-            </div>
-            <div className="flex gap-2">
-              <Button disabled={isLoading || isTranscribing} onClick={getFeedback}>
-                {isLoading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    분석 중...
-                  </>
-                ) : (
-                  "AI 피드백 받기"
-                )}
-              </Button>
-            </div>
-          </div>
-
-          {feedback ? (
-            <div className="mt-5 rounded-md border border-indigo-100 bg-indigo-50/50 p-4 dark:border-indigo-900 dark:bg-indigo-950/40">
-              <pre className="whitespace-pre-wrap font-sans text-xs leading-6 text-zinc-800 dark:text-zinc-200">
-                {feedback}
-              </pre>
-              <div className="mt-4 border-t border-indigo-200/50 pt-3 dark:border-indigo-800/50">
-                <Button onClick={retryAttempt} size="sm" variant="secondary">
-                  <RotateCcw className="h-3.5 w-3.5" />
-                  피드백 반영하여 다시 말하기
-                </Button>
-              </div>
-            </div>
-          ) : null}
-        </Card>
-      </section>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -478,6 +495,7 @@ export function PracticeView({
     <TrainingSelectionGuard onNavigate={onNavigate} stepName="STEP 6. 실전 연습">
       {(resolved) => (
         <PracticeViewContent
+          onNavigate={onNavigate}
           onToast={onToast}
           resolved={resolved}
           settings={settings}
@@ -487,4 +505,3 @@ export function PracticeView({
     </TrainingSelectionGuard>
   );
 }
-

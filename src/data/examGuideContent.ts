@@ -1,7 +1,14 @@
-﻿export type ExamGuideSection = "exam-overview" | "exam-apply" | "exam-day" | "exam-results" | "exam-faq";
+export type ExamGuideSection =
+  | "exam-overview"
+  | "exam-screen"
+  | "exam-apply"
+  | "exam-day"
+  | "exam-results"
+  | "exam-faq";
 
 export const examGuideSections: Array<{ id: ExamGuideSection; label: string; shortLabel: string; description: string }> = [
   { id: "exam-overview", label: "OPIc 소개 · 등급", shortLabel: "소개 · 등급", description: "시험의 목적, 형식, 등급 체계와 전체 흐름" },
+  { id: "exam-screen", label: "시험 화면 · 조작법", shortLabel: "시험 화면", description: "인터뷰어, 질문 청취, 녹음 상태와 다음 문제 이동 흐름" },
   { id: "exam-apply", label: "회원 · 신청 · 응시료", shortLabel: "신청 · 응시료", description: "회원가입, 접수 과정, 응시료와 지원 안내" },
   { id: "exam-day", label: "신분증 · 입실 · 진행", shortLabel: "당일 진행", description: "규정 신분증, 입실 통제, 시험 진행 프로세스" },
   { id: "exam-results", label: "성적 · 인증서 · 쿠폰", shortLabel: "성적 · 쿠폰", description: "성적 발표, 인증서, UR과 세이빙 쿠폰" },

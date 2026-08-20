@@ -46,4 +46,21 @@ describe("OPIc exam guide", () => {
     expect(screen.queryByText("L&Rcat")).not.toBeInTheDocument();
     expect(screen.queryByText("OPI")).not.toBeInTheDocument();
   });
+
+  it("opens the exam screen guide route directly and renders demo callouts", async () => {
+    render(
+      <MemoryRouter initialEntries={["/exam-guide/screen/"]}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(
+      await screen.findByRole("heading", {
+        name: "시험장에서 화면이 낯설지 않도록 미리 익혀보세요.",
+      })
+    ).toBeInTheDocument();
+    expect(screen.getByText("인터뷰어 영역")).toBeInTheDocument();
+    expect(screen.getByText("Replay / 청취 횟수")).toBeInTheDocument();
+    expect(screen.getByText("시험 조작 인터페이스 구성 도식")).toBeInTheDocument();
+  });
 });

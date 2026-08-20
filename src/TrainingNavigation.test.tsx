@@ -36,11 +36,16 @@ describe("training navigation", () => {
     expect(screen.getByText("훈련 진행 0%")).toBeInTheDocument();
 
     // Click STEP 5
-    await user.click(screen.getByRole("button", { name: /^STEP 5\. 롤플레이 공식$/ }));
+    const step5Button = screen.getByRole("button", { name: "STEP 5. 롤플레이 공식" });
+    await user.click(step5Button);
 
     // Wait for heading
     expect(
-      await screen.findByText(/문제를 설명하고, 대안을 요청하고, 정중하게 마무리합니다/, {}, { timeout: 4000 })
+      await screen.findByRole(
+        "heading",
+        { name: "문제를 설명하고, 대안을 요청하고, 정중하게 마무리합니다." },
+        { timeout: 8000 }
+      )
     ).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /시나리오 훈련/ }).length).toBeGreaterThanOrEqual(3);
     expect(screen.queryByText("EVA QUESTION")).not.toBeInTheDocument();

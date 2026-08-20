@@ -221,7 +221,7 @@ function SurveySheetContent({
       <div>
         <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
           <ClipboardCheck className="h-5 w-5" />
-          <span className="text-sm font-semibold">STEP 2. 서베이 고정</span>
+          <span className="text-sm font-semibold">STEP 2. 추천 서베이 익히기</span>
         </div>
         <h1 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
           실제 형식으로 보고, OOM 추천 조합을 그대로 기억합니다.
@@ -490,7 +490,7 @@ function SurveySheetContent({
 
 export function BackgroundSurveySheet({ onNavigate }: { onNavigate?: (view: ViewId) => void }) {
   return (
-    <TrainingSelectionGuard onNavigate={onNavigate} stepName="STEP 2. 서베이 고정">
+    <TrainingSelectionGuard onNavigate={onNavigate} stepName="STEP 2. 추천 서베이 익히기">
       {(resolved) => <SurveySheetContent resolved={resolved} />}
     </TrainingSelectionGuard>
   );

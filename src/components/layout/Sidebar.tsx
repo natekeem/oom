@@ -4,6 +4,7 @@ export type ViewId =
   | "home"
   | "exam-guide"
   | "exam-overview"
+  | "exam-screen"
   | "exam-apply"
   | "exam-day"
   | "exam-results"
@@ -38,13 +39,14 @@ export const viewTitles: Record<ViewId, string> = {
   home: "홈 / 전략 개요",
   "exam-guide": "OPIc 수험 가이드",
   "exam-overview": "OPIc 수험 가이드 · 소개 · 등급",
+  "exam-screen": "OPIc 수험 가이드 · 시험 화면 · 조작법",
   "exam-apply": "OPIc 수험 가이드 · 신청 · 응시료",
   "exam-day": "OPIc 수험 가이드 · 시험 당일",
   "exam-results": "OPIc 수험 가이드 · 성적 · 인증서",
   "exam-faq": "OPIc 수험 가이드 · 자주 묻는 질문",
   "training-hub": "OPIc 실전 훈련 6 STEP",
   "training-setup": "STEP 1. 목표 구간 · 코스 설정",
-  survey: "STEP 2. 서베이 고정",
+  survey: "STEP 2. 추천 서베이 익히기",
   difficulty: "STEP 3. 난이도 설정",
   "script-hub": "STEP 4. 만능 스크립트",
   "script-outdoor": "STEP 4. 그룹 1 스크립트",

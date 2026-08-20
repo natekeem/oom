@@ -63,15 +63,15 @@ Parent hubs explain the purpose of their child pages. Parent routes should not s
 | --- | --- | --- |
 | Home | `HomeView` | Product overview and entry points |
 | OOM magazine | `MagazineList`, `MagazineDetail` | Static learning articles with local editorial images, author/reviewer identity, honest publish/modified dates, official sources, structured data, examples, and practice takeaways |
-| Candidate guide | `ExamGuideHub`, `ExamGuideOverview`, `ExamGuideDashboard`, `ExamGuideDay`, `ExamGuideFaq`, `ExamGuideTabs` | Informational content, Q&A, and official-source links for time-sensitive rules |
+| Candidate guide | `ExamGuideHub`, `ExamGuideOverview`, `ExamGuideScreen`, `ExamGuideDashboard`, `ExamGuideDay`, `ExamGuideFaq`, `ExamGuideTabs` | Informational content, visual exam screen guide (annotated `ExamScreenShell`), Q&A, and official-source links |
 | Training overview | `TrainingHub` | Overview Hub: 6 STEP overview roadmap, concept explanation |
 | Training setup | `TrainingSetupView` | STEP 1: Target level and course selection |
-| Survey | `BackgroundSurveySheet` | STEP 2: Full survey-like list, course-specific recommendation view, rehearsal mode and scoring |
+| Survey | `BackgroundSurveySheet` | STEP 2: Recommended survey learning, full survey-like list, course-specific recommendation view, rehearsal mode and scoring |
 | Difficulty | `DifficultyGuide` | STEP 3: Level-specific difficulty presets (5-5, 4-4, 3-3) and goal guidance |
 | Script training | `ScriptHub`, `ScriptDashboardV2`, `ScriptTrainingTabs`, `ScriptTrainingGuide`, `MemoryModeToggle`, `TtsControls` | STEP 4: Canonical storyline per group, question variations, and answer blueprint |
 | Role-play | `RoleplayHub`, `RoleplayViewV2` | STEP 5: Integrated formula, flow, phrases, and course-specific scenarios |
-| Practice | `PracticeView`, `PracticeTimer`, `Recorder` | STEP 6: Random question filtered by Course × Level, timer, in-memory audio, text response, feedback request |
-| AI settings | `AiSettingsView`, `AiSettingsPanel` | Runtime-only LLM endpoint and request-shape configuration |
+| Practice | `PracticeView`, `ExamScreenShell`, `ExamInterviewer`, `PracticeReviewPanel`, `Recorder` | STEP 6: Real exam console UX (audio-first, listen count 0/2, EVA interviewer, level-aware timer), 2-phase learning flow, in-memory audio replay, STT transcript editing/retry, and targeted AI coaching |
+| AI settings | `AiSettingsView`, `AiSettingsPanel` | Runtime-only LLM and STT endpoint / request-shape configuration |
 | Legal pages | `LegalPageView` | About, privacy, contact, terms, editorial policy, and image credit content for public trust and static SEO |
 
 Some older presentation components remain in the source tree for now. They are not route owners. Use `App.tsx` and `docs/ROUTING.md` to determine the active implementation before editing.

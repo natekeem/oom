@@ -126,7 +126,7 @@ export function TrainingSetupView({
               </Button>
               {onContinueToNextStep ? (
                 <Button onClick={onContinueToNextStep}>
-                  STEP 2 서베이 고정으로 이동 <ArrowRight className="h-4 w-4" />
+                  STEP 2 추천 서베이 익히기로 이동 <ArrowRight className="h-4 w-4" />
                 </Button>
               ) : null}
             </div>

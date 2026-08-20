@@ -37,6 +37,7 @@ type ExpandedSection = "guide" | "training" | "script" | "roleplay" | "none" | n
 
 const guideItems: Item[] = [
   { id: "exam-overview", label: "소개 · 등급" },
+  { id: "exam-screen", label: "시험 화면 · 조작법" },
   { id: "exam-apply", label: "회원 · 신청 · 응시료" },
   { id: "exam-day", label: "신분증 · 입실 · 진행" },
   { id: "exam-results", label: "성적 · 인증서 · 쿠폰" },
@@ -313,7 +314,7 @@ export function ExpandableSidebar({
             }}
           >
             <ClipboardList className="h-3.5 w-3.5" />
-            STEP 2. 서베이 고정
+            STEP 2. 추천 서베이 익히기
           </NavigationButton>
           <NavigationButton
             active={activeView === "difficulty"}

@@ -8,6 +8,7 @@ import { viewIdForPath, viewPathForId } from "./lib/routes";
 import { HomeView } from "./components/home/HomeView";
 import { ExamGuideHub } from "./components/guide/ExamGuideHub";
 import { ExamGuideOverview } from "./components/guide/ExamGuideOverview";
+import { ExamGuideScreen } from "./components/guide/ExamGuideScreen";
 import { ExamGuideDay } from "./components/guide/ExamGuideDay";
 import { ExamGuideDashboard } from "./components/guide/ExamGuideDashboard";
 import { ExamGuideFaq } from "./components/guide/ExamGuideFaq";
@@ -218,6 +219,14 @@ export default function App() {
       <Route
         path="/exam-guide/overview/"
         element={<ExamGuideOverview onSectionChange={(v) => navigate(viewPathForId[v])} />}
+      />
+      <Route
+        path="/exam-guide/screen"
+        element={<ExamGuideScreen onNavigate={onNavigate} onSectionChange={(v) => navigate(viewPathForId[v])} />}
+      />
+      <Route
+        path="/exam-guide/screen/"
+        element={<ExamGuideScreen onNavigate={onNavigate} onSectionChange={(v) => navigate(viewPathForId[v])} />}
       />
       <Route
         path="/exam-guide/day"

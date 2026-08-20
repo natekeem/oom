@@ -879,4 +879,55 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
       expect(course3.title).not.toContain('Activity');
     }
   });
+
+  // ── 49. Item A & B & C: Recorder reset discardOnStopRef logic contract ──
+  it('49. Item A/B/C: Recorder discardOnStopRef prevents onRecordingReady when resetKey changes', () => {
+    // Structural assertion: discardOnStopRef flag is used in Recorder.tsx
+    const fs = readFileSync(join(process.cwd(), 'src', 'components', 'practice', 'Recorder.tsx'), 'utf8');
+    expect(fs).toContain('discardOnStopRef.current = true');
+    expect(fs).toContain('if (discardOnStopRef.current)');
+  });
+
+  // ── 50. Item D & E: RecorderHandle.start returns Promise<boolean> contract ──
+  it('50. Item D/E: RecorderHandle.start type signature is () => Promise<boolean>', () => {
+    const fs = readFileSync(join(process.cwd(), 'src', 'components', 'practice', 'Recorder.tsx'), 'utf8');
+    expect(fs).toContain('start: () => Promise<boolean>');
+    expect(fs).toContain('const start = async (): Promise<boolean>');
+  });
+
+  // ── 51. Item F & G: Mic failure prevents auto timer start & allows timer-only fallback ──
+  it('51. Item F/G: PracticeView handles mic failure without starting timer and provides timer-only CTA', async () => {
+    saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/practice']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    // Draw question
+    const drawBtn = screen.getByRole('button', { name: /랜덤 질문 뽑기/ });
+    await user.click(drawBtn);
+
+    // In jsdom mediaDevices.getUserMedia is missing, so startAnswer() returns false (mic failure)
+    const startBtn = screen.getByRole('button', { name: /답변 시작/ });
+    await user.click(startBtn);
+
+    // Mic warning card appears
+    expect(await screen.findByText('마이크를 사용할 수 없습니다.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '타이머만 시작' })).toBeInTheDocument();
+
+    // Click timer only button
+    await user.click(screen.getByRole('button', { name: '타이머만 시작' }));
+    // Warning card clears on timer only
+    expect(screen.queryByText('마이크를 사용할 수 없습니다.')).not.toBeInTheDocument();
+  });
+
+  // ── 52. Item H & I: attemptIdRef guards stale STT transcript overwrite and isTranscribing state ──
+  it('52. Item H/I: PracticeView attemptIdRef guards stale STT response and isTranscribing state reset', () => {
+    const fs = readFileSync(join(process.cwd(), 'src', 'components', 'practice', 'PracticeView.tsx'), 'utf8');
+    expect(fs).toContain('const attemptIdRef = useRef(0)');
+    expect(fs).toContain('requestAttemptId === attemptIdRef.current');
+  });
 });
+

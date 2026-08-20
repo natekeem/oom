@@ -14,6 +14,46 @@ import { ExamInterviewer } from "./ExamInterviewer";
 
 export type ExamSessionState = "ready" | "recording" | "complete";
 
+type AnnotationBadgeProps = {
+  id: number;
+  active?: boolean;
+  onSelect?: (id: number) => void;
+  className?: string;
+};
+
+function AnnotationBadge({
+  id,
+  active = false,
+  onSelect,
+  className = "",
+}: AnnotationBadgeProps) {
+  if (onSelect) {
+    return (
+      <button
+        aria-label={`${id}번 영역 설명 보기`}
+        aria-pressed={active}
+        className={`grid h-7 w-7 place-items-center rounded-full text-xs font-black text-white shadow-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
+          active
+            ? "bg-indigo-600 ring-4 ring-indigo-400 shadow-indigo-500/50 scale-110"
+            : "bg-zinc-800 text-zinc-200 ring-2 ring-zinc-500 hover:bg-indigo-600 hover:text-white hover:scale-105"
+        } ${className}`}
+        onClick={() => onSelect(id)}
+        type="button"
+      >
+        {id}
+      </button>
+    );
+  }
+
+  return (
+    <div
+      className={`grid h-7 w-7 place-items-center rounded-full bg-indigo-600 text-xs font-black text-white shadow-lg ring-2 ring-white ${className}`}
+    >
+      {id}
+    </div>
+  );
+}
+
 type ExamScreenShellProps = {
   courseLabel: string;
   levelLabel: string;
@@ -41,6 +81,9 @@ type ExamScreenShellProps = {
   micFailed?: boolean;
   onNavigateToGuide?: () => void;
   isDemo?: boolean;
+  activeAnnotation?: number;
+  onAnnotationSelect?: (id: number) => void;
+  questionChanged?: boolean;
 };
 
 /**
@@ -74,6 +117,9 @@ export function ExamScreenShell({
   micFailed = false,
   onNavigateToGuide,
   isDemo = false,
+  activeAnnotation,
+  onAnnotationSelect,
+  questionChanged = false,
 }: ExamScreenShellProps) {
   const recording = state === "recording";
   const canListen = !recording && !isSpeaking && listenCount < maxListenCount && Boolean(questionPrompt);
@@ -112,7 +158,9 @@ export function ExamScreenShell({
             <div className="relative">
               <ExamInterviewer
                 annotationBadge={isDemo ? 1 : undefined}
+                isAnnotationActive={activeAnnotation === 1}
                 isSpeaking={isSpeaking}
+                onAnnotationSelect={onAnnotationSelect}
                 recording={recording}
                 src={avatarSrc}
               />
@@ -120,21 +168,23 @@ export function ExamScreenShell({
 
             {/* 2 & 3. Question Listening Control */}
             <div className="relative flex flex-col justify-between rounded-lg border border-zinc-800 bg-zinc-900/90 p-5 text-white">
-              {isDemo ? (
-                <div className="absolute right-3 top-3 z-10 grid h-7 w-7 place-items-center rounded-full bg-indigo-600 text-xs font-black text-white shadow-lg ring-2 ring-white">
-                  3
-                </div>
-              ) : null}
-
               <div className="flex items-center justify-between gap-2">
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-zinc-400">
                   질문 청취
                 </p>
-                <div className="inline-flex items-center gap-1.5 rounded-md bg-zinc-800 px-2.5 py-1 text-xs font-extrabold text-white">
+                <div className="relative inline-flex items-center gap-1.5 rounded-md bg-zinc-800 px-2.5 py-1 text-xs font-extrabold text-white">
                   <Volume2 className="h-3.5 w-3.5 text-indigo-400" />
                   <span>
                     {listenCount} / {maxListenCount}
                   </span>
+                  {isDemo ? (
+                    <AnnotationBadge
+                      active={activeAnnotation === 3}
+                      className="absolute -right-3 -top-3 z-10"
+                      id={3}
+                      onSelect={onAnnotationSelect}
+                    />
+                  ) : null}
                 </div>
               </div>
 
@@ -142,9 +192,12 @@ export function ExamScreenShell({
               <div className="my-4 grid place-items-center text-center">
                 <div className="relative">
                   {isDemo ? (
-                    <div className="absolute -left-3 -top-3 z-10 grid h-7 w-7 place-items-center rounded-full bg-indigo-600 text-xs font-black text-white shadow-lg ring-2 ring-white">
-                      2
-                    </div>
+                    <AnnotationBadge
+                      active={activeAnnotation === 2}
+                      className="absolute -left-3 -top-3 z-10"
+                      id={2}
+                      onSelect={onAnnotationSelect}
+                    />
                   ) : null}
                   <button
                     aria-label="질문 듣기"
@@ -180,39 +233,37 @@ export function ExamScreenShell({
                 </p>
               </div>
 
-              {/* Text Reveal Accessibility Toggle */}
-              <div className="border-t border-zinc-800/80 pt-3 text-center">
-                <button
-                  aria-expanded={showQuestionText}
-                  className="inline-flex items-center gap-1.5 text-xs text-zinc-400 transition hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-                  onClick={onToggleQuestionText}
-                  type="button"
-                >
-                  {showQuestionText ? (
-                    <>
-                      <EyeOff className="h-3.5 w-3.5" />
-                      문제 텍스트 숨기기
-                    </>
-                  ) : (
-                    <>
-                      <Eye className="h-3.5 w-3.5" />
-                      문제 텍스트 보기
-                    </>
-                  )}
-                </button>
-              </div>
+              {/* Spacing alignment */}
+              <div className="border-t border-zinc-800/40" />
             </div>
           </div>
 
-          {/* Question Text Box (Audio-First: hidden by default, accessible via sr-only) */}
+          {/* Question Text Box (Audio-First: hidden by default, accessible via sr-only, single toggle in header) */}
           <div className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-4">
             <div className="flex items-center justify-between text-xs text-zinc-400">
               <span className="font-semibold uppercase tracking-wider">
                 Question Prompt
               </span>
-              <span className="text-[11px] text-zinc-500">
-                {showQuestionText ? "텍스트 표시 중" : "음성 중심 연습 (가림)"}
-              </span>
+              <Button
+                aria-expanded={showQuestionText}
+                aria-label={showQuestionText ? "문제 텍스트 숨기기" : "문제 텍스트 보기"}
+                className="h-7 text-xs"
+                onClick={onToggleQuestionText}
+                size="sm"
+                variant="secondary"
+              >
+                {showQuestionText ? (
+                  <>
+                    <EyeOff className="mr-1 h-3.5 w-3.5" />
+                    텍스트 숨기기
+                  </>
+                ) : (
+                  <>
+                    <Eye className="mr-1 h-3.5 w-3.5" />
+                    텍스트 보기
+                  </>
+                )}
+              </Button>
             </div>
 
             {/* Screen Reader Prompt (Always Present) */}
@@ -226,18 +277,8 @@ export function ExamScreenShell({
                 {questionPrompt ?? "랜덤 질문을 뽑아주세요."}
               </p>
             ) : (
-              <div className="mt-2 flex items-center justify-between rounded-md border border-dashed border-zinc-700/60 bg-zinc-950/40 px-3 py-2 text-xs text-zinc-400">
-                <span>
-                  질문 텍스트는 실제 시험처럼 숨겨져 있습니다. 음성에 집중해 보세요.
-                </span>
-                <Button
-                  className="h-7 text-xs"
-                  onClick={onToggleQuestionText}
-                  size="sm"
-                  variant="secondary"
-                >
-                  텍스트 보기
-                </Button>
+              <div className="mt-2 rounded-md border border-dashed border-zinc-800 bg-zinc-950/40 px-3.5 py-2.5 text-xs text-zinc-400">
+                질문 텍스트는 실제 시험처럼 숨겨져 있습니다. 음성에 집중해 보세요.
               </div>
             )}
           </div>
@@ -245,9 +286,12 @@ export function ExamScreenShell({
           {/* 4 & 6. Recording & Time Status Bar */}
           <div className="relative rounded-lg border border-zinc-800 bg-zinc-900/90 p-4 sm:p-5">
             {isDemo ? (
-              <div className="absolute left-3 top-3 z-10 grid h-7 w-7 place-items-center rounded-full bg-indigo-600 text-xs font-black text-white shadow-lg ring-2 ring-white">
-                4
-              </div>
+              <AnnotationBadge
+                active={activeAnnotation === 4}
+                className="absolute left-3 top-3 z-10"
+                id={4}
+                onSelect={onAnnotationSelect}
+              />
             ) : null}
 
             <div className="flex flex-wrap items-center justify-between gap-4">
@@ -295,9 +339,12 @@ export function ExamScreenShell({
               {/* Action Button */}
               <div className="relative flex items-center gap-2">
                 {isDemo ? (
-                  <div className="absolute -left-3 -top-3 z-10 grid h-7 w-7 place-items-center rounded-full bg-indigo-600 text-xs font-black text-white shadow-lg ring-2 ring-white">
-                    6
-                  </div>
+                  <AnnotationBadge
+                    active={activeAnnotation === 6}
+                    className="absolute -left-3 -top-3 z-10"
+                    id={6}
+                    onSelect={onAnnotationSelect}
+                  />
                 ) : null}
 
                 {recording ? (
@@ -346,11 +393,20 @@ export function ExamScreenShell({
         </div>
 
         {/* Right Column: Question Info, Storyline Hint & Navigation */}
-        <aside className="relative flex flex-col justify-between rounded-lg border border-zinc-800 bg-zinc-900/90 p-5 text-white">
+        <aside
+          className={`relative flex flex-col justify-between rounded-lg border bg-zinc-900/90 p-5 text-white transition-all duration-300 ${
+            questionChanged
+              ? "border-indigo-400 ring-2 ring-indigo-400/60 shadow-lg shadow-indigo-500/20"
+              : "border-zinc-800"
+          }`}
+        >
           {isDemo ? (
-            <div className="absolute right-3 top-3 z-10 grid h-7 w-7 place-items-center rounded-full bg-indigo-600 text-xs font-black text-white shadow-lg ring-2 ring-white">
-              5
-            </div>
+            <AnnotationBadge
+              active={activeAnnotation === 5}
+              className="absolute right-3 top-3 z-10"
+              id={5}
+              onSelect={onAnnotationSelect}
+            />
           ) : null}
 
           <div className="space-y-4">
@@ -384,7 +440,9 @@ export function ExamScreenShell({
             <div className="rounded-md border border-zinc-800 bg-zinc-950/60 p-4">
               <p className="text-xs font-semibold text-zinc-400">진행 상태</p>
               <p className="mt-1 text-sm font-bold text-white">
-                {recording
+                {questionChanged
+                  ? "✓ 새 연습 문항을 불러왔습니다."
+                  : recording
                   ? "● 답변 녹음 중..."
                   : isSpeaking
                   ? "질문 청취 중"

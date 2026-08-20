@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import App from "./App";
 
@@ -62,5 +63,26 @@ describe("OPIc exam guide", () => {
     expect(screen.getByText("인터뷰어 영역")).toBeInTheDocument();
     expect(screen.getByText("Replay / 청취 횟수")).toBeInTheDocument();
     expect(screen.getByText("시험 조작 인터페이스 구성 도식")).toBeInTheDocument();
+  });
+
+  it("allows interactive callout selection between screen badges and explanation cards", async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={["/exam-guide/screen/"]}>
+        <App />
+      </MemoryRouter>
+    );
+
+    // Callout 3 badge
+    const badge3 = screen.getByRole("button", { name: "3번 영역 설명 보기" });
+    await user.click(badge3);
+    expect(badge3).toHaveAttribute("aria-pressed", "true");
+
+    // Card 4 click
+    const card4 = screen.getByRole("button", { name: "4번 마이크 · 녹음 상태 설명 카드" });
+    await user.click(card4);
+    expect(card4).toHaveAttribute("aria-pressed", "true");
+    const badge4 = screen.getByRole("button", { name: "4번 영역 설명 보기" });
+    expect(badge4).toHaveAttribute("aria-pressed", "true");
   });
 });

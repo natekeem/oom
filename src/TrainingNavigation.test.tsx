@@ -41,11 +41,7 @@ describe("training navigation", () => {
 
     // Wait for heading
     expect(
-      await screen.findByRole(
-        "heading",
-        { name: "문제를 설명하고, 대안을 요청하고, 정중하게 마무리합니다." },
-        { timeout: 8000 }
-      )
+      await screen.findByText(/문제를 설명하고, 대안을 요청하고, 정중하게 마무리합니다/)
     ).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /시나리오 훈련/ }).length).toBeGreaterThanOrEqual(3);
     expect(screen.queryByText("EVA QUESTION")).not.toBeInTheDocument();

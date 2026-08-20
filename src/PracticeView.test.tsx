@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { PracticeView } from "./components/practice/PracticeView";
@@ -49,7 +49,7 @@ const dummySttSettings: SttSettings = {
 };
 
 describe("PracticeView & ExamScreenShell", () => {
-  it("renders the exam screen console with audio-first question text hidden by default", async () => {
+  it("renders the exam screen console with single audio-first question text toggle", async () => {
     const onToast = vi.fn();
     render(
       <TrainingSelectionProvider>
@@ -68,15 +68,19 @@ describe("PracticeView & ExamScreenShell", () => {
     // Check listen count starts at 0 / 2
     expect(screen.getByText(/0 \/ 2/)).toBeInTheDocument();
 
-    // Question prompt should NOT be visually visible in text before toggle
-    // Toggle button should exist
-    const togglePromptBtn = screen.getByRole("button", { name: /문제 텍스트 보기/ });
-    expect(togglePromptBtn).toBeInTheDocument();
+    // Only ONE question text toggle should exist across the entire screen
+    const toggleButtons = screen.getAllByRole("button", {
+      name: /문제 텍스트 보기|문제 텍스트 숨기기|텍스트 보기|텍스트 숨기기/,
+    });
+    expect(toggleButtons).toHaveLength(1);
+
+    const togglePromptBtn = toggleButtons[0];
+    expect(togglePromptBtn).toHaveTextContent("텍스트 보기");
 
     // Click toggle to reveal text
     const user = userEvent.setup();
     await user.click(togglePromptBtn);
-    expect(screen.getByRole("button", { name: /문제 텍스트 숨기기/ })).toBeInTheDocument();
+    expect(togglePromptBtn).toHaveTextContent("텍스트 숨기기");
   });
 
   it("increments listen count on Play and caps at 2/2", async () => {
@@ -108,7 +112,7 @@ describe("PracticeView & ExamScreenShell", () => {
     expect(playBtn).toBeDisabled();
   });
 
-  it("handles start answer and timer only mode without crashing", async () => {
+  it("handles start answer, timer only mode, and shows privacy notice in review panel", async () => {
     const onToast = vi.fn();
     const user = userEvent.setup();
 
@@ -126,8 +130,6 @@ describe("PracticeView & ExamScreenShell", () => {
     const startBtn = screen.getByRole("button", { name: /답변 시작/ });
     await user.click(startBtn);
 
-    // If mic is not granted or mock MediaRecorder is not available, shell gracefully shows fallback or recording status
-    // Now click '마이크 없이 타이머만 시작' if visible
     const timerOnlyBtn = screen.queryByRole("button", { name: /타이머만 시작/ });
     if (timerOnlyBtn) {
       await user.click(timerOnlyBtn);
@@ -142,6 +144,40 @@ describe("PracticeView & ExamScreenShell", () => {
     expect(screen.getByText(/① 내 녹음/)).toBeInTheDocument();
     expect(screen.getByText(/② 음성 받아쓰기/)).toBeInTheDocument();
     expect(screen.getByText(/③ AI 맞춤 피드백/)).toBeInTheDocument();
+
+    // Privacy notice
+    expect(
+      screen.getByText(/녹음은 서버로 전송되지 않고 브라우저 메모리에만 유지됩니다/)
+    ).toBeInTheDocument();
+  });
+
+  it("triggers visual acknowledgement and resets on random question draw", async () => {
+    const onToast = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <TrainingSelectionProvider>
+        <PracticeView
+          onToast={onToast}
+          settings={dummyLlmSettings}
+          sttSettings={dummySttSettings}
+        />
+      </TrainingSelectionProvider>
+    );
+
+    const drawBtn = screen.getByRole("button", { name: /랜덤 질문 뽑기/ });
+    await user.click(drawBtn);
+
+    // Visual acknowledgement should appear
+    expect(screen.getByText(/새 연습 문항을 불러왔습니다/)).toBeInTheDocument();
+
+    // After ~1200ms, it should return to normal
+    await waitFor(
+      () => {
+        expect(screen.queryByText(/새 연습 문항을 불러왔습니다/)).not.toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 
   it("resets listen count and review data when '같은 문제 다시 말하기' retry button is clicked", async () => {

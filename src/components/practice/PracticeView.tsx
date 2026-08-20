@@ -125,6 +125,17 @@ function PracticeViewContent({
     };
   }, [sessionState]);
 
+  const [questionChanged, setQuestionChanged] = useState(false);
+  const questionChangeTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (questionChangeTimerRef.current) {
+        window.clearTimeout(questionChangeTimerRef.current);
+      }
+    };
+  }, []);
+
   const drawQuestion = () => {
     stopSpeech();
     sttAbortRef.current?.abort();
@@ -133,9 +144,14 @@ function PracticeViewContent({
       setAudioUrl(null);
     }
 
+    const candidates =
+      availableQuestions.length > 1 && question
+        ? availableQuestions.filter((item) => item.id !== question.id)
+        : availableQuestions;
+
     const next =
-      availableQuestions.length > 0
-        ? availableQuestions[Math.floor(Math.random() * availableQuestions.length)]
+      candidates.length > 0
+        ? candidates[Math.floor(Math.random() * candidates.length)]
         : null;
 
     setQuestion(next);
@@ -155,6 +171,14 @@ function PracticeViewContent({
 
     attemptIdRef.current += 1;
     setAttemptKey((k) => k + 1);
+
+    setQuestionChanged(true);
+    if (questionChangeTimerRef.current) {
+      window.clearTimeout(questionChangeTimerRef.current);
+    }
+    questionChangeTimerRef.current = window.setTimeout(() => {
+      setQuestionChanged(false);
+    }, 1200);
   };
 
   const handleListen = () => {
@@ -453,6 +477,7 @@ function PracticeViewContent({
         onStopAnswer={stopAnswer}
         onToggleQuestionText={() => setShowQuestionText((s) => !s)}
         onToggleStoryHint={() => setShowStoryHint((s) => !s)}
+        questionChanged={questionChanged}
         questionGroup={question?.group}
         questionPrompt={question?.prompt}
         questionTypeLabel={question ? questionTypeLabels[question.type] ?? question.type : undefined}

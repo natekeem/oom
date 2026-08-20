@@ -58,7 +58,7 @@ export function PracticeReviewPanel({
 
   return (
     <section aria-label="답변 복기 영역" className="space-y-4" id="answer-review">
-      <div className="border-l-4 border-indigo-500 pl-3.5">
+      <div>
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-indigo-600 dark:text-indigo-400">
           Phase B · 답변 복기
         </p>
@@ -67,43 +67,44 @@ export function PracticeReviewPanel({
         </h2>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[0.85fr_1.25fr_1.1fr]">
+      <div className="grid gap-4 xl:grid-cols-[0.85fr_1.25fr_1.1fr] xl:items-start">
         {/* ① 내 녹음 */}
-        <Card className="flex flex-col justify-between p-5">
-          <div>
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 font-extrabold text-zinc-900 dark:text-white">
-                <Headphones className="h-4 w-4 text-indigo-500" />
-                <span className="text-sm">① 내 녹음</span>
-              </div>
-              {durationSeconds ? (
-                <span className="rounded bg-zinc-100 px-2 py-0.5 font-mono text-xs font-bold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
-                  {durationSeconds}초
-                </span>
-              ) : null}
+        <Card className="p-5">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 font-extrabold text-zinc-900 dark:text-white">
+              <Headphones className="h-4 w-4 text-indigo-500" />
+              <span className="text-sm">① 내 녹음</span>
             </div>
+            {durationSeconds ? (
+              <span className="rounded bg-zinc-100 px-2 py-0.5 font-mono text-xs font-bold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                {durationSeconds}초
+              </span>
+            ) : null}
+          </div>
 
-            <p className="mt-2 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-              실제로 말한 발화 속도와 끊김 여부를 귀로 먼저 확인해 보세요.
+          <p className="mt-2 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+            실제로 말한 답변을 먼저 들어보세요.
+          </p>
+
+          {audioUrl ? (
+            <div className="my-4">
+              <audio className="w-full" controls src={audioUrl}>
+                <track kind="captions" />
+                브라우저가 오디오 재생을 지원하지 않습니다.
+              </audio>
+            </div>
+          ) : (
+            <div className="my-4 rounded-md border border-dashed border-zinc-200 bg-zinc-50 p-4 text-center text-xs text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900">
+              {hasRecording
+                ? "오디오를 불러오고 있습니다..."
+                : "녹음이 완료되면 오디오 재생 컨트롤이 표시됩니다."}
+            </div>
+          )}
+
+          <div className="border-t border-zinc-100 pt-3 dark:border-zinc-800">
+            <p className="text-[11px] leading-4 text-zinc-400">
+              * 녹음은 서버로 전송되지 않고 브라우저 메모리에만 유지됩니다.
             </p>
-
-            {audioUrl ? (
-              <div className="mt-5 space-y-2">
-                <audio className="w-full" controls src={audioUrl}>
-                  <track kind="captions" />
-                  브라우저가 오디오 재생을 지원하지 않습니다.
-                </audio>
-                <p className="text-[11px] text-zinc-400">
-                  * 녹음은 서버로 전송되지 않고 브라우저 메모리에만 유지됩니다.
-                </p>
-              </div>
-            ) : (
-              <div className="mt-5 rounded-md border border-dashed border-zinc-200 bg-zinc-50 p-4 text-center text-xs text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900">
-                {hasRecording
-                  ? "오디오를 불러오고 있습니다..."
-                  : "녹음이 완료되면 오디오 재생 컨트롤이 표시됩니다."}
-              </div>
-            )}
           </div>
         </Card>
 
@@ -227,7 +228,7 @@ export function PracticeReviewPanel({
             </div>
 
             <p className="text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-              Transcript를 확인한 다음 목표 등급 기준 피드백을 요청하세요.
+              Transcript를 확인한 다음 선택한 목표 구간에 맞춰 피드백을 받아보세요.
             </p>
 
             <Button

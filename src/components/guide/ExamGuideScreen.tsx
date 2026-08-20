@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   ArrowRight,
   Headphones,
@@ -76,6 +77,8 @@ export function ExamGuideScreen({
   onNavigate,
   onSectionChange,
 }: ExamGuideScreenProps) {
+  const [activeCallout, setActiveCallout] = useState<number>(1);
+
   return (
     <div className="space-y-8">
       <ExamGuideTabs
@@ -97,16 +100,17 @@ export function ExamGuideScreen({
 
       {/* Interactive / Annotated ExamScreenShell Demo */}
       <section className="space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
             시험 조작 인터페이스 구성 도식
           </h2>
           <span className="text-xs text-zinc-500">
-            ①~⑥ 번호 배지를 클릭하거나 아래 설명 카드를 확인하세요.
+            ①~⑥ 번호를 선택하면 해당 영역의 설명을 바로 확인할 수 있으며, 아래 설명 카드를 눌러도 해당 영역이 강조됩니다.
           </span>
         </div>
 
         <ExamScreenShell
+          activeAnnotation={activeCallout}
           courseLabel="Everyday & Getaway"
           elapsedLabel="00:42"
           isDemo={true}
@@ -114,6 +118,7 @@ export function ExamGuideScreen({
           levelLabel="1구간 (AL)"
           listenCount={1}
           maxListenCount={2}
+          onAnnotationSelect={setActiveCallout}
           onListen={() => {}}
           onStartAnswer={() => {}}
           onStopAnswer={() => {}}
@@ -136,24 +141,57 @@ export function ExamGuideScreen({
           화면 주요 구성 요소 설명
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {callouts.map(({ icon: Icon, num, title, body }) => (
-            <Card className="p-5" key={title}>
-              <div className="flex items-start gap-3">
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-indigo-600 text-xs font-black text-white shadow-sm">
-                  {num}
-                </span>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <Icon className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-                    <h3 className="text-sm font-bold text-zinc-950 dark:text-white">{title}</h3>
+          {callouts.map(({ icon: Icon, num, title, body }) => {
+            const isActive = activeCallout === num;
+            return (
+              <Card
+                aria-label={`${num}번 ${title} 설명 카드`}
+                aria-pressed={isActive}
+                className={`cursor-pointer p-5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+                  isActive
+                    ? "border-indigo-500 bg-indigo-50/60 ring-2 ring-indigo-400/40 dark:border-indigo-400 dark:bg-indigo-950/40"
+                    : "hover:border-zinc-300 hover:bg-zinc-50/50 dark:hover:border-zinc-700 dark:hover:bg-zinc-900/50"
+                }`}
+                key={title}
+                onClick={() => setActiveCallout(num)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setActiveCallout(num);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+              >
+                <div className="flex items-start gap-3">
+                  <span
+                    className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-black text-white shadow-sm transition-transform ${
+                      isActive ? "bg-indigo-600 scale-110" : "bg-zinc-700"
+                    }`}
+                  >
+                    {num}
+                  </span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Icon
+                        className={`h-4 w-4 ${
+                          isActive
+                            ? "text-indigo-600 dark:text-indigo-400"
+                            : "text-zinc-500 dark:text-zinc-400"
+                        }`}
+                      />
+                      <h3 className="text-sm font-bold text-zinc-950 dark:text-white">
+                        {title}
+                      </h3>
+                    </div>
+                    <p className="mt-2 text-xs leading-5 text-zinc-600 dark:text-zinc-300">
+                      {body}
+                    </p>
                   </div>
-                  <p className="mt-2 text-xs leading-5 text-zinc-600 dark:text-zinc-300">
-                    {body}
-                  </p>
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
       </section>
 

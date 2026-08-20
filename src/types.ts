@@ -96,6 +96,14 @@ export type LlmSettings = {
   customBodyTemplate?: string;
 };
 
+export type SttSettings = {
+  endpoint: string;
+  apiKey?: string;
+  model?: string;
+  authType: LlmAuthType;
+  autoTranscribe: boolean;
+};
+
 export type LlmMessage = {
   role: "system" | "user" | "assistant";
   content: string;

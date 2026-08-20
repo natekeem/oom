@@ -15,6 +15,7 @@ import type { ViewId } from "../layout/Sidebar";
 import type { ResolvedTrainingContext } from "../../training/types";
 
 type SurveyMode = "guide" | "practice";
+type SurveyDisplayMode = "paged" | "all";
 
 type GradeResult = {
   correctCount: number;
@@ -145,6 +146,7 @@ function SurveySheetContent({
   const recommendedSet = useMemo(() => new Set(currentRecommendedIds), [currentRecommendedIds]);
 
   const [mode, setMode] = useState<SurveyMode>("guide");
+  const [displayMode, setDisplayMode] = useState<SurveyDisplayMode>("paged");
   const [selectedIds, setSelectedIds] = useState<string[]>(currentRecommendedIds);
   const [result, setResult] = useState<GradeResult | null>(null);
   const [currentPart, setCurrentPart] = useState(1);
@@ -247,7 +249,7 @@ function SurveySheetContent({
             </div>
           </div>
           <div
-            aria-label="서베이 표시 모드"
+            aria-label="서베이 모드"
             className="inline-flex w-full rounded-md border border-indigo-200 bg-white p-1 sm:w-auto dark:border-indigo-800 dark:bg-zinc-900"
             role="group"
           >
@@ -353,59 +355,103 @@ function SurveySheetContent({
 
       {/* Main Background Survey Card Container (Shared for Guide and Practice modes) */}
       <Card className="p-5 sm:p-6">
-        <div className="mb-5 flex items-center justify-between border-b border-zinc-100 pb-4 dark:border-zinc-800">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-100 pb-4 dark:border-zinc-800">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
               Background Survey
             </span>
             <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              {currentPage.title} ({currentPart} / {pages.length})
+              {displayMode === "all" ? "전체 7개 파트" : `${currentPage.title} (${currentPart} / ${pages.length})`}
             </p>
           </div>
-          <div className="flex gap-1.5">
-            <Button disabled={currentPart === 1} onClick={goBack} size="sm" variant="secondary">
-              이전
+          <div
+            aria-label="서베이 표시 모드"
+            className="inline-flex rounded-md border border-zinc-200 bg-zinc-50 p-0.5 dark:border-zinc-700 dark:bg-zinc-800"
+            role="group"
+          >
+            <Button
+              aria-pressed={displayMode === "paged"}
+              onClick={() => setDisplayMode("paged")}
+              size="sm"
+              variant={displayMode === "paged" ? "primary" : "ghost"}
+            >
+              파트별 보기
             </Button>
             <Button
-              disabled={currentPart === pages.length}
-              onClick={goNext}
+              aria-pressed={displayMode === "all"}
+              onClick={() => setDisplayMode("all")}
               size="sm"
-              variant="secondary"
+              variant={displayMode === "all" ? "primary" : "ghost"}
             >
-              다음
+              전체 보기
             </Button>
           </div>
         </div>
 
-        <div className="space-y-6">
-          {currentPage.sections.map((section) => (
-            <SurveyQuestion
-              gridClass={currentPage.gridClass}
-              key={section.id}
-              mode={mode}
-              onChange={updateSelection}
-              recommendedSet={recommendedSet}
-              section={section}
-              selected={mode === "guide" ? recommendedSet : selected}
-            />
-          ))}
-        </div>
+        {displayMode === "all" ? (
+          <div className="space-y-8">
+            {pages.map((page, pageIdx) => (
+              <div className="space-y-4" key={`page-${page.part}`}>
+                {pageIdx > 0 ? (
+                  <div className="border-t border-zinc-200 pt-4 dark:border-zinc-800" />
+                ) : null}
+                <div className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+                  {page.title}
+                </div>
+                {page.sections.map((section) => (
+                  <SurveyQuestion
+                    gridClass={page.gridClass}
+                    key={section.id}
+                    mode={mode}
+                    onChange={updateSelection}
+                    recommendedSet={recommendedSet}
+                    section={section}
+                    selected={mode === "guide" ? recommendedSet : selected}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {currentPage.sections.map((section) => (
+              <SurveyQuestion
+                gridClass={currentPage.gridClass}
+                key={section.id}
+                mode={mode}
+                onChange={updateSelection}
+                recommendedSet={recommendedSet}
+                section={section}
+                selected={mode === "guide" ? recommendedSet : selected}
+              />
+            ))}
+          </div>
+        )}
 
-        <div className="mt-6 flex justify-between border-t border-zinc-100 pt-4 dark:border-zinc-800">
-          <Button disabled={currentPart === 1} onClick={goBack} size="sm" variant="secondary">
-            이전 파트
-          </Button>
-          {mode === "practice" && currentPart === pages.length ? (
+        {displayMode === "paged" ? (
+          <div className="mt-6 flex justify-between border-t border-zinc-100 pt-4 dark:border-zinc-800">
+            <Button disabled={currentPart === 1} onClick={goBack} size="sm" variant="secondary">
+              이전 파트
+            </Button>
+            {mode === "practice" && currentPart === pages.length ? (
+              <Button onClick={grade} size="sm">
+                <ClipboardCheck className="h-3.5 w-3.5" />
+                답안 채점하기
+              </Button>
+            ) : (
+              <Button disabled={currentPart === pages.length} onClick={goNext} size="sm">
+                다음 파트 <Check className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
+        ) : mode === "practice" ? (
+          <div className="mt-6 flex justify-end border-t border-zinc-100 pt-4 dark:border-zinc-800">
             <Button onClick={grade} size="sm">
               <ClipboardCheck className="h-3.5 w-3.5" />
               답안 채점하기
             </Button>
-          ) : (
-            <Button disabled={currentPart === pages.length} onClick={goNext} size="sm">
-              다음 파트 <Check className="h-3.5 w-3.5" />
-            </Button>
-          )}
-        </div>
+          </div>
+        ) : null}
       </Card>
 
       {/* Course-aware Storyline Grouping Section */}

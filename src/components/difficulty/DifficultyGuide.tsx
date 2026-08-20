@@ -180,12 +180,14 @@ function DifficultySlider({
         value={value}
       />
       <span className="mt-1 flex justify-between text-[11px] text-zinc-400">
-        <span>1</span>
-        <span>2</span>
-        <span>3</span>
-        <span>4</span>
-        <span className={recommended === 5 ? "font-bold text-indigo-500" : ""}>5</span>
-        <span>6</span>
+        {[1, 2, 3, 4, 5, 6].map((num) => (
+          <span
+            className={recommended === num ? "font-bold text-indigo-500" : ""}
+            key={num}
+          >
+            {num}
+          </span>
+        ))}
       </span>
     </label>
   );

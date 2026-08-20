@@ -477,7 +477,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
     expect(screen.getByText('이 코스의 4개 핵심 스토리 묶음 (Everyday & Getaway)')).toBeInTheDocument();
 
     // Navigate to Part 2
-    await user.click(screen.getByRole('button', { name: '다음' }));
+    await user.click(screen.getByRole('button', { name: /다음 파트/ }));
     expect(screen.getByText('Part 2 of 7 (2 / 7)')).toBeInTheDocument();
 
     // Switch to Practice Mode
@@ -530,5 +530,151 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
     // Course 2 has 12 activities
     expect(screen.getByText(/Culture & City 추천 서베이: 활동 12개 추천 \+ 기본 프로필 · 거주 설정/)).toBeInTheDocument();
     expect(screen.getByText(/전체 16개 항목\(활동 12개 및 프로필\/거주지\)을 고정하여/)).toBeInTheDocument();
+  });
+
+  /* 31. Survey displayMode switches between paged and all */
+  it('31. STEP 2 Survey switches between 파트별 보기 and 전체 보기 preserving selections', async () => {
+    saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/training/survey']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    // Default is paged (Part 1 of 7)
+    expect(screen.getByText('Part 1 of 7 (1 / 7)')).toBeInTheDocument();
+
+    // Switch to '전체 보기'
+    await user.click(screen.getByRole('button', { name: '전체 보기' }));
+    expect(screen.getByText('전체 7개 파트')).toBeInTheDocument();
+    expect(screen.getByText('Part 1 of 7')).toBeInTheDocument();
+    expect(screen.getByText('Part 7 of 7')).toBeInTheDocument();
+
+    // Switch back to '파트별 보기'
+    await user.click(screen.getByRole('button', { name: '파트별 보기' }));
+    expect(screen.getByText('Part 1 of 7 (1 / 7)')).toBeInTheDocument();
+  });
+
+  /* 32. STT adapter transcribeAudio builds FormData and handles response */
+  it('32. STT adapter transcribeAudio sends audio blob with correct form fields and auth', async () => {
+    const { transcribeAudio } = await import('./lib/stt');
+
+    let capturedBody: FormData | null = null;
+    let capturedHeaders: Record<string, string> | null = null;
+
+    const originalFetch = window.fetch;
+    window.fetch = async (_input: RequestInfo | URL, init?: RequestInit) => {
+      capturedBody = init?.body as FormData;
+      capturedHeaders = (init?.headers as Record<string, string>) || null;
+      return new Response(JSON.stringify({ text: 'I love going to the park.' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    };
+
+    try {
+      const blob = new Blob(['mock audio data'], { type: 'audio/webm' });
+      const result = await transcribeAudio(
+        {
+          endpoint: 'https://api.openai.com/v1/audio/transcriptions',
+          apiKey: 'test-key-123',
+          model: 'whisper-1',
+          authType: 'bearer',
+          autoTranscribe: true,
+        },
+        blob,
+        'audio/webm'
+      );
+
+      expect(result).toBe('I love going to the park.');
+      expect(capturedHeaders ? capturedHeaders['Authorization'] : undefined).toBe(
+        'Bearer test-key-123'
+      );
+      expect(capturedBody).toBeInstanceOf(FormData);
+    } finally {
+      window.fetch = originalFetch;
+    }
+  });
+
+  /* 33. Practice timer respects level targetSeconds */
+  it('33. Practice level definitions provide specific target duration and learning focus', () => {
+    const adv = TRAINING_LEVELS.find((l) => l.id === 'advanced')!;
+    const inter = TRAINING_LEVELS.find((l) => l.id === 'intermediate')!;
+    const fnd = TRAINING_LEVELS.find((l) => l.id === 'foundation')!;
+
+    expect(adv.targetSeconds).toEqual([60, 90]);
+    expect(inter.targetSeconds).toEqual([45, 65]);
+    expect(fnd.targetSeconds).toEqual([30, 45]);
+
+    expect(adv.learningFocus).toContain('질문별 즉흥 변형');
+    expect(inter.learningFocus).toContain('핵심 블록 재사용');
+    expect(fnd.learningFocus).toContain('누구·어디·무엇·왜');
+  });
+
+  /* 34. Practice View renders and allows random question draw */
+  it('34. STEP 6 Practice view renders with level-aware pool and resets question', async () => {
+    saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/practice']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Everyday & Getaway 랜덤 질문/)).toBeInTheDocument();
+    expect(screen.getByText(/1구간 \(AL \(Advanced Low\)\) 레벨에 맞는 질문 풀/)).toBeInTheDocument();
+
+    // Click random draw button
+    await user.click(screen.getByRole('button', { name: '랜덤 질문 뽑기' }));
+    expect(screen.getByRole('button', { name: /답변 시작/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /추천 스크립트 힌트 보기/ })).toBeInTheDocument();
+  });
+
+  /* 35. Complete Content QA & Structural Integrity for Course 1-3 × Level 1-3 */
+  it('35. Structural integrity audit: every course has 4 storylines, >=3 roleplays, and 3-level coverage', () => {
+    expect(discoveredCourses.length).toBeGreaterThanOrEqual(3);
+
+    for (const course of discoveredCourses) {
+      for (const level of TRAINING_LEVELS) {
+        const ctx = resolveTrainingContext(course.id, level.id);
+
+        // Survey preset
+        expect(ctx.survey.profileOptionIds.length).toBeGreaterThan(0);
+        expect(ctx.survey.activityOptionIds.length).toBeGreaterThanOrEqual(12);
+
+        // 4 storylines
+        expect(ctx.storylines).toHaveLength(4);
+        for (const storyline of ctx.storylines) {
+          expect(storyline.core.anchorScene.length).toBeGreaterThan(0);
+          expect(storyline.core.facts.length).toBeGreaterThan(0);
+          expect(storyline.active.englishScript.length).toBeGreaterThan(0);
+          expect(storyline.active.koreanSummary.length).toBeGreaterThan(0);
+
+          // All 3 levels must exist on the storyline
+          for (const l of ['advanced', 'intermediate', 'foundation'] as const) {
+            expect(storyline.levels[l].englishScript.length).toBeGreaterThan(0);
+          }
+        }
+
+        // >= 3 roleplays
+        expect(ctx.roleplays.length).toBeGreaterThanOrEqual(3);
+        for (const roleplay of ctx.roleplays) {
+          expect(roleplay.answerStructure.length).toBeGreaterThan(0);
+          expect(roleplay.active.englishExample.length).toBeGreaterThan(0);
+          for (const l of ['advanced', 'intermediate', 'foundation'] as const) {
+            expect(roleplay.levels[l].englishExample.length).toBeGreaterThan(0);
+          }
+        }
+
+        // Questions pool
+        expect(ctx.questions.length).toBeGreaterThanOrEqual(12);
+        for (const q of ctx.questions) {
+          expect(q.prompt.length).toBeGreaterThan(0);
+          expect(q.group.length).toBeGreaterThan(0);
+          expect(q.type.length).toBeGreaterThan(0);
+        }
+      }
+    }
   });
 });

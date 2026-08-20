@@ -27,9 +27,10 @@ import { TrainingSetupView } from "./components/training/TrainingSetupView";
 import { TrainingSelectionProvider, useTrainingSelection } from "./training/TrainingSelectionContext";
 import { discoveredCourses } from "./training/courseRegistry";
 import { TRAINING_LEVELS } from "./training/levels";
-import type { LlmSettings, ToastMessage } from "./types";
+import type { LlmSettings, SttSettings, ToastMessage } from "./types";
 
 const SETTINGS_KEY = "oom-llm-settings";
+const STT_SETTINGS_KEY = "oom-stt-settings";
 const THEME_KEY = "oom-theme";
 const ADSENSE_SCRIPT_ID = "oom-adsense-script";
 const ADSENSE_CLIENT = "ca-pub-8734087248170812";
@@ -40,6 +41,14 @@ const defaultSettings: LlmSettings = {
   mode: "openai-compatible",
   authType: "bearer",
   customBodyTemplate: '{"model":{model},"messages":{messages},"temperature":0.4}',
+};
+
+const defaultSttSettings: SttSettings = {
+  endpoint: "",
+  apiKey: "",
+  model: "",
+  authType: "bearer",
+  autoTranscribe: true,
 };
 
 const scriptSlotViewIds: ViewId[] = [
@@ -84,6 +93,15 @@ function loadSettings(): LlmSettings {
   }
 }
 
+function loadSttSettings(): SttSettings {
+  try {
+    const stored = window.localStorage.getItem(STT_SETTINGS_KEY);
+    return stored ? { ...defaultSttSettings, ...(JSON.parse(stored) as Partial<SttSettings>) } : defaultSttSettings;
+  } catch {
+    return defaultSttSettings;
+  }
+}
+
 function TrainingSetupRoute({ onNavigate }: { onNavigate: (view: ViewId) => void }) {
   const { selection, select, clear } = useTrainingSelection();
   return (
@@ -102,6 +120,7 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const [settings, setSettings] = useState<LlmSettings>(loadSettings);
+  const [sttSettings, setSttSettings] = useState<SttSettings>(loadSttSettings);
   const [darkMode, setDarkMode] = useState(
     () =>
       window.localStorage.getItem(THEME_KEY) === "dark" ||
@@ -155,8 +174,9 @@ export default function App() {
 
   const saveSettings = () => {
     window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    window.localStorage.setItem(STT_SETTINGS_KEY, JSON.stringify(sttSettings));
     showToast(
-      "AI 설정을 브라우저에 저장했습니다.",
+      "AI 및 STT 설정을 브라우저에 저장했습니다.",
       "공유 PC에서는 사용 후 설정을 지워 주세요.",
       "success"
     );
@@ -290,19 +310,49 @@ export default function App() {
 
       <Route
         path="/practice"
-        element={<PracticeView onNavigate={onNavigate} onToast={showToast} settings={settings} />}
+        element={
+          <PracticeView
+            onNavigate={onNavigate}
+            onToast={showToast}
+            settings={settings}
+            sttSettings={sttSettings}
+          />
+        }
       />
       <Route
         path="/practice/"
-        element={<PracticeView onNavigate={onNavigate} onToast={showToast} settings={settings} />}
+        element={
+          <PracticeView
+            onNavigate={onNavigate}
+            onToast={showToast}
+            settings={settings}
+            sttSettings={sttSettings}
+          />
+        }
       />
       <Route
         path="/ai-settings"
-        element={<AiSettingsView onChange={setSettings} onSave={saveSettings} settings={settings} />}
+        element={
+          <AiSettingsView
+            onChange={setSettings}
+            onSave={saveSettings}
+            onSttChange={setSttSettings}
+            settings={settings}
+            sttSettings={sttSettings}
+          />
+        }
       />
       <Route
         path="/ai-settings/"
-        element={<AiSettingsView onChange={setSettings} onSave={saveSettings} settings={settings} />}
+        element={
+          <AiSettingsView
+            onChange={setSettings}
+            onSave={saveSettings}
+            onSttChange={setSttSettings}
+            settings={settings}
+            sttSettings={sttSettings}
+          />
+        }
       />
       <Route path="/magazine" element={<MagazineList />} />
       <Route path="/magazine/" element={<MagazineList />} />

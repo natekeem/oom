@@ -11,7 +11,8 @@ export type RecordingResult = {
 };
 
 export type RecorderHandle = {
-  start: () => Promise<void>;
+  /** Returns true on success, false if mic permission was denied or device unavailable. */
+  start: () => Promise<boolean>;
   stop: () => void;
   isRecording: () => boolean;
 };
@@ -34,6 +35,8 @@ export const Recorder = forwardRef<RecorderHandle, RecorderProps>(function Recor
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const secondsRef = useRef(0);
+  // When true, the next onstop event is from a discard/reset — skip onRecordingReady.
+  const discardOnStopRef = useRef(false);
   const supported = isRecorderSupported();
 
   secondsRef.current = seconds;
@@ -51,10 +54,11 @@ export const Recorder = forwardRef<RecorderHandle, RecorderProps>(function Recor
     };
   }, [audioUrl]);
 
-  // Reset when resetKey changes
+  // Reset when resetKey changes — mark discard so onstop skips onRecordingReady.
   useEffect(() => {
     if (resetKey === undefined || resetKey === 0) return;
     if (recorderRef.current && recorderRef.current.state === "recording") {
+      discardOnStopRef.current = true;
       recorderRef.current.stop();
     }
     stopAudioTracks(streamRef.current);
@@ -69,10 +73,10 @@ export const Recorder = forwardRef<RecorderHandle, RecorderProps>(function Recor
     }
   }, [resetKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const start = async () => {
+  const start = async (): Promise<boolean> => {
     try {
       if (recorderRef.current && recorderRef.current.state === "recording") {
-        return;
+        return true;
       }
       const stream = await requestAudioStream();
       streamRef.current = stream;
@@ -83,6 +87,13 @@ export const Recorder = forwardRef<RecorderHandle, RecorderProps>(function Recor
         if (event.data.size) chunksRef.current.push(event.data);
       };
       recorder.onstop = () => {
+        // If this stop was triggered by a reset/discard, clear the flag and bail out.
+        if (discardOnStopRef.current) {
+          discardOnStopRef.current = false;
+          stopAudioTracks(streamRef.current);
+          streamRef.current = null;
+          return;
+        }
         const mimeType = recorder.mimeType || "audio/webm";
         const blob = new Blob(chunksRef.current, { type: mimeType });
         if (audioUrl) URL.revokeObjectURL(audioUrl);
@@ -100,12 +111,14 @@ export const Recorder = forwardRef<RecorderHandle, RecorderProps>(function Recor
       recorder.start();
       setIsRecording(true);
       onRecordingStateChange?.(true);
+      return true;
     } catch (error) {
       onToast(
         "녹음을 시작하지 못했습니다.",
         error instanceof Error ? error.message : "마이크 권한을 확인해 주세요.",
         "error"
       );
+      return false;
     }
   };
 

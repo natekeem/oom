@@ -40,7 +40,7 @@ describe("training navigation", () => {
 
     // Wait for heading
     expect(
-      await screen.findByText("문제를 설명하고, 대안을 요청하고, 정중하게 마무리합니다.", {}, { timeout: 4000 })
+      await screen.findByText(/문제를 설명하고, 대안을 요청하고, 정중하게 마무리합니다/, {}, { timeout: 4000 })
     ).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /시나리오 훈련/ }).length).toBeGreaterThanOrEqual(3);
     expect(screen.queryByText("EVA QUESTION")).not.toBeInTheDocument();

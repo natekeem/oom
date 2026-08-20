@@ -75,9 +75,12 @@ function PracticeViewContent({
   const [attemptKey, setAttemptKey] = useState(0);
   const [recordingResult, setRecordingResult] = useState<RecordingResult | null>(null);
   const [showHint, setShowHint] = useState(false);
+  const [micFailed, setMicFailed] = useState(false);
 
   const recorderRef = useRef<RecorderHandle | null>(null);
   const sttAbortRef = useRef<AbortController | null>(null);
+  // Secondary defense against stale STT: abort + id mismatch both required to discard.
+  const attemptIdRef = useRef(0);
 
   const targetDefaultSeconds = resolved.level.targetSeconds[1] || 90;
 
@@ -90,6 +93,8 @@ function PracticeViewContent({
     setIsTranscribing(false);
     setRecordingResult(null);
     setShowHint(false);
+    setMicFailed(false);
+    attemptIdRef.current += 1;
     setAttemptKey((k) => k + 1);
   };
 
@@ -98,15 +103,23 @@ function PracticeViewContent({
       onToast("먼저 질문을 뽑아 주세요.", "랜덤 질문을 정한 뒤 타이머를 시작할 수 있습니다.", "info");
       return;
     }
-    setTimerSignal((value) => value + 1);
-    try {
-      await recorderRef.current?.start();
-    } catch {
-      // Handled in Recorder
+    setMicFailed(false);
+    const success = await recorderRef.current?.start() ?? false;
+    if (!success) {
+      // Mic failed — show inline UX; do NOT start timer.
+      setMicFailed(true);
+      return;
     }
+    setTimerSignal((value) => value + 1);
+  };
+
+  const startTimerOnly = () => {
+    setMicFailed(false);
+    setTimerSignal((value) => value + 1);
   };
 
   const handleTimerEnd = () => {
+    // Only stop if actually recording; avoids double-stop when mic was not started.
     if (recorderRef.current?.isRecording()) {
       recorderRef.current.stop();
       onToast("목표 시간이 종료되어 녹음을 마쳤습니다.", undefined, "info");
@@ -122,6 +135,7 @@ function PracticeViewContent({
     sttAbortRef.current?.abort();
     const controller = new AbortController();
     sttAbortRef.current = controller;
+    const requestAttemptId = attemptIdRef.current;
     setIsTranscribing(true);
 
     try {
@@ -131,17 +145,18 @@ function PracticeViewContent({
         recording.mimeType,
         controller.signal
       );
-      if (!controller.signal.aborted) {
+      // Double defense: abort signal + attempt id must both match.
+      if (!controller.signal.aborted && requestAttemptId === attemptIdRef.current) {
         setAnswer(text);
         onToast("음성을 텍스트로 변환했습니다.", "필요시 수정 후 AI 피드백을 요청하세요.", "success");
       }
     } catch (error) {
-      if (!controller.signal.aborted) {
+      if (!controller.signal.aborted && requestAttemptId === attemptIdRef.current) {
         const msg = error instanceof Error ? error.message : "STT 변환에 실패했습니다.";
         onToast("STT 변환 실패", `${msg} (수동으로 답변을 입력할 수 있습니다)`, "error");
       }
     } finally {
-      if (!controller.signal.aborted) {
+      if (!controller.signal.aborted && requestAttemptId === attemptIdRef.current) {
         setIsTranscribing(false);
       }
     }
@@ -149,11 +164,13 @@ function PracticeViewContent({
 
   const retryAttempt = () => {
     sttAbortRef.current?.abort();
+    attemptIdRef.current += 1;
     setFeedback("");
     setAnswer("");
     setIsTranscribing(false);
     setRecordingResult(null);
     setShowHint(false);
+    setMicFailed(false);
     setAttemptKey((k) => k + 1);
     onToast("재도전 준비가 완료되었습니다.", "다시 '답변 시작'을 눌러 말해 보세요.", "info");
   };
@@ -334,6 +351,25 @@ function PracticeViewContent({
                   </Button>
                 ) : null}
               </div>
+
+              {micFailed ? (
+                <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 p-4 text-sm leading-6 dark:border-amber-900 dark:bg-amber-950">
+                  <p className="font-semibold text-amber-800 dark:text-amber-200">
+                    마이크를 사용할 수 없습니다.
+                  </p>
+                  <p className="mt-1 text-xs text-amber-700 dark:text-amber-300">
+                    브라우저 마이크 권한을 확인한 뒤 다시 시도하거나, 녹음 없이 타이머만 시작할 수 있습니다.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button onClick={startTimerOnly} size="sm" variant="secondary">
+                      타이머만 시작
+                    </Button>
+                    <Button onClick={startAnswer} size="sm">
+                      다시 시도
+                    </Button>
+                  </div>
+                </div>
+              ) : null}
             </div>
           ) : (
             <div className="mt-5 rounded-md border border-dashed border-zinc-300 p-8 text-center text-sm text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">

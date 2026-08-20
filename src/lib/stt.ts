@@ -66,14 +66,20 @@ export async function transcribeAudio(
   try {
     const parsed = JSON.parse(raw);
     if (typeof parsed === "object" && parsed !== null) {
-      if (typeof parsed.text === "string") {
-        textResult = parsed.text.trim();
-      } else if (typeof parsed.transcript === "string") {
-        textResult = parsed.transcript.trim();
+      const candidate =
+        (typeof parsed.text === "string" ? parsed.text : undefined) ??
+        (typeof parsed.transcript === "string" ? parsed.transcript : undefined) ??
+        (typeof parsed.output_text === "string" ? parsed.output_text : undefined);
+      if (candidate !== undefined) {
+        textResult = candidate.trim();
       }
     }
   } catch {
     // response_format=text returns plain text directly
+  }
+
+  if (!textResult) {
+    throw new Error("STT 응답에서 변환된 텍스트를 찾지 못했습니다. 서버 응답이 비어 있거나 형식이 다를 수 있습니다.");
   }
 
   return textResult;

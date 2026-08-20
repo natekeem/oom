@@ -145,6 +145,9 @@ export function AiSettingsPanel({
               type="text"
               value={sttSettings.model ?? ""}
             />
+            <p className="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+              사용하는 STT 서비스에 따라 모델명이 필요할 수 있습니다. 예: <code>whisper-1</code> 또는 해당 서비스에서 지정한 모델명. 미입력 시 모델 파라미터를 생략합니다.
+            </p>
           </Field>
           <Field label="STT API Key">
             <input

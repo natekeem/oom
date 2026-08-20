@@ -1,4 +1,4 @@
-﻿# OOM Training Content Quality Audit (Course 1–3 × Level 1–3)
+# OOM Training Content Quality Audit (Course 1–3 × Level 1–3)
 
 이 문서는 OOM (OPIc On Me)의 **Course × Level 아키텍처**와 **4개 만능 스토리라인 → 최대 질문 재사용** 철학에 따른 3개 코스 전체 콘텐츠 품질 감사 보고서입니다.
 
@@ -6,7 +6,7 @@
 
 ## 1. 감사 개요 및 기본 원칙
 
-* **분석 대상**: Course 1 (Everyday & Getaway), Course 2 (Culture & City), Course 3 (Nature & Activity)
+* **분석 대상**: Course 1 (Everyday & Getaway), Course 2 (Culture & City), Course 3 (Nature & Weekend)
 * **레벨 체계**: 1구간 (Advanced, AL), 2구간 (Intermediate, IH/IM3), 3구간 (Foundation, IM2/IM1)
 * **핵심 철학**:
   1. **One Canonical Scene**: 동일 스토리라인은 3개 레벨에서 정확히 같은 핵심 장면(`anchorScene`)과 팩트(`core.facts`)를 공유하며 어휘 밀도와 문장 복잡도만 차별화함.
@@ -21,7 +21,7 @@
 |---|---|---|---|---|---|
 | `course-1` | Everyday & Getaway | 12개 (공원, 해변, 카페, 쇼핑 등) | 4개 (공원, 카페, 해외여행, 집/재택) | 3개 (여행사, 공연예매, 친구약속) | 12개 × 3레벨 = 36개 |
 | `course-2` | Culture & City | 12개 (영화, 공연, 박물관, 도시여행 등) | 4개 (영화관, 전시/공연, 국내도시, 혼자거주) | 3개 (티켓교환, 시설문의, 호텔예약) | 12개 × 3레벨 = 36개 |
-| `course-3` | Nature & Activity | 12개 (조깅, 자전거, 캠핑, 하이킹 등) | 4개 (조깅/러닝, 자전거/야외, 캠핑/자연, 동네산책) | 3개 (장비대여, 캠핑장변경, 운동친구) | 12개 × 3레벨 = 36개 |
+| `course-3` | Nature & Weekend | 12개 (조깅, 자전거, 캠핑, 하이킹 등) | 4개 (조깅/러닝, 자전거/야외, 캠핑/자연, 동네산책) | 3개 (장비대여, 캠핑장변경, 운동친구) | 12개 × 3레벨 = 36개 |
 
 ---
 

@@ -21,6 +21,8 @@ GitHub Pages has no server rewrite. `scripts/generate-static-routes.mjs` runs af
 
 `AppShell` owns the shared responsive frame.
 
+The root route is the exception: `/` renders `src/landing/LandingPage.tsx` as an independent full-bleed brand and product landing. It does not mount `AppShell`, the sidebar, the training header, or the app footer. Its semantic DOM remains usable without motion; GSAP/Lenis, the pointer field, and the lazy R3F canvas are progressive enhancements with capability and reduced-motion gates.
+
 | Owner | Responsibility |
 | --- | --- |
 | `AppShell` | Desktop shell, fixed-height sidebar frame with main-content scrolling, mobile controls, training-only sticky header, progress bar, next-step button |
@@ -35,7 +37,9 @@ The sticky header is intentionally limited to `training-hub` and the STEP 1-5 de
 `App.tsx` is the only place that selects a top-level screen from `activeView`. Route-owned screens are loaded with `React.lazy` behind one shared `Suspense` fallback so the initial static shell stays below the production chunk warning without changing route ownership.
 
 ```text
-Home
+Brand landing (`/`, outside AppShell)
+App shell routes
+├─ OOM learning philosophy (`/about/`)
 ├─ OPIc candidate guide
 │  ├─ overview and grades
 │  ├─ application and fees
@@ -61,7 +65,8 @@ Parent hubs explain the purpose of their child pages. Parent routes should not s
 
 | Area | Primary components | Contract |
 | --- | --- | --- |
-| Home | `HomeView` | Product overview and entry points |
+| Brand landing | `LandingPage`, `LandingNav`, `VoiceUniverseCanvas`, `MorphingSignalPoints` | Independent product overview, semantic conversion entry points, continuous signal morph, capability fallbacks |
+| OOM learning philosophy | `LegalPageView` with `legalPages.about` | Learner-facing explanation of the Course × Level, story-reuse, and retry model |
 | OOM magazine | `MagazineList`, `MagazineDetail` | Static learning articles with local editorial images, author/reviewer identity, honest publish/modified dates, official sources, structured data, examples, and practice takeaways |
 | Candidate guide | `ExamGuideHub`, `ExamGuideOverview`, `ExamGuideScreen`, `ExamGuideDashboard`, `ExamGuideDay`, `ExamGuideFaq`, `ExamGuideTabs` | Informational content, visual exam screen guide (annotated `ExamScreenShell`), Q&A, and official-source links |
 | Training overview | `TrainingHub` | Overview Hub: 6 STEP overview roadmap, concept explanation |

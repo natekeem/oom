@@ -36,7 +36,7 @@ export type ViewId =
   | "image-credits";
 
 export const viewTitles: Record<ViewId, string> = {
-  home: "홈 / 전략 개요",
+  home: "오픽온미 브랜드 홈",
   "exam-guide": "OPIc 수험 가이드",
   "exam-overview": "OPIc 수험 가이드 · 소개 · 등급",
   "exam-screen": "OPIc 수험 가이드 · 시험 화면 · 조작법",
@@ -63,7 +63,7 @@ export const viewTitles: Record<ViewId, string> = {
   practice: "STEP 6. 실전 연습",
   "ai-settings": "AI 피드백 / 설정",
   "magazine-list": "오픽 매거진",
-  about: "소개",
+  about: "오픽온미란?",
   privacy: "개인정보처리방침",
   contact: "문의",
   terms: "이용약관",

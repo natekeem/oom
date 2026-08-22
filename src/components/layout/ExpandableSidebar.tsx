@@ -288,9 +288,9 @@ export function ExpandableSidebar({
       </div>
 
       <nav aria-label="OOM 메뉴" className="space-y-1">
-        <NavigationButton active={activeView === "home"} onClick={() => navigate("home")}>
+        <NavigationButton active={activeView === "about"} onClick={() => navigate("about")}>
           <House className="h-4 w-4" />
-          홈 / 전략 개요
+          오픽온미란?
         </NavigationButton>
 
         <CollapsibleSection

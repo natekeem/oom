@@ -14,13 +14,12 @@ describe("training navigation", () => {
     saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
     const user = userEvent.setup();
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={["/training/"]}>
         <App />
       </MemoryRouter>
     );
 
     expect(screen.queryByText("훈련 진행 0%")).not.toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "OPIc 실전 훈련하기" }));
 
     // /training/ is Overview Hub
     expect(

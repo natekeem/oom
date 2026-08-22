@@ -18,9 +18,9 @@ export const legalPages: Record<LegalPageId, LegalPage> = {
   about: {
     id: "about",
     eyebrow: "소개",
-    title: "오픽온미 소개",
-    description: "오픽온미는 OPIc 말하기 시험을 준비하는 학습자를 위한 개인 연습용 웹 도구입니다.",
-    updatedAt: "2026-07-27",
+    title: "오픽온미란?",
+    description: "오픽온미는 내 이야기 하나를 여러 질문과 목표 구간에 맞게 바꾸어 말하도록 돕는 OPIc 연습 도구입니다.",
+    updatedAt: "2026-08-22",
     sections: [
       {
         heading: "운영자와 작성 책임",
@@ -31,16 +31,24 @@ export const legalPages: Record<LegalPageId, LegalPage> = {
         links: [{ label: "콘텐츠 작성·검수 원칙 보기", href: "/editorial-policy/" }],
       },
       {
-        heading: "서비스 목적",
+        heading: "내 이야기로 말하는 훈련",
         paragraphs: [
-          "오픽온미(OOM, OPIc On Me)는 학습자가 익숙한 경험 장면을 정리하고, 여러 질문 유형에 맞춰 자연스럽게 말해 보는 연습을 돕는 브라우저 기반 학습 도구입니다.",
+          "오픽온미(OOM, OPIc On Me)는 질문마다 새로운 모범답안을 외우는 대신, 학습자가 익숙한 경험 장면을 정리하고 여러 질문 유형에 맞춰 자연스럽게 바꾸어 말하도록 돕는 브라우저 기반 학습 도구입니다.",
           "이 서비스는 공식 시험기관과 제휴하거나 인증받은 서비스가 아니며, 등급 취득이나 특정 결과를 보장하지 않습니다.",
         ],
       },
       {
-        heading: "제공 기능",
-        paragraphs: ["학습자는 서베이 고정, 난이도 설정, 스크립트 훈련, 롤플레이 공식, 실전 녹음 연습, 선택형 AI 피드백 설정을 한 흐름에서 사용할 수 있습니다."],
-        bullets: ["OPIc Background Survey를 참고한 연습용 선택 조합", "60-90초 답변을 위한 장면 중심 스크립트", "질문 유형별 변형 연습과 롤플레이 구조", "브라우저 녹음 및 사용자가 직접 설정한 LLM 피드백"],
+        heading: "Course × Level 학습 구조",
+        paragraphs: ["Course는 서베이와 이야기 맥락을 정하고, Level은 같은 장면의 답변 밀도와 목표 시간을 조절합니다. 코스마다 네 개의 canonical story를 두고, 하나의 중심 장면을 묘사·루틴·경험·비교 같은 질문 방향에 재사용합니다."],
+        bullets: ["1구간 · AL · 60~90초", "2구간 · IH / IM3 · 45~65초", "3구간 · IM2 / IM1 · 30~45초", "같은 story를 유지하며 질문에 따라 KEEP / CHANGE / REQUIRED / DROP fact 선택"],
+      },
+      {
+        heading: "듣고, 말하고, 복기하고, 다시 말하기",
+        paragraphs: ["목표와 코스를 고르는 STEP 1부터 실제형 질문을 듣고 녹음하는 STEP 6까지 하나의 훈련 흐름으로 이어집니다. 녹음 뒤에는 내 목소리를 재생하고, 필요하면 transcript와 KEEP / FIX / RETRY 피드백을 확인한 다음 같은 질문에 다시 답합니다."],
+        links: [
+          { label: "6 STEP 실전 훈련 둘러보기", href: "/training/" },
+          { label: "OPIc 수험 가이드 보기", href: "/exam-guide/" },
+        ],
       },
       {
         heading: "대상 사용자",

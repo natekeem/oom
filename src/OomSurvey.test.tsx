@@ -28,12 +28,11 @@ describe("OOM survey rehearsal", () => {
     saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
     const user = userEvent.setup();
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={["/training/scripts/outdoor/"]}>
         <App />
       </MemoryRouter>
     );
 
-    await user.click(await screen.findByRole("link", { name: "스크립트 보기" }));
     const indoorTitle = await screen.findByText("조용한 카페와 집에서의 휴식 루틴");
     await user.click(indoorTitle);
 

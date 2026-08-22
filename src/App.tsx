@@ -11,7 +11,7 @@ import { TRAINING_LEVELS } from "./training/levels";
 import type { LlmSettings, SttSettings, ToastMessage } from "./types";
 
 const ExamGuideHub = lazy(() => import("./components/guide/ExamGuideHub").then((module) => ({ default: module.ExamGuideHub })));
-const HomeView = lazy(() => import("./components/home/HomeView").then((module) => ({ default: module.HomeView })));
+const LandingPage = lazy(() => import("./landing/LandingPage").then((module) => ({ default: module.LandingPage })));
 const BackgroundSurveySheet = lazy(() => import("./components/survey/BackgroundSurveySheet").then((module) => ({ default: module.BackgroundSurveySheet })));
 const DifficultyGuide = lazy(() => import("./components/difficulty/DifficultyGuide").then((module) => ({ default: module.DifficultyGuide })));
 const TrainingHub = lazy(() => import("./components/training/TrainingHub").then((module) => ({ default: module.TrainingHub })));
@@ -133,6 +133,7 @@ export default function App() {
   const [toast, setToast] = useState<ToastMessage | null>(null);
 
   const activeView = viewIdForPath(location.pathname);
+  const isLanding = location.pathname === "/";
   const isMagazineDetail = /^\/magazine\/[^/]+\/?$/.test(location.pathname);
   const adExcluded =
     ["practice", "ai-settings", "about", "privacy", "contact", "terms", "editorial-policy", "image-credits"].includes(
@@ -184,6 +185,14 @@ export default function App() {
     );
   };
 
+  if (isLanding) {
+    return (
+      <Suspense fallback={<div className="min-h-screen bg-[#07090d]" aria-label="랜딩 페이지를 불러오는 중" />}>
+        <LandingPage />
+      </Suspense>
+    );
+  }
+
   const onNavigate = (view: ViewId) => navigate(viewPathForId[view]);
 
   const renderScriptSlot = (slotIndex: 0 | 1 | 2 | 3) => (
@@ -210,7 +219,6 @@ export default function App() {
 
   const screen = (
     <Routes>
-      <Route path="/" element={<HomeView />} />
       <Route path="/exam-guide" element={<ExamGuideHub onNavigate={onNavigate} />} />
       <Route path="/exam-guide/" element={<ExamGuideHub onNavigate={onNavigate} />} />
       <Route

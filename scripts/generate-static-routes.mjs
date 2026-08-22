@@ -12,10 +12,20 @@ const require = createRequire(import.meta.url);
 const baseRoutes = [
   {
     path: "/",
-    title: "오픽온미 | OPIc 말하기 연습 도구",
-    description: "오픽온미에서 OPIc 서베이, 스크립트, 롤플레이, 실전 녹음 연습을 한 흐름으로 준비하세요.",
-    heading: "오픽온미",
-    content: ["OPIc 말하기를 준비하는 학습자를 위한 브라우저 기반 연습 도구입니다.", "서베이 고정, 난이도 설정, 스크립트 훈련, 롤플레이 공식, 실전 녹음 연습을 한 흐름으로 제공합니다."],
+    title: "오픽온미 | 내 이야기로 말하는 OPIc 훈련",
+    description: "질문마다 새 답안을 외우는 대신 내 이야기 하나를 여러 질문과 목표 구간에 맞게 바꾸어 말하고, 듣기·녹음·복기·재도전까지 연습하세요.",
+    heading: "OPIc, ON ME.",
+    content: ["내 이야기를 여러 질문에 맞게 바꾸어 말하는 훈련.", "오픽온미는 OPIc 수험 준비와 Course × Level 말하기 훈련을 연결하는 브라우저 기반 학습 도구입니다."],
+    lastmod: "2026-08-22",
+    sections: [
+      { heading: "ONE STORY. MANY QUESTIONS.", paragraphs: ["질문마다 새로운 답안을 외우지 않습니다. 같은 장면에서 필요한 fact를 꺼내고 질문의 방향만 바꿉니다."] },
+      { heading: "YOUR STORY GROWS WITH YOU.", paragraphs: ["Course가 이야기의 맥락을 정하고 Level이 같은 장면의 길이와 답변 밀도를 조절합니다."], bullets: ["3구간 · IM2 / IM1 · 30~45초", "2구간 · IH / IM3 · 45~65초", "1구간 · AL · 60~90초"] },
+      { heading: "SIX STEPS. ONE VOICE.", paragraphs: ["목표·코스, 추천 서베이, 난이도, 만능 스크립트, 롤플레이, 실전 연습의 6 STEP을 하나의 목소리로 연결합니다."] },
+      { heading: "질문이 달라져도 내 이야기는 유지합니다", paragraphs: ["STEP 4에서는 기본 질문이 변형 질문으로 바뀔 때 같은 story의 fact를 KEEP, CHANGE, REQUIRED, DROP으로 구분합니다."] },
+      { heading: "LISTEN. SPEAK. REVIEW. RETRY.", paragraphs: ["질문을 듣고 답한 뒤 내 녹음과 transcript를 확인하고 KEEP / FIX / RETRY를 적용해 같은 질문에 다시 답합니다."] },
+      { heading: "오픽온미 학습 경로", paragraphs: ["수험 정보는 가이드에서 확인하고, 6 STEP 훈련으로 말한 뒤, Magazine에서 말하기 전략을 더 깊이 읽을 수 있습니다."], links: [{ href: "/about/", label: "오픽온미란?" }, { href: "/training/", label: "실전 훈련 둘러보기" }, { href: "/exam-guide/", label: "OPIc 수험 가이드" }, { href: "/magazine/", label: "OOM Magazine" }] },
+      { heading: "MAKE IT YOURS.", paragraphs: ["남의 모범답안이 아니라 내 이야기로 시작하세요."] },
+    ],
   },
   {
     path: "/exam-guide/",

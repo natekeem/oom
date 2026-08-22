@@ -6,7 +6,7 @@ import App from "./App";
 describe("OPIc exam guide", () => {
   it("opens the guide hub", async () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={["/exam-guide/"]}>
         <App />
       </MemoryRouter>
     );

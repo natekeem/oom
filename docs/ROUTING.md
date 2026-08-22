@@ -18,7 +18,8 @@ GitHub Pages cannot rewrite unknown paths to the SPA shell. `scripts/generate-st
 ## Sidebar Hierarchy
 
 ```text
-Home / strategy overview
+Brand landing (`/`, no AppShell)
+OOM learning philosophy (`/about/`)
 OPIc candidate guide
 ├─ overview and grades
 ├─ exam screen & controls
@@ -72,7 +73,7 @@ Home, all `exam-*` views, `magazine-list` (including article detail URLs), foote
 Public route targets use the canonical `https://opic-on-me.com/path/` form. Internal navigation must preserve the trailing slash; the root route remains `https://opic-on-me.com/`.
 | ViewId | Sidebar location | Screen owner | Header | Notes |
 | --- | --- | --- | --- | --- |
-| `home` | Home | `HomeView` | No | Strategy overview |
+| `home` | Brand landing, outside sidebar shell | `LandingPage` | No | Independent full-bleed product landing; no AppShell/sidebar/footer |
 | `exam-guide` | Candidate guide parent | `ExamGuideHub` | No | Explains the guide sections |
 | `exam-overview` | Candidate guide child | `ExamGuideOverview` | No | OPIc format and grade framework |
 | `exam-screen` | Candidate guide child | `ExamGuideScreen` | No | Annotated exam screen shell, 5-step flow, timer disclaimer |
@@ -98,7 +99,7 @@ Public route targets use the canonical `https://opic-on-me.com/path/` form. Inte
 | `practice` | Training / STEP 6 | `PracticeView` | Yes, 100% | Random prompt by Course × Level, timer, recording, feedback |
 | `magazine-list` | Top-level magazine | `MagazineList` / `MagazineDetail` | No | `/magazine/` lists static articles; `/magazine/:id/` renders the selected article |
 | `ai-settings` | Top-level utility | `AiSettingsView` | No | LLM runtime configuration |
-| `about` | Footer legal page | `LegalPageView` | No | `/about/` introduces OOM as a study tool |
+| `about` | App sidebar and footer information page | `LegalPageView` | No | `/about/` explains OOM's Course × Level, story reuse, and retry philosophy |
 | `privacy` | Footer legal page | `LegalPageView` | No | `/privacy/` explains privacy, cookies, Google ads, and contact |
 | `contact` | Footer legal page | `LegalPageView` | No | `/contact/` lists the inquiry email |
 | `terms` | Footer legal page | `LegalPageView` | No | `/terms/` explains study-use terms and non-affiliation |

@@ -13,6 +13,8 @@ export function defineVariantSets<T extends Record<string, ScriptVariantSet>>(se
         ...set,
         variants: set.variants.map((variant) => ({
           ...variant,
+          requiredFacts: variant.requiredFacts ?? [],
+          optionalFacts: variant.optionalFacts ?? [],
           newFacts: variant.newFacts ?? [],
         })),
       },

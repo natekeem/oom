@@ -80,6 +80,8 @@ const authoredVariantSets: Record<string, ScriptVariantSet> = {
         question: "Describe an unexpected problem you experienced during a trip and how you handled it.",
         pivot: "갑작스러운 바닷바람으로 텐트가 흔들렸을 때 이웃 캠퍼의 조언으로 팩을 단단히 고정했던 해결 과정에 집중합니다.",
         keep: ["strong wind", "neighbor helped", "secured the tent safely"],
+        requiredFacts: ["strong wind", "neighbor helped"],
+        optionalFacts: ["sunrise by beach"],
       },
       {
         id: "drive-routine",

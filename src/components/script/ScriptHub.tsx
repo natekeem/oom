@@ -104,7 +104,7 @@ export function ScriptHub({ onNavigate }: { onNavigate: (view: ViewId) => void }
                   <p className="text-xs leading-5 text-indigo-800 dark:text-indigo-200">
                     1. <strong>메인 스토리</strong>: 선택한 구간의 목표 시간에 맞는 대표 답변을 먼저 읽고 듣습니다.<br />
                     2. <strong>질문별 변형</strong>: 질문의 시제나 초점이 바뀌었을 때 유지할 블록과 교체할 블록을 확인합니다.<br />
-                    3. <strong>답변 설계도</strong>: 문단 번호가 아니라 ANSWER → SCENE / ACTION → RESULT 기능을 골라 말합니다.
+                    3. <strong>답변 설계도</strong>: 실제 문단 수와 무관한 서론 → 본론 → 결론 말하기 순서 안에서 ANSWER·ACTION·RESULT fact를 골라 말합니다.
                   </p>
                 </div>
               </div>

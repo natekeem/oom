@@ -26,6 +26,10 @@ export type ScriptVariant = {
   question: string;
   pivot: string;
   keep: string[];
+  /** Canonical facts that are globally optional but required by this prompt. */
+  requiredFacts?: string[];
+  /** Canonical facts that may still be omitted for this prompt. */
+  optionalFacts?: string[];
   /** Prompt-required facts that do not exist in the canonical anchor. Empty means no new fact is allowed. */
   newFacts?: string[];
   englishExample?: string;

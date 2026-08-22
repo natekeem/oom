@@ -41,7 +41,8 @@
 
 ## 4. 질문 변형·교체 블록 계약
 
-- 답변 설계는 문단 index가 아니라 `ANSWER`, `SCENE / ACTION`, `RESULT`, 필요 시 `EXPANSION` 기능으로 나눕니다.
+- 답변 설계는 raw 문단 index가 아니라 모든 Level에 공통인 `OPEN(시작·서론) → SCENE(핵심 장면·본론) → CLOSE(마무리·결론)` 학습 구간으로 나눕니다. `ANSWER`, `SCENE / ACTION / DETAILS`, `RESULT / FEELING`, 필요 시 `EXPANSION`은 각 구간 안의 작은 기능 label입니다.
+- Foundation 선택 확장은 0개, Intermediate는 최대 1문장, Advanced는 최대 2문장입니다. 선택 확장은 독립 원고가 아니며 질문에 필요하면 `이 질문에서는 필수`로 승격합니다.
 - 교체 가이드는 `KEEP`, `CHANGE`, `DROP`을 표시하고 Foundation·Intermediate·Advanced용 micro-example을 각각 소유합니다. Foundation이 Advanced 문단으로 fallback해서는 안 됩니다.
 - Foundation 최근 경험 질문은 코스당 4개, 전체 12개이며 자연스러운 과거 시제와 한 개의 중심 topic family를 사용합니다. 각 Foundation storyline은 3문항을 유지합니다.
 - Course 3 Intermediate metadata와 Advanced question type은 실제 prompt가 요구하는 묘사·이유·변화·비교·선호·문제 기능을 반영합니다.

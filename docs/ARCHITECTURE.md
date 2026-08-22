@@ -90,9 +90,10 @@ OOM uses a structured Course × Level data model:
 Each script group has exactly **one canonical storyline** per course. The legacy Story A/B choice UI has been completely removed.
 
 The core storyline provides:
-1. One scene adapted to the selected Level's time and answer density. Advanced displays a stable CORE and a collapsible OPTIONAL EXPANSION without rewriting its source text.
+1. One scene adapted to the selected Level's time and answer density. Every Level derives the same OPEN / SCENE / CLOSE learning order independently of raw paragraph count; Advanced preserves its authored paragraph rhythm and source text.
 2. Question-type variations that retain the same people, place, event, and core objects unless the prompt strictly requires a minimal new fact.
-3. A Level-aware blueprint built from ANSWER, SCENE/ACTION, RESULT, and optional EXPANSION functions. Each replacement exposes KEEP, CHANGE, and DROP cues plus a micro-example for the selected Level only.
+3. A Level-aware blueprint whose macro sections are OPEN (시작·서론), SCENE (핵심 장면·본론), and CLOSE (마무리·결론). ANSWER, SCENE/ACTION/DETAILS, RESULT/FEELING, and optional EXPANSION are micro functions inside those sections. Each replacement exposes KEEP, CHANGE, and DROP cues plus a micro-example for the selected Level only.
+4. Optional expansion stays inside its owning learning section as at most one sentence for Intermediate and two for Advanced. A variant may promote a canonical optional fact to `REQUIRED FOR THIS QUESTION`; it does not author a second story.
 
 `ScriptTrainingTabs` owns the `story`, `variants`, and `blueprint` views.
 

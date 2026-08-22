@@ -1,8 +1,8 @@
-import type { ScriptReplacementGuide } from "../types";
+import { defineReplacementGuides } from "./training/defineReplacementGuides";
 
 const key = (scriptId: string, variantId: string) => `${scriptId}:${variantId}`;
 
-export const scriptReplacementGuides: Record<string, ScriptReplacementGuide> = {
+export const scriptReplacementGuides = defineReplacementGuides({
   [key("outdoor-travel", "favorite-place")]: { summary: "여행이라는 큰 사건 대신, 자주 가는 해변을 첫 장면으로 꺼냅니다.", replacements: [{ block: "opening", instruction: "여행 출발 문단을 좋아하는 장소 소개로 바꿉니다.", replacement: "Actually, there is a beach not far from my home that I enjoy visiting when the weather is nice. It has a long walking path next to the water, so I usually go there with my family on weekend mornings." }], keepBlocks: ["details", "closing"] },
   [key("outdoor-travel", "recent-trip")]: { summary: "메인 스토리가 이미 최근 여행 답입니다. 시간과 기억 포인트를 조금 더 분명하게 만듭니다.", replacements: [{ block: "opening", instruction: "최근성을 앞에 놓고 여행 전체를 바로 소개합니다.", replacement: "One memorable trip I took recently was a short family getaway to a resort near the beach. We left early on Saturday, and the quiet drive made the trip feel relaxed from the beginning." }], keepBlocks: ["details", "closing"] },
   [key("outdoor-travel", "outdoor-routine")]: { summary: "한 번의 여행이 아니라 매주 반복할 수 있는 야외 루틴처럼 시작합니다.", replacements: [{ block: "opening", instruction: "최근 여행 대신 주말 야외 습관으로 출발합니다.", replacement: "When I visit an outdoor place, I usually keep my plan simple. I like going to a park or a beach in the morning, especially when the air is fresh and there are not many people around." }, { block: "details", instruction: "여행 활동을 루틴 순서로 바꿉니다.", replacement: "First, I take a slow walk and look at the trees or the water. If I feel energetic, I do a light jog for about twenty minutes. After that, I sit down for a while and drink water before going home." }], keepBlocks: ["closing"] },
@@ -22,7 +22,7 @@ export const scriptReplacementGuides: Record<string, ScriptReplacementGuide> = {
   [key("home-residence", "neighborhood")]: { summary: "집 내부보다 집 주변에서 할 수 있는 일을 첫 문단으로 이동합니다.", replacements: [{ block: "opening", instruction: "거실 대신 동네의 편리함으로 시작합니다.", replacement: "One thing I like about my neighborhood is that most places I need are within walking distance. There is a small park near my apartment, a grocery store, and a few useful cafes." }], keepBlocks: ["details", "closing"] },
   [key("home-residence", "household-chores")]: { summary: "집안일의 순서를 구체적으로 보여 주고, 가족과 나누는 루틴으로 닫습니다.", replacements: [{ block: "opening", instruction: "집 묘사 대신 주말 집안일 루틴으로 시작합니다.", replacement: "At home, I usually share simple chores with my family on weekends. I often vacuum the living room, organize my room, and help clean up the kitchen after meals." }, { block: "details", instruction: "공간 설명을 구체적인 순서와 역할로 교체합니다.", replacement: "We do not make it complicated. One person prepares the laundry, another person checks the groceries, and I make sure the common areas are tidy before we relax together." }], keepBlocks: ["closing"] },
   [key("home-residence", "home-problem")]: { summary: "청소 일정 변경이라는 한 사건을 문제·설명·대안·결과 순서로 꺼냅니다.", replacements: [{ block: "opening", instruction: "집 묘사는 짧게 하고 문제 상황을 바로 말합니다.", replacement: "Once, my family had to change a cleaning appointment because we suddenly had a family event on the same day. I called the company and explained the situation politely." }, { block: "details", instruction: "문제 해결 과정과 대안을 넣습니다.", replacement: "First, I apologized for the late notice, and then I asked if there was another time available the following week. Luckily, the staff member offered two new options, and we chose a morning slot that worked for everyone." }], keepBlocks: ["closing"] },
-};
+});
 
 export function getReplacementGuide(scriptId: string, variantId: string) {
   return scriptReplacementGuides[key(scriptId, variantId)];

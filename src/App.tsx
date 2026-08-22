@@ -1,34 +1,35 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { AppShell } from "./components/layout/AppShell";
 import { Toast } from "./components/ui/Toast";
 import type { ViewId } from "./components/layout/Sidebar";
 import { viewIdForPath, viewPathForId } from "./lib/routes";
-import { HomeView } from "./components/home/HomeView";
-import { ExamGuideHub } from "./components/guide/ExamGuideHub";
-import { ExamGuideOverview } from "./components/guide/ExamGuideOverview";
-import { ExamGuideScreen } from "./components/guide/ExamGuideScreen";
-import { ExamGuideDay } from "./components/guide/ExamGuideDay";
-import { ExamGuideDashboard } from "./components/guide/ExamGuideDashboard";
-import { ExamGuideFaq } from "./components/guide/ExamGuideFaq";
-import { BackgroundSurveySheet } from "./components/survey/BackgroundSurveySheet";
-import { DifficultyGuide } from "./components/difficulty/DifficultyGuide";
-import { ScriptHub } from "./components/script/ScriptHub";
-import { ScriptDashboardV2 } from "./components/script/ScriptDashboardV2";
-import { RoleplayHub } from "./components/roleplay/RoleplayHub";
-import { RoleplayViewV2 } from "./components/roleplay/RoleplayViewV2";
-import { PracticeView } from "./components/practice/PracticeView";
-import { AiSettingsView } from "./components/ai/AiSettingsView";
-import { MagazineList } from "./components/magazine/MagazineList";
-import { MagazineDetail } from "./components/magazine/MagazineDetail";
-import { LegalPageView } from "./components/legal/LegalPageView";
-import { TrainingHub } from "./components/training/TrainingHub";
-import { TrainingSetupView } from "./components/training/TrainingSetupView";
 import { TrainingSelectionProvider, useTrainingSelection } from "./training/TrainingSelectionContext";
 import { discoveredCourses } from "./training/courseRegistry";
 import { TRAINING_LEVELS } from "./training/levels";
 import type { LlmSettings, SttSettings, ToastMessage } from "./types";
+
+const ExamGuideHub = lazy(() => import("./components/guide/ExamGuideHub").then((module) => ({ default: module.ExamGuideHub })));
+const HomeView = lazy(() => import("./components/home/HomeView").then((module) => ({ default: module.HomeView })));
+const BackgroundSurveySheet = lazy(() => import("./components/survey/BackgroundSurveySheet").then((module) => ({ default: module.BackgroundSurveySheet })));
+const DifficultyGuide = lazy(() => import("./components/difficulty/DifficultyGuide").then((module) => ({ default: module.DifficultyGuide })));
+const TrainingHub = lazy(() => import("./components/training/TrainingHub").then((module) => ({ default: module.TrainingHub })));
+const TrainingSetupView = lazy(() => import("./components/training/TrainingSetupView").then((module) => ({ default: module.TrainingSetupView })));
+const ExamGuideOverview = lazy(() => import("./components/guide/ExamGuideOverview").then((module) => ({ default: module.ExamGuideOverview })));
+const ExamGuideScreen = lazy(() => import("./components/guide/ExamGuideScreen").then((module) => ({ default: module.ExamGuideScreen })));
+const ExamGuideDay = lazy(() => import("./components/guide/ExamGuideDay").then((module) => ({ default: module.ExamGuideDay })));
+const ExamGuideDashboard = lazy(() => import("./components/guide/ExamGuideDashboard").then((module) => ({ default: module.ExamGuideDashboard })));
+const ExamGuideFaq = lazy(() => import("./components/guide/ExamGuideFaq").then((module) => ({ default: module.ExamGuideFaq })));
+const ScriptHub = lazy(() => import("./components/script/ScriptHub").then((module) => ({ default: module.ScriptHub })));
+const ScriptDashboardV2 = lazy(() => import("./components/script/ScriptDashboardV2").then((module) => ({ default: module.ScriptDashboardV2 })));
+const RoleplayHub = lazy(() => import("./components/roleplay/RoleplayHub").then((module) => ({ default: module.RoleplayHub })));
+const RoleplayViewV2 = lazy(() => import("./components/roleplay/RoleplayViewV2").then((module) => ({ default: module.RoleplayViewV2 })));
+const PracticeView = lazy(() => import("./components/practice/PracticeView").then((module) => ({ default: module.PracticeView })));
+const AiSettingsView = lazy(() => import("./components/ai/AiSettingsView").then((module) => ({ default: module.AiSettingsView })));
+const MagazineList = lazy(() => import("./components/magazine/MagazineList").then((module) => ({ default: module.MagazineList })));
+const MagazineDetail = lazy(() => import("./components/magazine/MagazineDetail").then((module) => ({ default: module.MagazineDetail })));
+const LegalPageView = lazy(() => import("./components/legal/LegalPageView").then((module) => ({ default: module.LegalPageView })));
 
 const SETTINGS_KEY = "oom-llm-settings";
 const STT_SETTINGS_KEY = "oom-stt-settings";
@@ -433,7 +434,9 @@ export default function App() {
             key={location.pathname}
             transition={{ duration: 0.2 }}
           >
-            {screen}
+            <Suspense fallback={<div className="py-12 text-center text-sm text-zinc-500">화면을 불러오는 중...</div>}>
+              {screen}
+            </Suspense>
           </motion.div>
         </AnimatePresence>
         <Toast onDismiss={() => setToast(null)} toast={toast} />

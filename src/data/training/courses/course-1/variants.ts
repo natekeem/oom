@@ -1,4 +1,5 @@
 import type { ScriptBlueprintStep, ScriptVariantSet } from "../../../../types";
+import { defineVariantSets } from "../../defineVariantSets";
 
 const blueprint = (items: Array<[string, string, string]>) =>
   items.map<ScriptBlueprintStep>(([id, label, koreanGuide], index) => ({
@@ -13,7 +14,7 @@ const blueprint = (items: Array<[string, string, string]>) =>
     ][index],
   }));
 
-export const variantSets: Record<string, ScriptVariantSet> = {
+const authoredVariantSets: Record<string, ScriptVariantSet> = {
   "outdoor-travel": {
     title: "한 번의 바닷가 장면을 질문 방향에 맞게 돌리기",
     description:
@@ -23,8 +24,8 @@ export const variantSets: Record<string, ScriptVariantSet> = {
         id: "favorite-place",
         label: "좋아하는 장소",
         questionType: "장소 묘사",
-        question: "Tell me about a park or beach you enjoy going to.",
-        pivot: "여행의 시작을 ‘집 근처에서 자주 가는 해변’으로 바꿉니다.",
+        question: "Tell me about a beach destination you enjoyed visiting.",
+        pivot: "같은 가족 여행의 바닷가와 리조트 주변 산책 장면을 장소 묘사에 맞게 앞에 둡니다.",
         keep: ["walking path", "ocean view", "relaxed feeling"],
       },
       {
@@ -37,11 +38,11 @@ export const variantSets: Record<string, ScriptVariantSet> = {
       },
       {
         id: "outdoor-routine",
-        label: "야외 루틴",
-        questionType: "루틴 / 활동",
-        question: "What do you usually do when you visit an outdoor place?",
-        pivot: "여행의 하루를 반복 가능한 주말 산책과 가벼운 조깅 루틴으로 전환합니다.",
-        keep: ["morning walk", "light jog", "fresh air"],
+        label: "여행지에서 한 활동",
+        questionType: "활동 순서",
+        question: "What did you do during your family trip near the beach?",
+        pivot: "새 루틴을 만들지 않고 같은 여행에서 했던 산책·식사·파도 소리 순서만 고릅니다.",
+        keep: ["family getaway", "walk near the beach", "seafood dinner"],
       },
       {
         id: "travel-change",
@@ -195,3 +196,5 @@ export const variantSets: Record<string, ScriptVariantSet> = {
     ]),
   },
 };
+
+export const variantSets = defineVariantSets(authoredVariantSets);

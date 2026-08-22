@@ -1,4 +1,5 @@
 import type { ScriptBlueprintStep, ScriptVariantSet } from "../../../../types";
+import { defineVariantSets } from "../../defineVariantSets";
 
 const blueprint = (items: Array<[string, string, string]>) =>
   items.map<ScriptBlueprintStep>(([id, label, koreanGuide], index) => ({
@@ -13,7 +14,7 @@ const blueprint = (items: Array<[string, string, string]>) =>
     ][index],
   }));
 
-export const variantSets: Record<string, ScriptVariantSet> = {
+const authoredVariantSets: Record<string, ScriptVariantSet> = {
   "culture-night": {
     title: "영화·공연·음악의 복합 저녁을 질문에 맞게 재구성하기",
     description:
@@ -195,3 +196,5 @@ export const variantSets: Record<string, ScriptVariantSet> = {
     ]),
   },
 };
+
+export const variantSets = defineVariantSets(authoredVariantSets);

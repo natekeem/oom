@@ -17,7 +17,7 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { cn } from "../../lib/utils";
 import type { ViewId } from "./Sidebar";
 import { useTrainingSelection } from "../../training/TrainingSelectionContext";
@@ -162,6 +162,7 @@ export function ExpandableSidebar({
   onNavigate,
   onToggleDarkMode,
 }: ExpandableSidebarProps) {
+  const mobileDialogRef = useRef<HTMLElement | null>(null);
   const { selection } = useTrainingSelection();
   const resolved = selection ? resolveTrainingContext(selection.courseId, selection.levelId) : null;
 
@@ -222,6 +223,40 @@ export function ExpandableSidebar({
     onClose?.();
   };
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const dialog = mobileDialogRef.current;
+    const firstTarget =
+      dialog?.querySelector<HTMLElement>("[data-mobile-close]") ??
+      dialog?.querySelector<HTMLElement>("button, a, [tabindex]:not([tabindex='-1'])");
+    firstTarget?.focus();
+  }, [mobileOpen]);
+
+  const trapMobileFocus = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      onClose?.();
+      return;
+    }
+    if (event.key !== "Tab") return;
+
+    const focusable = Array.from(
+      event.currentTarget.querySelectorAll<HTMLElement>(
+        "button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1'])"
+      )
+    ).filter((element) => element.getAttribute("aria-hidden") !== "true");
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
   const content = (
     <div className="flex h-full flex-col bg-zinc-50 px-3 py-5 dark:bg-zinc-950">
       <div className="mb-7 flex items-center justify-between px-2">
@@ -242,6 +277,7 @@ export function ExpandableSidebar({
         {onClose ? (
           <button
             aria-label="메뉴 닫기"
+            data-mobile-close
             className="rounded p-2 text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-800 lg:hidden"
             onClick={onClose}
             type="button"
@@ -440,7 +476,12 @@ export function ExpandableSidebar({
           />
           <aside
             aria-label="모바일 메뉴"
+            aria-modal="true"
             className="relative h-full w-72 max-w-[85vw] border-r border-zinc-200 bg-zinc-50 shadow-2xl dark:border-zinc-800 dark:bg-zinc-950"
+            id="oom-mobile-navigation"
+            onKeyDown={trapMobileFocus}
+            ref={mobileDialogRef}
+            role="dialog"
           >
             {content}
           </aside>

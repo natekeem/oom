@@ -25,9 +25,9 @@ OOM은 사내 구성원이 OPIc 영어 말하기를 체계적으로 연습하도
 
 1. **목표 구간 · 코스 설정 (`/training/setup/`)**: 1구간(AL), 2구간(IH/IM3), 3구간(IM2/IM1) 중 목표 구간과 학습 코스(Everyday & Getaway, Culture & City, Nature & Weekend)를 설정합니다.
 2. **추천 서베이 익히기 (`/training/survey/`)**: 실제형 설문 목록에서 선택한 코스 맞춤 추천 조합을 확인하고 연습 모드로 훈련합니다.
-3. **난이도 설정 (`/training/difficulty/`)**: 선택한 구간에 맞춘 권장 난이도(5-5, 4-4, 3-3)와 평가 초점을 확인합니다.
-4. **만능 스크립트 (`/training/scripts/`)**: 코스별 4개의 canonical storyline을 질문별 변형과 답변 설계도로 익힙니다.
-5. **롤플레이 공식 (`/roleplay/`)**: 6단계 만능 해결 공식(상황 → 문제 → 질문 → 대안 1 → 대안 2 → 마무리)과 필수 만능 표현을 익히고 코스별 실전 시나리오를 훈련합니다.
+3. **난이도 설정 (`/training/difficulty/`)**: 선택한 구간의 권장 난이도를 확인하고, 별도의 시험 난이도 선택 시뮬레이션으로 조합을 미리 봅니다. 시뮬레이션은 현재 Course × Level 설정을 바꾸지 않습니다.
+4. **만능 스크립트 (`/training/scripts/`)**: 코스별 4개 핵심 이야기를 질문별 변형과 기능 단위 답변 설계(ANSWER → SCENE/ACTION → RESULT, 필요 시 EXPANSION)로 익힙니다.
+5. **롤플레이 공식 (`/roleplay/`)**: 문제·목적, 질문 또는 요청, 다음 행동을 CORE로 먼저 잡고, 정보 질문·대안·마무리를 OPTIONAL 메뉴처럼 골라 코스별 3개 실전 시나리오를 훈련합니다. 6단계를 매번 모두 사용할 필요는 없습니다.
 6. **실전 연습 (`/practice/`)**: 실제 OPIc 시험 화면 스타일의 통합 콘솔에서 가상 인터뷰어(EVA)의 질문을 청취(최대 2회)하고 음성 녹음과 타이머로 답변을 진행합니다. 녹음 완료 후 2-Phase 복기 영역으로 전환되어 ① 내 녹음 재생 → ② optional STT 전사 및 editable transcript 확인·수정 → ③ Course × Level 맞춤 AI 피드백 → 같은 질문 다시 말하기(재도전) 흐름으로 실전 감각을 기릅니다.
 
 ## 기능
@@ -35,12 +35,13 @@ OOM은 사내 구성원이 OPIc 영어 말하기를 체계적으로 연습하도
 - 다크 모드와 반응형 접이식 사이드바
 - 훈련 화면에서만 보이는 상단 진행 표시와 다음 단계 이동 (0% → 20% → 40% → 60% → 80% → 100%)
 - 스크립트 전체/블라인드/키워드 암기 모드
-- 질문 변형별 교체 블록 및 4단계 답변 설계도 (Opening → Scene → Detail → Closing)
+- 질문 변형별 Level-aware micro-example과 KEEP / CHANGE / DROP 기능 단위 답변 설계
+- Advanced 원문은 CORE와 펼쳐 보는 OPTIONAL EXPANSION으로 나누어 연습
 - Web Speech API 기반 영어 TTS와 속도 조절
 - 클립보드 복사 피드백
 - MediaRecorder 기반 브라우저 내 녹음 및 재생
 - 브라우저 `localStorage` 기반 내부 LLM 설정
-- 스크립트 자연스러운 변형, 답변 피드백, 롤플레이 질문 생성
+- 스크립트 자연스러운 변형, KEEP/FIX/RETRY 우선 답변 피드백, 롤플레이 질문 생성
 
 ## 기술 구성
 

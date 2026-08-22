@@ -20,7 +20,7 @@ describe("ScriptTrainingTabs", () => {
 
     await user.click(screen.getByRole("tab", { name: "질문별 변형" }));
     expect(screen.getByText("좋아하는 장소")).toBeInTheDocument();
-    expect(screen.getAllByText("Tell me about a park or beach you enjoy going to.")).toHaveLength(2);
+    expect(screen.getAllByText("Tell me about a beach destination you enjoyed visiting.")).toHaveLength(2);
 
     await user.click(screen.getByRole("tab", { name: "답변 설계" }));
     expect(screen.getByText("질문의 중심 명사 고르기")).toBeInTheDocument();
@@ -40,7 +40,7 @@ describe("ScriptTrainingTabs", () => {
     await user.click(screen.getByRole("tab", { name: "질문별 변형" }));
     await user.click(screen.getByText("조립된 답변 보기"));
 
-    expect(screen.getByText("교체 문단")).toBeInTheDocument();
-    expect(screen.getAllByText("유지 문단")).toHaveLength(2);
+    expect(screen.getByText("CHANGE")).toBeInTheDocument();
+    expect(screen.getAllByText("KEEP")).toHaveLength(2);
   });
 });

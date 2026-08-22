@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Card } from "../ui/Card";
 import { Badge } from "../ui/Badge";
 import { ButtonLink } from "../ui/Button";
+import { TRAINING_LEVELS, formatTrainingPreset } from "../../training/levels";
 
 const flows = [
   "STEP 1 목표 구간 · 코스 설정",
@@ -13,11 +14,17 @@ const flows = [
   "STEP 6 실전 연습",
 ];
 
-const levels = [
-  { level: "IM3", tone: "emerald" as const, text: "기본 구조를 지키며, 친숙한 경험을 이해 가능한 문장으로 이어 말합니다." },
-  { level: "IH", tone: "indigo" as const, text: "시간·장소·감정을 덧붙여 답변을 확장하고 자연스럽게 연결합니다." },
-  { level: "AL", tone: "amber" as const, text: "구체적인 장면과 변화, 문제 해결을 유연하게 엮어 깊이를 만듭니다." },
-];
+const levelDescriptions = {
+  foundation: "기본 구조를 지키며, 친숙한 경험을 이해 가능한 짧은 문장으로 이어 말합니다.",
+  intermediate: "시간·장소·감정을 덧붙여 답변을 확장하고 자연스럽게 연결합니다.",
+  advanced: "구체적인 장면과 변화, 문제 해결을 질문에 맞춰 유연하게 엮습니다.",
+};
+
+const levelTones = {
+  foundation: "emerald" as const,
+  intermediate: "indigo" as const,
+  advanced: "amber" as const,
+};
 
 export function HomeView() {
   return (
@@ -30,7 +37,7 @@ export function HomeView() {
           </span>
           <h1 className="mt-4 max-w-3xl text-balance text-3xl font-bold leading-tight sm:text-4xl">오픽온미와 함께 오픽은 나에게 맡기고, 반복 가능한 구조로 말합니다.</h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-300 sm:text-base">OOM은 답을 통째로 암기하는 도구가 아닙니다. 익숙한 장면을 여러 질문에 맞게 자연스럽게 변형해 말하는 훈련 대시보드입니다.</p>
-          <div className="mt-6 flex flex-wrap gap-3"><ButtonLink to="/training/"><Route className="h-4 w-4" />STEP 1 실전 훈련 시작</ButtonLink><ButtonLink to="/training/scripts/outdoor/" variant="secondary"><Mic2 className="h-4 w-4" />스크립트 보기</ButtonLink></div>
+          <div className="mt-6 flex flex-wrap gap-3"><ButtonLink to="/training/"><Route className="h-4 w-4" />실전 훈련 둘러보기</ButtonLink><ButtonLink to="/training/setup/" variant="secondary"><ArrowRight className="h-4 w-4" />STEP 1 시작</ButtonLink><ButtonLink to="/training/scripts/outdoor/" variant="secondary"><Mic2 className="h-4 w-4" />스크립트 보기</ButtonLink></div>
         </Card>
         <Card className="p-6">
           <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400"><Gauge className="h-5 w-5" /><p className="text-sm font-semibold">추천 시작점</p></div>
@@ -41,7 +48,7 @@ export function HomeView() {
       </motion.section>
 
       <section className="grid gap-5 lg:grid-cols-3">
-        {levels.map((item, index) => <motion.div animate={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 12 }} key={item.level} transition={{ delay: index * 0.06 }}><Card className="h-full p-5"><Badge tone={item.tone}>{item.level}</Badge><p className="mt-4 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{item.text}</p></Card></motion.div>)}
+        {[...TRAINING_LEVELS].reverse().map((level, index) => <motion.div animate={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 12 }} key={level.id} transition={{ delay: index * 0.06 }}><Card className="h-full p-5"><Badge tone={levelTones[level.id]}>{formatTrainingPreset(level)}</Badge><p className="mt-4 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{levelDescriptions[level.id]}</p></Card></motion.div>)}
       </section>
 
       <Card className="p-5 sm:p-6">
@@ -55,7 +62,12 @@ export function HomeView() {
         <div className="flex gap-3"><Lightbulb className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" /><div><p className="text-sm font-bold text-emerald-900 dark:text-emerald-100">훈련의 기준</p><p className="mt-1 text-sm leading-6 text-emerald-800 dark:text-emerald-200">이 구조가 점수를 보장하지는 않습니다. 다만 낯선 질문 앞에서도 재사용 가능한 답변 구조를 꺼내 자연스럽게 말하는 힘을 키웁니다.</p></div></div>
       </Card>
 
-      <section aria-labelledby="opic-study-guide" className="space-y-5 pt-4">
+      <details className="group rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900 sm:p-5">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-1 text-sm font-bold text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-white">
+          <span>OPIc 학습 가이드 더 보기</span>
+          <span aria-hidden="true" className="text-indigo-600 transition-transform group-open:rotate-90 dark:text-indigo-400">→</span>
+        </summary>
+      <section aria-labelledby="opic-study-guide" className="mt-5 space-y-5 border-t border-zinc-200 pt-5 dark:border-zinc-800">
         <div className="max-w-3xl">
           <Badge tone="indigo">OPIc 학습 가이드</Badge>
           <h2 className="mt-3 text-balance text-2xl font-bold tracking-tight text-zinc-950 sm:text-3xl dark:text-white" id="opic-study-guide">오픽을 혼자 준비할 때 알아야 할 등급, 훈련, 발화의 기준</h2>
@@ -145,6 +157,7 @@ export function HomeView() {
           </div>
         </Card>
       </section>
+      </details>
     </div>
   );
 }

@@ -38,8 +38,7 @@ OPIc training hub
 ├─ STEP 5. role-play formula
 │  ├─ group 1 scenario
 │  ├─ group 2 scenario
-│  ├─ group 3 scenario
-│  └─ group 4 scenario
+│  └─ group 3 scenario
 └─ STEP 6. practice
 OOM magazine
 Footer legal pages
@@ -52,7 +51,7 @@ Footer legal pages
 AI feedback / settings
 ```
 
-The candidate guide and training hub are independent top-level branches. STEP 1-6 belong to the training hub. The candidate guide also includes the `exam-screen` exam console guide and `exam-faq` Q&A child page. Sidebar labels for STEP 4 and STEP 5 are rendered dynamically from the active Course's storylines and roleplays.
+The candidate guide and training hub are independent top-level branches. STEP 1-6 belong to the training hub. The candidate guide also includes the `exam-screen` exam console guide and `exam-faq` Q&A child page. Sidebar labels for STEP 4 and STEP 5 are rendered dynamically from the active Course's storylines and actual roleplays. Current manifests declare three roleplay IDs; roleplay count does not have to equal the four-storyline count.
 
 ## Header Rule
 
@@ -95,7 +94,7 @@ Public route targets use the canonical `https://opic-on-me.com/path/` form. Inte
 | `roleplay-travel` | Training / STEP 5 child | `RoleplayViewV2` | Yes, 80% | Generic slot 0 scenario (e.g. travel/outdoor) |
 | `roleplay-indoor` | Training / STEP 5 child | `RoleplayViewV2` | Yes, 80% | Generic slot 1 scenario (e.g. cafe/indoor) |
 | `roleplay-sports` | Training / STEP 5 child | `RoleplayViewV2` | Yes, 80% | Generic slot 2 scenario (e.g. sports/fitness) |
-| `roleplay-home` | Training / STEP 5 child | `RoleplayViewV2` | Yes, 80% | Generic slot 3 scenario (e.g. home/neighborhood) |
+| `roleplay-home` | Compatibility route, hidden from current sidebar | `RoleplayViewV2` | Yes, 80% | Legacy slot 3 URL; current three-scenario manifests fall back safely to slot 0 |
 | `practice` | Training / STEP 6 | `PracticeView` | Yes, 100% | Random prompt by Course × Level, timer, recording, feedback |
 | `magazine-list` | Top-level magazine | `MagazineList` / `MagazineDetail` | No | `/magazine/` lists static articles; `/magazine/:id/` renders the selected article |
 | `ai-settings` | Top-level utility | `AiSettingsView` | No | LLM runtime configuration |
@@ -119,7 +118,7 @@ The group-specific script routes also point to `roleplay-hub`. The legacy `rolep
 
 ## Synchronization Rules
 
-- `ScriptDashboardV2` and `RoleplayViewV2` use generic `slotIndex` props (0..3) to resolve against active Course storylines and roleplays.
+- `ScriptDashboardV2` uses four generic storyline slots. `RoleplayViewV2` retains slot routes 0..3 for URL compatibility, while the current registry and sidebar expose only the three IDs declared by each manifest.
 - The sidebar expander dynamically displays group titles for the currently selected Course context.
 - A group page remains reachable through both its sidebar item and its hub card.
 - `roleplay-formula` shows only the formula and scenario-group cards. Detailed questions and sample answers belong in the selected `roleplay-*` route.

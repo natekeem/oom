@@ -6,7 +6,7 @@ export const TRAINING_LEVELS: TrainingLevelDefinition[] = [
     displayOrder: 1,
     displayName: "1구간",
     targetGrades: ["AL"],
-    targetLabel: "AL (Advanced Low)",
+    targetLabel: "AL",
     recommendedFor: ["현재 IH", "현재 IM3"],
     difficulty: { initial: 5, second: 5, label: "5-5" },
     targetSeconds: [60, 90],
@@ -57,3 +57,7 @@ export const TRAINING_LEVELS: TrainingLevelDefinition[] = [
       "짧더라도 질문에 직접 답하고 장면을 끝까지 완성하는 것을 우선한다.",
   },
 ];
+
+export function formatTrainingPreset(level: TrainingLevelDefinition) {
+  return `${level.displayName} · ${level.targetLabel} · ${level.targetSeconds[0]}~${level.targetSeconds[1]}초 연습 preset`;
+}

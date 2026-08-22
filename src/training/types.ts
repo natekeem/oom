@@ -39,6 +39,8 @@ export type TrainingCourseDefinition = {
   title: string;
   subtitle: string;
   description: string;
+  displaySummary: string;
+  recommendedFor: string[];
   recommendedBadge?: string;
   surveyPresetId: string;
   storylineIds: string[];
@@ -96,6 +98,7 @@ export type TrainingRoleplay = {
   title: string;
   group: string;
   situation: string;
+  learningFunction: string;
   prompt: string;
   answerStructure: string[];
   levels: Record<TrainingLevelId, LevelRoleplayContent>;

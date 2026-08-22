@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
@@ -40,9 +40,14 @@ describe("training navigation", () => {
     await user.click(step5Button);
 
     // Wait for heading
-    expect(
-      await screen.findByText(/문제를 설명하고, 대안을 요청하고, 정중하게 마무리합니다/)
-    ).toBeInTheDocument();
+    await waitFor(
+      () => expect(
+        screen.getByRole("heading", {
+          name: "문제를 설명하고, 대안을 요청하고, 정중하게 마무리합니다.",
+        })
+      ).toBeInTheDocument(),
+      { timeout: 4000 }
+    );
     expect(screen.getAllByRole("button", { name: /시나리오 훈련/ }).length).toBeGreaterThanOrEqual(3);
     expect(screen.queryByText("EVA QUESTION")).not.toBeInTheDocument();
   });

@@ -5,6 +5,7 @@ import { PracticeView } from "./components/practice/PracticeView";
 import { TrainingSelectionProvider } from "./training/TrainingSelectionContext";
 import { saveTrainingSelection } from "./training/storage";
 import type { LlmSettings, SttSettings } from "./types";
+import { resolveTrainingContext } from "./training/courseRegistry";
 
 // Mock SpeechSynthesis
 const mockSpeak = vi.fn();
@@ -51,7 +52,7 @@ const dummySttSettings: SttSettings = {
 describe("PracticeView & ExamScreenShell", () => {
   it("renders the exam screen console with single audio-first question text toggle", async () => {
     const onToast = vi.fn();
-    render(
+    const { container } = render(
       <TrainingSelectionProvider>
         <PracticeView
           onToast={onToast}
@@ -81,6 +82,33 @@ describe("PracticeView & ExamScreenShell", () => {
     const user = userEvent.setup();
     await user.click(togglePromptBtn);
     expect(togglePromptBtn).toHaveTextContent("텍스트 숨기기");
+
+    const prompt = resolveTrainingContext("course-1", "advanced").questions[0].prompt;
+    expect([...container.querySelectorAll("p")].filter((node) => node.textContent === prompt)).toHaveLength(1);
+    expect(screen.queryByRole("button", { name: "녹음 시작" })).not.toBeInTheDocument();
+    expect(screen.getByTestId("exam-console-grid")).toHaveClass("xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.85fr)]");
+    expect(screen.getByTestId("exam-console-grid").className).not.toContain("lg:grid-cols");
+  });
+
+  it("shows KEEP/FIX/RETRY fallback without auto-opening the story hint", async () => {
+    const user = userEvent.setup();
+    render(
+      <TrainingSelectionProvider>
+        <PracticeView onToast={vi.fn()} settings={{ ...dummyLlmSettings, endpoint: "" }} sttSettings={dummySttSettings} />
+      </TrainingSelectionProvider>
+    );
+
+    await user.click(screen.getByRole("button", { name: /답변 시작/ }));
+    const timerOnly = screen.queryByRole("button", { name: /타이머만 시작/ });
+    if (timerOnly) await user.click(timerOnly);
+    await user.click(screen.getByRole("button", { name: /답변 종료/ }));
+    await user.type(await screen.findByRole("textbox", { name: /Transcript/ }), "Last Saturday I went to the beach with my family.");
+    await user.click(screen.getByRole("button", { name: "AI 피드백 받기" }));
+
+    expect(screen.getAllByText("KEEP").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("FIX").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("RETRY").length).toBeGreaterThan(0);
+    expect(screen.getByRole("button", { name: /추천 스크립트 힌트 보기/ })).toHaveAttribute("aria-expanded", "false");
   });
 
   it("increments listen count on Play and caps at 2/2", async () => {

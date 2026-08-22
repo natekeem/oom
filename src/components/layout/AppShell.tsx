@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { ArrowRight, Menu, Moon, Sun } from "lucide-react";
 import { Button } from "../ui/Button";
 import { type ViewId, getViewTitle } from "./Sidebar";
@@ -38,6 +38,25 @@ const progressMap: Partial<Record<ViewId, number>> = {
   practice: 100,
 };
 
+const mobileTrainingLabels: Partial<Record<ViewId, string>> = {
+  "training-hub": "실전 훈련 · 6 STEP",
+  "training-setup": "STEP 1 · 목표 설정",
+  survey: "STEP 2 · 추천 서베이",
+  difficulty: "STEP 3 · 난이도",
+  "script-hub": "STEP 4 · 스크립트",
+  "script-outdoor": "STEP 4 · 스크립트",
+  "script-indoor": "STEP 4 · 스크립트",
+  "script-sports": "STEP 4 · 스크립트",
+  "script-home": "STEP 4 · 스크립트",
+  "roleplay-hub": "STEP 5 · 롤플레이",
+  "roleplay-formula": "STEP 5 · 롤플레이",
+  "roleplay-travel": "STEP 5 · 시나리오",
+  "roleplay-indoor": "STEP 5 · 시나리오",
+  "roleplay-sports": "STEP 5 · 시나리오",
+  "roleplay-home": "STEP 5 · 시나리오",
+  practice: "STEP 6 · 실전 연습",
+};
+
 export function AppShell({
   activeView,
   children,
@@ -50,6 +69,9 @@ export function AppShell({
   onCloseMobileMenu,
   showTrainingHeader,
 }: AppShellProps) {
+  const mobileMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const mainRef = useRef<HTMLElement | null>(null);
+  const wasMobileOpenRef = useRef(false);
   const { selection } = useTrainingSelection();
   const resolved = selection ? resolveTrainingContext(selection.courseId, selection.levelId) : null;
 
@@ -57,12 +79,28 @@ export function AppShell({
   const progress = progressMap[activeView];
   const themeLabel = darkMode ? "라이트 모드로 전환" : "다크 모드로 전환";
 
+  useEffect(() => {
+    const main = mainRef.current;
+    if (main) {
+      main.inert = mobileOpen;
+      if (mobileOpen) main.setAttribute("aria-hidden", "true");
+      else main.removeAttribute("aria-hidden");
+    }
+    if (!mobileOpen && wasMobileOpenRef.current) {
+      mobileMenuTriggerRef.current?.focus();
+    }
+    wasMobileOpenRef.current = mobileOpen;
+  }, [mobileOpen]);
+
   const mobileControls = (
     <div className="fixed right-4 top-4 z-30 flex gap-2 lg:hidden">
       <Button
+        aria-controls="oom-mobile-navigation"
+        aria-expanded={mobileOpen}
         aria-label="메뉴 열기"
-        className="bg-zinc-100/90 shadow-sm backdrop-blur dark:bg-zinc-900/90"
+        className="h-11 w-11 bg-zinc-100/90 shadow-sm backdrop-blur dark:bg-zinc-900/90"
         onClick={onToggleMobileMenu}
+        ref={mobileMenuTriggerRef}
         size="icon"
         variant="secondary"
       >
@@ -70,7 +108,7 @@ export function AppShell({
       </Button>
       <Button
         aria-label={themeLabel}
-        className="bg-zinc-100/90 shadow-sm backdrop-blur dark:bg-zinc-900/90"
+        className="h-11 w-11 bg-zinc-100/90 shadow-sm backdrop-blur dark:bg-zinc-900/90"
         onClick={onToggleDarkMode}
         size="icon"
         variant="secondary"
@@ -90,14 +128,20 @@ export function AppShell({
         onNavigate={onNavigate}
         onToggleDarkMode={onToggleDarkMode}
       />
-      <main className="flex min-h-screen min-w-0 flex-1 flex-col lg:h-screen lg:min-h-0 lg:overflow-y-auto">
+      <main
+        className="flex min-h-screen min-w-0 flex-1 flex-col lg:h-screen lg:min-h-0 lg:overflow-y-auto"
+        ref={mainRef}
+      >
         {showTrainingHeader ? (
           <header className="sticky top-0 z-20 border-b border-zinc-200 bg-zinc-100/90 px-4 py-3 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90 sm:px-6 lg:px-9">
             <div className="mx-auto flex max-w-7xl items-center gap-3">
               <Button
+                aria-controls="oom-mobile-navigation"
+                aria-expanded={mobileOpen}
                 aria-label="메뉴 열기"
-                className="lg:hidden"
+                className="h-11 w-11 lg:hidden"
                 onClick={onToggleMobileMenu}
+                ref={mobileMenuTriggerRef}
                 size="icon"
                 variant="ghost"
               >
@@ -105,7 +149,8 @@ export function AppShell({
               </Button>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold text-zinc-900 dark:text-white">
-                  {getViewTitle(activeView, resolved)}
+                  <span className="sm:hidden">{mobileTrainingLabels[activeView] ?? getViewTitle(activeView, resolved)}</span>
+                  <span className="hidden sm:inline">{getViewTitle(activeView, resolved)}</span>
                 </p>
                 {!isOverview && typeof progress === "number" ? (
                   <div className="mt-2 h-1 overflow-hidden rounded bg-zinc-200 dark:bg-zinc-800">
@@ -129,12 +174,12 @@ export function AppShell({
                 <>
                   <Button
                     aria-label={`다음 단계: ${nextStep.label}`}
-                    className="sm:hidden"
+                    className="h-11 px-3 sm:hidden"
                     onClick={nextStep.onClick}
-                    size="icon"
+                    size="sm"
                     variant="secondary"
                   >
-                    <ArrowRight className="h-4 w-4" />
+                    <span>{nextStep.label.match(/STEP\s*\d+/i)?.[0] ?? "다음"}</span><ArrowRight className="h-4 w-4" />
                   </Button>
                   <Button
                     aria-label={`다음 단계: ${nextStep.label}`}

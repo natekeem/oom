@@ -102,9 +102,9 @@ export function ScriptHub({ onNavigate }: { onNavigate: (view: ViewId) => void }
                     스크립트 훈련 3단계 안내
                   </p>
                   <p className="text-xs leading-5 text-indigo-800 dark:text-indigo-200">
-                    1. <strong>메인 스토리</strong>: 60~90초 분량의 대표 답변을 먼저 소리 내어 연습합니다.<br />
+                    1. <strong>메인 스토리</strong>: 선택한 구간의 목표 시간에 맞는 대표 답변을 먼저 읽고 듣습니다.<br />
                     2. <strong>질문별 변형</strong>: 질문의 시제나 초점이 바뀌었을 때 유지할 블록과 교체할 블록을 확인합니다.<br />
-                    3. <strong>답변 설계도</strong>: 스크립트 전체를 외우지 않고 4단계 뼈대(Opening → Scene → Detail → Closing)만 떠올려 말해 봅니다.
+                    3. <strong>답변 설계도</strong>: 문단 번호가 아니라 ANSWER → SCENE / ACTION → RESULT 기능을 골라 말합니다.
                   </p>
                 </div>
               </div>

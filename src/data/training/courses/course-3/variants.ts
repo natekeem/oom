@@ -1,4 +1,5 @@
 import type { ScriptBlueprintStep, ScriptVariantSet } from "../../../../types";
+import { defineVariantSets } from "../../defineVariantSets";
 
 const blueprint = (items: Array<[string, string, string]>) =>
   items.map<ScriptBlueprintStep>(([id, label, koreanGuide], index) => ({
@@ -13,7 +14,7 @@ const blueprint = (items: Array<[string, string, string]>) =>
     ][index],
   }));
 
-export const variantSets: Record<string, ScriptVariantSet> = {
+const authoredVariantSets: Record<string, ScriptVariantSet> = {
   "trail-photo": {
     title: "공원 트레일과 사진 촬영을 묘사·루틴·변화로 확장하기",
     description:
@@ -24,23 +25,23 @@ export const variantSets: Record<string, ScriptVariantSet> = {
         label: "자주 가는 공원",
         questionType: "장소 묘사",
         question: "Tell me about a park or hiking trail you frequently visit. What makes it special?",
-        pivot: "공원의 숲길 트레일과 도시가 내려다보이는 전망대 구조를 묘사하는 문장으로 엽니다.",
-        keep: ["park trail", "viewpoint at the top", "fresh mountain air"],
+        pivot: "집 근처 큰 공원의 완만한 트레일과 작은 전망대를 묘사하는 문장으로 엽니다.",
+        keep: ["large local park", "easy trail", "small overlook"],
       },
       {
         id: "weekend-hiking",
         label: "주말 걷기·하이킹 루틴",
         questionType: "일상 루틴",
         question: "What is your typical routine when you go walking or hiking on weekends?",
-        pivot: "토요일 아침 일찍 룸메이트와 가벼운 배낭을 챙겨 한 시간 산책하는 루틴에 맞춥니다.",
-        keep: ["Saturday morning", "roommate", "one-hour walk"],
+        pivot: "토요일 아침 룸메이트와 편한 신발을 신고 완만한 길을 걷는 루틴에 맞춥니다.",
+        keep: ["Saturday morning", "roommate", "comfortable shoes"],
       },
       {
         id: "photo-memory",
         label: "사진을 찍은 최근 경험",
         questionType: "최근 경험",
         question: "Describe a recent experience when you took interesting photos outdoors.",
-        pivot: "전망대에 도착해 아침 햇살과 주변 풍경을 카메라나 스마트폰으로 천천히 담았던 순간에 집중합니다.",
+        pivot: "전망대에 도착해 나무와 멀리 보이는 도시를 휴대폰으로 담았던 순간에 집중합니다.",
         keep: ["took photos", "morning light", "clear scenery"],
       },
       {
@@ -82,11 +83,11 @@ export const variantSets: Record<string, ScriptVariantSet> = {
       },
       {
         id: "drive-routine",
-        label: "드라이브와 주말 나들이",
-        questionType: "일상 루틴",
-        question: "Do you like driving on weekends? Describe a typical drive you enjoy.",
-        pivot: "해안 도로를 따라 음악을 들으며 운전하고 경치 좋은 휴게 스팟에 들르는 드라이브 루틴으로 전환합니다.",
-        keep: ["coastal road", "good music", "scenic stops"],
+        label: "캠핑장으로 간 드라이브",
+        questionType: "최근 이동 경험",
+        question: "Describe the drive to your coastal campsite.",
+        pivot: "새 드라이브 루틴을 만들지 않고 친구와 두 시간 이동해 캠핑장에 도착한 같은 여정을 말합니다.",
+        keep: ["friend", "two-hour drive", "coastal campsite"],
       },
       {
         id: "travel-style-change",
@@ -127,11 +128,11 @@ export const variantSets: Record<string, ScriptVariantSet> = {
       },
       {
         id: "reading-routine",
-        label: "독서와 휴식 루틴",
-        questionType: "일상 루틴",
-        question: "When and where do you usually enjoy reading books or articles?",
-        pivot: "전시를 본 후 조용한 카페나 집에서 책과 도록을 읽으며 생각을 정리하는 루틴으로 출발합니다.",
-        keep: ["quiet cafe corner", "reading an exhibition book", "warm tea"],
+        label: "전시 후 도록 읽기",
+        questionType: "최근 경험",
+        question: "What did you read after visiting the photography exhibition?",
+        pivot: "같은 박물관 카페에서 전시 안내서를 읽은 장면만 자세히 고릅니다.",
+        keep: ["museum cafe", "exhibition guide", "photography exhibition"],
       },
       {
         id: "perspective-change",
@@ -145,7 +146,7 @@ export const variantSets: Record<string, ScriptVariantSet> = {
     blueprint: blueprint([
       ["target", "박물관 공간 vs 전시 관람 vs 독서 습관 확인", "공간 묘사인지, 전시 경험인지, 독서/휴식 습관인지 질문 단어를 확인합니다."],
       ["open", "비 오는 날의 차분한 출발", "조용한 박물관 소개, 최근 비 오던 날의 방문, 평소 독서 습관으로 엽니다."],
-      ["reuse", "흑백 사진과 카페 도록 읽기 디테일 재사용", "black and white photos, exhibition catalog, warm tea 디테일을 활용합니다."],
+      ["reuse", "흑백 사진과 카페 도록 읽기 디테일 재사용", "black and white photos, exhibition guide, museum cafe 디테일을 활용합니다."],
       ["close", "차분한 사색과 힐링으로 마무리", "복잡한 생각에서 벗어나 마음이 차분해졌다는 감정으로 닫습니다."],
     ]),
   },
@@ -195,3 +196,5 @@ export const variantSets: Record<string, ScriptVariantSet> = {
     ]),
   },
 };
+
+export const variantSets = defineVariantSets(authoredVariantSets);

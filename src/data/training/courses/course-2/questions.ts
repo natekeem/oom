@@ -26,7 +26,7 @@ export const questions = [
     "storylineId": "culture-night",
     "group": "문화 / 음악",
     "type": "recent-experience",
-    "prompt": "Tell me about a recent time you enjoy movies, performances, or music. What happened?"
+    "prompt": "Tell me about the last live performance you attended. What happened that evening?"
   },
   {
     "id": "course-2-foundation-q04",
@@ -53,7 +53,7 @@ export const questions = [
     "storylineId": "smart-shopping",
     "group": "쇼핑 / 생활",
     "type": "recent-experience",
-    "prompt": "Tell me about a recent time you shop for something you need. What happened?"
+    "prompt": "Tell me about the last time you shopped for something you needed. What did you choose?"
   },
   {
     "id": "course-2-foundation-q07",
@@ -80,7 +80,7 @@ export const questions = [
     "storylineId": "light-fitness",
     "group": "공원 / 가벼운 운동",
     "type": "recent-experience",
-    "prompt": "Tell me about a recent time you walk or exercise. What happened?"
+    "prompt": "Tell me about a recent time when you took a walk for exercise. What did you do?"
   },
   {
     "id": "course-2-foundation-q10",
@@ -107,7 +107,7 @@ export const questions = [
     "storylineId": "solo-staycation",
     "group": "집 / 휴가 / 여행",
     "type": "recent-experience",
-    "prompt": "Tell me about a recent time you spend a vacation at home or travel. What happened?"
+    "prompt": "Tell me about your last staycation at home. What did you do?"
   },
   {
     "id": "course-2-intermediate-q13",
@@ -241,8 +241,8 @@ export const questions = [
     "levelId": "advanced",
     "storylineId": "culture-night",
     "group": "문화 / 음악",
-    "type": "problem-opinion",
-    "prompt": "Describe a problem, unexpected situation, or important choice related to movies, live performances, concerts, or music. How did you handle it and what did you learn?"
+    "type": "preference",
+    "prompt": "Do you prefer watching a live performance or enjoying recorded music at home? Explain your choice."
   },
   {
     "id": "course-2-advanced-q28",
@@ -295,8 +295,8 @@ export const questions = [
     "levelId": "advanced",
     "storylineId": "light-fitness",
     "group": "공원 / 가벼운 운동",
-    "type": "problem-opinion",
-    "prompt": "Describe a problem, unexpected situation, or important choice related to a park or your light exercise routine. How did you handle it and what did you learn?"
+    "type": "opinion",
+    "prompt": "Do you think a simple walking routine is easier to maintain than intense exercise? Explain why."
   },
   {
     "id": "course-2-advanced-q34",
@@ -322,7 +322,7 @@ export const questions = [
     "levelId": "advanced",
     "storylineId": "solo-staycation",
     "group": "집 / 휴가 / 여행",
-    "type": "problem-opinion",
-    "prompt": "Describe a problem, unexpected situation, or important choice related to your home, a staycation, or a short trip. How did you handle it and what did you learn?"
+    "type": "preference",
+    "prompt": "Do you prefer a quiet staycation or a short city trip? Explain your choice."
   }
 ] as const satisfies readonly TrainingPracticeQuestion[];

@@ -32,7 +32,7 @@ The sticky header is intentionally limited to `training-hub` and the STEP 1-5 de
 
 ## Navigation Ownership
 
-`App.tsx` is the only place that selects a top-level screen from `activeView`.
+`App.tsx` is the only place that selects a top-level screen from `activeView`. Route-owned screens are loaded with `React.lazy` behind one shared `Suspense` fallback so the initial static shell stays below the production chunk warning without changing route ownership.
 
 ```text
 Home
@@ -48,7 +48,7 @@ Home
 │  ├─ STEP 4 script hub
 │  │  └─ four generic script slot views
 │  ├─ STEP 5 role-play hub
-│  │  └─ four scenario slot views
+│  │  └─ three current scenario slot views (the fourth URL remains compatibility-only)
 │  └─ STEP 6 practice
 ├─ OOM magazine
 ├─ legal pages
@@ -67,10 +67,10 @@ Parent hubs explain the purpose of their child pages. Parent routes should not s
 | Training overview | `TrainingHub` | Overview Hub: 6 STEP overview roadmap, concept explanation |
 | Training setup | `TrainingSetupView` | STEP 1: Target level and course selection |
 | Survey | `BackgroundSurveySheet` | STEP 2: Recommended survey learning, full survey-like list, course-specific recommendation view, rehearsal mode and scoring |
-| Difficulty | `DifficultyGuide` | STEP 3: Level-specific difficulty presets (5-5, 4-4, 3-3) and goal guidance |
-| Script training | `ScriptHub`, `ScriptDashboardV2`, `ScriptTrainingTabs`, `ScriptTrainingGuide`, `MemoryModeToggle`, `TtsControls` | STEP 4: Canonical storyline per group, question variations, and answer blueprint |
-| Role-play | `RoleplayHub`, `RoleplayViewV2` | STEP 5: Integrated formula, flow, phrases, and course-specific scenarios |
-| Practice | `PracticeView`, `ExamScreenShell`, `ExamInterviewer`, `PracticeReviewPanel`, `Recorder` | STEP 6: Real exam console UX (audio-first, listen count 0/2, EVA interviewer, level-aware timer), 2-phase learning flow, in-memory audio replay, STT transcript editing/retry, and targeted AI coaching |
+| Difficulty | `DifficultyGuide` | STEP 3: Source-owned Level presets plus a local-only exam difficulty preview that never mutates training selection |
+| Script training | `ScriptHub`, `ScriptDashboardV2`, `ScriptTrainingTabs`, `ScriptTrainingGuide`, `MemoryModeToggle`, `TtsControls` | STEP 4: One core story per group, same-story question variations, Level-aware replacement cues, and function-based answer blueprint |
+| Role-play | `RoleplayHub`, `RoleplayViewV2` | STEP 5: Quick scenario access plus a collapsible six-function CORE/OPTIONAL menu and three course-owned scenarios |
+| Practice | `PracticeView`, `ExamScreenShell`, `ExamInterviewer`, `PracticeReviewPanel`, `Recorder` | STEP 6: Audio-first exam console (listen count 0/2, EVA, level timer), headless recorder engine, in-memory replay, optional STT/editable transcript, KEEP/FIX/RETRY coaching, and same-question retry |
 | AI settings | `AiSettingsView`, `AiSettingsPanel` | Runtime-only LLM and STT endpoint / request-shape configuration |
 | Legal pages | `LegalPageView` | About, privacy, contact, terms, editorial policy, and image credit content for public trust and static SEO |
 
@@ -81,7 +81,7 @@ Some older presentation components remain in the source tree for now. They are n
 OOM uses a structured Course × Level data model:
 
 1. **Course**: Defines the context (survey recommendations, core storylines, role-play scenarios, practice questions, question variations, replacement guides). Discovered automatically via `import.meta.glob` in `src/training/courseRegistry.ts`.
-2. **Level**: Defines the target difficulty (`advanced` 5-5 / AL, `intermediate` 4-4 / IH, `foundation` 3-3 / IM3) and answer density. The same core scene is adapted for each level.
+2. **Level**: `src/training/levels.ts` owns the complete display contract and answer density: `advanced` 1구간 / AL / 5-5 / 60~90초, `intermediate` 2구간 / IH·IM3 / 4-4 / 45~65초, `foundation` 3구간 / IM2·IM1 / 3-3 / 30~45초. The same core scene is adapted for each level.
 3. **Training Selection Context**: Provided by `TrainingSelectionProvider` (`src/training/TrainingSelectionContext.tsx`). The user's selection is persisted in `localStorage` via `src/training/storage.ts`.
 4. **Generic Slot Routing**: Script and Roleplay routes (`slotIndex` 0, 1, 2, 3) resolve dynamically against `resolved.storylines[slotIndex]` and `resolved.roleplays[slotIndex]`, ensuring new courses (e.g. Course 4) work without routing edits.
 
@@ -89,10 +89,10 @@ OOM uses a structured Course × Level data model:
 
 Each script group has exactly **one canonical storyline** per course. The legacy Story A/B choice UI has been completely removed.
 
-The canonical storyline provides:
-1. The 60-90 second primary story, adapted for the selected level.
-2. Question-type variations that remain connected to the same core scene.
-3. A blueprint explaining which opening, detail, or closing block should be kept or replaced.
+The core storyline provides:
+1. One scene adapted to the selected Level's time and answer density. Advanced displays a stable CORE and a collapsible OPTIONAL EXPANSION without rewriting its source text.
+2. Question-type variations that retain the same people, place, event, and core objects unless the prompt strictly requires a minimal new fact.
+3. A Level-aware blueprint built from ANSWER, SCENE/ACTION, RESULT, and optional EXPANSION functions. Each replacement exposes KEEP, CHANGE, and DROP cues plus a micro-example for the selected Level only.
 
 `ScriptTrainingTabs` owns the `story`, `variants`, and `blueprint` views.
 
@@ -120,7 +120,7 @@ Do not duplicate these values in view components. Add to the relevant data owner
 | Capability | Module | Behavior |
 | --- | --- | --- |
 | TTS | `lib/speech.ts` | Uses Web Speech API, prefers `en-US`, then `en-GB`, then other English voices |
-| Recording | `lib/recorder.ts` and `Recorder` | Uses `MediaRecorder` and `getUserMedia`; audio remains in browser memory |
+| Recording | `lib/recorder.ts` and `Recorder` | Uses `MediaRecorder` and `getUserMedia`; `mode="engine"` preserves lifecycle without rendering duplicate controls; audio remains in browser memory |
 | LLM | `lib/llm.ts` | Calls the configured endpoint directly from the browser |
 
 `callInternalLlm` supports OpenAI-compatible, generic messages, and custom JSON-body modes. The app can send Bearer, `x-api-key`, or no authentication header. Endpoint CORS support is required.

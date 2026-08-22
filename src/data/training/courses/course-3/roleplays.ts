@@ -7,6 +7,7 @@ export const roleplays = [
     "title": "캠핑장 날씨·예약 변경",
     "group": "캠핑 / 해변 / 드라이브",
     "situation": "강풍 예보 때문에 예약한 텐트 사이트를 그대로 쓰기 어려운 상황",
+    "learningFunction": "날씨 조건 확인 → 예약 변경 → 대체 일정 요청",
     "prompt": "Call the campground. Explain the weather problem and ask for a safer option.",
     "answerStructure": [
       "예약 확인",
@@ -48,6 +49,7 @@ export const roleplays = [
     "title": "박물관 티켓·촬영 정책 문의",
     "group": "박물관 / 사진 / 독서",
     "situation": "예약한 전시 시간에 늦을 것 같고 사진 촬영 가능 여부도 확인해야 하는 상황",
+    "learningFunction": "이용 조건 질문 → 입장 시간 확인 → 가능한 대안 요청",
     "prompt": "Call the museum. Explain that you may be late and ask about your ticket and the photography policy.",
     "answerStructure": [
       "티켓 정보",
@@ -89,6 +91,7 @@ export const roleplays = [
     "title": "로드트립 렌터카 문제",
     "group": "캠핑 / 해변 / 드라이브",
     "situation": "예약한 작은 차 대신 너무 큰 차량만 준비되어 있어 변경이 필요한 상황",
+    "learningFunction": "서비스 문제 설명 → 교체 조건 확인 → 다음 행동 합의",
     "prompt": "Talk to the rental-car desk. Explain the problem and ask for another car or another solution.",
     "answerStructure": [
       "예약 차량",

@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { Link, type LinkProps } from "react-router-dom";
 import { cn } from "../../lib/utils";
 
@@ -32,17 +32,18 @@ function buttonClassName(variant: keyof typeof variants, size: keyof typeof size
   );
 }
 
-export function Button({ className, variant = "primary", size = "md", type = "button", children, ...props }: ButtonProps) {
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button({ className, variant = "primary", size = "md", type = "button", children, ...props }, ref) {
   return (
     <button
       className={buttonClassName(variant, size, className)}
+      ref={ref}
       type={type}
       {...props}
     >
       {children}
     </button>
   );
-}
+});
 
 type ButtonLinkProps = LinkProps & {
   variant?: keyof typeof variants;

@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import App from './App';
-import { TRAINING_LEVELS } from './training/levels';
+import { TRAINING_LEVELS, formatTrainingPreset } from './training/levels';
 import {
   discoveredCourses,
   resolveTrainingContext,
@@ -37,6 +37,9 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
     expect(advanced.difficulty.label).toBe('5-5');
     expect(intermediate.difficulty.label).toBe('4-4');
     expect(foundation.difficulty.label).toBe('3-3');
+    expect(formatTrainingPreset(foundation)).toBe('3구간 · IM2 / IM1 · 30~45초 연습 preset');
+    expect(formatTrainingPreset(intermediate)).toBe('2구간 · IH / IM3 · 45~65초 연습 preset');
+    expect(formatTrainingPreset(advanced)).toBe('1구간 · AL · 60~90초 연습 preset');
   });
 
   /* 2. Course discovery and standardized naming */
@@ -187,6 +190,81 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
     expect(rpAdv.active.focus).not.toEqual(rpFou.active.focus);
   });
 
+  it('9b. Manifest roleplay IDs match the actual three scenario records for every course', () => {
+    for (const course of discoveredCourses) {
+      const ctx = resolveTrainingContext(course.id, 'foundation');
+      expect(course.roleplayIds).toEqual(ctx.roleplays.map((roleplay) => roleplay.id));
+      expect(ctx.roleplays).toHaveLength(3);
+      for (const roleplay of ctx.roleplays) {
+        expect(roleplay.learningFunction).toBeTruthy();
+        expect(roleplay.levels.foundation).toBeDefined();
+        expect(roleplay.levels.intermediate).toBeDefined();
+        expect(roleplay.levels.advanced).toBeDefined();
+      }
+    }
+  });
+
+  it('9c. Replacement guides provide a level-owned micro-example without cross-level fallback', () => {
+    for (const course of discoveredCourses) {
+      const ctx = resolveTrainingContext(course.id, 'foundation');
+      for (const guide of Object.values(ctx.replacementGuides)) {
+        for (const replacement of guide.replacements) {
+          expect(Object.keys(replacement.levelExamples).sort()).toEqual(['advanced', 'foundation', 'intermediate']);
+          expect(replacement.levelExamples.foundation.trim()).not.toBe('');
+          expect(replacement.levelExamples.intermediate.trim()).not.toBe('');
+          expect(replacement.levelExamples.advanced.trim()).not.toBe('');
+          expect(replacement.levelExamples.foundation.split(/\s+/).length).toBeLessThanOrEqual(
+            replacement.levelExamples.advanced.split(/\s+/).length
+          );
+        }
+      }
+    }
+  });
+
+  it('9d. Canonical story identity and core facts stay continuous across all three levels', () => {
+    for (const course of discoveredCourses) {
+      const foundation = resolveTrainingContext(course.id, 'foundation');
+      const intermediate = resolveTrainingContext(course.id, 'intermediate');
+      const advanced = resolveTrainingContext(course.id, 'advanced');
+      expect(foundation.storylines).toHaveLength(4);
+      for (let index = 0; index < 4; index += 1) {
+        expect(intermediate.storylines[index].id).toBe(foundation.storylines[index].id);
+        expect(advanced.storylines[index].id).toBe(foundation.storylines[index].id);
+        expect(intermediate.storylines[index].core).toEqual(foundation.storylines[index].core);
+        expect(advanced.storylines[index].core).toEqual(foundation.storylines[index].core);
+      }
+    }
+  });
+
+  it('9d-2. Every variant explicitly declares only minimal NEW facts', () => {
+    for (const course of discoveredCourses) {
+      const ctx = resolveTrainingContext(course.id, 'foundation');
+      for (const set of Object.values(ctx.variantSets)) {
+        for (const variant of set.variants) {
+          expect(variant).toHaveProperty('newFacts');
+          expect(variant.newFacts).toBeInstanceOf(Array);
+          expect(variant.newFacts?.length ?? 0).toBeLessThanOrEqual(2);
+          expect(new Set(variant.newFacts).size).toBe(variant.newFacts?.length ?? 0);
+        }
+      }
+    }
+  });
+
+  it('9e. Foundation recent-experience prompts use natural past-time grammar and keep 3 questions per storyline', () => {
+    for (const course of discoveredCourses) {
+      const ctx = resolveTrainingContext(course.id, 'foundation');
+      expect(ctx.questions).toHaveLength(12);
+      const counts = new Map<string, number>();
+      for (const question of ctx.questions) {
+        counts.set(question.storylineId, (counts.get(question.storylineId) ?? 0) + 1);
+        if (question.type === 'recent-experience') {
+          expect(question.prompt).not.toMatch(/recent time you (spend|relax|practice|shop|walk|go|visit|enjoy)\b/i);
+        }
+      }
+      expect([...counts.values()]).toEqual([3, 3, 3, 3]);
+    }
+  });
+
   /* 10. Question type internal IDs normalized across all courses */
   it('10. STEP 6 question type internal IDs follow uniform schema across all courses', () => {
     const allowedTypes = new Set([
@@ -204,6 +282,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
       'unexpected-situation',
       'problem',
       'opinion',
+      'preference',
       'hobby',
       'shopping',
     ]);
@@ -219,6 +298,28 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
             true
           );
         }
+      }
+    }
+  });
+
+  it('10b. Repaired prompt metadata names the communicative function actually requested', () => {
+    const course3Intermediate = resolveTrainingContext('course-3', 'intermediate').questions;
+    for (const id of ['course-3-intermediate-q13', 'course-3-intermediate-q16', 'course-3-intermediate-q19', 'course-3-intermediate-q22']) {
+      expect(course3Intermediate.find((question) => question.id === id)?.type).toBe('description-reason');
+    }
+    for (const id of ['course-3-intermediate-q15', 'course-3-intermediate-q18', 'course-3-intermediate-q21', 'course-3-intermediate-q24']) {
+      expect(course3Intermediate.find((question) => question.id === id)?.type).toBe('change');
+    }
+
+    const expectedAdvancedTypes = new Map([
+      ['course-1:course-1-advanced-q27', 'preference'], ['course-1:course-1-advanced-q30', 'preference'], ['course-1:course-1-advanced-q33', 'opinion'],
+      ['course-2:course-2-advanced-q27', 'preference'], ['course-2:course-2-advanced-q33', 'opinion'], ['course-2:course-2-advanced-q36', 'preference'],
+      ['course-3:course-3-advanced-q27', 'preference'], ['course-3:course-3-advanced-q33', 'preference'], ['course-3:course-3-advanced-q36', 'comparison'],
+    ]);
+    for (const courseId of ['course-1', 'course-2', 'course-3'] as const) {
+      for (const question of resolveTrainingContext(courseId, 'advanced').questions) {
+        const expected = expectedAdvancedTypes.get(`${courseId}:${question.id}`);
+        if (expected) expect(question.type).toBe(expected);
       }
     }
   });
@@ -272,14 +373,14 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
   });
 
   /* 15. TrainingHub (/training) is pure overview hub with 6 roadmap cards and concept cards */
-  it('15. TrainingHub renders 6 roadmap cards and 3 concept areas', () => {
+  it('15. TrainingHub renders 6 roadmap cards and 3 concept areas', async () => {
     render(
       <MemoryRouter initialEntries={['/training']}>
         <App />
       </MemoryRouter>
     );
 
-    expect(screen.getByText('최소한의 스토리로, 더 많은 질문에 답하는 6 STEP 훈련')).toBeInTheDocument();
+    expect(await screen.findByText('최소한의 스토리로, 더 많은 질문에 답하는 6 STEP 훈련')).toBeInTheDocument();
     expect(screen.getByText('훈련 목적')).toBeInTheDocument();
     expect(screen.getByText('코스 & 레벨 컨셉')).toBeInTheDocument();
     expect(screen.getByText('학습 방법')).toBeInTheDocument();
@@ -303,7 +404,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
       </MemoryRouter>
     );
 
-    expect(screen.getByText('목표 구간과 학습 코스를 먼저 설정합니다.')).toBeInTheDocument();
+    expect(await screen.findByText('목표 구간과 학습 코스를 먼저 설정합니다.')).toBeInTheDocument();
     expect(screen.getByText('1. 목표 구간 선택')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /이 구성으로 학습 시작/ })).toBeDisabled();
 
@@ -324,7 +425,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
 
     // After selection, active configuration card appears in setup
     expect(await screen.findByText('현재 학습 설정')).toBeInTheDocument();
-    expect(screen.getByText(/1구간 · AL/)).toBeInTheDocument();
+    expect(screen.getAllByText(/1구간 · AL/).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('Culture & City')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '설정 초기화' })).toBeInTheDocument();
 
@@ -335,7 +436,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
   });
 
   /* 16b. TrainingHub is a clean overview without duplicate active selection cards */
-  it('16b. TrainingHub is a clean roadmap hub without duplicate selection summary banner', () => {
+  it('16b. TrainingHub is a clean roadmap hub without duplicate selection summary banner', async () => {
     saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
     render(
       <MemoryRouter initialEntries={['/training']}>
@@ -343,69 +444,69 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
       </MemoryRouter>
     );
 
-    expect(screen.getByText('최소한의 스토리로, 더 많은 질문에 답하는 6 STEP 훈련')).toBeInTheDocument();
+    expect(await screen.findByText('최소한의 스토리로, 더 많은 질문에 답하는 6 STEP 훈련')).toBeInTheDocument();
     expect(screen.queryByText('현재 학습 설정')).not.toBeInTheDocument();
     expect(screen.getByText('OPIc 실전 훈련 6 STEP 로드맵')).toBeInTheDocument();
   });
 
   /* 17. Training Selection Guard blocks unselected STEP 2 (survey) and routes to setup */
-  it('17. TrainingSelectionGuard prevents implicit fallback on STEP 2 (/training/survey)', () => {
+  it('17. TrainingSelectionGuard prevents implicit fallback on STEP 2 (/training/survey)', async () => {
     render(
       <MemoryRouter initialEntries={['/training/survey']}>
         <App />
       </MemoryRouter>
     );
 
-    expect(screen.getByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
+    expect(await screen.findByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'STEP 1 설정하러 가기' })).toBeInTheDocument();
   });
 
   /* 18. Training Selection Guard blocks unselected STEP 3 (difficulty) */
-  it('18. TrainingSelectionGuard prevents implicit fallback on STEP 3 (/training/difficulty)', () => {
+  it('18. TrainingSelectionGuard prevents implicit fallback on STEP 3 (/training/difficulty)', async () => {
     render(
       <MemoryRouter initialEntries={['/training/difficulty']}>
         <App />
       </MemoryRouter>
     );
 
-    expect(screen.getByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
+    expect(await screen.findByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
   });
 
   /* 19. Training Selection Guard blocks unselected STEP 4 (scripts) */
-  it('19. TrainingSelectionGuard prevents implicit fallback on STEP 4 (/training/scripts)', () => {
+  it('19. TrainingSelectionGuard prevents implicit fallback on STEP 4 (/training/scripts)', async () => {
     render(
       <MemoryRouter initialEntries={['/training/scripts']}>
         <App />
       </MemoryRouter>
     );
 
-    expect(screen.getByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
+    expect(await screen.findByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
   });
 
   /* 20. Training Selection Guard blocks unselected STEP 5 (roleplay) */
-  it('20. TrainingSelectionGuard prevents implicit fallback on STEP 5 (/roleplay)', () => {
+  it('20. TrainingSelectionGuard prevents implicit fallback on STEP 5 (/roleplay)', async () => {
     render(
       <MemoryRouter initialEntries={['/roleplay']}>
         <App />
       </MemoryRouter>
     );
 
-    expect(screen.getByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
+    expect(await screen.findByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
   });
 
   /* 21. Training Selection Guard blocks unselected STEP 6 (practice) */
-  it('21. TrainingSelectionGuard prevents implicit fallback on STEP 6 (/practice)', () => {
+  it('21. TrainingSelectionGuard prevents implicit fallback on STEP 6 (/practice)', async () => {
     render(
       <MemoryRouter initialEntries={['/practice']}>
         <App />
       </MemoryRouter>
     );
 
-    expect(screen.getByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
+    expect(await screen.findByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
   });
 
   /* 22. STEP 5 RoleplayHub integrates formula and course scenarios without absolute score guarantee */
-  it('22. STEP 5 RoleplayHub merges 6-step formula and has non-guaranteeing tip phrasing', () => {
+  it('22. STEP 5 RoleplayHub merges 6-step formula and has non-guaranteeing tip phrasing', async () => {
     saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
     render(
       <MemoryRouter initialEntries={['/roleplay']}>
@@ -413,7 +514,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
       </MemoryRouter>
     );
 
-    expect(screen.getAllByText('STEP 5. 롤플레이 공식').length).toBeGreaterThan(0);
+    expect((await screen.findAllByText('STEP 5. 롤플레이 공식')).length).toBeGreaterThan(0);
     expect(screen.getByText('1. 롤플레이란? & 대표 출제 흐름')).toBeInTheDocument();
     expect(screen.getByText('2. 6단계 만능 해결 공식')).toBeInTheDocument();
     expect(screen.getByText('3. 자주 쓰는 롤플레이 만능 표현')).toBeInTheDocument();
@@ -423,7 +524,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
   });
 
   /* 23. RoleplayViewV2 has compact formula reminder and back-link */
-  it('23. RoleplayViewV2 renders compact formula reminder and back-link', () => {
+  it('23. RoleplayViewV2 renders compact formula reminder and back-link', async () => {
     saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
     render(
       <MemoryRouter initialEntries={['/roleplay/travel']}>
@@ -431,8 +532,8 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
       </MemoryRouter>
     );
 
+    expect(await screen.findByText('6단계 문제 해결 공식 요약')).toBeInTheDocument();
     expect(screen.getAllByText('STEP 5. 롤플레이 공식').length).toBeGreaterThan(0);
-    expect(screen.getByText('6단계 문제 해결 공식 요약')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '롤플레이 공식 전체보기' })).toBeInTheDocument();
   });
 
@@ -446,14 +547,14 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
       </MemoryRouter>
     );
 
-    expect(screen.getByText('6 STEP 로드맵')).toBeInTheDocument();
+    expect(await screen.findByText('6 STEP 로드맵')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'STEP 2 이동' }));
     expect(await screen.findByText('훈련 진행 20%')).toBeInTheDocument();
   });
 
   /* 25. Next-step button labels follow 6 STEPs */
-  it('25. Next-step navigation buttons sequentially guide STEP 1 through STEP 6', () => {
+  it('25. Next-step navigation buttons sequentially guide STEP 1 through STEP 6', async () => {
     saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
     render(
       <MemoryRouter initialEntries={['/training/difficulty']}>
@@ -461,7 +562,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
       </MemoryRouter>
     );
 
-    expect(screen.getAllByRole('button', { name: '다음 단계: STEP 4' })).toHaveLength(2);
+    expect(await screen.findAllByRole('button', { name: '다음 단계: STEP 4' })).toHaveLength(2);
   });
 
   /* 26. STEP 2 Background Survey Sheet pagination and mode toggle */
@@ -475,7 +576,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
     );
 
     // Check Part 1 of 7
-    expect(screen.getByText('Part 1 of 7 (1 / 7)')).toBeInTheDocument();
+    expect(await screen.findByText('Part 1 of 7 (1 / 7)')).toBeInTheDocument();
     expect(screen.getByText('이 코스의 4개 핵심 스토리 묶음 (Everyday & Getaway)')).toBeInTheDocument();
 
     // Navigate to Part 2
@@ -495,7 +596,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
   });
 
   /* 28. Overview STEP 1 card displays compact selection status and STEP 2-6 show setup indicator */
-  it('28. Overview displays compact status on STEP 1 card and setup badges on STEP 2-6 when unselected', () => {
+  it('28. Overview displays compact status on STEP 1 card and setup badges on STEP 2-6 when unselected', async () => {
     render(
       <MemoryRouter initialEntries={['/training']}>
         <App />
@@ -503,11 +604,11 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
     );
 
     // Unselected state
-    expect(screen.getByText('설정 필요')).toBeInTheDocument();
+    expect(await screen.findByText('설정 필요')).toBeInTheDocument();
     expect(screen.getAllByText('STEP 1 설정 후 이용')).toHaveLength(5);
   });
 
-  it('29. Overview displays compact course/level info on STEP 1 card when selected', () => {
+  it('29. Overview displays compact course/level info on STEP 1 card when selected', async () => {
     saveTrainingSelection({ courseId: 'course-2', levelId: 'intermediate' });
     render(
       <MemoryRouter initialEntries={['/training']}>
@@ -515,13 +616,13 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/설정 완료:/)).toBeInTheDocument();
+    expect(await screen.findByText(/설정 완료:/)).toBeInTheDocument();
     expect(screen.getByText(/2구간 · Culture & City/)).toBeInTheDocument();
     expect(screen.queryByText('STEP 1 설정 후 이용')).not.toBeInTheDocument();
   });
 
   /* 30. Survey recommendation count distinguishes activities from total items */
-  it('30. Survey recommendation clearly distinguishes activity counts from profile/residence presets', () => {
+  it('30. Survey recommendation clearly distinguishes activity counts from profile/residence presets', async () => {
     saveTrainingSelection({ courseId: 'course-2', levelId: 'advanced' });
     render(
       <MemoryRouter initialEntries={['/training/survey']}>
@@ -530,7 +631,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
     );
 
     // Course 2 has 12 activities
-    expect(screen.getByText(/Culture & City 추천 서베이: 활동 12개 추천 \+ 기본 프로필 · 거주 설정/)).toBeInTheDocument();
+    expect(await screen.findByText(/Culture & City 추천 서베이: 활동 12개 추천 \+ 기본 프로필 · 거주 설정/)).toBeInTheDocument();
     expect(screen.getByText(/전체 16개 항목\(활동 12개 및 프로필\/거주지\)을 고정하여/)).toBeInTheDocument();
   });
 
@@ -545,7 +646,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
     );
 
     // Default is paged (Part 1 of 7)
-    expect(screen.getByText('Part 1 of 7 (1 / 7)')).toBeInTheDocument();
+    expect(await screen.findByText('Part 1 of 7 (1 / 7)')).toBeInTheDocument();
 
     // Switch to '전체 보기'
     await user.click(screen.getByRole('button', { name: '전체 보기' }));
@@ -624,8 +725,8 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Everyday & Getaway 랜덤 질문/)).toBeInTheDocument();
-    expect(screen.getByText(/1구간 \(AL \(Advanced Low\)\) 레벨에 맞는 질문 풀/)).toBeInTheDocument();
+    expect(await screen.findByText(/Everyday & Getaway 랜덤 질문/)).toBeInTheDocument();
+    expect(screen.getByText(/1구간 \(AL\) 레벨에 맞는 질문 풀/)).toBeInTheDocument();
 
     // Click random draw button
     await user.click(screen.getByRole('button', { name: '랜덤 질문 뽑기' }));
@@ -906,7 +1007,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
     );
 
     // Draw question
-    const drawBtn = screen.getByRole('button', { name: /랜덤 질문 뽑기/ });
+    const drawBtn = await screen.findByRole('button', { name: /랜덤 질문 뽑기/ });
     await user.click(drawBtn);
 
     // In jsdom mediaDevices.getUserMedia is missing, so startAnswer() returns false (mic failure)
@@ -930,4 +1031,3 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
     expect(fs).toContain('requestAttemptId === attemptIdRef.current');
   });
 });
-

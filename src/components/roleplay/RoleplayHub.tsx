@@ -14,12 +14,12 @@ import { Card } from "../ui/Card";
 import { TrainingSelectionGuard } from "../training/TrainingSelectionGuard";
 
 const formulaSteps = [
-  { step: "01", name: "상황 시작 (Situation)", desc: "인사와 함께 현재 내 위치/상황을 밝힙니다.", cue: "Hi, I'm calling about / I'm here because..." },
-  { step: "02", name: "문제 설명 (Problem)", desc: "발생한 문제 상황을 1~2문장으로 분명히 말합니다.", cue: "Unfortunately, there seems to be a problem with..." },
-  { step: "03", name: "정보 질문 (Question)", desc: "상대방에게 현 상황에 대한 확인 질문을 던집니다.", cue: "Could you check if / Do you know what happened to...?" },
-  { step: "04", name: "첫 번째 대안 (Alternative 1)", desc: "내가 원하는 최선의 해결 방안을 요청합니다.", cue: "Is it possible to / Would you be able to...?" },
-  { step: "05", name: "두 번째 대안 (Alternative 2)", desc: "안 될 경우를 대비한 차선책을 제안합니다.", cue: "If that's not possible, could I instead...?" },
-  { step: "06", name: "감사/마무리 (Closing)", desc: "도움에 감사하며 긍정적으로 대화를 닫습니다.", cue: "Thank you for your help. Please let me know." },
+  { step: "01", kind: "OPTIONAL", name: "상황 시작 (Situation)", desc: "필요하면 인사와 현재 상황을 짧게 밝힙니다.", cue: "Hi, I'm calling about / I'm here because..." },
+  { step: "02", kind: "CORE", name: "문제 설명 (Problem)", desc: "문제 또는 목적을 1~2문장으로 분명히 말합니다.", cue: "Unfortunately, there seems to be a problem with..." },
+  { step: "03", kind: "CORE", name: "정보 질문 (Question)", desc: "필요한 정보나 해결 조건을 질문합니다.", cue: "Could you check if / Do you know what happened to...?" },
+  { step: "04", kind: "CORE", name: "첫 번째 대안 (Alternative 1)", desc: "원하는 다음 행동을 구체적으로 요청합니다.", cue: "Is it possible to / Would you be able to...?" },
+  { step: "05", kind: "OPTIONAL", name: "두 번째 대안 (Alternative 2)", desc: "첫 요청이 어렵다면 차선책을 제안합니다.", cue: "If that's not possible, could I instead...?" },
+  { step: "06", kind: "OPTIONAL", name: "감사/마무리 (Closing)", desc: "상황에 맞으면 감사하며 대화를 닫습니다.", cue: "Thank you for your help. Please let me know." },
 ];
 
 const essentialPhrases = [
@@ -74,6 +74,22 @@ export function RoleplayHub({ onNavigate }: { onNavigate: (view: ViewId) => void
             </p>
           </div>
 
+          <Card className="border-indigo-200 bg-indigo-50/60 p-5 dark:border-indigo-900 dark:bg-indigo-950/30">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-bold text-indigo-950 dark:text-indigo-100">현재 코스 상황으로 바로 연습하기</p>
+                <p className="mt-1 text-xs leading-5 text-indigo-800 dark:text-indigo-200">원리를 이미 익혔다면 시나리오부터 시작하고, 필요한 표현만 다시 확인하세요.</p>
+              </div>
+              <Button onClick={() => onNavigate("roleplay-travel")}>첫 시나리오 연습 <ArrowRight className="h-4 w-4" /></Button>
+            </div>
+          </Card>
+
+          <details className="rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
+            <summary className="cursor-pointer text-sm font-bold text-zinc-900 dark:text-white">
+              롤플레이 원리 알아보기 <span className="ml-2 text-xs font-normal text-zinc-500">출제 흐름 · 6단계 메뉴 · 필수 표현</span>
+            </summary>
+            <div className="mt-6 space-y-8">
+
           {/* 1. 롤플레이란 & 2. 대표 출제 구조 */}
           <section className="space-y-4">
             <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
@@ -117,12 +133,15 @@ export function RoleplayHub({ onNavigate }: { onNavigate: (view: ViewId) => void
                 2. 6단계 만능 해결 공식
               </h2>
             </div>
+            <Card className="border-amber-200 bg-amber-50/70 p-4 text-sm leading-6 text-amber-900 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100">
+              6단계를 매번 모두 사용할 필요는 없습니다. 먼저 <strong>문제·목적 → 질문·요청 → 다음 행동</strong>을 말하고, 정보 질문·두 번째 대안·마무리는 상황에 따라 고르세요.
+            </Card>
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {formulaSteps.map((s) => (
                 <Card className="flex flex-col justify-between p-5" key={s.step}>
                   <div>
                     <div className="flex items-center justify-between">
-                      <Badge tone="indigo">{s.step}</Badge>
+                      <Badge tone={s.kind === "CORE" ? "indigo" : "default"}>{s.kind} · {s.step}</Badge>
                     </div>
                     <h3 className="mt-3 text-base font-bold text-zinc-950 dark:text-white">
                       {s.name}
@@ -168,6 +187,9 @@ export function RoleplayHub({ onNavigate }: { onNavigate: (view: ViewId) => void
             </Card>
           </section>
 
+            </div>
+          </details>
+
           {/* 4. 현재 Course 실전 시나리오 목록 */}
           <section className="space-y-4">
             <div className="flex items-center justify-between">
@@ -179,7 +201,7 @@ export function RoleplayHub({ onNavigate }: { onNavigate: (view: ViewId) => void
               </div>
             </div>
             <p className="text-xs text-zinc-600 dark:text-zinc-400">
-              아래 시나리오를 클릭하여 현재 코스에 배정된 롤플레이 상황별 6단계 공식과 레벨별 답변 예시를 훈련하세요.
+              Storyline 수와 별개로, 현재 코스에서 자주 쓰는 세 가지 기능 상황을 연습합니다. 필요한 CORE부터 말하고 OPTIONAL은 상황에 따라 고르세요.
             </p>
 
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -205,6 +227,9 @@ export function RoleplayHub({ onNavigate }: { onNavigate: (view: ViewId) => void
                       </h3>
                       <p className="mt-2 line-clamp-3 text-xs leading-5 text-zinc-600 dark:text-zinc-400">
                         {scenario.situation}
+                      </p>
+                      <p className="mt-3 rounded bg-zinc-50 px-3 py-2 text-xs font-semibold leading-5 text-zinc-700 dark:bg-zinc-950 dark:text-zinc-300">
+                        연습 기능 · {scenario.learningFunction}
                       </p>
                     </div>
 

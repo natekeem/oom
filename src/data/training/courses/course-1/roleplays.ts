@@ -7,6 +7,7 @@ export const roleplays = [
     "title": "호텔 예약 문제",
     "group": "야외 / 여행",
     "situation": "가족 여행을 위해 예약한 바닷가 호텔의 객실 유형이 예약 내용과 다름",
+    "learningFunction": "서비스 문제 설명 → 예약 조건 확인 → 객실 변경 요청",
     "prompt": "You are at a hotel. Explain that there is a problem with your reservation and ask the front desk to help you.",
     "answerStructure": [
       "상황 시작",
@@ -48,6 +49,7 @@ export const roleplays = [
     "title": "테니스 코트 예약 문제",
     "group": "운동 / 취미",
     "situation": "비 때문에 야외 테니스 코트를 사용할 수 없음",
+    "learningFunction": "예약 변경 → 대체 시간·시설 질문 → 크레딧 확인",
     "prompt": "Call the sports center. Explain the court reservation problem and ask for a new time or another solution.",
     "answerStructure": [
       "예약·날씨 문제",
@@ -89,6 +91,7 @@ export const roleplays = [
     "title": "청소 일정 변경",
     "group": "집 / 거주지",
     "situation": "가족 행사와 청소업체 방문 시간이 겹침",
+    "learningFunction": "일정 충돌 설명 → 새 시간 요청 → 추가 비용 확인",
     "prompt": "Call a cleaning company. Explain your scheduling problem and ask to reschedule the service.",
     "answerStructure": [
       "기존 예약",

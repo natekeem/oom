@@ -5,6 +5,7 @@ import { Card } from "../ui/Card";
 import { ScriptTrainingTabs } from "./ScriptTrainingTabs";
 import { TrainingSelectionGuard } from "../training/TrainingSelectionGuard";
 import type { ViewId } from "../layout/Sidebar";
+import { formatTrainingPreset } from "../../training/levels";
 
 type ScriptDashboardProps = {
   slotIndex?: number;
@@ -48,6 +49,9 @@ export function ScriptDashboardV2({
               koreanSummary: s.active.koreanSummary,
               englishScript: s.active.englishScript,
               pointNotes: s.active.skills,
+              trainingLevelId: resolved.level.id,
+              trainingPresetLabel: formatTrainingPreset(resolved.level),
+              targetSeconds: resolved.level.targetSeconds,
             };
             return { ...item, slotIndex: idx, levelName: resolved.level.displayName };
           });
@@ -89,7 +93,29 @@ export function ScriptDashboardV2({
               </p>
             </div>
 
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <Card className="border-indigo-200 bg-indigo-50/60 p-3 dark:border-indigo-900 dark:bg-indigo-950/30">
+              <ol className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-semibold text-indigo-900 dark:text-indigo-100">
+                <li>1. 읽고 듣기</li><li aria-hidden="true">→</li><li>2. 키워드로 회상</li><li aria-hidden="true">→</li><li>3. 질문별 변형 / 답변 설계</li>
+              </ol>
+            </Card>
+
+            <label className="block md:hidden">
+              <span className="mb-2 block text-xs font-bold text-zinc-700 dark:text-zinc-300">연습할 스토리</span>
+              <select
+                aria-label="연습할 스토리 선택"
+                className="h-11 w-full rounded-md border border-zinc-300 bg-white px-3 text-sm font-semibold text-zinc-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+                onChange={(event) => {
+                  const idx = Number(event.target.value);
+                  const next = displayScripts[idx];
+                  if (next) handleGroupClick(idx, next.id);
+                }}
+                value={selectedIndex}
+              >
+                {displayScripts.map((script, idx) => <option key={script.id} value={idx}>{script.group} · {script.title}</option>)}
+              </select>
+            </label>
+
+            <div className="hidden gap-3 md:grid md:grid-cols-2 xl:grid-cols-4">
               {displayScripts.map((script, idx) => {
                 const active = idx === selectedIndex;
                 return (
@@ -127,7 +153,7 @@ export function ScriptDashboardV2({
                   <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
                     <Layers3 className="h-5 w-5" />
                     <p className="text-xs font-bold uppercase tracking-wider">
-                      {currentScript.group} · {currentScript.levelName} ({currentScript.goalLevel})
+                      {currentScript.group} · {currentScript.trainingPresetLabel}
                     </p>
                   </div>
                   <h2 className="mt-1 text-xl font-bold text-zinc-950 dark:text-white sm:text-2xl">
@@ -136,7 +162,7 @@ export function ScriptDashboardV2({
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge tone="indigo">
-                    목표 등급 {currentScript.goalLevel} ({currentScript.levelName})
+                    {currentScript.trainingPresetLabel}
                   </Badge>
                 </div>
               </div>

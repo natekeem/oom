@@ -26,7 +26,7 @@ export const questions = [
     "storylineId": "outdoor-travel",
     "group": "야외 / 여행",
     "type": "recent-experience",
-    "prompt": "Tell me about a recent time you spend time outdoors or travel. What happened?"
+    "prompt": "Tell me about the last time you took a short trip. Where did you go, and what happened?"
   },
   {
     "id": "course-1-foundation-q04",
@@ -53,7 +53,7 @@ export const questions = [
     "storylineId": "indoor-rest",
     "group": "실내 / 휴식",
     "type": "recent-experience",
-    "prompt": "Tell me about a recent time you relax at a cafe or at home. What happened?"
+    "prompt": "Tell me about a recent time when you relaxed at a cafe. What did you do there?"
   },
   {
     "id": "course-1-foundation-q07",
@@ -80,7 +80,7 @@ export const questions = [
     "storylineId": "sports-hobby",
     "group": "운동 / 취미",
     "type": "recent-experience",
-    "prompt": "Tell me about a recent time you practice your hobby or shop for it. What happened?"
+    "prompt": "Tell me about the last time you practiced your favorite hobby. What happened?"
   },
   {
     "id": "course-1-foundation-q10",
@@ -107,7 +107,7 @@ export const questions = [
     "storylineId": "home-residence",
     "group": "집 / 거주지",
     "type": "recent-experience",
-    "prompt": "Tell me about a recent time you spend time at home or do household chores. What happened?"
+    "prompt": "Tell me about the last time you did household chores. What did you do?"
   },
   {
     "id": "course-1-intermediate-q13",
@@ -241,8 +241,8 @@ export const questions = [
     "levelId": "advanced",
     "storylineId": "outdoor-travel",
     "group": "야외 / 여행",
-    "type": "problem-opinion",
-    "prompt": "Describe a problem, unexpected situation, or important choice related to a park, beach, or trip you enjoy. How did you handle it and what did you learn?"
+    "type": "preference",
+    "prompt": "Do you prefer a simple family trip or a busy sightseeing trip? Explain your choice."
   },
   {
     "id": "course-1-advanced-q28",
@@ -268,8 +268,8 @@ export const questions = [
     "levelId": "advanced",
     "storylineId": "indoor-rest",
     "group": "실내 / 휴식",
-    "type": "problem-opinion",
-    "prompt": "Describe a problem, unexpected situation, or important choice related to a cafe, home routine, or music experience. How did you handle it and what did you learn?"
+    "type": "preference",
+    "prompt": "Do you prefer relaxing at a quiet cafe or at home? Explain your choice."
   },
   {
     "id": "course-1-advanced-q31",
@@ -295,8 +295,8 @@ export const questions = [
     "levelId": "advanced",
     "storylineId": "sports-hobby",
     "group": "운동 / 취미",
-    "type": "problem-opinion",
-    "prompt": "Describe a problem, unexpected situation, or important choice related to tennis or a hobby you enjoy. How did you handle it and what did you learn?"
+    "type": "opinion",
+    "prompt": "Why do you think regular practice matters when learning a sport? Give details from your tennis experience."
   },
   {
     "id": "course-1-advanced-q34",

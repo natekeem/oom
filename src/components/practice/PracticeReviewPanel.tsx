@@ -29,6 +29,18 @@ export type PracticeReviewPanelProps = {
   hasRecording: boolean;
 };
 
+function getCoachingSummary(feedback: string) {
+  const read = (label: "KEEP" | "FIX" | "RETRY") => {
+    const match = feedback.match(new RegExp(`${label}\\s*:?\\s*(?:\\n|—|-)?\\s*([^\\n]+)`, "i"));
+    return match?.[1]?.trim() ?? "상세 진단에서 확인하세요.";
+  };
+  return [
+    { label: "KEEP", body: read("KEEP"), className: "border-emerald-200 bg-emerald-50 text-emerald-950 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-100" },
+    { label: "FIX", body: read("FIX"), className: "border-amber-200 bg-amber-50 text-amber-950 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100" },
+    { label: "RETRY", body: read("RETRY"), className: "border-indigo-200 bg-indigo-50 text-indigo-950 dark:border-indigo-900 dark:bg-indigo-950/40 dark:text-indigo-100" },
+  ];
+}
+
 /**
  * Phase B: Answer Review Panel.
  *
@@ -55,6 +67,7 @@ export function PracticeReviewPanel({
 }: PracticeReviewPanelProps) {
   const sttConfigured = sttStatus !== "unconfigured";
   const wordCount = answer.trim().split(/\s+/).filter(Boolean).length;
+  const coachingSummary = feedback ? getCoachingSummary(feedback) : [];
 
   return (
     <section aria-label="답변 복기 영역" className="space-y-4" id="answer-review">
@@ -247,8 +260,19 @@ export function PracticeReviewPanel({
             </Button>
 
             {feedback ? (
-              <div className="mt-3 max-h-96 overflow-y-auto whitespace-pre-wrap rounded-md bg-zinc-50 p-4 font-sans text-xs leading-6 text-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
-                {feedback}
+              <div className="mt-3 space-y-3">
+                <div aria-label="KEEP FIX RETRY 핵심 코칭" className="grid gap-2">
+                  {coachingSummary.map((item) => (
+                    <div className={`rounded-md border p-3 ${item.className}`} key={item.label}>
+                      <p className="text-[11px] font-black tracking-[0.14em]">{item.label}</p>
+                      <p className="mt-1 text-xs leading-5">{item.body}</p>
+                    </div>
+                  ))}
+                </div>
+                <details className="rounded-md border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-900">
+                  <summary className="cursor-pointer text-xs font-bold text-zinc-800 dark:text-zinc-200">상세 진단 보기</summary>
+                  <div className="mt-3 max-h-80 overflow-y-auto whitespace-pre-wrap font-sans text-xs leading-6 text-zinc-700 dark:text-zinc-300">{feedback}</div>
+                </details>
               </div>
             ) : null}
           </div>

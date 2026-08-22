@@ -205,10 +205,10 @@ export function TrainingHub({ onNavigate }: { onNavigate: (view: ViewId) => void
                 </div>
                 <Button
                   className="mt-6 w-full"
-                  onClick={() => onNavigate(step.id)}
+                  onClick={() => onNavigate(needsSetup ? "training-setup" : step.id)}
                   variant="secondary"
                 >
-                  {step.stepNum} 이동 <ArrowRight className="h-4 w-4" />
+                  {needsSetup ? "STEP 1 먼저 설정" : `${step.stepNum} 이동`} <ArrowRight className="h-4 w-4" />
                 </Button>
               </Card>
             );

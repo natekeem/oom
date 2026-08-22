@@ -7,6 +7,7 @@ export const roleplays = [
     "title": "영화·공연 티켓 좌석 문제",
     "group": "문화 / 음악",
     "situation": "예약한 두 좌석이 떨어져 배정됨",
+    "learningFunction": "티켓 문제 설명 → 좌석 확인 → 교환·보상 요청",
     "prompt": "Talk to the ticket desk. Explain the problem with your ticket and ask for another seat or another show.",
     "answerStructure": [
       "티켓 문제",
@@ -48,6 +49,7 @@ export const roleplays = [
     "title": "쇼핑 교환·환불 문제",
     "group": "쇼핑 / 생활",
     "situation": "구매한 무선 이어폰의 연결이 자주 끊김",
+    "learningFunction": "상품 문제 설명 → 교환 조건 확인 → 환불 대안 요청",
     "prompt": "Return to a store. Explain the problem with an item you bought and ask for an exchange or refund.",
     "answerStructure": [
       "구매 정보",
@@ -89,6 +91,7 @@ export const roleplays = [
     "title": "도시 여행 예약 변경",
     "group": "집 / 휴가 / 여행",
     "situation": "기차 도착 지연으로 예약한 도시 투어 시간에 맞출 수 없음",
+    "learningFunction": "일정 변경 확인 → 가능한 시간 질문 → 취소·환불 요청",
     "prompt": "Call a tour company. Explain that your train arrives late and ask to change the tour time or find another option.",
     "answerStructure": [
       "예약 시간",

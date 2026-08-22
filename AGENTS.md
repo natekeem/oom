@@ -21,6 +21,9 @@ Before changing code, read these in order:
 - `OPIc 실전 훈련하기` owns STEP 1 through STEP 6 in the sidebar. STEP 4 and STEP 5 have a further nested group level; preserve this hierarchy.
 - The sticky title/progress header is a training-only affordance. It is visible for `training-hub` and its STEP descendants, but not for Home, the candidate guide, or AI settings.
 - Course owns survey/story context. Level owns difficulty/answer density. One canonical storyline per group per course. Same core scene across three levels. Story A/B choice UI is removed. Question-type variation training remains required.
+- The canonical display contract comes from `src/training/levels.ts`: 1구간 · AL · 60~90초, 2구간 · IH / IM3 · 45~65초, 3구간 · IM2 / IM1 · 30~45초. Do not hardcode shortened alternatives in views.
+- Script replacement guidance is Level-aware and function-based: ANSWER, SCENE/ACTION, RESULT, optional EXPANSION, with KEEP/CHANGE/DROP cues. It must not fall back to an Advanced paragraph for Foundation.
+- Role-play uses six named functions as a flexible menu. Problem/purpose, request/question, and next action are CORE; other functions are OPTIONAL. Each current course owns three scenarios, independent of its four storylines.
 - Keep accessible names, keyboard focus states, loading/error states, and mobile navigation intact.
 - Avoid unrelated refactors. Existing legacy presentation files may remain in the repository; route ownership is defined by `src/App.tsx` and `docs/ROUTING.md`.
 
@@ -33,7 +36,7 @@ Before changing code, read these in order:
 - Course data: `src/data/training/courses/course-N/` (manifest, survey, storylines, roleplays, questions, variants, replacementGuides)
 - Training hub: `src/components/training/TrainingHub.tsx` (Training Overview Hub) and `TrainingSetupView.tsx` (STEP 1: Target Level & Course selection)
 - Script flow: `ScriptHub` -> canonical storyline per course in `ScriptDashboardV2` -> `ScriptTrainingTabs` (STEP 4)
-- Role-play flow: `RoleplayHub` (integrated 6-step formula, flow, phrases, scenarios) -> `RoleplayViewV2` (STEP 5)
+- Role-play flow: `RoleplayHub` (quick scenario access plus collapsible six-function reference menu) -> `RoleplayViewV2` (STEP 5)
 - Candidate guide: `ExamGuideHub` plus overview, application, day-of-exam, and results views
 - Browser APIs: `src/lib/speech.ts`, `src/lib/recorder.ts`
 - LLM adapter: `src/lib/llm.ts`

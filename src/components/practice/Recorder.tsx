@@ -18,6 +18,7 @@ export type RecorderHandle = {
 };
 
 export type RecorderProps = {
+  mode?: "ui" | "engine";
   onToast: (title: string, description?: string, tone?: "success" | "error" | "info") => void;
   onRecordingReady?: (recording: RecordingResult) => void;
   onRecordingStateChange?: (isRecording: boolean) => void;
@@ -25,7 +26,7 @@ export type RecorderProps = {
 };
 
 export const Recorder = forwardRef<RecorderHandle, RecorderProps>(function Recorder(
-  { onToast, onRecordingReady, onRecordingStateChange, resetKey },
+  { mode = "ui", onToast, onRecordingReady, onRecordingStateChange, resetKey },
   ref
 ) {
   const [isRecording, setIsRecording] = useState(false);
@@ -139,6 +140,11 @@ export const Recorder = forwardRef<RecorderHandle, RecorderProps>(function Recor
     }),
     [isRecording] // eslint-disable-line react-hooks/exhaustive-deps
   );
+
+  // PracticeView owns the visible exam controls. Engine mode keeps the
+  // MediaRecorder lifecycle and imperative API without creating duplicate
+  // interactive controls in a visually hidden subtree.
+  if (mode === "engine") return null;
 
   if (!supported) {
     return (

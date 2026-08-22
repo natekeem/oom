@@ -1,16 +1,16 @@
-import type { ScriptReplacementGuide } from "../../../../types";
+import { defineReplacementGuides } from "../../defineReplacementGuides";
 
 const key = (scriptId: string, variantId: string) => `${scriptId}:${variantId}`;
 
-export const replacementGuides: Record<string, ScriptReplacementGuide> = {
+export const replacementGuides = defineReplacementGuides({
   [key("outdoor-travel", "favorite-place")]: {
-    summary: "여행이라는 큰 사건 대신, 자주 가는 해변을 첫 장면으로 꺼냅니다.",
+    summary: "같은 가족 여행의 바닷가를 장소 질문의 첫 장면으로 꺼냅니다.",
     replacements: [
       {
         block: "opening",
-        instruction: "여행 출발 문단을 좋아하는 장소 소개로 바꿉니다.",
+        instruction: "가족 여행에서 본 바닷가를 장소 소개로 앞에 둡니다.",
         replacement:
-          "Actually, there is a beach not far from my home that I enjoy visiting when the weather is nice. It has a long walking path next to the water, so I usually go there with my family on weekend mornings.",
+          "A beach near the resort was my favorite place on our family getaway. We walked next to the water and enjoyed the ocean view together.",
       },
     ],
     keepBlocks: ["details", "closing"],
@@ -28,19 +28,19 @@ export const replacementGuides: Record<string, ScriptReplacementGuide> = {
     keepBlocks: ["details", "closing"],
   },
   [key("outdoor-travel", "outdoor-routine")]: {
-    summary: "한 번의 여행이 아니라 매주 반복할 수 있는 야외 루틴처럼 시작합니다.",
+    summary: "같은 여행에서 실제로 한 활동만 시간 순서대로 고릅니다.",
     replacements: [
       {
         block: "opening",
-        instruction: "최근 여행 대신 주말 야외 습관으로 출발합니다.",
+        instruction: "가족과 떠난 바닷가 여행을 직접 답합니다.",
         replacement:
-          "When I visit an outdoor place, I usually keep my plan simple. I like going to a park or a beach in the morning, especially when the air is fresh and there are not many people around.",
+          "On our family getaway near the beach, we kept the plan simple and spent most of our time by the water.",
       },
       {
         block: "details",
-        instruction: "여행 활동을 루틴 순서로 바꿉니다.",
+        instruction: "여행 안의 산책과 식사 순서만 남깁니다.",
         replacement:
-          "First, I take a slow walk and look at the trees or the water. If I feel energetic, I do a light jog for about twenty minutes. After that, I sit down for a while and drink water before going home.",
+          "First, we took a slow walk near the beach. Later, we had a seafood dinner and listened to the waves before returning to the resort.",
       },
     ],
     keepBlocks: ["closing"],
@@ -232,4 +232,4 @@ export const replacementGuides: Record<string, ScriptReplacementGuide> = {
     ],
     keepBlocks: ["closing"],
   },
-};
+});

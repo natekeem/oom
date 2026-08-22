@@ -84,6 +84,21 @@ function StructuredScript({ script, fillersVisible, structureVisible }: { script
   );
 }
 
+function splitAdvancedExpansion(text: string) {
+  const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g)?.map((item) => item.trim()).filter(Boolean) ?? [text];
+  let words = 0;
+  let splitIndex = sentences.length;
+  for (let index = 0; index < sentences.length; index += 1) {
+    const nextWords = sentences[index].split(/\s+/).filter(Boolean).length;
+    if (words >= 120 && words + nextWords > 150) {
+      splitIndex = index;
+      break;
+    }
+    words += nextWords;
+  }
+  return { core: sentences.slice(0, splitIndex).join(" "), optional: sentences.slice(splitIndex).join(" ") };
+}
+
 export function ScriptDetail({ script, settings, onToast }: ScriptDetailProps) {
   const [memoryMode, setMemoryMode] = useState<MemoryMode>("full");
   const [fillersVisible, setFillersVisible] = useState(false);
@@ -91,6 +106,10 @@ export function ScriptDetail({ script, settings, onToast }: ScriptDetailProps) {
   const [revealBlind, setRevealBlind] = useState(false);
   const [variation, setVariation] = useState("");
   const [variationLoading, setVariationLoading] = useState(false);
+  const advancedParts = useMemo(
+    () => script.trainingLevelId === "advanced" ? splitAdvancedExpansion(script.englishScript) : null,
+    [script]
+  );
 
   const copyScript = async () => {
     try {
@@ -111,7 +130,7 @@ export function ScriptDetail({ script, settings, onToast }: ScriptDetailProps) {
     try {
       const result = await callInternalLlm(settings, [
         { role: "system", content: "You are an OPIc English speaking coach. Return natural, spoken English. Keep vocabulary accessible for IM3 to AL." },
-        { role: "user", content: `Rewrite the OPIc script below naturally. Keep the original topic and core nouns, avoid difficult words, retain a few natural filler phrases, and return: 1) a 60-90 second English script, 2) three short bullet points for what changed.\n\nTitle: ${script.title}\nKeywords: ${script.keywords.join(", ")}\n\nOriginal script:\n${script.englishScript}` },
+        { role: "user", content: `Rewrite the OPIc script below naturally. Keep the original topic and core nouns, avoid difficult words, and treat filler phrases as optional recovery language. Target the current practice preset (${script.targetSeconds?.join("-") ?? "60-90"} seconds). Return the script and three short bullet points for what changed.\n\nTitle: ${script.title}\nKeywords: ${script.keywords.join(", ")}\n\nOriginal script:\n${script.englishScript}` },
       ]);
       setVariation(result);
       onToast("자연스러운 변형을 만들었습니다.", "원본과 비교해 내 표현으로 바꿔 보세요.", "success");
@@ -175,16 +194,24 @@ export function ScriptDetail({ script, settings, onToast }: ScriptDetailProps) {
         ) : (
           <section className="mt-5">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2"><h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">영어 스크립트</h3><Badge tone="amber">60-90 sec</Badge></div>
+              <div className="flex items-center gap-2"><h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">영어 스크립트</h3><Badge tone="amber">{script.targetSeconds ? `${script.targetSeconds[0]}-${script.targetSeconds[1]} sec` : "연습 preset"}</Badge></div>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <label className="flex cursor-pointer items-center gap-2 text-xs text-zinc-600 dark:text-zinc-300"><input checked={structureVisible} className="accent-indigo-600" onChange={(event) => setStructureVisible(event.target.checked)} type="checkbox" /><ListTree className="h-3.5 w-3.5" />문단 구조 보기</label>
                 <label className="flex cursor-pointer items-center gap-2 text-xs text-zinc-600 dark:text-zinc-300"><input checked={fillersVisible} className="accent-indigo-600" onChange={(event) => setFillersVisible(event.target.checked)} type="checkbox" /><Highlighter className="h-3.5 w-3.5" />Filler 강조</label>
               </div>
             </div>
-            <button aria-label="블라인드 스크립트 보기" className="w-full text-left" onClick={() => memoryMode === "blind" && setRevealBlind((value) => !value)} onMouseEnter={() => memoryMode === "blind" && setRevealBlind(true)} onMouseLeave={() => memoryMode === "blind" && setRevealBlind(false)} type="button">
-              <div className={cn("rounded-md border border-zinc-200 bg-zinc-50 p-3 transition-all dark:border-zinc-800 dark:bg-zinc-950 sm:p-4", memoryMode === "blind" && !revealBlind && "select-none blur-md")}><StructuredScript fillersVisible={fillersVisible} script={script} structureVisible={structureVisible} /></div>
-            </button>
-            {memoryMode === "blind" ? <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">Hover 또는 클릭하면 잠깐 확인할 수 있습니다.</p> : null}
+            <div className="w-full text-left" onMouseEnter={() => memoryMode === "blind" && setRevealBlind(true)} onMouseLeave={() => memoryMode === "blind" && setRevealBlind(false)}>
+              <div className={cn("rounded-md border border-zinc-200 bg-zinc-50 p-3 transition-all dark:border-zinc-800 dark:bg-zinc-950 sm:p-4", memoryMode === "blind" && !revealBlind && "select-none blur-md")}>
+                {advancedParts?.optional ? (
+                  <div className="space-y-4">
+                    <section><Badge tone="indigo">CORE · 안정적으로 말할 부분</Badge><div className="mt-3"><StructuredScript fillersVisible={fillersVisible} script={{ ...script, englishScript: advancedParts.core }} structureVisible={structureVisible} /></div></section>
+                    <details className="rounded-md bg-white/70 p-3 dark:bg-zinc-900/70"><summary className="cursor-pointer text-xs font-bold text-zinc-700 dark:text-zinc-200">OPTIONAL EXPANSION · 질문과 시간에 따라 추가</summary><div className="mt-3"><StructuredScript fillersVisible={fillersVisible} script={{ ...script, englishScript: advancedParts.optional }} structureVisible={false} /></div></details>
+                  </div>
+                ) : <StructuredScript fillersVisible={fillersVisible} script={script} structureVisible={structureVisible} />}
+              </div>
+            </div>
+            {script.trainingLevelId === "advanced" ? <p className="mt-2 text-xs leading-5 text-zinc-500 dark:text-zinc-400">Filler는 필수 원고가 아니라 단어가 막힐 때 골라 쓰는 recovery phrase입니다. 한 답변에서 모두 재현할 필요가 없습니다.</p> : null}
+            {memoryMode === "blind" ? <Button className="mt-2" onClick={() => setRevealBlind((value) => !value)} size="sm" variant="ghost">{revealBlind ? "스크립트 다시 가리기" : "블라인드 스크립트 잠깐 보기"}</Button> : null}
           </section>
         )}
 

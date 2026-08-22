@@ -9,6 +9,7 @@ import type {
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
+import { formatTrainingPreset } from "../../training/levels";
 
 type Props = {
   levels: TrainingLevelDefinition[];
@@ -101,7 +102,7 @@ export function TrainingSetupView({
                 </p>
               </div>
               <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                난이도 권장 설정: <strong>{activeSavedLevel.difficulty.label}</strong> · {activeSavedCourse.subtitle}
+                {formatTrainingPreset(activeSavedLevel)} · 권장 난이도 <strong>{activeSavedLevel.difficulty.label}</strong>
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -176,12 +177,18 @@ export function TrainingSetupView({
                       </span>
                       <Badge tone={isSelected ? "indigo" : "default"}>{level.targetLabel}</Badge>
                     </div>
-                    <p className="text-xs leading-5 text-zinc-600 dark:text-zinc-400">
-                      {level.disclaimer}
-                    </p>
+                    <p className="text-xs font-bold text-zinc-800 dark:text-zinc-200">이런 분께 추천</p>
+                    <ul className="mt-2 space-y-1.5">
+                      {level.recommendedFor.map((item) => (
+                        <li className="flex gap-2 text-xs leading-5 text-zinc-600 dark:text-zinc-400" key={item}>
+                          <span aria-hidden="true">·</span>{item}
+                        </li>
+                      ))}
+                    </ul>
                     <p className="mt-4 text-xs font-semibold text-indigo-700 dark:text-indigo-300">
-                      권장 난이도: {level.difficulty.label}
+                      권장 난이도 {level.difficulty.label} · OOM 연습 목표 {level.targetSeconds[0]}~{level.targetSeconds[1]}초
                     </p>
+                    <p className="mt-2 text-[11px] leading-5 text-zinc-500 dark:text-zinc-400">{level.disclaimer}</p>
                   </button>
                 );
               })}
@@ -216,12 +223,13 @@ export function TrainingSetupView({
                           <Badge tone="emerald">{course.recommendedBadge}</Badge>
                         )}
                       </div>
-                      <p className="text-xs leading-5 text-zinc-600 dark:text-zinc-400">
-                        {course.subtitle}
-                      </p>
-                      <p className="mt-3 line-clamp-2 text-xs text-zinc-500 dark:text-zinc-400">
-                        {course.description}
-                      </p>
+                      <p className="text-xs leading-5 text-zinc-600 dark:text-zinc-400">{course.displaySummary}</p>
+                      <p className="mt-3 text-xs font-semibold text-zinc-700 dark:text-zinc-300">이런 분께 추천</p>
+                      <ul className="mt-1.5 space-y-1">
+                        {course.recommendedFor.map((item) => (
+                          <li className="text-xs leading-5 text-zinc-500 dark:text-zinc-400" key={item}>· {item}</li>
+                        ))}
+                      </ul>
                     </button>
                   );
                 })}

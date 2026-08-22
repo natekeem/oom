@@ -6,36 +6,7 @@ import { Card } from "../ui/Card";
 import { TrainingSelectionGuard } from "../training/TrainingSelectionGuard";
 import type { ViewId } from "../layout/Sidebar";
 import type { ResolvedTrainingContext } from "../../training/types";
-
-const goalCards = [
-  {
-    goal: "Foundation",
-    tone: "emerald" as const,
-    items: [
-      "질문에 직접 답하는 첫 문장 만들기",
-      "과거·현재 시제를 섞지 않기",
-      "40~60초 동안 멈춤 줄이기",
-    ],
-  },
-  {
-    goal: "Intermediate",
-    tone: "indigo" as const,
-    items: [
-      "상황과 감정을 한 문장 더 붙이기",
-      "Actually, To be honest 같은 연결 활용",
-      "비교나 변화 경험 하나 넣기",
-    ],
-  },
-  {
-    goal: "Advanced",
-    tone: "amber" as const,
-    items: [
-      "구체 명사와 작은 문제를 넣어 장면 만들기",
-      "질문 방향이 바뀌어도 핵심 장면 변형",
-      "대안과 이유를 자연스럽게 이어 말하기",
-    ],
-  },
-];
+import { TRAINING_LEVELS, formatTrainingPreset } from "../../training/levels";
 
 function DifficultyGuideContent({
   resolved,
@@ -86,9 +57,10 @@ function DifficultyGuideContent({
           </p>
         </Card>
         <Card className="p-6">
-          <h2 className="text-base font-bold text-zinc-900 dark:text-white">
-            내 연습용 난이도 표시
-          </h2>
+          <h2 className="text-base font-bold text-zinc-900 dark:text-white">시험 난이도 선택 시뮬레이션</h2>
+          <p className="mt-2 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
+            이 조작은 난이도 구조를 이해하기 위한 미리 보기이며, 현재 OOM Course × Level 학습 구성은 변경하지 않습니다.
+          </p>
           <div className="mt-6 grid gap-5 sm:grid-cols-2">
             <DifficultySlider
               label="첫 번째 난이도"
@@ -123,11 +95,12 @@ function DifficultyGuideContent({
         </Card>
       </div>
       <section className="grid gap-5 lg:grid-cols-3">
-        {goalCards.map((card) => (
-          <Card className="p-5" key={card.goal}>
-            <Badge tone={card.tone}>{card.goal} 목표</Badge>
+        {TRAINING_LEVELS.map((level) => {
+          const active = level.id === currentLevel.id;
+          return <Card className={`p-5 ${active ? "border-indigo-400 bg-indigo-50/50 ring-1 ring-indigo-300 dark:border-indigo-700 dark:bg-indigo-950/30" : "opacity-70"}`} key={level.id}>
+            <div className="flex flex-wrap items-center gap-2"><Badge tone={active ? "indigo" : "default"}>{active ? "현재 선택" : "참고"}</Badge><span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">{formatTrainingPreset(level)}</span></div>
             <ul className="mt-4 space-y-3">
-              {card.items.map((item) => (
+              {level.learningFocus.map((item) => (
                 <li
                   className="flex gap-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300"
                   key={item}
@@ -137,8 +110,8 @@ function DifficultyGuideContent({
                 </li>
               ))}
             </ul>
-          </Card>
-        ))}
+          </Card>;
+        })}
       </section>
     </div>
   );

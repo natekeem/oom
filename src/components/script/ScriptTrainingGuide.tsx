@@ -2,7 +2,7 @@ import { ArrowRight, CheckCircle2, Lightbulb, MessageCircleQuestion, RefreshCcw,
 import { useMemo, useState } from "react";
 import { useTrainingSelection } from "../../training/TrainingSelectionContext";
 import { getTrainingReplacementGuide, getTrainingVariantSet } from "../../training/courseRegistry";
-import type { TrainingCourseId } from "../../training/types";
+import type { TrainingCourseId, TrainingLevelId } from "../../training/types";
 import type { ScriptBlockId, ScriptItem, ScriptReplacementGuide, ScriptVariant } from "../../types";
 import { Badge } from "../ui/Badge";
 import { Card } from "../ui/Card";
@@ -10,20 +10,25 @@ import { Card } from "../ui/Card";
 type StoryBlock = { id: ScriptBlockId; label: string; content: string };
 
 const blockLabels: Record<ScriptBlockId, string> = {
-  opening: "1. 장면 열기",
-  details: "2. 구체 활동",
-  closing: "3. 느낌과 마무리",
+  answer: "ANSWER · 직접 답하기",
+  "scene-action": "SCENE / ACTION · 장면과 행동",
+  result: "RESULT · 결과와 감정",
+  expansion: "EXPANSION · 선택 확장",
 };
 
 function getStoryBlocks(script: ScriptItem): StoryBlock[] {
-  const paragraphs = script.englishScript.trim().split(/\n\s*\n/).filter(Boolean);
-  const opening = paragraphs[0] ?? script.englishScript;
-  const closing = paragraphs.length > 2 ? paragraphs[paragraphs.length - 1] : "";
-  const details = paragraphs.length > 2 ? paragraphs.slice(1, -1).join("\n\n") : paragraphs.slice(1).join("\n\n");
+  const sentences = script.englishScript
+    .replace(/\n+/g, " ")
+    .match(/[^.!?]+[.!?]+|[^.!?]+$/g)
+    ?.map((sentence) => sentence.trim())
+    .filter(Boolean) ?? [script.englishScript];
+  const answer = sentences[0] ?? script.englishScript;
+  const result = sentences.length > 1 ? sentences[sentences.length - 1] : "";
+  const sceneAction = sentences.length > 2 ? sentences.slice(1, -1).join(" ") : "";
   return [
-    { id: "opening", label: blockLabels.opening, content: opening },
-    { id: "details", label: blockLabels.details, content: details },
-    { id: "closing", label: blockLabels.closing, content: closing },
+    { id: "answer", label: blockLabels.answer, content: answer },
+    { id: "scene-action", label: blockLabels["scene-action"], content: sceneAction },
+    { id: "result", label: blockLabels.result, content: result },
   ];
 }
 
@@ -54,7 +59,7 @@ function AssemblyStrip({
               <Badge tone={replacing ? "indigo" : "emerald"}>{replacing ? "교체" : "유지"}</Badge>
             </div>
             <p className="mt-2 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-              {replacing ? "질문용 문장으로 바꾸기" : "메인 스토리 그대로 사용"}
+              {replacing ? "질문 기능에 맞게 초점 바꾸기" : "필요한 핵심 fact만 고르기"}
             </p>
             {index < blocks.length - 1 ? (
               <ArrowRight className="mt-3 hidden h-4 w-4 text-zinc-400 sm:block" />
@@ -69,9 +74,11 @@ function AssemblyStrip({
 function ReplacementRows({
   blocks,
   guide,
+  levelId,
 }: {
   blocks: StoryBlock[];
   guide?: ScriptReplacementGuide;
+  levelId: TrainingLevelId;
 }) {
   const replacements = guide?.replacements ?? [];
   if (replacements.length === 0)
@@ -100,20 +107,17 @@ function ReplacementRows({
             </div>
             <div className="grid divide-y divide-zinc-200 dark:divide-zinc-800 md:grid-cols-2 md:divide-x md:divide-y-0">
               <div className="p-4">
-                <p className="text-[11px] font-semibold tracking-wide text-zinc-500">
-                  메인에서 빼는 부분
-                </p>
+                <p className="text-[11px] font-semibold tracking-wide text-zinc-500">DROP · 지금 질문에 불필요한 fact</p>
                 <p className="mt-2 whitespace-pre-line text-sm leading-6 text-zinc-600 dark:text-zinc-300">
                   {block.content}
                 </p>
               </div>
               <div className="bg-indigo-50/60 p-4 dark:bg-indigo-950/30">
-                <p className="text-[11px] font-semibold tracking-wide text-indigo-700 dark:text-indigo-300">
-                  이 질문에서는 이렇게 말하기
-                </p>
+                <p className="text-[11px] font-semibold tracking-wide text-indigo-700 dark:text-indigo-300">CHANGE · {replacement.functionCue}</p>
                 <p className="mt-2 text-sm leading-6 text-zinc-800 dark:text-zinc-100">
-                  {replacement.replacement}
+                  {replacement.levelExamples[levelId]}
                 </p>
+                <p className="mt-3 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">KEEP · {replacement.keepFacts.join(" · ")}</p>
                 <p className="mt-3 text-xs leading-5 text-indigo-700 dark:text-indigo-300">
                   <RefreshCcw className="mr-1 inline h-3.5 w-3.5" />
                   {replacement.instruction}
@@ -130,9 +134,11 @@ function ReplacementRows({
 function AssembledAnswer({
   blocks,
   guide,
+  levelId,
 }: {
   blocks: StoryBlock[];
   guide?: ScriptReplacementGuide;
+  levelId: TrainingLevelId;
 }) {
   return (
     <details className="group rounded-md border border-amber-200 bg-amber-50/70 p-4 dark:border-amber-900 dark:bg-amber-950/30">
@@ -141,7 +147,7 @@ function AssembledAnswer({
         조립된 답변 보기 <span className="ml-1 text-xs font-normal">교체된 블록만 확인하세요</span>
       </summary>
       <p className="mt-3 text-xs leading-5 text-amber-800 dark:text-amber-200">
-        새 답안 전체를 추가 암기하라는 뜻이 아닙니다. 위에서 파란색으로 표시된 교체 블록만 익히고, 나머지는 메인 스토리를 그대로 연결하면 됩니다.
+        새 답안 전체를 추가 암기하라는 뜻이 아닙니다. 현재 구간의 micro-example로 기능을 확인하고, KEEP fact 중 질문에 필요한 것만 골라 말하세요.
       </p>
       <div className="mt-4 space-y-3">
         {blocks.map((block) => {
@@ -158,7 +164,7 @@ function AssembledAnswer({
             >
               <div className="mb-2 flex flex-wrap items-center gap-2">
                 <Badge tone={replacement ? "indigo" : "default"}>
-                  {replacement ? "교체 문단" : "유지 문단"}
+                {replacement ? "CHANGE" : "KEEP"}
                 </Badge>
                 <span
                   className={`text-xs font-bold ${
@@ -171,7 +177,7 @@ function AssembledAnswer({
                 </span>
               </div>
               <p className="whitespace-pre-line text-sm leading-7 text-zinc-700 dark:text-zinc-200">
-                {replacement?.replacement ?? block.content}
+                {replacement?.levelExamples[levelId] ?? block.content}
               </p>
             </section>
           );
@@ -184,6 +190,7 @@ function AssembledAnswer({
 export function ScriptQuestionVariants({ script }: { script: ScriptItem }) {
   const { selection } = useTrainingSelection();
   const courseId: TrainingCourseId = selection?.courseId ?? "course-1";
+  const levelId: TrainingLevelId = selection?.levelId ?? "advanced";
 
   const set = getTrainingVariantSet(courseId, script.id);
   const [selectedId, setSelectedId] = useState(() => set?.variants[0]?.id ?? "");
@@ -208,7 +215,7 @@ export function ScriptQuestionVariants({ script }: { script: ScriptItem }) {
             {set.description} 짧은 예제를 통째로 외우는 화면이 아닙니다. 질문 하나를 고르면 메인 스토리의 세 블록 중 어떤 부분을 바꿔 말할지 보여 줍니다.
           </p>
         </div>
-        <Badge tone="amber">60-90초로 연결</Badge>
+        <Badge tone="amber">현재 구간 micro-example</Badge>
       </div>
       <div aria-label="예상 질문 선택" className="mt-5 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
         {set.variants.map((variant) => {
@@ -246,7 +253,7 @@ export function ScriptQuestionVariants({ script }: { script: ScriptItem }) {
       </div>
       <div className="mt-6 space-y-3">
         <p className="text-sm font-bold text-zinc-950 dark:text-white">바꿀 부분만 확인하세요</p>
-        <ReplacementRows blocks={blocks} guide={guide} />
+        <ReplacementRows blocks={blocks} guide={guide} levelId={levelId} />
       </div>
       <div className="mt-5">
         <p className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">그대로 유지할 핵심 명사</p>
@@ -259,7 +266,7 @@ export function ScriptQuestionVariants({ script }: { script: ScriptItem }) {
         </div>
       </div>
       <div className="mt-5">
-        <AssembledAnswer blocks={blocks} guide={guide} />
+        <AssembledAnswer blocks={blocks} guide={guide} levelId={levelId} />
       </div>
     </Card>
   );
@@ -287,7 +294,7 @@ export function ScriptAnswerBlueprint({ script }: { script: ScriptItem }) {
         질문이 바뀌어도, 장면을 새로 만들지 말고 출발점을 바꿉니다.
       </h3>
       <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-        질문을 받으면 ‘전부 새로 답해야 하나?’가 아니라 ‘세 블록 중 어디가 질문의 정답인가?’를 먼저 찾습니다. 아래에서 질문을 골라 실제 전환 규칙을 확인해 보세요.
+        질문을 받으면 문단 번호를 찾지 말고 ANSWER, SCENE / ACTION, RESULT 중 어떤 기능을 KEEP·CHANGE·DROP할지 먼저 고릅니다.
       </p>
       <div aria-label="설계도 질문 선택" className="mt-5 flex flex-wrap gap-2">
         {set.variants.map((variant) => (

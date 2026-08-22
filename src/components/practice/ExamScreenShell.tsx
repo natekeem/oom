@@ -32,7 +32,7 @@ function AnnotationBadge({
       <button
         aria-label={`${id}번 영역 설명 보기`}
         aria-pressed={active}
-        className={`grid h-7 w-7 place-items-center rounded-full text-xs font-black text-white shadow-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
+        className={`grid h-11 w-11 place-items-center rounded-full text-xs font-black text-white shadow-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:h-7 sm:w-7 ${
           active
             ? "bg-indigo-600 ring-4 ring-indigo-400 shadow-indigo-500/50 scale-110"
             : "bg-zinc-800 text-zinc-200 ring-2 ring-zinc-500 hover:bg-indigo-600 hover:text-white hover:scale-105"
@@ -47,7 +47,7 @@ function AnnotationBadge({
 
   return (
     <div
-      className={`grid h-7 w-7 place-items-center rounded-full bg-indigo-600 text-xs font-black text-white shadow-lg ring-2 ring-white ${className}`}
+      className={`grid h-11 w-11 place-items-center rounded-full bg-indigo-600 text-xs font-black text-white shadow-lg ring-2 ring-white sm:h-7 sm:w-7 ${className}`}
     >
       {id}
     </div>
@@ -150,7 +150,10 @@ export function ExamScreenShell({
       </header>
 
       {/* Main Console Grid */}
-      <div className="grid gap-5 p-4 sm:p-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.85fr)]">
+      <div
+        className="grid gap-5 p-4 sm:p-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.85fr)]"
+        data-testid="exam-console-grid"
+      >
         {/* Left Column: Interviewer & Question Listening */}
         <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-[minmax(200px,0.85fr)_minmax(240px,1.15fr)]">
@@ -180,7 +183,7 @@ export function ExamScreenShell({
                   {isDemo ? (
                     <AnnotationBadge
                       active={activeAnnotation === 3}
-                      className="absolute -right-3 -top-3 z-10"
+                      className="absolute -right-3 -top-3 z-10 max-sm:static"
                       id={3}
                       onSelect={onAnnotationSelect}
                     />
@@ -194,7 +197,7 @@ export function ExamScreenShell({
                   {isDemo ? (
                     <AnnotationBadge
                       active={activeAnnotation === 2}
-                      className="absolute -left-3 -top-3 z-10"
+                      className="absolute -left-3 -top-3 z-10 max-sm:static max-sm:mb-2"
                       id={2}
                       onSelect={onAnnotationSelect}
                     />
@@ -247,7 +250,7 @@ export function ExamScreenShell({
               <Button
                 aria-expanded={showQuestionText}
                 aria-label={showQuestionText ? "문제 텍스트 숨기기" : "문제 텍스트 보기"}
-                className="h-7 text-xs"
+                className="h-11 text-xs sm:h-8"
                 onClick={onToggleQuestionText}
                 size="sm"
                 variant="secondary"
@@ -266,21 +269,22 @@ export function ExamScreenShell({
               </Button>
             </div>
 
-            {/* Screen Reader Prompt (Always Present) */}
-            <p className="sr-only">
+            {/* One canonical prompt node switches between visual and sr-only presentation. */}
+            <p
+              className={
+                showQuestionText
+                  ? "mt-2 text-sm font-medium leading-6 text-zinc-100 sm:text-base"
+                  : "sr-only"
+              }
+            >
               {questionPrompt ?? "현재 선택된 질문이 없습니다."}
             </p>
 
-            {/* Visual Prompt */}
-            {showQuestionText ? (
-              <p className="mt-2 text-sm font-medium leading-6 text-zinc-100 sm:text-base">
-                {questionPrompt ?? "랜덤 질문을 뽑아주세요."}
-              </p>
-            ) : (
+            {!showQuestionText ? (
               <div className="mt-2 rounded-md border border-dashed border-zinc-800 bg-zinc-950/40 px-3.5 py-2.5 text-xs text-zinc-400">
                 질문 텍스트는 실제 시험처럼 숨겨져 있습니다. 음성에 집중해 보세요.
               </div>
-            )}
+            ) : null}
           </div>
 
           {/* 4 & 6. Recording & Time Status Bar */}
@@ -288,7 +292,7 @@ export function ExamScreenShell({
             {isDemo ? (
               <AnnotationBadge
                 active={activeAnnotation === 4}
-                className="absolute left-3 top-3 z-10"
+                className="absolute left-3 top-3 z-10 max-sm:static max-sm:mb-3"
                 id={4}
                 onSelect={onAnnotationSelect}
               />
@@ -341,7 +345,7 @@ export function ExamScreenShell({
                 {isDemo ? (
                   <AnnotationBadge
                     active={activeAnnotation === 6}
-                    className="absolute -left-3 -top-3 z-10"
+                    className="absolute -left-3 -top-3 z-10 max-sm:static"
                     id={6}
                     onSelect={onAnnotationSelect}
                   />
@@ -403,7 +407,7 @@ export function ExamScreenShell({
           {isDemo ? (
             <AnnotationBadge
               active={activeAnnotation === 5}
-              className="absolute right-3 top-3 z-10"
+              className="absolute right-3 top-3 z-10 max-sm:static max-sm:mb-3"
               id={5}
               onSelect={onAnnotationSelect}
             />

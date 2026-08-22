@@ -42,6 +42,7 @@ const questionTypeLabels: Record<string, string> = {
   "unexpected-situation": "예상 밖 상황",
   problem: "문제 해결",
   opinion: "의견 / 선호",
+  preference: "선호와 선택 이유",
   hobby: "취미 / 관심사",
   shopping: "구매 / 쇼핑",
 };
@@ -332,15 +333,16 @@ function PracticeViewContent({
 
     if (!settings.endpoint.trim()) {
       setFeedback(
-        "AI 설정이 아직 없습니다. AI 피드백 / STT 설정에서 Endpoint를 저장한 뒤 다시 시도해 주세요.\n\n" +
-          `[체크리스트 - ${levelLabel}]\n` +
+        "KEEP\n답변을 직접 말하고 Transcript로 확인하는 복기 흐름을 완료했습니다.\n\n" +
+          "FIX\n질문의 시제와 첫 문장 직접 답하기 중 한 가지만 우선 확인하세요.\n\n" +
+          "RETRY\n질문의 핵심 표현으로 첫 문장을 시작해 같은 답변을 다시 말하세요.\n\n" +
+          `상세 체크리스트 · ${levelLabel}\n` +
           `1. 목표 시간 (${resolved.level.targetSeconds.join("–")}초) 내에 주요 장면을 완성했는가?\n` +
           `2. 질문에 첫 문장부터 직접 답했는가?\n` +
           `3. 시제와 핵심 명사 2개 이상이 명확하게 들어갔는가?\n` +
           `4. 침묵 대신 자연스러운 필러로 문장을 연결했는가?`
       );
       onToast("AI 설정이 필요합니다.", "설정 화면으로 이동해 내부 LLM Endpoint를 입력해 주세요.", "info");
-      setShowStoryHint(true);
       return;
     }
 
@@ -369,16 +371,8 @@ function PracticeViewContent({
             `Evaluate specifically against target level: ${levelLabel}.\n` +
             `Level Learning Focus: ${criteria}.\n` +
             `Target Duration: ${resolved.level.targetSeconds.join("–")}s.\n\n` +
-            `Format your response with the following structured sections:\n` +
-            `1. 목표 구간 적합도 (Target level fit: Excellent / Good / Needs Improvement with clear reason)\n` +
-            `2. 질문 대응 (Did the response answer the question directly from the first sentence?)\n` +
-            `3. 답변 구조 (Opening → Details → Closing narrative progression)\n` +
-            `4. 시제 및 구체성 (Tense consistency, specific nouns, descriptive details)\n` +
-            `5. 발화량 분석 (Word count, WPM, and duration suitability)\n` +
-            `6. 유지할 점 2가지 (Strengths to keep)\n` +
-            `7. 고칠 점 1가지 (Key improvement priority)\n` +
-            `8. 자연스러운 표현 3개 (3 polished alternative expressions)\n` +
-            `9. 다음 시도 미션 (One clear, immediate goal for the retry attempt)\n\n` +
+            `Start with exactly these three concise sections, in this order:\nKEEP\n(one strength)\nFIX\n(one highest-priority correction)\nRETRY\n(one immediate same-question mission)\n\n` +
+            `Then add a section titled 상세 진단 with optional detail on target-level fit, direct question response, ANSWER/SCENE-ACTION/RESULT structure, tense and specificity, word count/WPM/duration, and up to 3 natural alternatives.\n\n` +
             `Rules:\n` +
             `- Do NOT claim an official OPIc score or guarantee any grade.\n` +
             `- Do NOT grade pronunciation or intonation from text.\n` +
@@ -400,15 +394,11 @@ function PracticeViewContent({
       ]);
 
       setFeedback(result);
-      setShowStoryHint(true);
       onToast("AI 피드백을 받았습니다.", "고칠 점과 다음 시도 미션을 확인해 보세요.", "success");
     } catch (error) {
       setFeedback(
-        `AI 요청에 실패했습니다. ${
-          error instanceof Error ? error.message : "설정과 CORS 정책을 확인해 주세요."
-        }`
+        `KEEP\nTranscript를 확인하고 같은 질문 재도전까지 준비했습니다.\n\nFIX\n첫 문장이 질문에 직접 답하는지 한 가지만 확인하세요.\n\nRETRY\n첫 문장을 고쳐 같은 답변을 다시 말하세요.\n\n상세 진단\nAI 요청 실패: ${error instanceof Error ? error.message : "설정과 CORS 정책을 확인해 주세요."}`
       );
-      setShowStoryHint(true);
       onToast("AI 피드백에 실패했습니다.", "내장 체크리스트로 먼저 연습을 이어가세요.", "error");
     } finally {
       setIsFeedbackLoading(false);
@@ -450,15 +440,14 @@ function PracticeViewContent({
         </p>
       </div>
 
-      {/* Invisible Recorder Engine */}
-      <div className="sr-only" aria-hidden="true">
-        <Recorder
-          onRecordingReady={handleRecordingReady}
-          onToast={onToast}
-          ref={recorderRef}
-          resetKey={attemptKey}
-        />
-      </div>
+      {/* Headless Recorder engine; ExamScreenShell owns the visible controls. */}
+      <Recorder
+        mode="engine"
+        onRecordingReady={handleRecordingReady}
+        onToast={onToast}
+        ref={recorderRef}
+        resetKey={attemptKey}
+      />
 
       {/* Phase A: Exam Screen Console */}
       <ExamScreenShell

@@ -1,8 +1,8 @@
-import type { ScriptReplacementGuide } from "../../../../types";
+import { defineReplacementGuides } from "../../defineReplacementGuides";
 
 const key = (scriptId: string, variantId: string) => `${scriptId}:${variantId}`;
 
-export const replacementGuides: Record<string, ScriptReplacementGuide> = {
+export const replacementGuides = defineReplacementGuides({
   [key("trail-photo", "favorite-park")]: {
     summary: "산책로와 전망대가 있는 공원 환경 묘사로 출발합니다.",
     replacements: [
@@ -10,7 +10,7 @@ export const replacementGuides: Record<string, ScriptReplacementGuide> = {
         block: "opening",
         instruction: "공원의 숲길 산책로와 전망대 소개로 시작합니다.",
         replacement:
-          "There is a scenic park with a well-maintained hiking trail that I really like visiting on weekends. It leads up to a peaceful viewpoint overlooking the surrounding green hills.",
+          "There is a large park near my home with an easy trail. The trail leads to a small overlook where I can see trees and the city in the distance.",
       },
     ],
     keepBlocks: ["details", "closing"],
@@ -22,7 +22,7 @@ export const replacementGuides: Record<string, ScriptReplacementGuide> = {
         block: "opening",
         instruction: "토요일 아침 주말 걷기 루틴으로 시작합니다.",
         replacement:
-          "On Saturday mornings, my roommate and I usually go for a light hike along the park trail. We pack a water bottle and simple snacks and walk for about an hour.",
+          "On Saturday mornings, my roommate and I walk on the easy park trail. We wear comfortable shoes and take our time on the way to the overlook.",
       },
     ],
     keepBlocks: ["details", "closing"],
@@ -34,7 +34,7 @@ export const replacementGuides: Record<string, ScriptReplacementGuide> = {
         block: "opening",
         instruction: "전망대에서 사진을 찍었던 최근 아침으로 시작합니다.",
         replacement:
-          "Recently, on a clear Saturday morning, I took my camera to the park trail. When we reached the viewpoint at the top, the morning sunlight made the whole landscape look vivid.",
+          "Recently, on a clear Saturday morning, I walked the park trail with my roommate and took photos with my phone at the overlook.",
       },
       {
         block: "details",
@@ -88,13 +88,13 @@ export const replacementGuides: Record<string, ScriptReplacementGuide> = {
     keepBlocks: ["closing"],
   },
   [key("coastal-camp", "drive-routine")]: {
-    summary: "해안 도로를 따라 드라이브하며 바다를 보는 주말 나들이 루틴을 설명합니다.",
+    summary: "친구와 두 시간 운전해 같은 해안 캠핑장에 도착한 여정을 설명합니다.",
     replacements: [
       {
         block: "opening",
-        instruction: "주말 해안 드라이브 루틴으로 엽니다.",
+        instruction: "캠핑장으로 이동한 실제 드라이브로 엽니다.",
         replacement:
-          "When the weather is pleasant, I love going for a weekend drive along the coast with a friend. We turn on good music and enjoy the scenic ocean views along the highway.",
+          "A friend and I drove for about two hours to reach the coastal campsite. We listened to music and talked during the drive.",
       },
     ],
     keepBlocks: ["details", "closing"],
@@ -143,13 +143,13 @@ export const replacementGuides: Record<string, ScriptReplacementGuide> = {
     keepBlocks: ["details", "closing"],
   },
   [key("museum-reading", "reading-routine")]: {
-    summary: "전시 후 조용한 카페에서 도록과 책을 읽으며 차를 마시는 휴식 루틴으로 전환합니다.",
+    summary: "전시 후 같은 박물관 카페에서 전시 안내서를 읽은 장면을 자세히 말합니다.",
     replacements: [
       {
         block: "opening",
-        instruction: "조용한 장소에서 책을 읽는 루틴으로 엽니다.",
+        instruction: "박물관 카페에서 전시 안내서를 읽은 최근 경험으로 엽니다.",
         replacement:
-          "When I want a quiet break, I like to visit a cozy cafe with a good book or an art catalog. I usually order warm tea and spend an hour reading in a corner seat.",
+          "After the photo exhibition, I sat in the museum cafe and read the exhibition guide. It explained why the photographer chose ordinary city scenes.",
       },
       {
         block: "details",
@@ -233,4 +233,4 @@ export const replacementGuides: Record<string, ScriptReplacementGuide> = {
     ],
     keepBlocks: ["details"],
   },
-};
+});

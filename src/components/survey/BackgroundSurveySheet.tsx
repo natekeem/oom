@@ -483,6 +483,15 @@ function SurveySheetContent({
             </Card>
           ))}
         </div>
+        {resolved.course.id === "course-1" ? (
+          <Card className="border-zinc-200 bg-zinc-50/70 p-4 dark:border-zinc-800 dark:bg-zinc-950/60">
+            <p className="text-xs font-bold text-zinc-800 dark:text-zinc-200">간접 활용 항목</p>
+            <div className="mt-2 grid gap-2 text-xs leading-5 text-zinc-600 dark:text-zinc-400 sm:grid-cols-2">
+              <p><strong>요리</strong> · 집에서 쉬는 저녁의 simple dinner detail로 활용합니다. 레시피나 요리 과정 전용 스토리는 아닙니다.</p>
+              <p><strong>해외여행</strong> · 가족 여행 장면을 일반 여행 질문에 활용합니다. 특정 해외 도시 경험에 직접 대응하는 스토리는 아닙니다.</p>
+            </div>
+          </Card>
+        ) : null}
       </section>
     </div>
   );

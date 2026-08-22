@@ -26,7 +26,7 @@ export const questions = [
     "storylineId": "trail-photo",
     "group": "공원 / 걷기 / 하이킹",
     "type": "recent-experience",
-    "prompt": "Tell me about a recent time you walk, hike, or take photos outdoors. What happened?"
+    "prompt": "Tell me about the last time you walked on a park trail. What happened?"
   },
   {
     "id": "course-3-foundation-q04",
@@ -53,7 +53,7 @@ export const questions = [
     "storylineId": "coastal-camp",
     "group": "캠핑 / 해변 / 드라이브",
     "type": "recent-experience",
-    "prompt": "Tell me about a recent time you go camping, visit a beach, or take a road trip. What happened?"
+    "prompt": "Tell me about the last time you went camping. Where did you go, and what happened?"
   },
   {
     "id": "course-3-foundation-q07",
@@ -80,7 +80,7 @@ export const questions = [
     "storylineId": "museum-reading",
     "group": "박물관 / 사진 / 독서",
     "type": "recent-experience",
-    "prompt": "Tell me about a recent time you visit a museum, take photos, or read about something interesting. What happened?"
+    "prompt": "Tell me about the last time you visited a museum. What did you see there?"
   },
   {
     "id": "course-3-foundation-q10",
@@ -107,7 +107,7 @@ export const questions = [
     "storylineId": "shared-home-vacation",
     "group": "집 / 휴가 / 해외여행",
     "type": "recent-experience",
-    "prompt": "Tell me about a recent time you spend a vacation at home or travel overseas. What happened?"
+    "prompt": "Tell me about your last vacation with someone you live with. What happened?"
   },
   {
     "id": "course-3-intermediate-q13",
@@ -115,7 +115,7 @@ export const questions = [
     "levelId": "intermediate",
     "storylineId": "trail-photo",
     "group": "공원 / 걷기 / 하이킹",
-    "type": "description",
+    "type": "description-reason",
     "prompt": "Describe parks, walking, hiking, or photography and explain why you enjoy it."
   },
   {
@@ -133,7 +133,7 @@ export const questions = [
     "levelId": "intermediate",
     "storylineId": "trail-photo",
     "group": "공원 / 걷기 / 하이킹",
-    "type": "recent-experience",
+    "type": "change",
     "prompt": "Tell me about a memorable experience related to parks, walking, hiking, or photography. Did it change anything for you?"
   },
   {
@@ -142,7 +142,7 @@ export const questions = [
     "levelId": "intermediate",
     "storylineId": "coastal-camp",
     "group": "캠핑 / 해변 / 드라이브",
-    "type": "description",
+    "type": "description-reason",
     "prompt": "Describe camping, beaches, driving, or a domestic trip and explain why you enjoy it."
   },
   {
@@ -160,7 +160,7 @@ export const questions = [
     "levelId": "intermediate",
     "storylineId": "coastal-camp",
     "group": "캠핑 / 해변 / 드라이브",
-    "type": "recent-experience",
+    "type": "change",
     "prompt": "Tell me about a memorable experience related to camping, beaches, driving, or a domestic trip. Did it change anything for you?"
   },
   {
@@ -169,7 +169,7 @@ export const questions = [
     "levelId": "intermediate",
     "storylineId": "museum-reading",
     "group": "박물관 / 사진 / 독서",
-    "type": "description",
+    "type": "description-reason",
     "prompt": "Describe museums, photography, or reading and explain why you enjoy it."
   },
   {
@@ -187,7 +187,7 @@ export const questions = [
     "levelId": "intermediate",
     "storylineId": "museum-reading",
     "group": "박물관 / 사진 / 독서",
-    "type": "recent-experience",
+    "type": "change",
     "prompt": "Tell me about a memorable experience related to museums, photography, or reading. Did it change anything for you?"
   },
   {
@@ -196,7 +196,7 @@ export const questions = [
     "levelId": "intermediate",
     "storylineId": "shared-home-vacation",
     "group": "집 / 휴가 / 해외여행",
-    "type": "description",
+    "type": "description-reason",
     "prompt": "Describe your home, a staycation, or an overseas trip and explain why you enjoy it."
   },
   {
@@ -214,7 +214,7 @@ export const questions = [
     "levelId": "intermediate",
     "storylineId": "shared-home-vacation",
     "group": "집 / 휴가 / 해외여행",
-    "type": "recent-experience",
+    "type": "change",
     "prompt": "Tell me about a memorable experience related to your home, a staycation, or an overseas trip. Did it change anything for you?"
   },
   {
@@ -241,8 +241,8 @@ export const questions = [
     "levelId": "advanced",
     "storylineId": "trail-photo",
     "group": "공원 / 걷기 / 하이킹",
-    "type": "unexpected-situation",
-    "prompt": "Describe a problem, unexpected situation, or important choice related to parks, walking, hiking, or photography. How did you handle it, and what did you learn?"
+    "type": "preference",
+    "prompt": "Do you prefer taking photos during a trail walk or simply enjoying the view? Explain your choice."
   },
   {
     "id": "course-3-advanced-q28",
@@ -295,8 +295,8 @@ export const questions = [
     "levelId": "advanced",
     "storylineId": "museum-reading",
     "group": "박물관 / 사진 / 독서",
-    "type": "unexpected-situation",
-    "prompt": "Describe a problem, unexpected situation, or important choice related to museums, photography, or reading. How did you handle it, and what did you learn?"
+    "type": "preference",
+    "prompt": "Do you prefer looking at an exhibition first or reading its catalog first? Explain your choice."
   },
   {
     "id": "course-3-advanced-q34",
@@ -322,7 +322,7 @@ export const questions = [
     "levelId": "advanced",
     "storylineId": "shared-home-vacation",
     "group": "집 / 휴가 / 해외여행",
-    "type": "unexpected-situation",
-    "prompt": "Describe a problem, unexpected situation, or important choice related to your home, a staycation, or an overseas trip. How did you handle it, and what did you learn?"
+    "type": "comparison",
+    "prompt": "Compare spending a vacation at home with traveling abroad. Which one fits you better now?"
   }
 ] as const satisfies readonly TrainingPracticeQuestion[];

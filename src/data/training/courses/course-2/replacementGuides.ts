@@ -1,8 +1,8 @@
-import type { ScriptReplacementGuide } from "../../../../types";
+import { defineReplacementGuides } from "../../defineReplacementGuides";
 
 const key = (scriptId: string, variantId: string) => `${scriptId}:${variantId}`;
 
-export const replacementGuides: Record<string, ScriptReplacementGuide> = {
+export const replacementGuides = defineReplacementGuides({
   [key("culture-night", "favorite-culture")]: {
     summary: "우연한 발견의 스토리 대신, 영화와 라이브 음악을 함께 즐기는 문화 선호로 시작합니다.",
     replacements: [
@@ -245,4 +245,4 @@ export const replacementGuides: Record<string, ScriptReplacementGuide> = {
     ],
     keepBlocks: ["details"],
   },
-};
+});

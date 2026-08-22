@@ -14,6 +14,9 @@ export type ScriptItem = {
   koreanSummary: string;
   englishScript: string;
   pointNotes: string[];
+  trainingLevelId?: "advanced" | "intermediate" | "foundation";
+  trainingPresetLabel?: string;
+  targetSeconds?: [number, number];
 };
 
 export type ScriptVariant = {
@@ -23,15 +26,23 @@ export type ScriptVariant = {
   question: string;
   pivot: string;
   keep: string[];
+  /** Prompt-required facts that do not exist in the canonical anchor. Empty means no new fact is allowed. */
+  newFacts?: string[];
   englishExample?: string;
 };
 
-export type ScriptBlockId = "opening" | "details" | "closing";
+export type ScriptBlockId = "answer" | "scene-action" | "result" | "expansion";
+export type LegacyScriptBlockId = "opening" | "details" | "closing";
 
 export type ScriptReplacement = {
   block: ScriptBlockId;
   instruction: string;
   replacement: string;
+  functionCue: string;
+  keepFacts: string[];
+  changeFocus: string;
+  dropFacts: string[];
+  levelExamples: Record<"foundation" | "intermediate" | "advanced", string>;
 };
 
 export type ScriptReplacementGuide = {

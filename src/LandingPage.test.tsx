@@ -92,8 +92,8 @@ describe("landing correction contracts", () => {
 
     const source = readFileSync(join(process.cwd(), "src", "landing", "components", "PointerSignalTrail.tsx"), "utf8");
     expect(source).toContain('window.addEventListener("pointermove"');
-    expect(source).toContain("ambient: { count: 1");
-    expect(source).toContain("reconverge: { count: 2");
+    expect(source).toContain("setLandingMotion");
+    expect(source).toContain("initAgencyFluidCursor");
 
     const timelineSource = readFileSync(join(process.cwd(), "src", "landing", "hooks", "useLandingScrollTimeline.ts"), "utf8");
     expect(timelineSource).toContain('window.addEventListener("scroll", requestSceneSync');
@@ -137,13 +137,19 @@ describe("landing correction contracts", () => {
     expect(source).not.toContain("anticipatePin");
   });
 
-  it("uses a crisp trail core plus a restrained halo instead of fog-only circles", () => {
-    const source = readFileSync(join(process.cwd(), "src", "landing", "components", "PointerSignalTrail.tsx"), "utf8");
-    expect(source).toContain("coreRadius");
-    expect(source).toContain("coreOpacity");
-    expect(source).toContain("haloRadius");
-    expect(source).toContain("context.lineTo(point.x, point.y)");
-    expect(source).not.toContain("radius: 34");
+  it("uses the reference WebGL fluid physics with explicit lifecycle cleanup", () => {
+    const componentSource = readFileSync(join(process.cwd(), "src", "landing", "components", "PointerSignalTrail.tsx"), "utf8");
+    const fluidSource = readFileSync(join(process.cwd(), "src", "landing", "fluid", "agencyFluidCursor.ts"), "utf8");
+    expect(componentSource).toContain("landing-fluid-cursor");
+    expect(componentSource).toContain("disposeFluidCursor?.()");
+    expect(fluidSource).toContain("DENSITY_DISSIPATION: 3.5");
+    expect(fluidSource).toContain("VELOCITY_DISSIPATION: 1.5");
+    expect(fluidSource).toContain("CURL: 3");
+    expect(fluidSource).toContain("SPLAT_RADIUS: 0.6");
+    expect(fluidSource).toContain("SPLAT_FORCE: 6500");
+    expect(fluidSource).toContain("TRANSPARENT: true");
+    expect(fluidSource).toContain("WEBGL_lose_context");
+    expect(fluidSource).not.toContain("addEventListener('touch");
   });
 
   it("uses the approved messaging, simplified Pivot, and honest AI Coach positioning", async () => {

@@ -75,6 +75,7 @@
 .landing-webgl-layer { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
 .landing-webgl-layer canvas { display: block; width: 100% !important; height: 100% !important; pointer-events: none !important; }
 .landing-pointer-field { position: fixed; inset: 0; z-index: 3; display: block; pointer-events: none; }
+.landing-fluid-cursor { width: 100%; height: 100%; contain: strict; }
 .landing-page[data-canvas-ready="true"] :is(.landing-static-o, .landing-static-orbit) { opacity: 0; }
 
 .landing-section { position: relative; display: flex; min-height: 100svh; align-items: center; padding: clamp(7rem, 10vw, 10rem) clamp(1.25rem, 7vw, 8rem); }

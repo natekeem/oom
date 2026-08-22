@@ -21,7 +21,7 @@ GitHub Pages has no server rewrite. `scripts/generate-static-routes.mjs` runs af
 
 `AppShell` owns the shared responsive frame.
 
-The root route is the exception: `/` renders `src/landing/LandingPage.tsx` as an independent full-bleed brand and product landing. It does not mount `AppShell`, the sidebar, the training header, or the app footer. Its semantic DOM remains usable without motion; GSAP/Lenis, the pointer field, and the lazy R3F canvas are progressive enhancements with capability and reduced-motion gates.
+The root route is the exception: `/` renders `src/landing/LandingPage.tsx` as an independent full-bleed brand and product landing. It does not mount `AppShell`, the sidebar, the training header, or the app footer. Its semantic DOM remains usable without motion; GSAP/Lenis, the pointer field, and the lazy R3F canvas are progressive enhancements with capability and reduced-motion gates. The STEP 6 preview is a presentation-only `LandingPracticePreview` that reuses `ExamScreenShell` without mounting `PracticeView`, `Recorder`, STT, LLM, or training-state owners.
 
 | Owner | Responsibility |
 | --- | --- |
@@ -65,9 +65,9 @@ Parent hubs explain the purpose of their child pages. Parent routes should not s
 
 | Area | Primary components | Contract |
 | --- | --- | --- |
-| Brand landing | `LandingPage`, `LandingNav`, `VoiceUniverseCanvas`, `MorphingSignalPoints` | Independent product overview, semantic conversion entry points, continuous signal morph, capability fallbacks |
-| OOM learning philosophy | `LegalPageView` with `legalPages.about` | Learner-facing explanation of the Course × Level, story-reuse, and retry model |
-| OOM magazine | `MagazineList`, `MagazineDetail` | Static learning articles with local editorial images, author/reviewer identity, honest publish/modified dates, official sources, structured data, examples, and practice takeaways |
+| Brand landing | `LandingPage`, `LandingNav`, `LandingPracticePreview`, `VoiceUniverseCanvas`, `MorphingSignalPoints` | Independent product overview, semantic conversion entry points, presentation-only STEP 6 shell reuse, continuous signal morph, capability fallbacks |
+| OOM learning philosophy | `HomeView` | Compact learner-facing Course × Level overview with three principles, the 6 STEP rail, and training/guide entry points |
+| OOM magazine | `MagazineList`, `MagazineDetail` | Static learning articles with 3:2 editorial listing covers, local images, author/reviewer identity, honest publish/modified dates, official sources, structured data, examples, and practice takeaways |
 | Candidate guide | `ExamGuideHub`, `ExamGuideOverview`, `ExamGuideScreen`, `ExamGuideDashboard`, `ExamGuideDay`, `ExamGuideFaq`, `ExamGuideTabs` | Informational content, visual exam screen guide (annotated `ExamScreenShell`), Q&A, and official-source links |
 | Training overview | `TrainingHub` | Overview Hub: 6 STEP overview roadmap, concept explanation |
 | Training setup | `TrainingSetupView` | STEP 1: Target level and course selection |

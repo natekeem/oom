@@ -48,6 +48,7 @@ export type MagazineArticle = {
   summary: string;
   image: string;
   imageAlt: string;
+  imagePosition?: string;
   takeaway: string;
   disclaimer?: string;
   sections: MagazineArticleSection[];
@@ -66,7 +67,7 @@ type StudyArticleInput = {
   checklist: string[];
 };
 
-const studyArticleDetails: Record<string, { image: string; imageAlt: string; sections: MagazineArticleSection[] }> = {
+const studyArticleDetails: Record<string, { image: string; imageAlt: string; imagePosition?: string; sections: MagazineArticleSection[] }> = {
   "opic-survey-choice-guide": {
     image: opicSurveyChoiceGuideCover,
     imageAlt: "책상 위 노트와 펜, 안경을 놓고 OPIc 서베이 선택지를 정리하는 장면",
@@ -420,6 +421,7 @@ const studyArticleDetails: Record<string, { image: string; imageAlt: string; sec
   "opic-im-to-ih-practice-plan": {
     image: opicImToIhPracticePlanCover,
     imageAlt: "작은 노트에 답변 확장 계획을 적어 IM에서 IH로 가는 연습을 준비하는 장면",
+    imagePosition: "center 54%",
     sections: [
       {
         heading: "짧은 답변이 나쁜 건 아니다",
@@ -582,6 +584,7 @@ function makeStudyArticle(input: StudyArticleInput): Omit<MagazineArticle, "publ
     summary: input.summary,
     image: detail.image,
     imageAlt: detail.imageAlt,
+    imagePosition: detail.imagePosition,
     takeaway: input.takeaway,
     disclaimer: "이 글은 OPIc 말하기를 준비하는 학습자를 위한 연습용 참고 자료입니다. 공식 시험기관의 보증이나 특정 등급 취득을 의미하지 않습니다.",
     sections: detail.sections,

@@ -28,7 +28,7 @@ export function useLandingPointerInteractions(rootRef: RefObject<HTMLDivElement 
       });
     });
 
-    const examConsole = root.querySelector<HTMLElement>(".landing-exam-console");
+    const examConsole = root.querySelector<HTMLElement>(".landing-practice-frame");
     if (examConsole) {
       const onMove = (event: PointerEvent) => {
         const rect = examConsole.getBoundingClientRect();

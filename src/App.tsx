@@ -29,6 +29,7 @@ const PracticeView = lazy(() => import("./components/practice/PracticeView").the
 const AiSettingsView = lazy(() => import("./components/ai/AiSettingsView").then((module) => ({ default: module.AiSettingsView })));
 const MagazineList = lazy(() => import("./components/magazine/MagazineList").then((module) => ({ default: module.MagazineList })));
 const MagazineDetail = lazy(() => import("./components/magazine/MagazineDetail").then((module) => ({ default: module.MagazineDetail })));
+const HomeView = lazy(() => import("./components/home/HomeView").then((module) => ({ default: module.HomeView })));
 const LegalPageView = lazy(() => import("./components/legal/LegalPageView").then((module) => ({ default: module.LegalPageView })));
 
 const SETTINGS_KEY = "oom-llm-settings";
@@ -376,8 +377,8 @@ export default function App() {
       <Route path="/magazine/" element={<MagazineList />} />
       <Route path="/magazine/:id" element={<MagazineDetail />} />
       <Route path="/magazine/:id/" element={<MagazineDetail />} />
-      <Route path="/about" element={<LegalPageView pageId="about" />} />
-      <Route path="/about/" element={<LegalPageView pageId="about" />} />
+      <Route path="/about" element={<HomeView />} />
+      <Route path="/about/" element={<HomeView />} />
       <Route path="/privacy" element={<LegalPageView pageId="privacy" />} />
       <Route path="/privacy/" element={<LegalPageView pageId="privacy" />} />
       <Route path="/contact" element={<LegalPageView pageId="contact" />} />

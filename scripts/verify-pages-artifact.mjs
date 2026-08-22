@@ -165,7 +165,10 @@ for (const [path, routeHtml] of routeHtmlFiles) {
   if (path.startsWith("magazine/") && (!routeHtml.includes("<article>") || !routeHtml.includes("<p>") || sectionCount < 4)) {
     throw new Error(`${path} does not contain enough generated article body sections.`);
   }
-  if (["privacy/index.html", "about/index.html", "contact/index.html", "terms/index.html", "editorial-policy/index.html", "image-credits/index.html"].includes(path) && sectionCount < 4) {
+  if (path === "about/index.html" && sectionCount < 3) {
+    throw new Error(`${path} does not contain the compact product overview sections.`);
+  }
+  if (["privacy/index.html", "contact/index.html", "terms/index.html", "editorial-policy/index.html", "image-credits/index.html"].includes(path) && sectionCount < 4) {
     throw new Error(`${path} does not contain enough legal page body sections.`);
   }
 }

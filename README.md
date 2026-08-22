@@ -2,7 +2,7 @@
 
 OOM은 사내 구성원이 OPIc 영어 말하기를 체계적으로 연습하도록 돕는 정적 웹앱입니다. 백엔드 없이 브라우저에서 동작하며, 목표 구간 설정, 추천 서베이 익히기, 난이도 설정, 재사용 가능한 만능 스크립트, 롤플레이 공식, 실전 녹음, AI 피드백을 하나의 6단계 흐름으로 제공합니다.
 
-루트 `/`는 OOM의 학습 방식을 설명하는 독립형 브랜드 랜딩입니다. AppShell과 Sidebar를 사용하지 않으며, 하나의 Voice/Signal object가 story 재사용, 세 Level, 6 STEP, 녹음·복기·재도전으로 이어지는 제품 구조를 설명합니다. WebGL과 scroll motion은 progressive enhancement이고, mobile·low capability·`prefers-reduced-motion`에서는 동일한 카피와 CTA를 가진 정적 흐름으로 전환됩니다.
+루트 `/`는 OOM의 학습 방식을 설명하는 독립형 브랜드 랜딩입니다. AppShell과 Sidebar를 사용하지 않으며, 하나의 Voice/Signal object가 story 재사용, 세 Level, 6 STEP, 녹음·복기·재도전으로 이어지는 제품 구조를 설명합니다. STEP 6 미리보기는 실제 `ExamScreenShell`을 presentation-only로 재사용하며 Recorder·STT·AI·훈련 상태를 mount하지 않습니다. WebGL과 scroll motion은 progressive enhancement이고, mobile·low capability·`prefers-reduced-motion`에서는 동일한 카피와 CTA를 가진 정적 흐름으로 전환됩니다.
 
 이 앱은 실제 점수나 등급을 보장하지 않습니다. 익숙한 경험을 여러 질문에 연결하고 자연스럽게 말하는 구조를 반복 연습하는 데 초점을 둡니다.
 
@@ -48,7 +48,7 @@ OOM은 사내 구성원이 OPIc 영어 말하기를 체계적으로 연습하도
 ## 기술 구성
 
 - Vite, React, TypeScript
-- Tailwind CSS, Framer Motion, Lucide React
+- Tailwind CSS, Framer Motion, GSAP, Lenis, React Three Fiber, Lucide React
 - Vitest, Testing Library
 - React state 기반 `ViewId` 라우팅
 - GitHub Pages와 일반 정적 호스팅 지원

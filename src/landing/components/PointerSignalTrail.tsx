@@ -13,6 +13,17 @@ type TrailPoint = {
 
 type Props = { enabled: boolean; quality: LandingQuality };
 
+const trailProfile = {
+  fluid: { count: 3, radius: 26, opacity: 0.11, decay: 0.019 },
+  attract: { count: 2, radius: 22, opacity: 0.075, decay: 0.025 },
+  parallax: { count: 1, radius: 30, opacity: 0.06, decay: 0.026 },
+  activate: { count: 1, radius: 15, opacity: 0.085, decay: 0.026 },
+  tilt: { count: 1, radius: 24, opacity: 0.055, decay: 0.028 },
+  ambient: { count: 1, radius: 34, opacity: 0.045, decay: 0.024 },
+  reconverge: { count: 2, radius: 25, opacity: 0.07, decay: 0.022 },
+  none: { count: 0, radius: 0, opacity: 0, decay: 1 },
+} as const;
+
 export function PointerSignalTrail({ enabled, quality }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -54,7 +65,8 @@ export function PointerSignalTrail({ enabled, quality }: Props) {
       });
 
       const { cursorMode } = getLandingMotionSnapshot();
-      const count = cursorMode === "fluid" ? 3 + Math.round(speed * 4) : cursorMode === "attract" ? 2 : cursorMode === "activate" ? 1 : 0;
+      const profile = trailProfile[cursorMode];
+      const count = profile.count + (cursorMode === "fluid" ? Math.round(speed * 4) : 0);
       for (let index = 0; index < count; index += 1) {
         const angle = Math.random() * Math.PI * 2;
         const push = 0.25 + Math.random() * 1.25;
@@ -64,7 +76,7 @@ export function PointerSignalTrail({ enabled, quality }: Props) {
           vx: Math.cos(angle) * push + velocityX * 0.025,
           vy: Math.sin(angle) * push + velocityY * 0.025,
           life: 1,
-          radius: cursorMode === "activate" ? 11 + Math.random() * 15 : 18 + Math.random() * 28,
+          radius: profile.radius * (0.72 + Math.random() * 0.56),
           hue: index % 3 === 0 ? "mint" : "indigo",
         });
       }
@@ -79,6 +91,7 @@ export function PointerSignalTrail({ enabled, quality }: Props) {
       context.clearRect(0, 0, width, height);
       context.globalCompositeOperation = "lighter";
       const { cursorMode } = getLandingMotionSnapshot();
+      const profile = trailProfile[cursorMode];
 
       for (let index = points.length - 1; index >= 0; index -= 1) {
         const point = points[index];
@@ -86,13 +99,13 @@ export function PointerSignalTrail({ enabled, quality }: Props) {
         point.y += point.vy;
         point.vx *= 0.983;
         point.vy *= 0.983;
-        point.life -= cursorMode === "fluid" ? 0.019 : 0.026;
+        point.life -= profile.decay;
         point.radius *= 0.994;
 
         const gradient = context.createRadialGradient(point.x, point.y, 0, point.x, point.y, point.radius);
         const color = point.hue === "mint" ? "124,240,214" : "154,174,255";
-        gradient.addColorStop(0, `rgba(${color},${Math.max(0, point.life) * 0.11})`);
-        gradient.addColorStop(0.46, `rgba(${color},${Math.max(0, point.life) * 0.035})`);
+        gradient.addColorStop(0, `rgba(${color},${Math.max(0, point.life) * profile.opacity})`);
+        gradient.addColorStop(0.46, `rgba(${color},${Math.max(0, point.life) * profile.opacity * 0.32})`);
         gradient.addColorStop(1, "rgba(0,0,0,0)");
         context.fillStyle = gradient;
         context.beginPath();

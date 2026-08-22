@@ -1,16 +1,27 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { getLandingMotionSnapshot, type LandingQuality } from "../landingMotionStore";
+import { getLandingMotionSnapshot, LANDING_SIGNAL_SCENE_LAYOUTS, type LandingCursorMode, type LandingQuality } from "../landingMotionStore";
 
 type Vector = [number, number, number];
+
+const pointerStrength: Record<LandingCursorMode, number> = {
+  fluid: 1,
+  attract: 0.72,
+  parallax: 0.48,
+  activate: 0.42,
+  tilt: 0.34,
+  ambient: 0.24,
+  reconverge: 0.38,
+  none: 0,
+};
 
 function circleTarget(count: number, clarity = 0): Vector[] {
   return Array.from({ length: count }, (_, index) => {
     const angle = (index / count) * Math.PI * 2;
     const layer = index % 5;
-    const radius = 2.16 + (layer - 2) * 0.035 + Math.sin(angle * 7) * (0.045 - clarity * 0.025);
-    const depth = Math.sin(angle * 3 + layer) * 0.12 * (1 - clarity * 0.5);
+    const radius = 2.16 + (layer - 2) * 0.028 + Math.sin(angle * 7) * 0.012 * (1 - clarity);
+    const depth = Math.sin(angle * 3 + layer) * 0.045 * (1 - clarity);
     return [Math.cos(angle) * radius, Math.sin(angle) * radius, depth];
   });
 }
@@ -18,9 +29,9 @@ function circleTarget(count: number, clarity = 0): Vector[] {
 function voiceCircleTarget(count: number): Vector[] {
   return Array.from({ length: count }, (_, index) => {
     const angle = (index / count) * Math.PI * 2;
-    const frequency = Math.sin(angle * 13) * 0.13 + Math.sin(angle * 29) * 0.035;
+    const frequency = Math.sin(angle * 13) * 0.065 + Math.sin(angle * 29) * 0.018;
     const radius = 2.18 + frequency;
-    return [Math.cos(angle) * radius, Math.sin(angle) * radius, Math.sin(angle * 4) * 0.2];
+    return [Math.cos(angle) * radius, Math.sin(angle) * radius, Math.sin(angle * 4) * 0.045];
   });
 }
 
@@ -104,10 +115,11 @@ function targetPair(progress: number) {
 
 export function MorphingSignalPoints({ quality }: { quality: LandingQuality }) {
   const pointsRef = useRef<THREE.Points>(null);
+  const materialRef = useRef<THREE.PointsMaterial>(null);
   const count = quality === "high" ? 1320 : 720;
 
   const targets = useMemo(() => [
-    circleTarget(count),
+    circleTarget(count, 1),
     voiceCircleTarget(count),
     waveformTarget(count),
     branchTarget(count),
@@ -142,11 +154,20 @@ export function MorphingSignalPoints({ quality }: { quality: LandingQuality }) {
 
   useFrame((state, delta) => {
     const points = pointsRef.current;
-    if (!points) return;
+    const material = materialRef.current;
+    if (!points || !material) return;
     const snapshot = getLandingMotionSnapshot();
     const { from, to, mix } = targetPair(snapshot.pageProgress);
     const position = points.geometry.getAttribute("position") as THREE.BufferAttribute;
-    const breath = Math.sin(state.clock.elapsedTime * 0.9) * 0.012;
+    const time = state.clock.elapsedTime;
+    const layout = LANDING_SIGNAL_SCENE_LAYOUTS[snapshot.activeScene];
+    const layoutEase = 1 - Math.exp(-delta * 3.8);
+    const breath = 1 + Math.sin(time * 0.72) * 0.006;
+    const currentScale = Math.max(0.001, points.scale.x);
+    const pointerLocalX = (snapshot.pointerX * 4.1 - points.position.x) / currentScale;
+    const pointerLocalY = (snapshot.pointerY * 2.5 - points.position.y) / currentScale;
+    const localPointerStrength = pointerStrength[snapshot.cursorMode];
+    const isOPhase = from <= 1 || to === targets.length - 1;
 
     for (let index = 0; index < count; index += 1) {
       const a = targets[from][index];
@@ -154,29 +175,44 @@ export function MorphingSignalPoints({ quality }: { quality: LandingQuality }) {
       let x = THREE.MathUtils.lerp(a[0], b[0], mix);
       let y = THREE.MathUtils.lerp(a[1], b[1], mix);
       let z = THREE.MathUtils.lerp(a[2], b[2], mix);
-      if (snapshot.cursorMode === "fluid" || snapshot.cursorMode === "attract") {
-        const pointerX = snapshot.pointerX * 4.1;
-        const pointerY = snapshot.pointerY * 2.5;
-        const distanceSquared = (x - pointerX) ** 2 + (y - pointerY) ** 2;
-        const influence = Math.exp(-distanceSquared * 0.68) * (0.08 + snapshot.pointerSpeed * 0.09);
-        x += snapshot.pointerX * influence;
-        y += snapshot.pointerY * influence;
-        z += influence * 0.8;
+      const noisePhase = index * 0.173 + time * (0.55 + (index % 7) * 0.018);
+      const vibration = Math.sin(noisePhase) * (isOPhase ? 0.008 : 0.013);
+      if (isOPhase) {
+        const radius = Math.max(0.001, Math.hypot(x, y));
+        x += (x / radius) * vibration;
+        y += (y / radius) * vibration;
+      } else {
+        x += vibration;
+        y += Math.cos(noisePhase * 0.87) * 0.009;
+      }
+      z += Math.sin(Math.hypot(x, y) * 2.2 - time * 0.75 + index * 0.021) * 0.014;
+
+      if (localPointerStrength > 0) {
+        const distanceSquared = (x - pointerLocalX) ** 2 + (y - pointerLocalY) ** 2;
+        const influence = Math.exp(-distanceSquared * 0.72)
+          * (0.045 + snapshot.pointerSpeed * 0.075)
+          * localPointerStrength;
+        x += (pointerLocalX - x) * influence * 0.16;
+        y += (pointerLocalY - y) * influence * 0.16;
+        z += influence * 0.72;
       }
       position.setXYZ(index, x, y, z);
     }
     position.needsUpdate = true;
-    points.scale.setScalar(1 + breath * (snapshot.pageProgress < 0.1 || snapshot.pageProgress > 0.9 ? 1 : 0.25));
-    points.rotation.y += delta * (snapshot.pageProgress < 0.12 ? 0.055 : 0.018);
-    const targetRotationX = snapshot.cursorMode === "parallax" ? snapshot.pointerY * -0.08 : 0;
-    const targetRotationZ = snapshot.cursorMode === "parallax" ? snapshot.pointerX * 0.035 : 0;
-    points.rotation.x = THREE.MathUtils.lerp(points.rotation.x, targetRotationX, 0.045);
-    points.rotation.z = THREE.MathUtils.lerp(points.rotation.z, targetRotationZ, 0.045);
+    points.position.x = THREE.MathUtils.lerp(points.position.x, layout.anchorX, layoutEase);
+    points.position.y = THREE.MathUtils.lerp(points.position.y, layout.anchorY, layoutEase);
+    points.position.z = THREE.MathUtils.lerp(points.position.z, layout.depth, layoutEase);
+    const targetScale = layout.scale * breath;
+    points.scale.setScalar(THREE.MathUtils.lerp(points.scale.x, targetScale, layoutEase));
+    material.opacity = THREE.MathUtils.lerp(material.opacity, layout.opacity, layoutEase);
+    const basePointSize = quality === "high" ? 0.032 : 0.04;
+    material.size = THREE.MathUtils.lerp(material.size, basePointSize * layout.pointSize, layoutEase);
   });
 
   return (
     <points ref={pointsRef} geometry={geometry} frustumCulled={false}>
       <pointsMaterial
+        ref={materialRef}
         blending={THREE.AdditiveBlending}
         depthWrite={false}
         opacity={0.9}

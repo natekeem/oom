@@ -9,6 +9,7 @@ import { useLandingScrollTimeline } from "./hooks/useLandingScrollTimeline";
 import "./landing.css";
 
 const VoiceUniverseCanvas = lazy(() => import("./three/VoiceUniverseCanvas").then((module) => ({ default: module.VoiceUniverseCanvas })));
+const LandingPracticePreview = lazy(() => import("./components/LandingPracticePreview").then((module) => ({ default: module.LandingPracticePreview })));
 
 const levels = [
   { band: "3구간", grade: "IM2 / IM1", label: "Foundation", time: "30–45초", density: "핵심 장면을 짧고 분명하게" },
@@ -94,7 +95,7 @@ export function LandingPage() {
         </section>
 
         <section aria-labelledby="story-title" className="landing-section landing-story" id="story" data-landing-scene="story">
-          <div className="landing-copy landing-copy-left">
+          <div className="landing-copy landing-copy-left landing-copy-scrim">
             <p className="landing-kicker"><span>01</span> ONE STORY · MANY DIRECTIONS</p>
             <h2 id="story-title">ONE STORY.<br /><span>MANY QUESTIONS.</span></h2>
             <p className="landing-description">질문마다 새로운 답안을 외우지 않습니다. 같은 장면에서 필요한 fact를 꺼내고, 질문의 방향만 바꿉니다.</p>
@@ -109,7 +110,7 @@ export function LandingPage() {
         </section>
 
         <section aria-labelledby="levels-title" className="landing-section landing-levels" id="levels" data-landing-scene="levels">
-          <div className="landing-copy">
+          <div className="landing-copy landing-copy-scrim">
             <p className="landing-kicker"><span>02</span> SAME SCENE · THREE LEVELS</p>
             <h2 id="levels-title">YOUR STORY<br /><span>GROWS WITH YOU.</span></h2>
             <p className="landing-description">Course가 이야기의 맥락을 정하고, Level이 같은 장면의 길이와 답변 밀도를 조절합니다.</p>
@@ -127,7 +128,7 @@ export function LandingPage() {
         </section>
 
         <section aria-labelledby="journey-title" className="landing-section landing-journey" id="journey" data-landing-scene="journey">
-          <div className="landing-copy landing-copy-centered">
+          <div className="landing-copy landing-copy-centered landing-copy-scrim">
             <p className="landing-kicker"><span>03</span> TRAINING JOURNEY</p>
             <h2 id="journey-title">SIX STEPS.<br /><span>ONE VOICE.</span></h2>
           </div>
@@ -144,7 +145,7 @@ export function LandingPage() {
         </section>
 
         <section aria-labelledby="pivot-title" className="landing-section landing-pivot" id="pivot" data-landing-scene="pivot">
-          <div className="landing-copy landing-copy-left">
+          <div className="landing-copy landing-copy-left landing-copy-scrim">
             <p className="landing-kicker"><span>04</span> QUESTION PIVOT · STEP 4</p>
             <h2 id="pivot-title">THE QUESTION<br /><span>CHANGES.</span><br />YOUR STORY<br /><span>STAYS YOURS.</span></h2>
           </div>
@@ -164,23 +165,20 @@ export function LandingPage() {
 
         <section aria-labelledby="exam-title" className="landing-section landing-exam" id="exam" data-landing-scene="exam">
           <div aria-hidden="true" className="landing-rec-handoff"><span>REC</span></div>
-          <div className="landing-copy landing-copy-centered">
+          <div className="landing-copy landing-copy-centered landing-copy-scrim">
             <p className="landing-kicker"><span>05</span> SPEAK · REVIEW · RETRY</p>
             <h2 id="exam-title">LISTEN. SPEAK.<br /><span>REVIEW. RETRY.</span></h2>
             <p className="landing-description">질문을 듣고 답한 뒤, 내 목소리를 다시 확인하고 같은 질문에 한 번 더 답합니다.</p>
           </div>
-          <div aria-label="OOM 실전 연습 흐름 미리보기" className="landing-exam-console">
-            <div className="landing-console-header"><span>OOM PRACTICE CONSOLE</span><span><i /> READY · LISTEN 0 / 2</span></div>
-            <div className="landing-console-body">
-              <div className="landing-eva-panel"><div aria-hidden="true" className="landing-eva"><span /><i /></div><p>EVA · QUESTION INTERVIEWER</p></div>
-              <div className="landing-listen-panel"><button aria-label="질문 듣기 데모" disabled type="button"><span aria-hidden="true">▶</span></button><p>질문을 먼저 듣고<br />핵심 시제와 명사를 잡습니다.</p></div>
-              <div className="landing-review-panel"><span>REVIEW SIGNAL</span><div className="landing-mini-wave" aria-hidden="true"><i /><i /><i /><i /><i /><i /><i /><i /><i /></div><p>editable transcript</p><ul><li><b>KEEP</b> 이어갈 한 가지</li><li><b>FIX</b> 고칠 한 가지</li><li><b>RETRY</b> 바로 다시 말하기</li></ul></div>
-            </div>
+          <div className="landing-practice-frame">
+            <Suspense fallback={<div aria-hidden="true" className="landing-practice-placeholder" />}>
+              <LandingPracticePreview />
+            </Suspense>
           </div>
         </section>
 
         <section aria-labelledby="ecosystem-title" className="landing-section landing-ecosystem" id="ecosystem" data-landing-scene="ecosystem">
-          <div className="landing-copy">
+          <div className="landing-copy landing-copy-scrim">
             <p className="landing-kicker"><span>06</span> OOM ECOSYSTEM</p>
             <h2 id="ecosystem-title">LEARN THE TEST.<br /><span>TRAIN YOUR VOICE.</span></h2>
           </div>
@@ -193,7 +191,7 @@ export function LandingPage() {
 
         <section aria-labelledby="final-title" className="landing-section landing-final" data-landing-scene="final">
           <div className="landing-final-ring" aria-hidden="true"><span>O</span></div>
-          <div className="landing-copy landing-copy-centered">
+          <div className="landing-copy landing-copy-centered landing-copy-scrim">
             <p className="landing-kicker"><span>07</span> START WITH YOUR VOICE</p>
             <h2 id="final-title">MAKE IT<br /><span>YOURS.</span></h2>
             <p className="landing-description">남의 모범답안이 아니라, 내 이야기로 시작하세요.</p>

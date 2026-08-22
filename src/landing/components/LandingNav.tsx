@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { OomBrandMark } from "../../components/brand/OomBrandMark";
 
 const links = [
   { href: "/about/", label: "오픽온미란?" },
@@ -53,8 +54,7 @@ export function LandingNav() {
   return (
     <header className="landing-nav" data-landing-nav>
       <Link aria-label="오픽온미 홈" className="landing-logo" to="/">
-        <span aria-hidden="true" className="landing-logo-mark">O</span>
-        <span>OOM</span>
+        <OomBrandMark size="sm" variant="wordmark" />
       </Link>
 
       <nav aria-label="랜딩 주요 메뉴" className="landing-nav-links">
@@ -80,7 +80,7 @@ export function LandingNav() {
       {open ? (
         <div aria-label="랜딩 모바일 메뉴" aria-modal="true" className="landing-mobile-menu" id="landing-mobile-menu" ref={menuRef} role="dialog">
           <div className="landing-mobile-menu-top">
-            <span className="landing-logo"><span aria-hidden="true" className="landing-logo-mark">O</span><span>OOM</span></span>
+            <span className="landing-logo"><OomBrandMark size="sm" variant="wordmark" /></span>
             <button aria-label="랜딩 메뉴 닫기" onClick={closeAndRestoreFocus} ref={closeButtonRef} type="button">닫기</button>
           </div>
           <nav aria-label="랜딩 모바일 주요 메뉴">

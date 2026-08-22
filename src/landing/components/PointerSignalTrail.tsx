@@ -7,21 +7,22 @@ type TrailPoint = {
   vx: number;
   vy: number;
   life: number;
-  radius: number;
+  haloRadius: number;
+  coreRadius: number;
   hue: "mint" | "indigo";
 };
 
 type Props = { enabled: boolean; quality: LandingQuality };
 
 const trailProfile = {
-  fluid: { count: 3, radius: 26, opacity: 0.11, decay: 0.019 },
-  attract: { count: 2, radius: 22, opacity: 0.075, decay: 0.025 },
-  parallax: { count: 1, radius: 30, opacity: 0.06, decay: 0.026 },
-  activate: { count: 1, radius: 15, opacity: 0.085, decay: 0.026 },
-  tilt: { count: 1, radius: 24, opacity: 0.055, decay: 0.028 },
-  ambient: { count: 1, radius: 34, opacity: 0.045, decay: 0.024 },
-  reconverge: { count: 2, radius: 25, opacity: 0.07, decay: 0.022 },
-  none: { count: 0, radius: 0, opacity: 0, decay: 1 },
+  fluid: { count: 3, haloRadius: 16, haloOpacity: 0.075, coreRadius: 1.7, coreOpacity: 0.82, decay: 0.032 },
+  attract: { count: 2, haloRadius: 14, haloOpacity: 0.06, coreRadius: 1.45, coreOpacity: 0.68, decay: 0.038 },
+  parallax: { count: 2, haloRadius: 15, haloOpacity: 0.05, coreRadius: 1.35, coreOpacity: 0.62, decay: 0.04 },
+  activate: { count: 2, haloRadius: 12, haloOpacity: 0.055, coreRadius: 1.55, coreOpacity: 0.7, decay: 0.04 },
+  tilt: { count: 1, haloRadius: 13, haloOpacity: 0.045, coreRadius: 1.25, coreOpacity: 0.58, decay: 0.043 },
+  ambient: { count: 1, haloRadius: 15, haloOpacity: 0.04, coreRadius: 1.2, coreOpacity: 0.54, decay: 0.041 },
+  reconverge: { count: 2, haloRadius: 15, haloOpacity: 0.06, coreRadius: 1.6, coreOpacity: 0.74, decay: 0.035 },
+  none: { count: 0, haloRadius: 0, haloOpacity: 0, coreRadius: 0, coreOpacity: 0, decay: 1 },
 } as const;
 
 export function PointerSignalTrail({ enabled, quality }: Props) {
@@ -76,7 +77,8 @@ export function PointerSignalTrail({ enabled, quality }: Props) {
           vx: Math.cos(angle) * push + velocityX * 0.025,
           vy: Math.sin(angle) * push + velocityY * 0.025,
           life: 1,
-          radius: profile.radius * (0.72 + Math.random() * 0.56),
+          haloRadius: profile.haloRadius * (0.82 + Math.random() * 0.36),
+          coreRadius: profile.coreRadius * (0.84 + Math.random() * 0.32),
           hue: index % 3 === 0 ? "mint" : "indigo",
         });
       }
@@ -100,16 +102,28 @@ export function PointerSignalTrail({ enabled, quality }: Props) {
         point.vx *= 0.983;
         point.vy *= 0.983;
         point.life -= profile.decay;
-        point.radius *= 0.994;
+        point.haloRadius *= 0.992;
 
-        const gradient = context.createRadialGradient(point.x, point.y, 0, point.x, point.y, point.radius);
+        const gradient = context.createRadialGradient(point.x, point.y, 0, point.x, point.y, point.haloRadius);
         const color = point.hue === "mint" ? "124,240,214" : "154,174,255";
-        gradient.addColorStop(0, `rgba(${color},${Math.max(0, point.life) * profile.opacity})`);
-        gradient.addColorStop(0.46, `rgba(${color},${Math.max(0, point.life) * profile.opacity * 0.32})`);
+        gradient.addColorStop(0, `rgba(${color},${Math.max(0, point.life) * profile.haloOpacity})`);
+        gradient.addColorStop(0.42, `rgba(${color},${Math.max(0, point.life) * profile.haloOpacity * 0.3})`);
         gradient.addColorStop(1, "rgba(0,0,0,0)");
         context.fillStyle = gradient;
         context.beginPath();
-        context.arc(point.x, point.y, point.radius, 0, Math.PI * 2);
+        context.arc(point.x, point.y, point.haloRadius, 0, Math.PI * 2);
+        context.fill();
+
+        context.strokeStyle = `rgba(${color},${Math.max(0, point.life) * profile.coreOpacity})`;
+        context.fillStyle = `rgba(${color},${Math.max(0, point.life) * Math.min(1, profile.coreOpacity + 0.12)})`;
+        context.lineCap = "round";
+        context.lineWidth = point.coreRadius;
+        context.beginPath();
+        context.moveTo(point.x - point.vx * 3.4, point.y - point.vy * 3.4);
+        context.lineTo(point.x, point.y);
+        context.stroke();
+        context.beginPath();
+        context.arc(point.x, point.y, Math.max(0.7, point.coreRadius * 0.62), 0, Math.PI * 2);
         context.fill();
         if (point.life <= 0) points.splice(index, 1);
       }

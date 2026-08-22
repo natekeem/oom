@@ -51,7 +51,6 @@ export function useLandingScrollTimeline(rootRef: RefObject<HTMLDivElement | nul
     window.addEventListener("resize", requestSceneSync, { passive: true });
     requestSceneSync();
 
-    const media = gsap.matchMedia();
     const context = gsap.context(() => {
       ScrollTrigger.create({
         trigger: root,
@@ -119,6 +118,18 @@ export function useLandingScrollTimeline(rootRef: RefObject<HTMLDivElement | nul
         });
       });
 
+      const steps = gsap.utils.toArray<HTMLElement>(".landing-step-list li");
+      const journeyTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".landing-journey",
+          start: "top 80%",
+          end: "bottom 20%",
+          pin: false,
+          scrub: 0.75,
+        },
+      });
+      journeyTimeline.fromTo(steps, { autoAlpha: 0.28 }, { autoAlpha: 1, stagger: 0.16, duration: 1 });
+
       const pivotTimeline = gsap.timeline({
         scrollTrigger: { trigger: ".landing-pivot-demo", start: "top 76%", once: true },
       });
@@ -151,24 +162,9 @@ export function useLandingScrollTimeline(rootRef: RefObject<HTMLDivElement | nul
         scrollTrigger: { trigger: ".landing-final", start: "top 76%", end: "center center", scrub: 0.7 },
       });
 
-      media.add("(min-width: 901px) and (pointer: fine)", () => {
-        const steps = gsap.utils.toArray<HTMLElement>(".landing-step-list li");
-        const journeyTimeline = gsap.timeline({
-          scrollTrigger: {
-            trigger: ".landing-journey",
-            start: "top top",
-            end: "+=1300",
-            pin: true,
-            scrub: 0.75,
-            anticipatePin: 1,
-          },
-        });
-        journeyTimeline.fromTo(steps, { autoAlpha: 0.28 }, { autoAlpha: 1, stagger: 0.16, duration: 1 });
-      });
     }, root);
 
     return () => {
-      media.revert();
       context.revert();
       window.cancelAnimationFrame(sceneSyncFrame);
       window.removeEventListener("scroll", requestSceneSync);

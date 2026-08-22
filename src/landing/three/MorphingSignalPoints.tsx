@@ -1,20 +1,9 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { getLandingMotionSnapshot, LANDING_SIGNAL_SCENE_LAYOUTS, type LandingCursorMode, type LandingQuality } from "../landingMotionStore";
+import { getLandingMotionSnapshot, LANDING_SCENE_POINTER_STRENGTHS, LANDING_SIGNAL_SCENE_LAYOUTS, type LandingQuality } from "../landingMotionStore";
 
 type Vector = [number, number, number];
-
-const pointerStrength: Record<LandingCursorMode, number> = {
-  fluid: 1,
-  attract: 0.72,
-  parallax: 0.48,
-  activate: 0.42,
-  tilt: 0.34,
-  ambient: 0.24,
-  reconverge: 0.38,
-  none: 0,
-};
 
 function circleTarget(count: number, clarity = 0): Vector[] {
   return Array.from({ length: count }, (_, index) => {
@@ -162,11 +151,11 @@ export function MorphingSignalPoints({ quality }: { quality: LandingQuality }) {
     const time = state.clock.elapsedTime;
     const layout = LANDING_SIGNAL_SCENE_LAYOUTS[snapshot.activeScene];
     const layoutEase = 1 - Math.exp(-delta * 3.8);
-    const breath = 1 + Math.sin(time * 0.72) * 0.006;
+    const breath = 1 + Math.sin(time * 0.58) * 0.01;
     const currentScale = Math.max(0.001, points.scale.x);
     const pointerLocalX = (snapshot.pointerX * 4.1 - points.position.x) / currentScale;
     const pointerLocalY = (snapshot.pointerY * 2.5 - points.position.y) / currentScale;
-    const localPointerStrength = pointerStrength[snapshot.cursorMode];
+    const localPointerStrength = LANDING_SCENE_POINTER_STRENGTHS[snapshot.activeScene];
     const isOPhase = from <= 1 || to === targets.length - 1;
 
     for (let index = 0; index < count; index += 1) {
@@ -175,12 +164,16 @@ export function MorphingSignalPoints({ quality }: { quality: LandingQuality }) {
       let x = THREE.MathUtils.lerp(a[0], b[0], mix);
       let y = THREE.MathUtils.lerp(a[1], b[1], mix);
       let z = THREE.MathUtils.lerp(a[2], b[2], mix);
-      const noisePhase = index * 0.173 + time * (0.55 + (index % 7) * 0.018);
-      const vibration = Math.sin(noisePhase) * (isOPhase ? 0.008 : 0.013);
+      const noisePhase = index * 0.173 + time * (0.42 + (index % 7) * 0.014);
+      const vibration = Math.sin(noisePhase) * (isOPhase ? 0.006 : 0.013);
       if (isOPhase) {
         const radius = Math.max(0.001, Math.hypot(x, y));
-        x += (x / radius) * vibration;
-        y += (y / radius) * vibration;
+        const angle = Math.atan2(y, x);
+        const organicDeformation = Math.sin(angle * 3 + time * 0.34) * 0.018
+          + Math.sin(angle * 7 - time * 0.22) * 0.009;
+        const radialScale = 1 + organicDeformation;
+        x = x * radialScale + (x / radius) * vibration;
+        y = y * radialScale + (y / radius) * vibration;
       } else {
         x += vibration;
         y += Math.cos(noisePhase * 0.87) * 0.009;
@@ -189,12 +182,15 @@ export function MorphingSignalPoints({ quality }: { quality: LandingQuality }) {
 
       if (localPointerStrength > 0) {
         const distanceSquared = (x - pointerLocalX) ** 2 + (y - pointerLocalY) ** 2;
-        const influence = Math.exp(-distanceSquared * 0.72)
-          * (0.045 + snapshot.pointerSpeed * 0.075)
+        const pointerFalloff = Math.exp(-distanceSquared * 0.72);
+        const localBulge = pointerFalloff
+          * (0.022 + snapshot.pointerSpeed * 0.016)
           * localPointerStrength;
-        x += (pointerLocalX - x) * influence * 0.16;
-        y += (pointerLocalY - y) * influence * 0.16;
-        z += influence * 0.72;
+        x *= 1 + localBulge;
+        y *= 1 + localBulge;
+        x += (pointerLocalX - x) * localBulge * 0.08;
+        y += (pointerLocalY - y) * localBulge * 0.08;
+        z += localBulge * 1.6;
       }
       position.setXYZ(index, x, y, z);
     }

@@ -4,7 +4,6 @@ import {
   ChartNoAxesCombined,
   ChevronRight,
   ClipboardList,
-  GraduationCap,
   House,
   Mic,
   SlidersHorizontal,
@@ -15,6 +14,7 @@ import {
 import type { ReactNode } from "react";
 import { cn } from "../../lib/utils";
 import type { ViewId } from "./Sidebar";
+import { OomBrandMark } from "../brand/OomBrandMark";
 
 type UnifiedSidebarProps = {
   activeView: ViewId;
@@ -84,7 +84,7 @@ export function UnifiedSidebar({ activeView, mobileOpen = false, onClose, onNavi
     <div className="flex h-full flex-col bg-zinc-50 px-3 py-5 dark:bg-zinc-950">
       <div className="mb-7 flex items-center justify-between px-2">
         <button aria-label="홈으로 이동" className="flex items-center gap-3 text-left" onClick={() => navigate("home")} type="button">
-          <span className="grid h-9 w-9 place-items-center rounded-md bg-indigo-600 text-white"><GraduationCap className="h-5 w-5" /></span>
+          <OomBrandMark className="text-indigo-600 dark:text-indigo-300" size="md" />
           <span>
             <span className="block text-sm font-semibold text-zinc-950 dark:text-white">OOM</span>
             <span className="block text-xs text-zinc-500 dark:text-zinc-400">OPIc On Me</span>

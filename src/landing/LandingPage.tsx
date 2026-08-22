@@ -6,16 +6,25 @@ import { useLandingCapabilities } from "./hooks/useLandingCapabilities";
 import { useLandingLenis } from "./hooks/useLandingLenis";
 import { useLandingPointerInteractions } from "./hooks/useLandingPointerInteractions";
 import { useLandingScrollTimeline } from "./hooks/useLandingScrollTimeline";
+import { TRAINING_LEVELS } from "../training/levels";
 import "./landing.css";
 
 const VoiceUniverseCanvas = lazy(() => import("./three/VoiceUniverseCanvas").then((module) => ({ default: module.VoiceUniverseCanvas })));
 const LandingPracticePreview = lazy(() => import("./components/LandingPracticePreview").then((module) => ({ default: module.LandingPracticePreview })));
 
-const levels = [
-  { band: "3구간", grade: "IM2 / IM1", label: "Foundation", time: "30–45초", density: "핵심 장면을 짧고 분명하게" },
-  { band: "2구간", grade: "IH / IM3", label: "Intermediate", time: "45–65초", density: "행동과 이유를 자연스럽게 연결" },
-  { band: "1구간", grade: "AL", label: "Advanced", time: "60–90초", density: "변화와 관점까지 유연하게 확장" },
-];
+const levelMeta = {
+  foundation: { label: "Foundation", density: "핵심 장면을 짧고 분명하게" },
+  intermediate: { label: "Intermediate", density: "행동과 이유를 자연스럽게 연결" },
+  advanced: { label: "Advanced", density: "변화와 관점까지 유연하게 확장" },
+};
+
+const levels = [...TRAINING_LEVELS].reverse().map((level) => ({
+  band: level.displayName,
+  grade: level.targetLabel,
+  label: levelMeta[level.id].label,
+  time: `${level.targetSeconds[0]}~${level.targetSeconds[1]}초`,
+  density: levelMeta[level.id].density,
+}));
 
 const steps = [
   ["01", "목표 · 코스", "내가 말할 장면을 정합니다."],
@@ -31,6 +40,13 @@ const factStates = [
   ["CHANGE", "첫 답변 방향", "질문 의도에 맞게 전환"],
   ["REQUIRED", "필수 장면", "이번 질문에 필요한 fact 승격"],
   ["DROP", "불필요한 확장", "시간과 초점을 위해 덜어냄"],
+];
+
+const aiCoachFeatures = [
+  ["01", "답변 분석", "Transcript를 기준으로 질문 대응, 구조, 시제·구체성을 확인합니다."],
+  ["02", "KEEP / FIX / RETRY", "이번 답변에서 유지할 것, 고칠 것, 다음 재시도 미션을 정리합니다."],
+  ["03", "스크립트 · 질문 Assist", "스크립트 변형, 표현 보조, 롤플레이 질문 생성에 AI를 활용합니다."],
+  ["04", "계속 확장되는 AI", "OOM의 AI 학습 보조 기능은 앞으로 단계적으로 확장됩니다."],
 ];
 
 export function LandingPage() {
@@ -85,7 +101,10 @@ export function LandingPage() {
           <div className="landing-hero-copy">
             <p className="landing-eyebrow">VOICE · STORY · PRACTICE</p>
             <h1 id="landing-hero-title">OPIc,<br /><span>ON ME.</span></h1>
-            <p className="landing-hero-support">내 이야기를 여러 질문에 맞게<br className="landing-mobile-break" /> 바꾸어 말하는 훈련.</p>
+            <p className="landing-hero-support">
+              <strong>외울 건 줄이고, 바꿔 말할 건 정해두고.</strong>
+              <span>OOM은 적은 수의 기본 스크립트를 익힌 뒤,<br className="landing-hero-detail-break" /> 질문에 맞게 필요한 부분만 바꿔 답하는 OPIc 훈련 도구입니다.</span>
+            </p>
             <div className="landing-actions">
               <Link className="landing-button landing-button-primary" data-magnetic to="/training/">실전 훈련 둘러보기 <span aria-hidden="true">↗</span></Link>
               <Link className="landing-button landing-button-secondary" data-magnetic to="/exam-guide/">OPIc 수험 가이드 <span aria-hidden="true">→</span></Link>
@@ -97,11 +116,17 @@ export function LandingPage() {
         <section aria-labelledby="story-title" className="landing-section landing-story" id="story" data-landing-scene="story">
           <div className="landing-copy landing-copy-left landing-copy-scrim">
             <p className="landing-kicker"><span>01</span> ONE STORY · MANY DIRECTIONS</p>
-            <h2 id="story-title">ONE STORY.<br /><span>MANY QUESTIONS.</span></h2>
-            <p className="landing-description">질문마다 새로운 답안을 외우지 않습니다. 같은 장면에서 필요한 fact를 꺼내고, 질문의 방향만 바꿉니다.</p>
+            <h2 className="landing-korean-heading" id="story-title">
+              <span className="landing-heading-line">적게 준비하고,</span>
+              <span className="landing-heading-line landing-outline">여러 질문에 돌려씁니다.</span>
+            </h2>
+            <p className="landing-description">
+              <span className="landing-description-line">질문마다 새로운 답안을 외우지 않습니다.</span>
+              <span className="landing-description-line">같은 장면에서 필요한 fact를 꺼내고, 질문의 방향만 바꿉니다.</span>
+            </p>
           </div>
           <div aria-hidden="true" className="landing-story-map">
-            <span className="landing-story-origin">MY STORY</span>
+            <span className="landing-story-origin">BASE SCENE</span>
             <div className="landing-story-branch branch-a"><i />묘사</div>
             <div className="landing-story-branch branch-b"><i />루틴</div>
             <div className="landing-story-branch branch-c"><i />경험</div>
@@ -112,8 +137,14 @@ export function LandingPage() {
         <section aria-labelledby="levels-title" className="landing-section landing-levels" id="levels" data-landing-scene="levels">
           <div className="landing-copy landing-copy-scrim">
             <p className="landing-kicker"><span>02</span> SAME SCENE · THREE LEVELS</p>
-            <h2 id="levels-title">YOUR STORY<br /><span>GROWS WITH YOU.</span></h2>
-            <p className="landing-description">Course가 이야기의 맥락을 정하고, Level이 같은 장면의 길이와 답변 밀도를 조절합니다.</p>
+            <h2 className="landing-korean-heading" id="levels-title">
+              <span className="landing-heading-line">같은 스크립트도</span>
+              <span className="landing-heading-line landing-outline">목표에 맞게 밀도를 바꿉니다.</span>
+            </h2>
+            <p className="landing-description">
+              <span className="landing-description-line">Course가 이야기의 맥락을 정하고,</span>
+              <span className="landing-description-line">Level이 같은 장면의 길이와 답변 밀도를 조절합니다.</span>
+            </p>
           </div>
           <div className="landing-level-list">
             {levels.map((level, index) => (
@@ -130,7 +161,7 @@ export function LandingPage() {
         <section aria-labelledby="journey-title" className="landing-section landing-journey" id="journey" data-landing-scene="journey">
           <div className="landing-copy landing-copy-centered landing-copy-scrim">
             <p className="landing-kicker"><span>03</span> TRAINING JOURNEY</p>
-            <h2 id="journey-title">SIX STEPS.<br /><span>ONE VOICE.</span></h2>
+            <h2 id="journey-title">SIX STEPS.<br /><span className="landing-outline">ONE VOICE.</span></h2>
           </div>
           <ol className="landing-step-list">
             {steps.map(([number, title, description]) => (
@@ -147,12 +178,15 @@ export function LandingPage() {
         <section aria-labelledby="pivot-title" className="landing-section landing-pivot" id="pivot" data-landing-scene="pivot">
           <div className="landing-copy landing-copy-left landing-copy-scrim">
             <p className="landing-kicker"><span>04</span> QUESTION PIVOT · STEP 4</p>
-            <h2 id="pivot-title">THE QUESTION<br /><span>CHANGES.</span><br />YOUR STORY<br /><span>STAYS YOURS.</span></h2>
+            <h2 className="landing-korean-heading" id="pivot-title">
+              <span className="landing-heading-line">질문이 틀어져도</span>
+              <span className="landing-heading-line landing-outline">처음부터 다시 외우지 않습니다.</span>
+            </h2>
           </div>
           <div className="landing-pivot-demo">
             <div className="landing-question landing-question-base"><span>BASE QUESTION</span><p>Tell me about a place you often visit.</p></div>
-            <div aria-hidden="true" className="landing-pivot-arrow"><span /> PIVOT</div>
-            <div className="landing-question landing-question-pivot"><span>PIVOT QUESTION</span><p>Tell me about a memorable change there.</p></div>
+            <div aria-hidden="true" className="landing-pivot-arrow"><b>↓</b><span>질문 방향 변경</span></div>
+            <div className="landing-question landing-question-pivot"><span>변형 질문</span><p>Tell me about a memorable change there.</p></div>
             <div className="landing-fact-grid">
               {factStates.map(([state, fact, note]) => (
                 <div className={`landing-fact landing-fact-${state.toLowerCase()}`} key={state}>
@@ -163,12 +197,15 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section aria-labelledby="exam-title" className="landing-section landing-exam" id="exam" data-landing-scene="exam">
+        <section aria-labelledby="exam-title" className="landing-section landing-exam" id="practice" data-landing-scene="practice">
           <div aria-hidden="true" className="landing-rec-handoff"><span>REC</span></div>
           <div className="landing-copy landing-copy-centered landing-copy-scrim">
             <p className="landing-kicker"><span>05</span> SPEAK · REVIEW · RETRY</p>
-            <h2 id="exam-title">LISTEN. SPEAK.<br /><span>REVIEW. RETRY.</span></h2>
-            <p className="landing-description">질문을 듣고 답한 뒤, 내 목소리를 다시 확인하고 같은 질문에 한 번 더 답합니다.</p>
+            <h2 className="landing-korean-heading" id="exam-title">
+              <span className="landing-heading-line">말하고, 확인하고,</span>
+              <span className="landing-heading-line landing-outline">한 번만 고쳐 다시 말합니다.</span>
+            </h2>
+            <p className="landing-description landing-practice-description">질문을 듣고 답한 뒤, 내 목소리를 확인하고 AI 피드백을 받아 같은 질문에 한 번 더 답합니다.</p>
           </div>
           <div className="landing-practice-frame">
             <Suspense fallback={<div aria-hidden="true" className="landing-practice-placeholder" />}>
@@ -177,10 +214,27 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section aria-labelledby="ecosystem-title" className="landing-section landing-ecosystem" id="ecosystem" data-landing-scene="ecosystem">
-          <div className="landing-copy landing-copy-scrim">
-            <p className="landing-kicker"><span>06</span> OOM ECOSYSTEM</p>
-            <h2 id="ecosystem-title">LEARN THE TEST.<br /><span>TRAIN YOUR VOICE.</span></h2>
+        <section aria-labelledby="ai-title" className="landing-section landing-ai" id="ai" data-landing-scene="ai">
+          <div className="landing-copy landing-copy-centered landing-copy-scrim">
+            <p className="landing-kicker"><span>06</span> VOICE SIGNAL · AI ASSIST</p>
+            <h2 id="ai-title">AI <span className="landing-outline">COACH</span></h2>
+            <p className="landing-ai-lead">혼자 연습해도,<br />무엇을 고칠지는 혼자 찾지 않아도 됩니다.</p>
+          </div>
+          <div className="landing-ai-panel">
+            <div aria-hidden="true" className="landing-ai-visual">
+              <div className="landing-ai-wave">
+                {Array.from({ length: 18 }, (_, index) => <span className={`bar-${index % 6}`} key={index} />)}
+              </div>
+              <div className="landing-ai-transcript"><span>TRANSCRIPT</span><i /><i /><i /></div>
+              <div className="landing-ai-signal"><span>VOICE</span><b>→</b><span>ANALYZE</span><b>→</b><span>NEXT TRY</span></div>
+              <div className="landing-ai-outcomes"><span>KEEP</span><span>FIX</span><span>RETRY</span></div>
+            </div>
+            <ol className="landing-ai-feature-list">
+              {aiCoachFeatures.map(([number, title, description]) => (
+                <li key={number}><span>{number}</span><div><strong>{title}</strong><p>{description}</p></div></li>
+              ))}
+            </ol>
+            <p className="landing-ai-disclaimer">AI 피드백은 공식 OPIc 점수·등급 판정이 아닙니다.</p>
           </div>
           <nav aria-label="오픽온미 주요 서비스" className="landing-editorial-links">
             <Link data-magnetic to="/exam-guide/"><span>01 · GUIDE</span><strong>수험 가이드</strong><p>시험 구조부터 신청, 시험 당일, 결과 확인까지.</p><i aria-hidden="true">↗</i></Link>
@@ -193,8 +247,11 @@ export function LandingPage() {
           <div className="landing-final-ring" aria-hidden="true"><span>O</span></div>
           <div className="landing-copy landing-copy-centered landing-copy-scrim">
             <p className="landing-kicker"><span>07</span> START WITH YOUR VOICE</p>
-            <h2 id="final-title">MAKE IT<br /><span>YOURS.</span></h2>
-            <p className="landing-description">남의 모범답안이 아니라, 내 이야기로 시작하세요.</p>
+            <h2 id="final-title">PREP LESS.<br /><span className="landing-outline">PRACTICE MORE.</span></h2>
+            <p className="landing-description landing-final-description">
+              <strong>외울 건 줄이고, 실전은 더 많이.</strong>
+              <span>기본 스크립트를 익히고,<br />질문에 맞게 바꾸고,<br />직접 말해보세요.</span>
+            </p>
             <div className="landing-actions">
               <Link className="landing-button landing-button-primary" data-magnetic to="/training/">실전 훈련 둘러보기 <span aria-hidden="true">↗</span></Link>
               <Link className="landing-button landing-button-secondary" data-magnetic to="/exam-guide/">수험 가이드 보기 <span aria-hidden="true">→</span></Link>

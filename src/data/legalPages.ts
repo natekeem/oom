@@ -19,13 +19,13 @@ export const legalPages: Record<LegalPageId, LegalPage> = {
     id: "about",
     eyebrow: "소개",
     title: "오픽온미란?",
-    description: "많이 외우는 대신, 익숙한 이야기를 질문에 맞게 바꾸어 말하는 OPIc 훈련 도구입니다.",
-    updatedAt: "2026-08-22",
+    description: "적은 수의 기본 스크립트를 익히고, 질문에 맞게 필요한 부분만 바꿔 말하도록 만든 OPIc 훈련 시스템입니다.",
+    updatedAt: "2026-08-23",
     sections: [
       {
         heading: "세 가지 훈련 원칙",
         paragraphs: [
-          "익숙한 장면을 Course별로 적게 준비하고, 같은 이야기를 3개 Level로 확장한 뒤, 듣고 말하고 복기하고 다시 말합니다.",
+          "Course별 핵심 story를 여러 질문에 재사용하고, 같은 story를 Foundation에서 Advanced까지 목표에 맞게 확장합니다.",
           "질문마다 별도의 모범답안을 외우는 대신 장소, 사람, 행동 같은 중심 fact를 유지하고 질문 방향에 맞는 부분만 바꾸는 연습입니다.",
         ],
         bullets: ["적게 준비하기", "수준에 맞게 키우기", "말하고 바로 고치기"],
@@ -47,6 +47,13 @@ export const legalPages: Record<LegalPageId, LegalPage> = {
         links: [
           { label: "실전 훈련 둘러보기", href: "/training/" },
           { label: "수험 가이드", href: "/exam-guide/" },
+        ],
+      },
+      {
+        heading: "AI Coach",
+        paragraphs: [
+          "답변 분석, 스크립트와 질문 Assist, 다음 재시도 미션 정리에 AI를 활용합니다.",
+          "AI 피드백은 공식 OPIc 점수나 등급 판정이 아닌 학습 보조입니다.",
         ],
       },
     ],

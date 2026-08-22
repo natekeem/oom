@@ -7,7 +7,6 @@ import {
   ChevronRight,
   CirclePlay,
   ClipboardList,
-  GraduationCap,
   House,
   Mic,
   Moon,
@@ -22,6 +21,7 @@ import { cn } from "../../lib/utils";
 import type { ViewId } from "./Sidebar";
 import { useTrainingSelection } from "../../training/TrainingSelectionContext";
 import { resolveTrainingContext } from "../../training/courseRegistry";
+import { OomBrandMark } from "../brand/OomBrandMark";
 
 type ExpandableSidebarProps = {
   activeView: ViewId;
@@ -266,9 +266,7 @@ export function ExpandableSidebar({
           onClick={() => navigate("home")}
           type="button"
         >
-          <span className="grid h-9 w-9 place-items-center rounded-md bg-indigo-600 text-white">
-            <GraduationCap className="h-5 w-5" />
-          </span>
+          <OomBrandMark className="text-indigo-600 dark:text-indigo-300" size="md" />
           <span>
             <span className="block text-sm font-semibold text-zinc-950 dark:text-white">오픽온미</span>
             <span className="block text-xs text-zinc-500 dark:text-zinc-400">OOM - OPIc On Me</span>

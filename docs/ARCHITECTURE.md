@@ -21,7 +21,7 @@ GitHub Pages has no server rewrite. `scripts/generate-static-routes.mjs` runs af
 
 `AppShell` owns the shared responsive frame.
 
-The root route is the exception: `/` renders `src/landing/LandingPage.tsx` as an independent full-bleed brand and product landing. It does not mount `AppShell`, the sidebar, the training header, or the app footer. Its semantic DOM remains usable without motion; GSAP/Lenis, the pointer field, and the lazy R3F canvas are progressive enhancements with capability and reduced-motion gates. The STEP 6 preview is a presentation-only `LandingPracticePreview` that reuses `ExamScreenShell` without mounting `PracticeView`, `Recorder`, STT, LLM, or training-state owners.
+The root route is the exception: `/` renders `src/landing/LandingPage.tsx` as an independent full-bleed brand and product landing. It does not mount `AppShell`, the sidebar, the training header, or the app footer. Its semantic DOM remains usable without motion; GSAP/Lenis, the crisp-core pointer signal, and the lazy R3F canvas are progressive enhancements with capability and reduced-motion gates. The STEP 6 preview is a presentation-only `LandingPracticePreview` that reuses `ExamScreenShell` without mounting `PracticeView`, `Recorder`, STT, LLM, or training-state owners. The landing AI Coach block describes the existing transcript-based KEEP / FIX / RETRY and Assist capabilities without claiming official scoring or an autonomous agent.
 
 | Owner | Responsibility |
 | --- | --- |
@@ -29,6 +29,7 @@ The root route is the exception: `/` renders `src/landing/LandingPage.tsx` as an
 | `ExpandableSidebar` | Desktop/mobile navigation, guide and training expanders, theme control |
 | `Sidebar.tsx` | `ViewId` contract and dynamic page-title mapping (`getViewTitle`) |
 | `Toast` | Shared completion, warning, and error feedback |
+| `OomBrandMark` | Shared inline-SVG OOM identity used by the landing navigation, active sidebar brand header, and About overview |
 
 The sticky header is intentionally limited to `training-hub` and the STEP 1-5 descendants. Home, the OPIc candidate guide, magazine, legal pages, and AI settings use the content frame without a training progress bar. On mobile, those non-training pages keep compact floating menu/theme controls so navigation is never lost.
 
@@ -65,7 +66,7 @@ Parent hubs explain the purpose of their child pages. Parent routes should not s
 
 | Area | Primary components | Contract |
 | --- | --- | --- |
-| Brand landing | `LandingPage`, `LandingNav`, `LandingPracticePreview`, `VoiceUniverseCanvas`, `MorphingSignalPoints` | Independent product overview, semantic conversion entry points, presentation-only STEP 6 shell reuse, continuous signal morph, capability fallbacks |
+| Brand landing | `LandingPage`, `LandingNav`, `LandingPracticePreview`, `VoiceUniverseCanvas`, `MorphingSignalPoints` | Independent product overview, semantic conversion entry points, presentation-only STEP 6 shell reuse, continuous pointer-responsive signal morph, honest AI Coach positioning, capability fallbacks |
 | OOM learning philosophy | `HomeView` | Compact learner-facing Course × Level overview with three principles, the 6 STEP rail, and training/guide entry points |
 | OOM magazine | `MagazineList`, `MagazineDetail` | Static learning articles with 3:2 editorial listing covers, local images, author/reviewer identity, honest publish/modified dates, official sources, structured data, examples, and practice takeaways |
 | Candidate guide | `ExamGuideHub`, `ExamGuideOverview`, `ExamGuideScreen`, `ExamGuideDashboard`, `ExamGuideDay`, `ExamGuideFaq`, `ExamGuideTabs` | Informational content, visual exam screen guide (annotated `ExamScreenShell`), Q&A, and official-source links |

@@ -1,4 +1,4 @@
-import type { ScriptBlueprintStep, ScriptVariantSet } from "../types";
+import type { LegacyScriptVariantSet, ScriptBlueprintStep } from "../types";
 
 const blueprint = (items: Array<[string, string, string]>) => items.map<ScriptBlueprintStep>(([id, label, koreanGuide], index) => ({
   id,
@@ -7,7 +7,7 @@ const blueprint = (items: Array<[string, string, string]>) => items.map<ScriptBl
   cue: ["질문의 중심 단어를 먼저 고릅니다.", "첫 장면만 질문에 맞게 교체합니다.", "구체 활동과 명사는 재사용합니다.", "감정 또는 변화로 마무리합니다."][index],
 }));
 
-export const scriptTrainingSets: Record<string, ScriptVariantSet> = {
+export const scriptTrainingSets: Record<string, LegacyScriptVariantSet> = {
   "outdoor-travel": {
     title: "한 번의 바닷가 장면을 질문 방향에 맞게 돌리기",
     description: "공원·해변·여행·루틴 질문은 같은 가족 여행 장면을 씁니다. 질문이 요구하는 시작점만 바꾸고 날씨, 활동, 감정은 재사용합니다.",

@@ -71,11 +71,18 @@ export type StoryLevelContent = {
   skills: string[];
 };
 
+export type BilingualQuestion = {
+  en: string;
+  ko: string;
+  functionLabel?: string;
+};
+
 export type TrainingStoryline = {
   id: string;
   courseId: TrainingCourseId;
   group: string;
   title: string;
+  baseQuestion: BilingualQuestion;
   surveyOptionIds: string[];
   core: {
     anchorScene: string;

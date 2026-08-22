@@ -6,6 +6,11 @@ export const storylines = [
     "courseId": "course-2",
     "group": "문화 / 음악",
     "title": "도심 문화센터에서 보낸 영화·공연·콘서트 저녁",
+    "baseQuestion": {
+      "en": "Tell me about a memorable cultural outing. What did you see or hear, and why was it special?",
+      "ko": "기억에 남는 문화생활 경험을 말해 주세요. 무엇을 보거나 들었고 왜 특별했나요?",
+      "functionLabel": "문화 활동 · 기억나는 경험"
+    },
     "surveyOptionIds": [
       "leisure-movie",
       "leisure-performance",
@@ -70,6 +75,11 @@ export const storylines = [
     "courseId": "course-2",
     "group": "쇼핑 / 생활",
     "title": "도심 쇼핑몰에서 필요한 것만 고른 실용 쇼핑",
+    "baseQuestion": {
+      "en": "Tell me about a recent shopping experience. What did you need, and how did you choose what to buy?",
+      "ko": "최근 쇼핑 경험을 말해 주세요. 무엇이 필요했고 살 물건을 어떻게 골랐나요?",
+      "functionLabel": "구매 경험 · 비교 · 선택"
+    },
     "surveyOptionIds": [
       "leisure-shopping"
     ],
@@ -130,6 +140,11 @@ export const storylines = [
     "courseId": "course-2",
     "group": "공원 / 가벼운 운동",
     "title": "운동을 싫어해도 계속할 수 있는 공원 걷기·가벼운 조깅",
+    "baseQuestion": {
+      "en": "Tell me about an exercise routine you can continue regularly. What do you do, and why does it work for you?",
+      "ko": "꾸준히 할 수 있는 운동 루틴을 말해 주세요. 무엇을 하고 왜 자신에게 잘 맞나요?",
+      "functionLabel": "운동 루틴 · 이유 · 변화"
+    },
     "surveyOptionIds": [
       "leisure-park",
       "sport-walking",
@@ -194,6 +209,11 @@ export const storylines = [
     "courseId": "course-2",
     "group": "집 / 휴가 / 여행",
     "title": "혼자 사는 집에서 시작하는 스테이케이션과 짧은 도시 여행",
+    "baseQuestion": {
+      "en": "Tell me how you like to spend a vacation. What do you do at home or on a short trip?",
+      "ko": "좋아하는 휴가 방식을 말해 주세요. 집이나 짧은 여행에서 무엇을 하나요?",
+      "functionLabel": "휴가 방식 · 집 · 짧은 여행"
+    },
     "surveyOptionIds": [
       "residence-alone",
       "vacation-home",

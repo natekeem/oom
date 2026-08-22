@@ -90,10 +90,11 @@ OOM uses a structured Course × Level data model:
 Each script group has exactly **one canonical storyline** per course. The legacy Story A/B choice UI has been completely removed.
 
 The core storyline provides:
-1. One scene adapted to the selected Level's time and answer density. Every Level derives the same OPEN / SCENE / CLOSE learning order independently of raw paragraph count; Advanced preserves its authored paragraph rhythm and source text.
-2. Question-type variations that retain the same people, place, event, and core objects unless the prompt strictly requires a minimal new fact.
-3. A Level-aware blueprint whose macro sections are OPEN (시작·서론), SCENE (핵심 장면·본론), and CLOSE (마무리·결론). ANSWER, SCENE/ACTION/DETAILS, RESULT/FEELING, and optional EXPANSION are micro functions inside those sections. Each replacement exposes KEEP, CHANGE, and DROP cues plus a micro-example for the selected Level only.
-4. Optional expansion stays inside its owning learning section as at most one sentence for Intermediate and two for Advanced. A variant may promote a canonical optional fact to `REQUIRED FOR THIS QUESTION`; it does not author a second story.
+1. One bilingual `baseQuestion` plus one scene adapted to the selected Level's time and answer density. The English base question is the primary prompt for the canonical full answer; Korean is helper copy. Every Level derives the same OPEN / SCENE / CLOSE learning order independently of raw paragraph count; Advanced preserves its authored paragraph rhythm and source text.
+2. Four bilingual question-type variations that retain the same people, place, event, and core objects unless the prompt strictly requires a minimal new fact. `VariantScenarioSelector` is shared by the worked-example and blueprint tabs, while `ScriptTrainingTabs` owns the selected variant across tab changes.
+3. A deterministic full-answer comparison assembled by `scriptVariantTransform.ts` from the canonical learning sections plus explicit Level-aware replacement blocks. It never stores a duplicated full canonical answer or uses substring replacement.
+4. A Level-aware blueprint whose macro sections are OPEN (시작·서론), SCENE (핵심 장면·본론), and CLOSE (마무리·결론). ANSWER, SCENE/ACTION/DETAILS, RESULT/FEELING, and optional EXPANSION are micro functions inside those sections. Each replacement exposes KEEP, CHANGE, and DROP cues plus a micro-example for the selected Level only; the blueprint does not repeat the transformed full answer.
+5. Optional expansion stays inside its owning learning section as at most one sentence for Intermediate and two for Advanced. A variant may promote a canonical optional fact to `REQUIRED FOR THIS QUESTION`; promoted facts are removed from the optional list and do not author a second story.
 
 `ScriptTrainingTabs` owns the `story`, `variants`, and `blueprint` views.
 

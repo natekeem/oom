@@ -1,6 +1,6 @@
-import type { ScriptVariantSet } from "../types";
+import type { LegacyScriptVariantSet } from "../types";
 
-export const scriptVariantSets: Record<string, ScriptVariantSet> = {
+export const scriptVariantSets: Record<string, LegacyScriptVariantSet> = {
   "outdoor-travel": {
     title: "같은 바닷가 장면을 세 방향으로 돌리기",
     description: "장소, 최근 경험, 평소 루틴 중 질문의 중심만 바꾸고 날씨·걷기·휴식이라는 핵심 장면은 유지합니다.",

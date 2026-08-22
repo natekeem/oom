@@ -6,6 +6,11 @@ export const storylines = [
     "courseId": "course-1",
     "group": "야외 / 여행",
     "title": "바닷가 리조트에서 보낸 가족 여행",
+    "baseQuestion": {
+      "en": "Tell me about a memorable family trip you took. Where did you go, and what did you do there?",
+      "ko": "기억에 남는 가족 여행을 말해 주세요. 어디에 갔고 그곳에서 무엇을 했나요?",
+      "functionLabel": "가족 여행 · 활동 · 기억"
+    },
     "surveyOptionIds": [
       "leisure-park",
       "leisure-beach",
@@ -73,6 +78,11 @@ export const storylines = [
     "courseId": "course-1",
     "group": "실내 / 휴식",
     "title": "조용한 카페와 집에서의 휴식 루틴",
+    "baseQuestion": {
+      "en": "Tell me about your favorite way to relax after a busy week. Where do you go, and what do you usually do?",
+      "ko": "바쁜 한 주 뒤 가장 좋아하는 휴식 방법을 말해 주세요. 어디에 가고 보통 무엇을 하나요?",
+      "functionLabel": "휴식 장소 · 일상 루틴"
+    },
     "surveyOptionIds": [
       "leisure-cafe",
       "interest-music",
@@ -136,6 +146,11 @@ export const storylines = [
     "courseId": "course-1",
     "group": "운동 / 취미",
     "title": "주말 테니스와 장비 쇼핑 경험",
+    "baseQuestion": {
+      "en": "Tell me about a hobby or sport you enjoy. How did you start, and what do you usually do?",
+      "ko": "즐기는 취미나 운동을 말해 주세요. 어떻게 시작했고 보통 무엇을 하나요?",
+      "functionLabel": "취미 소개 · 시작 계기 · 루틴"
+    },
     "surveyOptionIds": [
       "sport-tennis",
       "leisure-shopping"
@@ -198,6 +213,11 @@ export const storylines = [
     "courseId": "course-1",
     "group": "집 / 거주지",
     "title": "가족과 사는 집, 동네, 집안일 에피소드",
+    "baseQuestion": {
+      "en": "Tell me about the home and neighborhood where you live. What do you usually do there with your family?",
+      "ko": "살고 있는 집과 동네를 말해 주세요. 그곳에서 가족과 보통 무엇을 하나요?",
+      "functionLabel": "집 묘사 · 동네 · 생활 루틴"
+    },
     "surveyOptionIds": [
       "residence-family",
       "interest-cooking",

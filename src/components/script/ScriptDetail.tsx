@@ -108,14 +108,14 @@ function StructuredScript({ script, fillersVisible, structureVisible }: { script
                   <HighlightedText active={fillersVisible} text={group.texts.join(" ")} />
                 </p>
               ) : (
-                <details className="rounded-md bg-white/65 px-3 py-2 dark:bg-zinc-900/60" key={`optional-${index}`}>
-                  <summary className="cursor-pointer text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-                    여유가 있으면 · 선택 확장 {group.texts.length > 1 ? `${group.texts.length}문장` : "1문장"}
-                  </summary>
+                <div className="rounded-md border border-dashed border-zinc-200 bg-white/65 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900/60" key={`optional-${index}`}>
+                  <span className="inline-flex rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] font-semibold text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+                    선택 확장
+                  </span>
                   <p className="mt-2 text-sm leading-7 text-zinc-600 dark:text-zinc-300">
                     <HighlightedText active={fillersVisible} text={group.texts.join(" ")} />
                   </p>
-                </details>
+                </div>
               )
             )}
           </div>
@@ -128,7 +128,9 @@ function StructuredScript({ script, fillersVisible, structureVisible }: { script
 export function ScriptDetail({ script, settings, onToast }: ScriptDetailProps) {
   const [memoryMode, setMemoryMode] = useState<MemoryMode>("full");
   const [fillersVisible, setFillersVisible] = useState(false);
-  const [structureVisible, setStructureVisible] = useState(true);
+  const structureKey = `${script.trainingCourseId ?? "legacy"}:${script.id}:${script.trainingLevelId ?? "advanced"}:${script.englishScript}`;
+  const [structureState, setStructureState] = useState({ key: structureKey, visible: false });
+  const structureVisible = structureState.key === structureKey ? structureState.visible : false;
   const [revealBlind, setRevealBlind] = useState(false);
   const [variation, setVariation] = useState("");
   const [variationLoading, setVariationLoading] = useState(false);
@@ -206,7 +208,17 @@ export function ScriptDetail({ script, settings, onToast }: ScriptDetailProps) {
           <MemoryModeToggle mode={memoryMode} onChange={setMemoryMode} />
         </div>
 
-        {memoryMode === "full" ? <div className="mt-5 rounded-md border border-indigo-100 bg-indigo-50 p-4 dark:border-indigo-900 dark:bg-indigo-950"><p className="text-sm leading-6 text-indigo-900 dark:text-indigo-100">{script.koreanSummary}</p></div> : null}
+        {memoryMode === "full" && script.baseQuestion ? (
+          <section aria-label="대표 기본 질문" className="mt-5 rounded-md border border-indigo-200 bg-indigo-50/55 p-4 dark:border-indigo-900 dark:bg-indigo-950/25 sm:p-5">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-xs font-bold text-indigo-700 dark:text-indigo-300">대표 기본 질문</p>
+              {script.baseQuestion.functionLabel ? <Badge tone="indigo">{script.baseQuestion.functionLabel}</Badge> : null}
+            </div>
+            <p className="mt-3 text-base font-bold leading-7 text-zinc-950 dark:text-white sm:text-lg sm:leading-8">{script.baseQuestion.en}</p>
+            <p className="mt-2 text-sm leading-6 text-zinc-500 dark:text-zinc-400">{script.baseQuestion.ko}</p>
+          </section>
+        ) : null}
+        {memoryMode === "full" ? <div className="mt-4 rounded-md border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-950"><p className="text-sm leading-6 text-zinc-600 dark:text-zinc-300">{script.koreanSummary}</p></div> : null}
         {memoryMode === "keywords" ? (
           <div className="mt-5 rounded-md border border-emerald-100 bg-emerald-50 p-5 dark:border-emerald-900 dark:bg-emerald-950">
             <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">KEYWORD PROMPTS</p>
@@ -218,7 +230,7 @@ export function ScriptDetail({ script, settings, onToast }: ScriptDetailProps) {
             <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2"><h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">영어 스크립트</h3><Badge tone="amber">{script.targetSeconds ? `${script.targetSeconds[0]}-${script.targetSeconds[1]} sec` : "연습 preset"}</Badge></div>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                <label className="flex cursor-pointer items-center gap-2 text-xs text-zinc-600 dark:text-zinc-300"><input checked={structureVisible} className="accent-indigo-600" onChange={(event) => setStructureVisible(event.target.checked)} type="checkbox" /><ListTree className="h-3.5 w-3.5" />3단 구조 보기</label>
+                <label className="flex cursor-pointer items-center gap-2 text-xs text-zinc-600 dark:text-zinc-300"><input checked={structureVisible} className="accent-indigo-600" onChange={(event) => setStructureState({ key: structureKey, visible: event.target.checked })} type="checkbox" /><ListTree className="h-3.5 w-3.5" />3단 구조 보기</label>
                 <label className="flex cursor-pointer items-center gap-2 text-xs text-zinc-600 dark:text-zinc-300"><input checked={fillersVisible} className="accent-indigo-600" onChange={(event) => setFillersVisible(event.target.checked)} type="checkbox" /><Highlighter className="h-3.5 w-3.5" />Filler 강조</label>
               </div>
             </div>

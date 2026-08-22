@@ -11,12 +11,17 @@ export function defineVariantSets<T extends Record<string, ScriptVariantSet>>(se
       storylineId,
       {
         ...set,
-        variants: set.variants.map((variant) => ({
-          ...variant,
-          requiredFacts: variant.requiredFacts ?? [],
-          optionalFacts: variant.optionalFacts ?? [],
-          newFacts: variant.newFacts ?? [],
-        })),
+        variants: set.variants.map((variant) => {
+          const requiredFacts = [...new Set(variant.requiredFacts ?? [])];
+          return {
+            ...variant,
+            requiredFacts,
+            optionalFacts: [...new Set(variant.optionalFacts ?? [])].filter(
+              (fact) => !requiredFacts.includes(fact)
+            ),
+            newFacts: [...new Set(variant.newFacts ?? [])],
+          };
+        }),
       },
     ])
   ) as T;

@@ -21,6 +21,13 @@ const tabs: Array<{ id: TrainingTab; label: string; icon: typeof BookOpenText }>
 
 export function ScriptTrainingTabs({ script, settings, onToast }: ScriptTrainingTabsProps) {
   const [activeTab, setActiveTab] = useState<TrainingTab>("story");
+  const [selectedVariantId, setSelectedVariantId] = useState("");
+
+  const tabDescription: Record<TrainingTab, string> = {
+    story: "기준 질문과 전체 답변",
+    variants: "질문이 바뀌면 실제 전체 답변이 이렇게 바뀝니다",
+    blueprint: "그 변형을 내가 직접 만드는 방법",
+  };
 
   return (
     <div className="space-y-5">
@@ -47,9 +54,25 @@ export function ScriptTrainingTabs({ script, settings, onToast }: ScriptTraining
         </div>
       </Card>
 
+      <p className="px-1 text-xs font-semibold text-zinc-500 dark:text-zinc-400">{tabDescription[activeTab]}</p>
+
       {activeTab === "story" ? <ScriptDetail onToast={onToast} script={script} settings={settings} /> : null}
-      {activeTab === "variants" ? <ScriptQuestionVariants script={script} /> : null}
-      {activeTab === "blueprint" ? <ScriptAnswerBlueprint script={script} /> : null}
+      {activeTab === "variants" ? (
+        <ScriptQuestionVariants
+          onSelectVariant={setSelectedVariantId}
+          onSwitchTab={() => setActiveTab("blueprint")}
+          script={script}
+          selectedVariantId={selectedVariantId}
+        />
+      ) : null}
+      {activeTab === "blueprint" ? (
+        <ScriptAnswerBlueprint
+          onSelectVariant={setSelectedVariantId}
+          onSwitchTab={() => setActiveTab("variants")}
+          script={script}
+          selectedVariantId={selectedVariantId}
+        />
+      ) : null}
     </div>
   );
 }

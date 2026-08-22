@@ -6,6 +6,11 @@ export const storylines = [
     "courseId": "course-3",
     "group": "공원 / 걷기 / 하이킹",
     "title": "전망대까지 걸으며 사진을 찍는 주말 트레일",
+    "baseQuestion": {
+      "en": "Tell me about an outdoor activity you enjoy on weekends. Where do you go, and what do you do there?",
+      "ko": "주말에 즐기는 야외 활동을 말해 주세요. 어디에 가고 그곳에서 무엇을 하나요?",
+      "functionLabel": "야외 활동 · 장소 · 루틴"
+    },
     "surveyOptionIds": [
       "leisure-park",
       "sport-walking",
@@ -72,6 +77,11 @@ export const storylines = [
     "courseId": "course-3",
     "group": "캠핑 / 해변 / 드라이브",
     "title": "바닷가 캠핑장으로 떠난 짧은 로드트립",
+    "baseQuestion": {
+      "en": "Tell me about a memorable camping trip. Where did you go, and what happened during the trip?",
+      "ko": "기억에 남는 캠핑 여행을 말해 주세요. 어디에 갔고 여행 중 무슨 일이 있었나요?",
+      "functionLabel": "캠핑 여행 · 사건 · 결과"
+    },
     "surveyOptionIds": [
       "leisure-camping",
       "leisure-beach",
@@ -138,6 +148,11 @@ export const storylines = [
     "courseId": "course-3",
     "group": "박물관 / 사진 / 독서",
     "title": "사진 전시를 보고 전시 도록을 읽은 조용한 오후",
+    "baseQuestion": {
+      "en": "Tell me about a memorable visit to a museum or exhibition. What did you see, and how did it affect you?",
+      "ko": "기억에 남는 박물관이나 전시 관람을 말해 주세요. 무엇을 보았고 어떤 영향을 받았나요?",
+      "functionLabel": "전시 경험 · 감상 · 변화"
+    },
     "surveyOptionIds": [
       "leisure-museum",
       "interest-photo",
@@ -202,6 +217,11 @@ export const storylines = [
     "courseId": "course-3",
     "group": "집 / 휴가 / 해외여행",
     "title": "룸메이트와 집에서 쉬며 지난 해외여행을 정리한 연휴",
+    "baseQuestion": {
+      "en": "Tell me about a vacation you spent at home. What did you do, and what did you learn about the way you like to travel?",
+      "ko": "집에서 보낸 휴가를 말해 주세요. 무엇을 했고 자신이 좋아하는 여행 방식에 대해 무엇을 알게 되었나요?",
+      "functionLabel": "집 휴가 · 여행 회상 · 선호 변화"
+    },
     "surveyOptionIds": [
       "residence-roommate",
       "vacation-home",

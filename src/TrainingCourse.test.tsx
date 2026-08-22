@@ -59,14 +59,18 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
     for (const courseId of courses) {
       const ctx = resolveTrainingContext(courseId, 'advanced');
       for (const storyline of ctx.storylines) {
+        expect(storyline.baseQuestion.en.length, `Missing English base question for ${courseId}/${storyline.id}`).toBeGreaterThan(0);
+        expect(storyline.baseQuestion.ko.length, `Missing Korean base question for ${courseId}/${storyline.id}`).toBeGreaterThan(0);
         const variantSet = ctx.variantSets[storyline.id];
         expect(variantSet, `Missing variantSet for ${courseId}/${storyline.id}`).toBeDefined();
         expect(variantSet.variants.length).toBeGreaterThanOrEqual(4);
         for (const v of variantSet.variants) {
           expect(v.id).toBeTruthy();
           expect(v.label).toBeTruthy();
-          expect(v.question).toBeTruthy();
+          expect(v.question.en).toBeTruthy();
+          expect(v.question.ko).toBeTruthy();
           expect(v.keep.length).toBeGreaterThanOrEqual(1);
+          expect((v.requiredFacts ?? []).filter((fact) => (v.optionalFacts ?? []).includes(fact))).toEqual([]);
         }
       }
     }
@@ -751,6 +755,8 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
         for (const storyline of ctx.storylines) {
           expect(storyline.core.anchorScene.length).toBeGreaterThan(0);
           expect(storyline.core.facts.length).toBeGreaterThan(0);
+          expect(storyline.baseQuestion.en.length).toBeGreaterThan(0);
+          expect(storyline.baseQuestion.ko.length).toBeGreaterThan(0);
           expect(storyline.active.englishScript.length).toBeGreaterThan(0);
           expect(storyline.active.koreanSummary.length).toBeGreaterThan(0);
 

@@ -52,6 +52,8 @@ export function ScriptDashboardV2({
               trainingLevelId: resolved.level.id,
               trainingPresetLabel: formatTrainingPreset(resolved.level),
               targetSeconds: resolved.level.targetSeconds,
+              trainingCourseId: resolved.course.id,
+              baseQuestion: s.baseQuestion,
             };
             return { ...item, slotIndex: idx, levelName: resolved.level.displayName };
           });
@@ -169,7 +171,7 @@ export function ScriptDashboardV2({
 
               <div className="mt-6">
                 <ScriptTrainingTabs
-                  key={`${currentScript.id}-${currentScript.levelName}`}
+                  key={`${currentScript.trainingCourseId}-${currentScript.id}-${currentScript.levelName}`}
                   onToast={onToast}
                   script={currentScript}
                   settings={settings}

@@ -17,13 +17,22 @@ export type ScriptItem = {
   trainingLevelId?: "advanced" | "intermediate" | "foundation";
   trainingPresetLabel?: string;
   targetSeconds?: [number, number];
+  trainingCourseId?: `course-${number}`;
+  baseQuestion?: {
+    en: string;
+    ko: string;
+    functionLabel?: string;
+  };
 };
 
 export type ScriptVariant = {
   id: string;
   label: string;
   questionType: string;
-  question: string;
+  question: {
+    en: string;
+    ko: string;
+  };
   pivot: string;
   keep: string[];
   /** Canonical facts that are globally optional but required by this prompt. */
@@ -33,6 +42,10 @@ export type ScriptVariant = {
   /** Prompt-required facts that do not exist in the canonical anchor. Empty means no new fact is allowed. */
   newFacts?: string[];
   englishExample?: string;
+};
+
+export type LegacyScriptVariant = Omit<ScriptVariant, "question"> & {
+  question: string;
 };
 
 export type ScriptBlockId = "answer" | "scene-action" | "result" | "expansion";
@@ -67,6 +80,10 @@ export type ScriptVariantSet = {
   description: string;
   variants: ScriptVariant[];
   blueprint: ScriptBlueprintStep[];
+};
+
+export type LegacyScriptVariantSet = Omit<ScriptVariantSet, "variants"> & {
+  variants: LegacyScriptVariant[];
 };
 
 export type SurveyItem = {

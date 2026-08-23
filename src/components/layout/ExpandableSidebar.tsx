@@ -4,7 +4,6 @@ import {
   BookOpenText,
   ChartNoAxesCombined,
   ChevronDown,
-  ChevronRight,
   CirclePlay,
   ClipboardList,
   House,
@@ -33,7 +32,6 @@ type ExpandableSidebarProps = {
 };
 
 type Item = { id: ViewId; label: string; icon?: LucideIcon };
-type ExpandedSection = "guide" | "training" | "script" | "roleplay" | "none" | null;
 
 const guideItems: Item[] = [
   { id: "exam-overview", label: "소개 · 등급" },
@@ -70,19 +68,25 @@ function NavigationButton({
   active,
   children,
   nested = false,
+  inset = false,
   onClick,
 }: {
   active: boolean;
   children: ReactNode;
   nested?: boolean;
+  inset?: boolean;
   onClick: () => void;
 }) {
   return (
     <button
       aria-current={active ? "page" : undefined}
       className={cn(
-        "flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
-        nested && "ml-2 w-[calc(100%-0.5rem)] py-1.5 pl-5 text-xs",
+        "flex w-full items-center rounded-md px-3 py-2 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+        nested && "ml-2 w-[calc(100%-0.5rem)] py-1.5 text-xs",
+        !inset && "gap-3",
+        nested && !inset && "pl-5",
+        nested && inset && "pl-[46px]",
+        !nested && inset && "pl-[40px]",
         active
           ? nested
             ? "bg-indigo-50 font-semibold text-indigo-700 dark:bg-indigo-950 dark:text-indigo-200"
@@ -141,6 +145,7 @@ function CollapsibleSection({
           <span className="truncate">{label}</span>
         </button>
         <button
+          aria-expanded={open}
           aria-label={`${label} 하위 메뉴 ${open ? "접기" : "펼치기"}`}
           className="mr-1 grid h-8 w-8 place-items-center rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
           onClick={onToggle}
@@ -202,22 +207,77 @@ export function ExpandableSidebar({
     activeView === "practice" ||
     activeView === "roleplay";
 
-  const [expanded, setExpanded] = useState<ExpandedSection>(null);
-  const activeChildExpansion: ExpandedSection = scriptItems.some((item) => item.id === activeView)
-    ? "script"
-    : roleplayItems.some((item) => item.id === activeView) || activeView === "roleplay-formula"
-    ? "roleplay"
-    : guideItems.some((item) => item.id === activeView)
-    ? "guide"
-    : null;
-  const visibleExpanded = activeChildExpansion ?? expanded;
-  const guideOpen = visibleExpanded === null ? guideActive : visibleExpanded === "guide";
-  const trainingOpen =
-    visibleExpanded === null
-      ? trainingActive
-      : visibleExpanded === "training" || visibleExpanded === "script" || visibleExpanded === "roleplay";
-  const scriptOpen = visibleExpanded === null ? scriptActive : visibleExpanded === "script";
-  const roleplayOpen = visibleExpanded === null ? roleplayActive : visibleExpanded === "roleplay";
+  const activeAncestors = new Set<string>();
+  if (scriptActive) {
+    activeAncestors.add("script");
+    activeAncestors.add("training");
+  } else if (roleplayActive) {
+    activeAncestors.add("roleplay");
+    activeAncestors.add("training");
+  } else if (guideActive) {
+    activeAncestors.add("guide");
+  } else if (trainingActive) {
+    activeAncestors.add("training");
+  }
+
+  const [expanded, setExpanded] = useState<Set<string>>(() => {
+    try {
+      const stored = sessionStorage.getItem("oom.sidebar.expanded");
+      if (stored) {
+        const parsed = new Set<string>(JSON.parse(stored));
+        for (const a of activeAncestors) parsed.add(a);
+        return parsed;
+      }
+    } catch {
+      // Ignore sessionStorage parsing errors
+    }
+    return new Set(activeAncestors);
+  });
+
+  useEffect(() => {
+    sessionStorage.setItem("oom.sidebar.expanded", JSON.stringify([...expanded]));
+  }, [expanded]);
+
+  const [prevActiveView, setPrevActiveView] = useState(activeView);
+  if (activeView !== prevActiveView) {
+    setPrevActiveView(activeView);
+    setExpanded((prev) => {
+      let changed = false;
+      const next = new Set(prev);
+      for (const anc of activeAncestors) {
+        if (!next.has(anc)) {
+          next.add(anc);
+          changed = true;
+        }
+      }
+      return changed ? next : prev;
+    });
+  }
+
+  const isSectionOpen = (section: string) => expanded.has(section);
+
+  const guideOpen = isSectionOpen("guide");
+  const trainingOpen = isSectionOpen("training");
+  const scriptOpen = isSectionOpen("script");
+  const roleplayOpen = isSectionOpen("roleplay");
+
+  const handleToggle = (section: string) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (mobileOpen) {
+        next.clear();
+        if (!prev.has(section)) next.add(section);
+      } else {
+        if (next.has(section)) {
+          next.delete(section);
+        } else {
+          next.add(section);
+        }
+      }
+      return next;
+    });
+  };
+
   const navigate = (view: ViewId) => {
     onNavigate(view);
     onClose?.();
@@ -296,10 +356,10 @@ export function ExpandableSidebar({
           icon={BookOpenCheck}
           label="OPIc 수험 가이드"
           onNavigate={() => {
-            setExpanded("guide");
+            setExpanded((prev) => new Set(prev).add("guide"));
             navigate("exam-guide");
           }}
-          onToggle={() => setExpanded(guideOpen ? "none" : "guide")}
+          onToggle={() => handleToggle("guide")}
           open={guideOpen}
         >
           {guideItems.map((item) => (
@@ -307,12 +367,12 @@ export function ExpandableSidebar({
               active={activeView === item.id}
               key={item.id}
               nested
+              inset
               onClick={() => {
-                setExpanded("guide");
+                setExpanded((prev) => new Set(prev).add("guide"));
                 navigate(item.id);
               }}
             >
-              <ChevronRight className="h-3.5 w-3.5" />
               {item.label}
             </NavigationButton>
           ))}
@@ -322,17 +382,17 @@ export function ExpandableSidebar({
           icon={CirclePlay}
           label="OPIc 실전 훈련하기"
           onNavigate={() => {
-            setExpanded("training");
+            setExpanded((prev) => new Set(prev).add("training"));
             navigate("training-hub");
           }}
-          onToggle={() => setExpanded(trainingOpen ? "none" : "training")}
+          onToggle={() => handleToggle("training")}
           open={trainingOpen}
         >
           <NavigationButton
             active={activeView === "training-setup"}
             nested
             onClick={() => {
-              setExpanded("training");
+              setExpanded((prev) => new Set(prev).add("training"));
               navigate("training-setup");
             }}
           >
@@ -343,7 +403,7 @@ export function ExpandableSidebar({
             active={activeView === "survey"}
             nested
             onClick={() => {
-              setExpanded("training");
+              setExpanded((prev) => new Set(prev).add("training"));
               navigate("survey");
             }}
           >
@@ -354,7 +414,7 @@ export function ExpandableSidebar({
             active={activeView === "difficulty"}
             nested
             onClick={() => {
-              setExpanded("training");
+              setExpanded((prev) => new Set(prev).add("training"));
               navigate("difficulty");
             }}
           >
@@ -367,10 +427,10 @@ export function ExpandableSidebar({
             label="STEP 4. 만능 스크립트"
             nested
             onNavigate={() => {
-              setExpanded("script");
+              setExpanded((prev) => new Set(prev).add("script"));
               navigate("script-hub");
             }}
-            onToggle={() => setExpanded(scriptOpen ? "training" : "script")}
+            onToggle={() => handleToggle("script")}
             open={scriptOpen}
           >
             {scriptItems.map((item) => (
@@ -378,12 +438,12 @@ export function ExpandableSidebar({
                 active={activeView === item.id}
                 key={item.id}
                 nested
+                inset
                 onClick={() => {
-                  setExpanded("script");
+                  setExpanded((prev) => new Set(prev).add("script"));
                   navigate(item.id);
                 }}
               >
-                <ChevronRight className="h-3.5 w-3.5" />
                 {item.label}
               </NavigationButton>
             ))}
@@ -394,10 +454,10 @@ export function ExpandableSidebar({
             label="STEP 5. 롤플레이 공식"
             nested
             onNavigate={() => {
-              setExpanded("roleplay");
+              setExpanded((prev) => new Set(prev).add("roleplay"));
               navigate("roleplay-hub");
             }}
-            onToggle={() => setExpanded(roleplayOpen ? "training" : "roleplay")}
+            onToggle={() => handleToggle("roleplay")}
             open={roleplayOpen}
           >
             {roleplayItems.map((item) => (
@@ -405,12 +465,12 @@ export function ExpandableSidebar({
                 active={activeView === item.id}
                 key={item.id}
                 nested
+                inset
                 onClick={() => {
-                  setExpanded("roleplay");
+                  setExpanded((prev) => new Set(prev).add("roleplay"));
                   navigate(item.id);
                 }}
               >
-                <ChevronRight className="h-3.5 w-3.5" />
                 {item.label}
               </NavigationButton>
             ))}
@@ -419,7 +479,7 @@ export function ExpandableSidebar({
             active={activeView === "practice"}
             nested
             onClick={() => {
-              setExpanded("training");
+              setExpanded((prev) => new Set(prev).add("training"));
               navigate("practice");
             }}
           >

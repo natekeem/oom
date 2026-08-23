@@ -172,8 +172,7 @@ export function useLandingScrollTimeline(rootRef: RefObject<HTMLDivElement | nul
       });
       pivotTimeline
         .fromTo(".landing-question-base", { xPercent: -8, autoAlpha: 0 }, { xPercent: 0, autoAlpha: 1, duration: 0.65, ease: "power3.out" })
-        .fromTo(".landing-pivot-arrow", { scaleX: 0, transformOrigin: "left", autoAlpha: 0 }, { scaleX: 1, autoAlpha: 1, duration: 0.45, ease: "power2.out" }, "-=0.18")
-        .fromTo(".landing-question-pivot", { xPercent: 8, autoAlpha: 0 }, { xPercent: 0, autoAlpha: 1, duration: 0.65, ease: "power3.out" }, "-=0.12")
+        .fromTo(".landing-question-pivot", { xPercent: 8, autoAlpha: 0 }, { xPercent: 0, autoAlpha: 1, duration: 0.65, ease: "power3.out" }, "-=0.18")
         .fromTo(".landing-fact", { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, stagger: 0.08, ease: "power2.out" }, "-=0.18");
 
       const examTimeline = gsap.timeline({

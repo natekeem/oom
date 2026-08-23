@@ -67,7 +67,7 @@ Parent hubs explain the purpose of their child pages. Parent routes should not s
 | Area | Primary components | Contract |
 | --- | --- | --- |
 | Brand landing | `LandingPage`, `LandingNav`, `LandingPracticePreview`, `PointerSignalTrail`, `VoiceUniverseCanvas`, `MorphingSignalPoints` | Independent product overview, semantic conversion entry points, presentation-only STEP 6 shell reuse, raw-WebGL fluid cursor plus one-pool O/off-screen-ejection/final-O signature, independent DOM/CSS section traces, honest AI Coach positioning, capability fallbacks |
-| OOM learning philosophy | `HomeView` | Existing AppShell width contract with independent metrics, Course × Level, Training Loop, AI Coach strip, and training/guide entry points |
+| OOM learning philosophy | `HomeView` | Existing AppShell width contract with a compact editorial metrics rail, four-step OOM Method, AI Coach closing, and training/guide entry points composed to fit one desktop viewport |
 | OOM magazine | `MagazineList`, `MagazineDetail` | Static learning articles with 3:2 editorial listing covers, local images, author/reviewer identity, honest publish/modified dates, official sources, structured data, examples, and practice takeaways |
 | Candidate guide | `ExamGuideHub`, `ExamGuideOverview`, `ExamGuideScreen`, `ExamGuideDashboard`, `ExamGuideDay`, `ExamGuideFaq`, `ExamGuideTabs` | Informational content, visual exam screen guide (annotated `ExamScreenShell`), Q&A, and official-source links |
 | Training overview | `TrainingHub` | Overview Hub: 6 STEP overview roadmap, concept explanation |

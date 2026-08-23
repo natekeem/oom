@@ -45,7 +45,7 @@ describe("landing accessibility fallbacks", () => {
     expect(screen.getAllByRole("link", { name: /실전 훈련 둘러보기/ })).toHaveLength(2);
     expect(container.querySelector(".landing-pointer-field")).not.toBeInTheDocument();
     expect(container.querySelector(".landing-webgl-layer")).not.toBeInTheDocument();
-    expect(container.querySelectorAll("[data-trace-mode]")).toHaveLength(5);
+    expect(container.querySelectorAll("[data-trace-mode]")).toHaveLength(4);
 
     const css = readFileSync(join(process.cwd(), "src", "landing", "landing.css"), "utf8");
     expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\)[\s\S]*\.landing-trace-core \{ transform: scaleX\(1\) !important;/);
@@ -71,7 +71,7 @@ describe("landing accessibility fallbacks", () => {
 
     expect(container.querySelector(".landing-pointer-field")).not.toBeInTheDocument();
     expect(container.querySelector(".landing-webgl-layer")).not.toBeInTheDocument();
-    expect(container.querySelectorAll("[data-trace-mode]")).toHaveLength(5);
+    expect(container.querySelectorAll("[data-trace-mode]")).toHaveLength(4);
   });
 });
 
@@ -191,6 +191,9 @@ describe("landing correction contracts", () => {
     expect(css).toMatch(/\.landing-vignette \{[^}]*z-index: 2;/);
     expect(css).toContain(".landing-pivot-demo { position: relative; z-index: 12;");
     expect(css).toContain(".landing-practice-frame { position: relative; z-index: 12;");
+    expect(css).toContain("@media (min-width: 1024px)");
+    expect(css).toContain('grid-template-areas: "visual copy"');
+    expect(css).toContain(".landing-levels { grid-template-columns:");
     expect(css).not.toMatch(/\.landing-webgl-layer[^}]*filter:\s*blur/s);
   });
 
@@ -231,8 +234,9 @@ describe("landing correction contracts", () => {
     expect(container.textContent).toContain("PREP LESS.PRACTICE MORE.");
     expect(screen.getByText("AI 피드백은 공식 OPIc 점수·등급 판정이 아닙니다.")).toBeInTheDocument();
     expect(container.querySelector('[data-landing-scene="ai"]')).toBeInTheDocument();
-    expect(container.querySelectorAll("[data-trace-mode]")).toHaveLength(5);
-    expect(container.querySelectorAll(".landing-pivot-arrow")).toHaveLength(1);
+    expect(container.querySelectorAll("[data-trace-mode]")).toHaveLength(4);
+    expect(container.querySelector(".landing-pivot-arrow")).not.toBeInTheDocument();
+    expect(container.textContent).not.toContain("질문 방향 변경");
     expect(container.textContent).not.toContain("PIVOT QUESTION");
     expect(container.textContent).not.toMatch(/AL 보장|고득점 보장|합격 보장/);
     expect(await screen.findByLabelText("실제 STEP 6 시험 화면 미리보기")).toBeInTheDocument();

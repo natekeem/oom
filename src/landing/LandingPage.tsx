@@ -200,10 +200,12 @@ export function LandingPage() {
               <span className="landing-heading-line">질문이 틀어져도</span>
               <span className="landing-heading-line landing-outline">처음부터 외우지 않습니다.</span>
             </h2>
+            <p className="landing-description">
+              같은 story의 중심은 유지하고, KEEP · CHANGE · DROP으로 질문에 필요한 부분만 조절합니다.
+            </p>
           </div>
           <div className="landing-pivot-demo">
             <div className="landing-question landing-question-base"><span>BASE QUESTION</span><p>Tell me about a place you often visit.</p></div>
-            <div aria-hidden="true" className="landing-pivot-arrow"><SignalTrace mode="bend" /><span>질문 방향 변경</span></div>
             <div className="landing-question landing-question-pivot"><span>변형 질문</span><p>Tell me about a memorable change there.</p></div>
             <div className="landing-fact-grid">
               {factStates.map(([state, fact, note]) => (

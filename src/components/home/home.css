@@ -1,0 +1,30 @@
+.about-method-grid {
+  display: grid;
+  grid-template-areas:
+    "statement"
+    "flow";
+  gap: 1.5rem;
+}
+
+.about-method-statement { grid-area: statement; }
+.about-method-flow { grid-area: flow; }
+.about-metric { position: relative; }
+.about-metric::after { content: ""; position: absolute; inset: auto 1rem 0; height: 1px; background: currentColor; opacity: 0; transform: scaleX(.25); transform-origin: left; transition: opacity 220ms ease, transform 220ms ease; }
+.about-method-row { transition: background-color 220ms ease, border-color 220ms ease; }
+.about-method-number, .about-method-arrow { transition: color 220ms ease, transform 220ms ease; }
+
+@media (min-width: 1024px) {
+  .about-method-grid { grid-template-areas: "statement flow"; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); gap: 2.5rem; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .about-metric:hover::after { opacity: .8; transform: scaleX(1); }
+  .about-metric:hover dd, .about-metric:hover dt { color: rgb(79 70 229); }
+  .about-method-row:hover, .about-method-row:focus-within { border-color: rgb(129 140 248 / .65); background: rgb(99 102 241 / .045); }
+  .about-method-row:hover .about-method-number, .about-method-row:focus-within .about-method-number { color: rgb(79 70 229); }
+  .about-method-row:hover .about-method-arrow, .about-method-row:focus-within .about-method-arrow { color: rgb(79 70 229); transform: translateX(4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-metric::after, .about-method-row, .about-method-number, .about-method-arrow { transition-duration: .01ms !important; }
+}

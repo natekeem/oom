@@ -8,18 +8,18 @@ gsap.registerPlugin(ScrollTrigger);
 export function useLandingScrollTimeline(rootRef: RefObject<HTMLDivElement | null>, enabled: boolean) {
   useEffect(() => {
     const root = rootRef.current;
-    if (!root || !enabled) return;
+    if (!root) return;
 
     let activeScene: LandingScene | null = null;
-    const activateScene = (scene: LandingScene) => {
-      if (activeScene === scene) return;
+    const activateScene = (scene: LandingScene, sceneProgress = 0) => {
+      const sceneChanged = activeScene !== scene;
       activeScene = scene;
       const cursorMode = LANDING_SCENE_CURSOR_MODES[scene];
       root.dataset.landingActiveScene = scene;
       root.dataset.landingPointerMode = cursorMode;
-      setLandingMotion({ activeScene: scene, cursorMode }, true);
+      setLandingMotion({ activeScene: scene, cursorMode, sceneProgress }, sceneChanged);
     };
-    activateScene("hero");
+    activateScene("hero", 0);
 
     const sceneSections = Array.from(root.querySelectorAll<HTMLElement>("[data-landing-scene]"));
     let sceneSyncFrame = 0;
@@ -27,6 +27,7 @@ export function useLandingScrollTimeline(rootRef: RefObject<HTMLDivElement | nul
       sceneSyncFrame = 0;
       const viewportCenter = window.innerHeight / 2;
       let closestSection = sceneSections[0];
+      let closestRect = closestSection?.getBoundingClientRect();
       let closestDistance = Number.POSITIVE_INFINITY;
 
       sceneSections.forEach((section) => {
@@ -37,11 +38,25 @@ export function useLandingScrollTimeline(rootRef: RefObject<HTMLDivElement | nul
         if (distance < closestDistance) {
           closestDistance = distance;
           closestSection = section;
+          closestRect = rect;
         }
       });
 
       const scene = closestSection?.dataset.landingScene as LandingScene | undefined;
-      if (scene) activateScene(scene);
+      if (scene && closestRect) {
+        const rawProgress = (viewportCenter - closestRect.top) / Math.max(1, closestRect.height);
+        let sceneProgress = rawProgress;
+        if (scene === "hero") {
+          const heroTravel = Math.max(1, Math.min(closestRect.height, window.innerHeight * 0.52));
+          sceneProgress = Math.max(0, -closestRect.top) / heroTravel;
+        } else if (scene === "final") {
+          const finalTravel = Math.max(0, closestRect.height - window.innerHeight);
+          const finalMaximum = (viewportCenter + finalTravel) / Math.max(1, closestRect.height);
+          sceneProgress = rawProgress / Math.max(0.0001, finalMaximum);
+        }
+        sceneProgress = Math.max(0, Math.min(1, sceneProgress));
+        activateScene(scene, sceneProgress);
+      }
     };
     const requestSceneSync = () => {
       if (sceneSyncFrame) return;
@@ -51,21 +66,12 @@ export function useLandingScrollTimeline(rootRef: RefObject<HTMLDivElement | nul
     window.addEventListener("resize", requestSceneSync, { passive: true });
     requestSceneSync();
 
-    const context = gsap.context(() => {
+    const context = enabled ? gsap.context(() => {
       ScrollTrigger.create({
         trigger: root,
         start: "top top",
         end: "bottom bottom",
         onUpdate: (self) => setLandingMotion({ pageProgress: self.progress }),
-      });
-
-      root.querySelectorAll<HTMLElement>("[data-landing-scene]").forEach((section) => {
-        ScrollTrigger.create({
-          trigger: section,
-          start: "top center",
-          end: "bottom center",
-          onUpdate: (self) => setLandingMotion({ sceneProgress: self.progress }),
-        });
       });
 
       gsap.fromTo(".landing-hero-copy > *", { y: 32, autoAlpha: 0 }, {
@@ -109,6 +115,27 @@ export function useLandingScrollTimeline(rootRef: RefObject<HTMLDivElement | nul
         scrollTrigger: { trigger: ".landing-story-map", start: "top 76%", once: true },
       });
 
+      root.querySelectorAll<HTMLElement>(".landing-signal-trace").forEach((trace) => {
+        const core = trace.querySelector<HTMLElement>(".landing-trace-core");
+        const particles = trace.querySelectorAll<HTMLElement>(".landing-trace-points span");
+        if (core) {
+          gsap.fromTo(core, { scaleX: 0, transformOrigin: "left center" }, {
+            scaleX: 1,
+            ease: "none",
+            scrollTrigger: { trigger: trace, start: "top 88%", end: "bottom 48%", scrub: 0.55 },
+          });
+        }
+        if (particles.length) {
+          gsap.fromTo(particles, { autoAlpha: 0.16, scale: 0.55 }, {
+            autoAlpha: 1,
+            scale: 1,
+            stagger: 0.045,
+            ease: "power2.out",
+            scrollTrigger: { trigger: trace, start: "top 84%", end: "bottom 54%", scrub: 0.45 },
+          });
+        }
+      });
+
       gsap.utils.toArray<HTMLElement>(".landing-level").forEach((level, index) => {
         gsap.fromTo(level, { xPercent: index % 2 === 0 ? -5 : 5, autoAlpha: 0.35 }, {
           xPercent: 0,
@@ -119,6 +146,16 @@ export function useLandingScrollTimeline(rootRef: RefObject<HTMLDivElement | nul
       });
 
       const steps = gsap.utils.toArray<HTMLElement>(".landing-step-list li");
+      gsap.fromTo(".landing-step-list", { "--journey-trace-progress": "0%" }, {
+        "--journey-trace-progress": "100%",
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".landing-step-list",
+          start: "top 84%",
+          end: "bottom 58%",
+          scrub: 0.7,
+        },
+      });
       const journeyTimeline = gsap.timeline({
         scrollTrigger: {
           trigger: ".landing-journey",
@@ -143,9 +180,8 @@ export function useLandingScrollTimeline(rootRef: RefObject<HTMLDivElement | nul
         scrollTrigger: { trigger: ".landing-exam", start: "top 72%", end: "center 42%", scrub: 0.65 },
       });
       examTimeline
-        .fromTo(".landing-rec-handoff", { y: -120, scale: 0.25, autoAlpha: 0 }, { y: 0, scale: 1, autoAlpha: 1, duration: 0.4, ease: "power3.out" })
-        .to(".landing-rec-handoff", { y: 170, xPercent: 260, scale: 0.16, autoAlpha: 0, duration: 0.38, ease: "power2.in" })
-        .fromTo(".landing-practice-frame", { y: 72, autoAlpha: 0.35 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out" }, "-=0.18");
+        .fromTo(".landing-rec-handoff", { scale: 0.35, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.42, ease: "power3.out" })
+        .fromTo(".landing-practice-frame", { y: 72, autoAlpha: 0.35 }, { y: 0, autoAlpha: 1, duration: 0.58, ease: "power3.out" }, "-=0.2");
 
       gsap.fromTo(".landing-editorial-links a", { xPercent: -4, autoAlpha: 0.45 }, {
         xPercent: 0,
@@ -162,10 +198,10 @@ export function useLandingScrollTimeline(rootRef: RefObject<HTMLDivElement | nul
         scrollTrigger: { trigger: ".landing-final", start: "top 76%", end: "center center", scrub: 0.7 },
       });
 
-    }, root);
+    }, root) : undefined;
 
     return () => {
-      context.revert();
+      context?.revert();
       window.cancelAnimationFrame(sceneSyncFrame);
       window.removeEventListener("scroll", requestSceneSync);
       window.removeEventListener("resize", requestSceneSync);

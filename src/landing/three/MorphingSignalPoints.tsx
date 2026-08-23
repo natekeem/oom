@@ -1,105 +1,60 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { getLandingMotionSnapshot, LANDING_SCENE_POINTER_STRENGTHS, LANDING_SIGNAL_SCENE_LAYOUTS, type LandingQuality } from "../landingMotionStore";
+import {
+  getLandingMotionSnapshot,
+  LANDING_SCENE_POINTER_STRENGTHS,
+  LANDING_SIGNAL_SCENE_LAYOUTS,
+  type LandingQuality,
+  type LandingScene,
+} from "../landingMotionStore";
 
 type Vector = [number, number, number];
+type SignalTargetName = "heroO" | "ejected" | "finalO";
+type SignalTransition = { from: SignalTargetName; to: SignalTargetName; mix: number };
 
-function circleTarget(count: number, clarity = 0): Vector[] {
+function smoothProgress(value: number, start: number, end: number) {
+  const progress = THREE.MathUtils.clamp((value - start) / Math.max(0.0001, end - start), 0, 1);
+  return THREE.MathUtils.smoothstep(progress, 0, 1);
+}
+
+function circleTarget(count: number): Vector[] {
   return Array.from({ length: count }, (_, index) => {
     const angle = (index / count) * Math.PI * 2;
     const layer = index % 5;
-    const radius = 2.16 + (layer - 2) * 0.028 + Math.sin(angle * 7) * 0.012 * (1 - clarity);
-    const depth = Math.sin(angle * 3 + layer) * 0.045 * (1 - clarity);
-    return [Math.cos(angle) * radius, Math.sin(angle) * radius, depth];
+    const radius = 2.28 + (layer - 2) * 0.027 + Math.sin(angle * 7) * 0.006;
+    return [Math.cos(angle) * radius, Math.sin(angle) * radius, Math.sin(angle * 3 + layer) * 0.018];
   });
 }
 
-function voiceCircleTarget(count: number): Vector[] {
+function ejectedTarget(count: number): Vector[] {
   return Array.from({ length: count }, (_, index) => {
-    const angle = (index / count) * Math.PI * 2;
-    const frequency = Math.sin(angle * 13) * 0.065 + Math.sin(angle * 29) * 0.018;
-    const radius = 2.18 + frequency;
-    return [Math.cos(angle) * radius, Math.sin(angle) * radius, Math.sin(angle * 4) * 0.045];
+    const baseAngle = (index / count) * Math.PI * 2;
+    const curl = Math.sin(baseAngle * 3 + index * 0.071) * 0.14;
+    const angle = baseAngle + curl;
+    const directionX = Math.cos(angle);
+    const directionY = Math.sin(angle);
+    const horizontalExit = 5.8 / Math.max(0.001, Math.abs(directionX));
+    const verticalExit = 3.45 / Math.max(0.001, Math.abs(directionY));
+    const distance = Math.min(horizontalExit, verticalExit) + 1.1 + ((index * 13) % 29) / 29 * 1.8;
+    return [directionX * distance, directionY * distance, Math.sin(index * 0.19) * 0.7];
   });
 }
 
-function waveformTarget(count: number): Vector[] {
-  return Array.from({ length: count }, (_, index) => {
-    const t = index / Math.max(1, count - 1);
-    const x = THREE.MathUtils.lerp(-4.65, 4.65, t);
-    const envelope = Math.pow(Math.sin(Math.PI * t), 0.65);
-    const y = (Math.sin(t * Math.PI * 12) * 0.68 + Math.sin(t * Math.PI * 31) * 0.13) * envelope;
-    return [x, y, Math.sin(t * Math.PI * 8) * 0.12];
-  });
-}
-
-function branchTarget(count: number): Vector[] {
-  const branchOffsets = [-1.5, -0.5, 0.5, 1.5];
-  return Array.from({ length: count }, (_, index) => {
-    const t = index / Math.max(1, count - 1);
-    const branch = index % branchOffsets.length;
-    const split = THREE.MathUtils.smoothstep(t, 0.22, 0.78);
-    const x = THREE.MathUtils.lerp(-4.55, 4.55, t);
-    const y = Math.sin(t * Math.PI * 10) * 0.2 + branchOffsets[branch] * split * 0.52;
-    return [x, y, (branch - 1.5) * 0.12 * split];
-  });
-}
-
-function threeBandsTarget(count: number): Vector[] {
-  const offsets = [-1.28, 0, 1.28];
-  return Array.from({ length: count }, (_, index) => {
-    const t = index / Math.max(1, count - 1);
-    const band = index % 3;
-    const amplitude = [0.14, 0.25, 0.42][band];
-    const frequency = [7, 10, 14][band];
-    return [THREE.MathUtils.lerp(-4.5, 4.5, t), offsets[band] + Math.sin(t * Math.PI * frequency) * amplitude, (band - 1) * 0.16];
-  });
-}
-
-function sixPulseTarget(count: number): Vector[] {
-  return Array.from({ length: count }, (_, index) => {
-    const t = index / Math.max(1, count - 1);
-    const nearest = Math.round(t * 5) / 5;
-    const distance = Math.abs(t - nearest);
-    const pulse = Math.exp(-distance * 115) * (index % 2 === 0 ? 0.72 : -0.48);
-    return [THREE.MathUtils.lerp(-4.45, 4.45, t), pulse + Math.sin(t * Math.PI * 4) * 0.04, Math.cos(t * Math.PI * 12) * 0.06];
-  });
-}
-
-function recordRingTarget(count: number): Vector[] {
-  return Array.from({ length: count }, (_, index) => {
-    const angle = (index / count) * Math.PI * 2;
-    const ring = index % 4;
-    const radius = 1.38 + ring * 0.035;
-    return [Math.cos(angle) * radius, Math.sin(angle) * radius, Math.sin(angle * 2) * 0.18];
-  });
-}
-
-function examSignalTarget(count: number): Vector[] {
-  return Array.from({ length: count }, (_, index) => {
-    const t = index / Math.max(1, count - 1);
-    const lane = index % 3;
-    const offsets = [-0.72, 0, 0.72];
-    const signal = lane === 1 ? Math.sin(t * Math.PI * 22) * 0.24 : Math.sin(t * Math.PI * 8) * 0.08;
-    return [THREE.MathUtils.lerp(-4.2, 4.2, t), offsets[lane] + signal, (lane - 1) * 0.12];
-  });
-}
-
-const intervals = [0, 0.08, 0.19, 0.3, 0.43, 0.57, 0.69, 0.84, 1];
-
-function targetPair(progress: number) {
-  let from = intervals.length - 2;
-  for (let index = 0; index < intervals.length - 1; index += 1) {
-    if (progress <= intervals[index + 1]) {
-      from = index;
-      break;
-    }
+function resolveTransition(scene: LandingScene, sceneProgress: number): SignalTransition {
+  if (scene === "hero") {
+    const heroExit = smoothProgress(sceneProgress, 0.08, 0.98);
+    return { from: "heroO", to: "ejected", mix: Math.pow(heroExit, 1.65) };
   }
-  const start = intervals[from];
-  const end = intervals[from + 1];
-  const local = THREE.MathUtils.clamp((progress - start) / Math.max(0.0001, end - start), 0, 1);
-  return { from, to: from + 1, mix: THREE.MathUtils.smoothstep(local, 0, 1) };
+  if (scene === "final") {
+    return { from: "ejected", to: "finalO", mix: smoothProgress(sceneProgress, 0.06, 0.92) };
+  }
+
+  return { from: "ejected", to: "ejected", mix: 1 };
+}
+
+function targetVisibility(target: SignalTargetName) {
+  return target === "ejected" ? 0.22 : 1;
 }
 
 export function MorphingSignalPoints({ quality }: { quality: LandingQuality }) {
@@ -107,17 +62,11 @@ export function MorphingSignalPoints({ quality }: { quality: LandingQuality }) {
   const materialRef = useRef<THREE.PointsMaterial>(null);
   const count = quality === "high" ? 1320 : 720;
 
-  const targets = useMemo(() => [
-    circleTarget(count, 1),
-    voiceCircleTarget(count),
-    waveformTarget(count),
-    branchTarget(count),
-    threeBandsTarget(count),
-    sixPulseTarget(count),
-    recordRingTarget(count),
-    examSignalTarget(count),
-    circleTarget(count, 1),
-  ], [count]);
+  const targets = useMemo<Record<SignalTargetName, Vector[]>>(() => ({
+    heroO: circleTarget(count),
+    ejected: ejectedTarget(count),
+    finalO: circleTarget(count),
+  }), [count]);
 
   const geometry = useMemo(() => {
     const next = new THREE.BufferGeometry();
@@ -125,7 +74,7 @@ export function MorphingSignalPoints({ quality }: { quality: LandingQuality }) {
     const colors = new Float32Array(count * 3);
     const mint = new THREE.Color("#7cf0d6");
     const indigo = new THREE.Color("#9aaeff");
-    targets[0].forEach(([x, y, z], index) => {
+    targets.heroO.forEach(([x, y, z], index) => {
       positions[index * 3] = x;
       positions[index * 3 + 1] = y;
       positions[index * 3 + 2] = z;
@@ -145,62 +94,71 @@ export function MorphingSignalPoints({ quality }: { quality: LandingQuality }) {
     const points = pointsRef.current;
     const material = materialRef.current;
     if (!points || !material) return;
+
     const snapshot = getLandingMotionSnapshot();
-    const { from, to, mix } = targetPair(snapshot.pageProgress);
+    const transition = resolveTransition(snapshot.activeScene, snapshot.sceneProgress);
+    const fromTarget = targets[transition.from];
+    const toTarget = targets[transition.to];
     const position = points.geometry.getAttribute("position") as THREE.BufferAttribute;
     const time = state.clock.elapsedTime;
     const layout = LANDING_SIGNAL_SCENE_LAYOUTS[snapshot.activeScene];
-    const layoutEase = 1 - Math.exp(-delta * 3.8);
-    const breath = 1 + Math.sin(time * 0.58) * 0.01;
+    const layoutEase = 1 - Math.exp(-delta * 4.2);
+    const isOPhase = transition.from === "heroO" || transition.to === "heroO" || transition.to === "finalO";
+    const isEjected = transition.from === "ejected" || transition.to === "ejected";
+    const breath = 1 + Math.sin(time * 0.52) * 0.008;
     const currentScale = Math.max(0.001, points.scale.x);
     const pointerLocalX = (snapshot.pointerX * 4.1 - points.position.x) / currentScale;
     const pointerLocalY = (snapshot.pointerY * 2.5 - points.position.y) / currentScale;
     const localPointerStrength = LANDING_SCENE_POINTER_STRENGTHS[snapshot.activeScene];
-    const isOPhase = from <= 1 || to === targets.length - 1;
 
     for (let index = 0; index < count; index += 1) {
-      const a = targets[from][index];
-      const b = targets[to][index];
-      let x = THREE.MathUtils.lerp(a[0], b[0], mix);
-      let y = THREE.MathUtils.lerp(a[1], b[1], mix);
-      let z = THREE.MathUtils.lerp(a[2], b[2], mix);
-      const noisePhase = index * 0.173 + time * (0.42 + (index % 7) * 0.014);
-      const vibration = Math.sin(noisePhase) * (isOPhase ? 0.006 : 0.013);
+      const from = fromTarget[index];
+      const to = toTarget[index];
+      let x = THREE.MathUtils.lerp(from[0], to[0], transition.mix);
+      let y = THREE.MathUtils.lerp(from[1], to[1], transition.mix);
+      let z = THREE.MathUtils.lerp(from[2], to[2], transition.mix);
+      const noisePhase = index * 0.173 + time * (0.35 + (index % 7) * 0.01);
+
       if (isOPhase) {
         const radius = Math.max(0.001, Math.hypot(x, y));
         const angle = Math.atan2(y, x);
-        const organicDeformation = Math.sin(angle * 3 + time * 0.34) * 0.018
-          + Math.sin(angle * 7 - time * 0.22) * 0.009;
+        const organicDeformation = Math.sin(angle * 3 + time * 0.28) * 0.011
+          + Math.sin(angle * 7 - time * 0.18) * 0.004;
         const radialScale = 1 + organicDeformation;
+        const vibration = Math.sin(noisePhase) * 0.004;
         x = x * radialScale + (x / radius) * vibration;
         y = y * radialScale + (y / radius) * vibration;
-      } else {
-        x += vibration;
-        y += Math.cos(noisePhase * 0.87) * 0.009;
+      } else if (isEjected) {
+        const edgeDrift = Math.sin(noisePhase * 0.72) * 0.025;
+        x += edgeDrift;
+        y += Math.cos(noisePhase * 0.61) * 0.02;
+        z += Math.sin(noisePhase * 0.5) * 0.022;
       }
-      z += Math.sin(Math.hypot(x, y) * 2.2 - time * 0.75 + index * 0.021) * 0.014;
 
       if (localPointerStrength > 0) {
         const distanceSquared = (x - pointerLocalX) ** 2 + (y - pointerLocalY) ** 2;
-        const pointerFalloff = Math.exp(-distanceSquared * 0.72);
+        const pointerFalloff = Math.exp(-distanceSquared * 0.78);
         const localBulge = pointerFalloff
-          * (0.022 + snapshot.pointerSpeed * 0.016)
+          * (0.02 + snapshot.pointerSpeed * 0.01)
           * localPointerStrength;
         x *= 1 + localBulge;
         y *= 1 + localBulge;
-        x += (pointerLocalX - x) * localBulge * 0.08;
-        y += (pointerLocalY - y) * localBulge * 0.08;
-        z += localBulge * 1.6;
+        x += (pointerLocalX - x) * localBulge * 0.06;
+        y += (pointerLocalY - y) * localBulge * 0.06;
+        z += localBulge * 1.35;
       }
+
       position.setXYZ(index, x, y, z);
     }
+
     position.needsUpdate = true;
     points.position.x = THREE.MathUtils.lerp(points.position.x, layout.anchorX, layoutEase);
     points.position.y = THREE.MathUtils.lerp(points.position.y, layout.anchorY, layoutEase);
     points.position.z = THREE.MathUtils.lerp(points.position.z, layout.depth, layoutEase);
-    const targetScale = layout.scale * breath;
-    points.scale.setScalar(THREE.MathUtils.lerp(points.scale.x, targetScale, layoutEase));
-    material.opacity = THREE.MathUtils.lerp(material.opacity, layout.opacity, layoutEase);
+    points.scale.setScalar(THREE.MathUtils.lerp(points.scale.x, layout.scale * breath, layoutEase));
+
+    const visibility = THREE.MathUtils.lerp(targetVisibility(transition.from), targetVisibility(transition.to), transition.mix);
+    material.opacity = THREE.MathUtils.lerp(material.opacity, layout.opacity * visibility, layoutEase);
     const basePointSize = quality === "high" ? 0.032 : 0.04;
     material.size = THREE.MathUtils.lerp(material.size, basePointSize * layout.pointSize, layoutEase);
   });
@@ -211,7 +169,7 @@ export function MorphingSignalPoints({ quality }: { quality: LandingQuality }) {
         ref={materialRef}
         blending={THREE.AdditiveBlending}
         depthWrite={false}
-        opacity={0.9}
+        opacity={0.94}
         size={quality === "high" ? 0.032 : 0.04}
         sizeAttenuation
         transparent

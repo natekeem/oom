@@ -99,7 +99,7 @@ Public route targets use the canonical `https://opic-on-me.com/path/` form. Inte
 | `practice` | Training / STEP 6 | `PracticeView` | Yes, 100% | Random prompt by Course × Level, timer, recording, feedback |
 | `magazine-list` | Top-level magazine | `MagazineList` / `MagazineDetail` | No | `/magazine/` lists static articles; `/magazine/:id/` renders the selected article |
 | `ai-settings` | Top-level utility | `AiSettingsView` | No | LLM runtime configuration |
-| `about` | App sidebar and footer information page | `HomeView` | No | `/about/` is a compact Course × Level product overview with three principles, a 6 STEP rail, and training/guide CTAs |
+| `about` | App sidebar and footer information page | `HomeView` | No | `/about/` keeps the shared AppShell width and presents four metrics, Course × Level, Training Loop, the AI Coach strip, and training/guide CTAs as independent compositions |
 | `privacy` | Footer legal page | `LegalPageView` | No | `/privacy/` explains privacy, cookies, Google ads, and contact |
 | `contact` | Footer legal page | `LegalPageView` | No | `/contact/` lists the inquiry email |
 | `terms` | Footer legal page | `LegalPageView` | No | `/terms/` explains study-use terms and non-affiliation |

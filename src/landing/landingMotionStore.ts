@@ -1,6 +1,27 @@
 export type LandingQuality = "high" | "medium" | "low";
 export type LandingScene = "hero" | "story" | "levels" | "journey" | "pivot" | "practice" | "ai" | "final";
 export type LandingCursorMode = "fluid" | "attract" | "parallax" | "activate" | "tilt" | "ambient" | "reconverge" | "none";
+export type SignaturePhase = "heroO" | "ejected" | "finalO";
+export type TraceMode = "underline" | "branch" | "parallel" | "checkpoints" | "bend" | "scan";
+
+export const LANDING_SCENE_SIGNATURE_PHASES: Record<LandingScene, SignaturePhase> = {
+  hero: "heroO",
+  story: "ejected",
+  levels: "ejected",
+  journey: "ejected",
+  pivot: "ejected",
+  practice: "ejected",
+  ai: "ejected",
+  final: "finalO",
+};
+
+export const LANDING_SCENE_TRACE_MODES: Partial<Record<LandingScene, TraceMode>> = {
+  story: "branch",
+  levels: "parallel",
+  journey: "checkpoints",
+  pivot: "bend",
+  ai: "scan",
+};
 
 export const LANDING_SCENE_CURSOR_MODES: Record<LandingScene, Exclude<LandingCursorMode, "none">> = {
   hero: "fluid",
@@ -15,13 +36,13 @@ export const LANDING_SCENE_CURSOR_MODES: Record<LandingScene, Exclude<LandingCur
 
 export const LANDING_SCENE_POINTER_STRENGTHS: Record<LandingScene, number> = {
   hero: 1,
-  story: 0.7,
-  levels: 0.65,
-  journey: 0.55,
+  story: 0.55,
+  levels: 0.5,
+  journey: 0.45,
   pivot: 0.4,
   practice: 0.3,
-  ai: 0.45,
-  final: 0.8,
+  ai: 0.4,
+  final: 1,
 };
 
 export type SignalSceneLayout = {
@@ -34,14 +55,14 @@ export type SignalSceneLayout = {
 };
 
 export const LANDING_SIGNAL_SCENE_LAYOUTS: Record<LandingScene, SignalSceneLayout> = {
-  hero: { anchorX: 0, anchorY: 0, scale: 1, opacity: 0.9, pointSize: 1, depth: 0 },
-  story: { anchorX: 3.25, anchorY: 0.05, scale: 0.5, opacity: 0.32, pointSize: 0.78, depth: -1 },
-  levels: { anchorX: 2.4, anchorY: 0.55, scale: 0.52, opacity: 0.28, pointSize: 0.74, depth: -1.15 },
-  journey: { anchorX: 0, anchorY: -2.3, scale: 0.64, opacity: 0.28, pointSize: 0.74, depth: -1.4 },
-  pivot: { anchorX: 2.05, anchorY: 0.25, scale: 0.68, opacity: 0.2, pointSize: 0.72, depth: -1.35 },
-  practice: { anchorX: 0, anchorY: -1.55, scale: 0.62, opacity: 0.15, pointSize: 0.58, depth: -1.9 },
-  ai: { anchorX: 1.5, anchorY: 0.35, scale: 0.76, opacity: 0.23, pointSize: 0.76, depth: -1.2 },
-  final: { anchorX: 0, anchorY: 0, scale: 1, opacity: 0.95, pointSize: 1, depth: 0 },
+  hero: { anchorX: 0, anchorY: 0, scale: 1.06, opacity: 0.94, pointSize: 1, depth: 0 },
+  story: { anchorX: 0, anchorY: 0, scale: 1, opacity: 0.16, pointSize: 0.72, depth: 0 },
+  levels: { anchorX: 0, anchorY: 0, scale: 1, opacity: 0.16, pointSize: 0.7, depth: 0 },
+  journey: { anchorX: 0, anchorY: 0, scale: 1, opacity: 0.16, pointSize: 0.7, depth: 0 },
+  pivot: { anchorX: 0, anchorY: 0, scale: 1, opacity: 0.16, pointSize: 0.68, depth: 0 },
+  practice: { anchorX: 0, anchorY: 0, scale: 1, opacity: 0.16, pointSize: 0.62, depth: 0 },
+  ai: { anchorX: 0, anchorY: 0, scale: 1, opacity: 0.16, pointSize: 0.7, depth: 0 },
+  final: { anchorX: 0, anchorY: 0, scale: 1.06, opacity: 0.94, pointSize: 1, depth: 0 },
 };
 
 export type LandingMotionSnapshot = {

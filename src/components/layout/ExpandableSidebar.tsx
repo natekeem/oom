@@ -2,14 +2,10 @@ import {
   Bot,
   BookOpenCheck,
   BookOpenText,
-  ChartNoAxesCombined,
   ChevronDown,
   CirclePlay,
-  ClipboardList,
   House,
-  Mic,
   Moon,
-  SlidersHorizontal,
   Sparkles,
   Sun,
   X,
@@ -66,37 +62,41 @@ const sidebarQuote = sidebarQuotes[Math.floor(Math.random() * sidebarQuotes.leng
 
 function NavigationButton({
   active,
-  children,
-  nested = false,
-  inset = false,
+  icon: Icon,
+  label,
+  depth = 0,
   onClick,
 }: {
   active: boolean;
-  children: ReactNode;
-  nested?: boolean;
-  inset?: boolean;
+  icon?: LucideIcon;
+  label: string;
+  depth?: 0 | 1 | 2;
   onClick: () => void;
 }) {
   return (
     <button
       aria-current={active ? "page" : undefined}
+      title={label}
       className={cn(
-        "flex w-full items-center rounded-md px-3 py-2 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
-        nested && "ml-2 w-[calc(100%-0.5rem)] py-1.5 text-xs",
-        !inset && "gap-3",
-        nested && !inset && "pl-5",
-        nested && inset && "pl-[46px]",
-        !nested && inset && "pl-[40px]",
+        "flex w-full items-center text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+        // Layout and Heights
+        depth === 0 ? "h-9 rounded-md px-3 text-sm" : 
+        depth === 1 ? "h-[32px] ml-2 w-[calc(100%-0.5rem)] rounded-md pl-4 pr-3 text-sm" : 
+                      "h-[30px] ml-4 w-[calc(100%-1rem)] rounded-md pl-6 pr-3 text-xs",
+        // Colors
         active
-          ? nested
-            ? "bg-indigo-50 font-semibold text-indigo-700 dark:bg-indigo-950 dark:text-indigo-200"
-            : "bg-indigo-600 text-white shadow-sm"
+          ? depth > 0
+            ? "bg-indigo-50/80 font-semibold text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-200"
+            : "bg-indigo-600 font-medium text-white shadow-sm"
           : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
       )}
       onClick={onClick}
       type="button"
     >
-      {children}
+      {depth === 0 && Icon && <Icon className="mr-2 h-[18px] w-[18px] shrink-0" />}
+      {depth === 1 && <div className={cn("mr-2 h-1 w-1 shrink-0 rounded-full", active ? "bg-indigo-600 dark:bg-indigo-400" : "bg-zinc-400 dark:bg-zinc-600")} />}
+      {depth === 2 && <div className={cn("mr-[7px] h-[3px] w-[3px] shrink-0 rounded-full", active ? "bg-indigo-600 dark:bg-indigo-400" : "bg-zinc-400 dark:bg-zinc-600")} />}
+      <span className="min-w-0 flex-1 truncate">{label}</span>
     </button>
   );
 }
@@ -106,55 +106,66 @@ function CollapsibleSection({
   children,
   icon: Icon,
   label,
-  nested = false,
+  depth = 0,
   onNavigate,
   onToggle,
   open,
 }: {
   active: boolean;
   children: ReactNode;
-  icon: LucideIcon;
+  icon?: LucideIcon;
   label: string;
-  nested?: boolean;
+  depth?: 0 | 1;
   onNavigate: () => void;
   onToggle: () => void;
   open: boolean;
 }) {
   return (
-    <div className={cn("space-y-1", nested && "ml-2 border-l border-zinc-200 pl-1 dark:border-zinc-800")}>
+    <div className="space-y-0.5">
       <div
         className={cn(
-          "flex items-center rounded-md",
+          "flex items-center rounded-md transition-colors",
+          depth === 1 && "ml-2 w-[calc(100%-0.5rem)]",
           active
-            ? nested
-              ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-200"
-              : "bg-indigo-600 text-white shadow-sm"
+            ? depth > 0
+              ? "bg-indigo-50/80 font-semibold text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-200"
+              : "bg-indigo-600 font-medium text-white shadow-sm"
             : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
         )}
       >
         <button
           aria-current={active ? "page" : undefined}
+          title={label}
           className={cn(
-            "flex min-w-0 flex-1 items-center gap-3 px-3 py-2 text-left text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-300",
-            nested && "py-1.5 text-xs"
+            "flex min-w-0 flex-1 items-center text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-300",
+            depth === 0 ? "h-9 px-3 text-sm" : "h-[32px] pl-4 text-sm"
           )}
           onClick={onNavigate}
           type="button"
         >
-          <Icon className="h-4 w-4 shrink-0" />
+          {depth === 0 && Icon && <Icon className="mr-2 h-[18px] w-[18px] shrink-0" />}
+          {depth === 1 && (
+            <div
+              className={cn(
+                "mr-2 h-1 w-1 shrink-0 rounded-full",
+                active ? "bg-indigo-600 dark:bg-indigo-400" : "bg-zinc-400 dark:bg-zinc-600",
+                open && !active && "bg-zinc-500 dark:bg-zinc-400"
+              )}
+            />
+          )}
           <span className="truncate">{label}</span>
         </button>
         <button
           aria-expanded={open}
           aria-label={`${label} 하위 메뉴 ${open ? "접기" : "펼치기"}`}
-          className="mr-1 grid h-8 w-8 place-items-center rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+          className="mr-1 grid h-8 w-8 shrink-0 place-items-center rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
           onClick={onToggle}
           type="button"
         >
-          <ChevronDown className={cn("h-4 w-4 transition-transform", open && "rotate-180")} />
+          <ChevronDown className={cn("h-4 w-4 shrink-0 transition-transform", open && "rotate-180")} />
         </button>
       </div>
-      {open ? <div className="space-y-1 border-l border-zinc-200 dark:border-zinc-800">{children}</div> : null}
+      {open ? <div className="space-y-0.5 pb-0.5 pt-0.5">{children}</div> : null}
     </div>
   );
 }
@@ -345,14 +356,18 @@ export function ExpandableSidebar({
         ) : null}
       </div>
 
-      <nav aria-label="OOM 메뉴" className="space-y-1">
-        <NavigationButton active={activeView === "about"} onClick={() => navigate("about")}>
-          <House className="h-4 w-4" />
-          오픽온미란?
-        </NavigationButton>
+      <nav aria-label="OOM 메뉴" className="space-y-0.5">
+        <NavigationButton
+          active={activeView === "about"}
+          depth={0}
+          icon={House}
+          label="오픽온미란?"
+          onClick={() => navigate("about")}
+        />
 
         <CollapsibleSection
           active={guideActive}
+          depth={0}
           icon={BookOpenCheck}
           label="OPIc 수험 가이드"
           onNavigate={() => {
@@ -365,20 +380,19 @@ export function ExpandableSidebar({
           {guideItems.map((item) => (
             <NavigationButton
               active={activeView === item.id}
+              depth={1}
               key={item.id}
-              nested
-              inset
+              label={item.label}
               onClick={() => {
                 setExpanded((prev) => new Set(prev).add("guide"));
                 navigate(item.id);
               }}
-            >
-              {item.label}
-            </NavigationButton>
+            />
           ))}
         </CollapsibleSection>
         <CollapsibleSection
           active={trainingActive}
+          depth={0}
           icon={CirclePlay}
           label="OPIc 실전 훈련하기"
           onNavigate={() => {
@@ -390,42 +404,35 @@ export function ExpandableSidebar({
         >
           <NavigationButton
             active={activeView === "training-setup"}
-            nested
+            depth={1}
+            label="STEP 1. 목표 구간 · 코스 설정"
             onClick={() => {
               setExpanded((prev) => new Set(prev).add("training"));
               navigate("training-setup");
             }}
-          >
-            <SlidersHorizontal className="h-3.5 w-3.5" />
-            STEP 1. 목표 구간 · 코스 설정
-          </NavigationButton>
+          />
           <NavigationButton
             active={activeView === "survey"}
-            nested
+            depth={1}
+            label="STEP 2. 추천 서베이 익히기"
             onClick={() => {
               setExpanded((prev) => new Set(prev).add("training"));
               navigate("survey");
             }}
-          >
-            <ClipboardList className="h-3.5 w-3.5" />
-            STEP 2. 추천 서베이 익히기
-          </NavigationButton>
+          />
           <NavigationButton
             active={activeView === "difficulty"}
-            nested
+            depth={1}
+            label="STEP 3. 난이도 설정"
             onClick={() => {
               setExpanded((prev) => new Set(prev).add("training"));
               navigate("difficulty");
             }}
-          >
-            <SlidersHorizontal className="h-3.5 w-3.5" />
-            STEP 3. 난이도 설정
-          </NavigationButton>
+          />
           <CollapsibleSection
             active={scriptActive}
-            icon={BookOpenText}
+            depth={1}
             label="STEP 4. 만능 스크립트"
-            nested
             onNavigate={() => {
               setExpanded((prev) => new Set(prev).add("script"));
               navigate("script-hub");
@@ -436,23 +443,20 @@ export function ExpandableSidebar({
             {scriptItems.map((item) => (
               <NavigationButton
                 active={activeView === item.id}
+                depth={2}
                 key={item.id}
-                nested
-                inset
+                label={item.label}
                 onClick={() => {
                   setExpanded((prev) => new Set(prev).add("script"));
                   navigate(item.id);
                 }}
-              >
-                {item.label}
-              </NavigationButton>
+              />
             ))}
           </CollapsibleSection>
           <CollapsibleSection
             active={roleplayActive}
-            icon={ChartNoAxesCombined}
+            depth={1}
             label="STEP 5. 롤플레이 공식"
-            nested
             onNavigate={() => {
               setExpanded((prev) => new Set(prev).add("roleplay"));
               navigate("roleplay-hub");
@@ -463,38 +467,40 @@ export function ExpandableSidebar({
             {roleplayItems.map((item) => (
               <NavigationButton
                 active={activeView === item.id}
+                depth={2}
                 key={item.id}
-                nested
-                inset
+                label={item.label}
                 onClick={() => {
                   setExpanded((prev) => new Set(prev).add("roleplay"));
                   navigate(item.id);
                 }}
-              >
-                {item.label}
-              </NavigationButton>
+              />
             ))}
           </CollapsibleSection>
           <NavigationButton
             active={activeView === "practice"}
-            nested
+            depth={1}
+            label="STEP 6. 실전 연습"
             onClick={() => {
               setExpanded((prev) => new Set(prev).add("training"));
               navigate("practice");
             }}
-          >
-            <Mic className="h-3.5 w-3.5" />
-            STEP 6. 실전 연습
-          </NavigationButton>
+          />
         </CollapsibleSection>
-        <NavigationButton active={activeView === "magazine-list"} onClick={() => navigate("magazine-list")}>
-          <BookOpenText className="h-4 w-4" />
-          오픽 매거진
-        </NavigationButton>
-        <NavigationButton active={activeView === "ai-settings"} onClick={() => navigate("ai-settings")}>
-          <Bot className="h-4 w-4" />
-          AI 피드백 / 설정
-        </NavigationButton>
+        <NavigationButton
+          active={activeView === "magazine-list"}
+          depth={0}
+          icon={BookOpenText}
+          label="오픽 매거진"
+          onClick={() => navigate("magazine-list")}
+        />
+        <NavigationButton
+          active={activeView === "ai-settings"}
+          depth={0}
+          icon={Bot}
+          label="AI 피드백 / 설정"
+          onClick={() => navigate("ai-settings")}
+        />
       </nav>
       <div className="mt-auto space-y-2">
         <button
@@ -521,7 +527,7 @@ export function ExpandableSidebar({
 
   return (
     <>
-      <aside className="hidden h-screen w-64 shrink-0 overflow-y-auto border-r border-zinc-200 dark:border-zinc-800 lg:block">
+      <aside className="oom-sidebar-scroll hidden h-screen w-64 shrink-0 overflow-y-auto border-r border-zinc-200 dark:border-zinc-800 lg:block">
         {content}
       </aside>
       {mobileOpen ? (
@@ -535,7 +541,7 @@ export function ExpandableSidebar({
           <aside
             aria-label="모바일 메뉴"
             aria-modal="true"
-            className="relative h-full w-72 max-w-[85vw] border-r border-zinc-200 bg-zinc-50 shadow-2xl dark:border-zinc-800 dark:bg-zinc-950"
+            className="oom-sidebar-scroll relative h-full w-72 max-w-[85vw] overflow-y-auto border-r border-zinc-200 bg-zinc-50 shadow-2xl dark:border-zinc-800 dark:bg-zinc-950"
             id="oom-mobile-navigation"
             onKeyDown={trapMobileFocus}
             ref={mobileDialogRef}

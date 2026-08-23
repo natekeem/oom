@@ -129,7 +129,7 @@ export function AppShell({
         onToggleDarkMode={onToggleDarkMode}
       />
       <main
-        className="flex min-h-screen min-w-0 flex-1 flex-col lg:h-screen lg:min-h-0 lg:overflow-y-auto"
+        className="oom-main-scroll flex min-h-screen min-w-0 flex-1 flex-col lg:h-screen lg:min-h-0 lg:overflow-y-auto"
         ref={mainRef}
       >
         {showTrainingHeader ? (

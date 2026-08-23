@@ -78,9 +78,9 @@ function NavigationButton({
       aria-current={active ? "page" : undefined}
       title={label}
       className={cn(
-        "flex w-full items-center text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+        "flex items-center text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
         // Layout and Heights
-        depth === 0 ? "h-9 rounded-md px-3 text-sm" : 
+        depth === 0 ? "h-9 w-full rounded-md px-3 text-sm" : 
         depth === 1 ? "h-[32px] ml-2 w-[calc(100%-0.5rem)] rounded-md pl-4 pr-3 text-sm" : 
                       "h-[30px] ml-4 w-[calc(100%-1rem)] rounded-md pl-6 pr-3 text-xs",
         // Colors
@@ -121,11 +121,11 @@ function CollapsibleSection({
   open: boolean;
 }) {
   return (
-    <div className="space-y-0.5">
+    <div className="space-y-0.5 w-full">
       <div
         className={cn(
           "flex items-center rounded-md transition-colors",
-          depth === 1 && "ml-2 w-[calc(100%-0.5rem)]",
+          depth === 0 ? "w-full" : "ml-2 w-[calc(100%-0.5rem)]",
           active
             ? depth > 0
               ? "bg-indigo-50/80 font-semibold text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-200"
@@ -231,13 +231,72 @@ export function ExpandableSidebar({
     activeAncestors.add("training");
   }
 
+  const expandSmartly = (prev: Set<string>, section: string, forceKeepDescendants = false) => {
+    if (mobileOpen) {
+      const next = new Set<string>();
+      next.add(section);
+      if (section === "script" || section === "roleplay") next.add("training");
+      return next;
+    }
+
+    const next = new Set(prev);
+    if (section === "guide") {
+      next.add("guide");
+      next.delete("training");
+      next.delete("script");
+      next.delete("roleplay");
+    } else if (section === "training") {
+      next.add("training");
+      next.delete("guide");
+      if (!forceKeepDescendants) {
+        next.delete("script");
+        next.delete("roleplay");
+      }
+    } else if (section === "script") {
+      next.add("script");
+      next.delete("roleplay");
+      next.add("training");
+      next.delete("guide");
+    } else if (section === "roleplay") {
+      next.add("roleplay");
+      next.delete("script");
+      next.add("training");
+      next.delete("guide");
+    }
+    return next;
+  };
+
   const [expanded, setExpanded] = useState<Set<string>>(() => {
     try {
       const stored = sessionStorage.getItem("oom.sidebar.expanded");
       if (stored) {
         const parsed = new Set<string>(JSON.parse(stored));
-        for (const a of activeAncestors) parsed.add(a);
-        return parsed;
+        const next = new Set<string>();
+        
+        const hasRoute = activeAncestors.size > 0;
+        let routeTarget = "";
+        if (activeAncestors.has("script")) routeTarget = "script";
+        else if (activeAncestors.has("roleplay")) routeTarget = "roleplay";
+        else if (activeAncestors.has("guide")) routeTarget = "guide";
+        else if (activeAncestors.has("training")) routeTarget = "training";
+
+        let restoredTarget = "";
+        if (parsed.has("script")) restoredTarget = "script";
+        else if (parsed.has("roleplay")) restoredTarget = "roleplay";
+        else if (parsed.has("guide")) restoredTarget = "guide";
+        else if (parsed.has("training")) restoredTarget = "training";
+
+        const target = hasRoute ? routeTarget : restoredTarget;
+        
+        if (target) {
+          if (target === "script") { next.add("script"); next.add("training"); }
+          else if (target === "roleplay") { next.add("roleplay"); next.add("training"); }
+          else if (target === "guide") { next.add("guide"); }
+          else if (target === "training") { next.add("training"); }
+        }
+        
+        for (const a of activeAncestors) next.add(a);
+        return next;
       }
     } catch {
       // Ignore sessionStorage parsing errors
@@ -253,14 +312,33 @@ export function ExpandableSidebar({
   if (activeView !== prevActiveView) {
     setPrevActiveView(activeView);
     setExpanded((prev) => {
+      let next = new Set(prev);
       let changed = false;
-      const next = new Set(prev);
+      
+      if (activeAncestors.size > 0) {
+        let targetSection = "";
+        if (activeAncestors.has("script")) targetSection = "script";
+        else if (activeAncestors.has("roleplay")) targetSection = "roleplay";
+        else if (activeAncestors.has("guide")) targetSection = "guide";
+        else if (activeAncestors.has("training")) targetSection = "training";
+
+        if (targetSection && !next.has(targetSection)) {
+          next = expandSmartly(next, targetSection, true); 
+        }
+      }
+
       for (const anc of activeAncestors) {
         if (!next.has(anc)) {
           next.add(anc);
           changed = true;
         }
       }
+      
+      if (prev.size !== next.size) changed = true;
+      else {
+        for (const item of prev) if (!next.has(item)) changed = true;
+      }
+
       return changed ? next : prev;
     });
   }
@@ -274,18 +352,26 @@ export function ExpandableSidebar({
 
   const handleToggle = (section: string) => {
     setExpanded((prev) => {
-      const next = new Set(prev);
       if (mobileOpen) {
-        next.clear();
-        if (!prev.has(section)) next.add(section);
-      } else {
-        if (next.has(section)) {
-          next.delete(section);
-        } else {
+        const next = new Set<string>();
+        if (!prev.has(section)) {
           next.add(section);
+          if (section === "script" || section === "roleplay") next.add("training");
         }
+        return next;
       }
-      return next;
+
+      const next = new Set(prev);
+      if (next.has(section)) {
+        next.delete(section);
+        if (section === "training") {
+          next.delete("script");
+          next.delete("roleplay");
+        }
+        return next;
+      } else {
+        return expandSmartly(prev, section);
+      }
     });
   };
 
@@ -371,7 +457,7 @@ export function ExpandableSidebar({
           icon={BookOpenCheck}
           label="OPIc 수험 가이드"
           onNavigate={() => {
-            setExpanded((prev) => new Set(prev).add("guide"));
+            setExpanded((prev) => expandSmartly(prev, "guide"));
             navigate("exam-guide");
           }}
           onToggle={() => handleToggle("guide")}
@@ -384,7 +470,7 @@ export function ExpandableSidebar({
               key={item.id}
               label={item.label}
               onClick={() => {
-                setExpanded((prev) => new Set(prev).add("guide"));
+                setExpanded((prev) => expandSmartly(prev, "guide"));
                 navigate(item.id);
               }}
             />
@@ -396,7 +482,7 @@ export function ExpandableSidebar({
           icon={CirclePlay}
           label="OPIc 실전 훈련하기"
           onNavigate={() => {
-            setExpanded((prev) => new Set(prev).add("training"));
+            setExpanded((prev) => expandSmartly(prev, "training"));
             navigate("training-hub");
           }}
           onToggle={() => handleToggle("training")}
@@ -405,9 +491,9 @@ export function ExpandableSidebar({
           <NavigationButton
             active={activeView === "training-setup"}
             depth={1}
-            label="STEP 1. 목표 구간 · 코스 설정"
+            label="STEP 1. 목표 설정"
             onClick={() => {
-              setExpanded((prev) => new Set(prev).add("training"));
+              setExpanded((prev) => expandSmartly(prev, "training"));
               navigate("training-setup");
             }}
           />
@@ -416,7 +502,7 @@ export function ExpandableSidebar({
             depth={1}
             label="STEP 2. 추천 서베이 익히기"
             onClick={() => {
-              setExpanded((prev) => new Set(prev).add("training"));
+              setExpanded((prev) => expandSmartly(prev, "training"));
               navigate("survey");
             }}
           />
@@ -425,7 +511,7 @@ export function ExpandableSidebar({
             depth={1}
             label="STEP 3. 난이도 설정"
             onClick={() => {
-              setExpanded((prev) => new Set(prev).add("training"));
+              setExpanded((prev) => expandSmartly(prev, "training"));
               navigate("difficulty");
             }}
           />
@@ -434,7 +520,7 @@ export function ExpandableSidebar({
             depth={1}
             label="STEP 4. 만능 스크립트"
             onNavigate={() => {
-              setExpanded((prev) => new Set(prev).add("script"));
+              setExpanded((prev) => expandSmartly(prev, "script"));
               navigate("script-hub");
             }}
             onToggle={() => handleToggle("script")}
@@ -447,7 +533,7 @@ export function ExpandableSidebar({
                 key={item.id}
                 label={item.label}
                 onClick={() => {
-                  setExpanded((prev) => new Set(prev).add("script"));
+                  setExpanded((prev) => expandSmartly(prev, "script"));
                   navigate(item.id);
                 }}
               />
@@ -458,7 +544,7 @@ export function ExpandableSidebar({
             depth={1}
             label="STEP 5. 롤플레이 공식"
             onNavigate={() => {
-              setExpanded((prev) => new Set(prev).add("roleplay"));
+              setExpanded((prev) => expandSmartly(prev, "roleplay"));
               navigate("roleplay-hub");
             }}
             onToggle={() => handleToggle("roleplay")}
@@ -471,7 +557,7 @@ export function ExpandableSidebar({
                 key={item.id}
                 label={item.label}
                 onClick={() => {
-                  setExpanded((prev) => new Set(prev).add("roleplay"));
+                  setExpanded((prev) => expandSmartly(prev, "roleplay"));
                   navigate(item.id);
                 }}
               />
@@ -482,7 +568,7 @@ export function ExpandableSidebar({
             depth={1}
             label="STEP 6. 실전 연습"
             onClick={() => {
-              setExpanded((prev) => new Set(prev).add("training"));
+              setExpanded((prev) => expandSmartly(prev, "training"));
               navigate("practice");
             }}
           />

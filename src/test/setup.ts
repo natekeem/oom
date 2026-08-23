@@ -4,3 +4,5 @@ Object.defineProperty(window, "matchMedia", { writable: true, value: (query: str
 Object.defineProperty(window, "scrollTo", { writable: true, value: () => undefined });
 
 Object.defineProperty(window, "speechSynthesis", { writable: true, value: { cancel: () => undefined, speak: () => undefined, getVoices: () => [] } });
+
+window.HTMLElement.prototype.scrollIntoView = function() {};

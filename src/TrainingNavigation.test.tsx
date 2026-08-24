@@ -21,22 +21,31 @@ describe("training navigation", () => {
 
     expect(screen.queryByText("훈련 진행 0%")).not.toBeInTheDocument();
 
-    // /training/ is TrainingHub with overview
+    // /training/ is TrainingHub with 6 STEP overview
     expect(
       await screen.findByRole("heading", { name: "최소한의 스토리로, 더 많은 질문에 답하는 6 STEP 훈련" }, { timeout: 4000 })
     ).toBeInTheDocument();
     expect(screen.getByText("OPIc 실전 훈련 6 STEP 로드맵")).toBeInTheDocument();
 
-    // Click STEP 1 button
-    await user.click(screen.getByRole("button", { name: /STEP 1 이동/ }));
+    // Click STEP 1 button - look for "STEP 1 이동" button text
+    const step1Button = screen.getByRole("button", { name: /STEP 1 이동/ });
+    await user.click(step1Button);
+    
     expect(
       await screen.findByRole("heading", { name: "목표 구간과 학습 코스를 먼저 설정합니다." }, { timeout: 4000 })
     ).toBeInTheDocument();
     expect(screen.getByText("훈련 진행 0%")).toBeInTheDocument();
 
-    // Navigate to STEP 5 (roleplay)
-    await user.click(screen.getByRole("button", { name: /이전으로/ }));
-    await user.click(screen.getByRole("button", { name: /STEP 5 이동/ }));
+    // Navigate back to training hub and then to STEP 5
+    const backButton = screen.getByRole("button", { name: /이전으로/ });
+    await user.click(backButton);
+    
+    // Wait for training hub to appear again
+    await screen.findByRole("heading", { name: "최소한의 스토리로, 더 많은 질문에 답하는 6 STEP 훈련" });
+    
+    // Click STEP 5 button
+    const step5Button = screen.getByRole("button", { name: /STEP 5 이동/ });
+    await user.click(step5Button);
 
     // Wait for roleplay heading
     await waitFor(

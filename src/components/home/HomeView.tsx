@@ -24,10 +24,10 @@ export function HomeView() {
         </div>
         
         <div className="flex shrink-0 flex-wrap items-center gap-2">
-          <Link to="/training/" className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-3.5 py-2.5 text-[11px] font-bold text-white no-underline transition hover:bg-indigo-700 dark:bg-[#6259f4] dark:hover:bg-[#5148e7]">
+          <Link to="/training/" className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-3.5 py-2.5 text-[11px] font-bold text-white no-underline transition hover:bg-indigo-700">
             실전 훈련 둘러보기
           </Link>
-          <Link to="/exam-guide/" className="inline-flex items-center justify-center rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-[11px] font-bold text-zinc-700 no-underline transition hover:bg-zinc-50 dark:border-[#343743] dark:bg-transparent dark:text-[#d9dbe1] dark:hover:bg-[#1a1c23]">
+          <Link to="/exam-guide/" className="inline-flex items-center justify-center rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-[11px] font-bold text-zinc-700 no-underline transition hover:bg-zinc-50">
             수험 가이드
           </Link>
         </div>
@@ -85,6 +85,10 @@ export function HomeView() {
 
       <AboutSystemExplorer courses={courses} levels={levels} />
 
+      <div className="flex items-center gap-2.5 rounded-lg bg-indigo-50 px-4 py-3.5 text-[13px] text-indigo-900 dark:bg-indigo-950 dark:text-indigo-100 border border-indigo-200 dark:border-indigo-800">
+        <span className="text-sm font-semibold">주의:</span>
+        <span>AI 피드백은 공식 OPIc 점수·등급 판정이 아닙니다.</span>
+      </div>
     </div>
   );
 }

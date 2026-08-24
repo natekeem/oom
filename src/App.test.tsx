@@ -2,6 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
+import { SIDEBAR_EXPANDED_STORAGE_KEY } from "./components/layout/ExpandableSidebar";
 import { saveTrainingSelection } from "./training/storage";
 
 describe("OOM", () => {
@@ -45,5 +46,30 @@ describe("OOM", () => {
     await user.keyboard("{Escape}");
     expect(screen.queryByRole("dialog", { name: "모바일 메뉴" })).not.toBeInTheDocument();
     expect(trigger).toHaveFocus();
+  });
+
+  it("resets remembered sidebar sections after visiting the landing page", async () => {
+    sessionStorage.setItem(
+      SIDEBAR_EXPANDED_STORAGE_KEY,
+      JSON.stringify(["guide", "training", "script"])
+    );
+    const user = userEvent.setup();
+    render(<MemoryRouter initialEntries={["/"]}><App /></MemoryRouter>);
+
+    expect(await screen.findByRole("heading", { level: 1, name: /OPIc, ON ME/ })).toBeInTheDocument();
+    expect(sessionStorage.getItem(SIDEBAR_EXPANDED_STORAGE_KEY)).toBeNull();
+
+    await user.click(screen.getAllByRole("link", { name: /실전 훈련 둘러보기/ })[0]);
+    expect(
+      await screen.findByRole("heading", {
+        name: "최소한의 스토리로, 더 많은 질문에 답하는 6 STEP 훈련",
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "STEP 4. 만능 스크립트 하위 메뉴 펼치기" })
+    ).toHaveAttribute("aria-expanded", "false");
+    expect(
+      screen.getByRole("button", { name: "OPIc 수험 가이드 하위 메뉴 펼치기" })
+    ).toHaveAttribute("aria-expanded", "false");
   });
 });

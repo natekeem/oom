@@ -61,7 +61,7 @@ export function ScriptHub({ onNavigate }: { onNavigate: (view: ViewId) => void }
               {displayScripts.map((script) => {
                 const targetView = scriptSlotViewIds[script.slotIndex] ?? "script-outdoor";
                 return (
-                  <Card className="flex h-full flex-col p-5" key={script.id}>
+                  <Card className="flex h-full min-w-0 flex-col p-5" data-script-card key={script.id}>
                     <div className="flex items-center justify-between">
                       <Badge tone="indigo">{script.group}</Badge>
                       <Badge tone="emerald">{script.levelName}</Badge>
@@ -82,13 +82,15 @@ export function ScriptHub({ onNavigate }: { onNavigate: (view: ViewId) => void }
                         </span>
                       ))}
                     </div>
-                    <Button
-                      className="mt-6 w-full"
-                      onClick={() => onNavigate(targetView)}
-                      variant="secondary"
-                    >
-                      {script.group} 학습하기 <ArrowRight className="h-4 w-4" />
-                    </Button>
+                    <div className="mt-auto pt-6" data-script-card-action>
+                      <Button
+                        className="w-full whitespace-nowrap"
+                        onClick={() => onNavigate(targetView)}
+                        variant="secondary"
+                      >
+                        스크립트 학습하기 <ArrowRight className="h-4 w-4 shrink-0" />
+                      </Button>
+                    </div>
                   </Card>
                 );
               })}

@@ -25,6 +25,8 @@ type ExpandableSidebarProps = {
 
 type Item = { id: ViewId; label: string; icon?: LucideIcon };
 
+export const SIDEBAR_EXPANDED_STORAGE_KEY = "oom.sidebar.expanded";
+
 const guideItems: Item[] = [
   { id: "exam-overview", label: "소개 · 등급" },
   { id: "exam-screen", label: "시험 화면 · 조작법" },
@@ -264,7 +266,7 @@ export function ExpandableSidebar({
 
   const [expanded, setExpanded] = useState<Set<string>>(() => {
     try {
-      const stored = sessionStorage.getItem("oom.sidebar.expanded");
+      const stored = sessionStorage.getItem(SIDEBAR_EXPANDED_STORAGE_KEY);
       if (stored) {
         const parsed = new Set<string>(JSON.parse(stored));
         const next = new Set<string>();
@@ -301,7 +303,7 @@ export function ExpandableSidebar({
   });
 
   useEffect(() => {
-    sessionStorage.setItem("oom.sidebar.expanded", JSON.stringify([...expanded]));
+    sessionStorage.setItem(SIDEBAR_EXPANDED_STORAGE_KEY, JSON.stringify([...expanded]));
   }, [expanded]);
 
   const [prevActiveView, setPrevActiveView] = useState(activeView);

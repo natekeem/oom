@@ -72,4 +72,29 @@ describe("training navigation", () => {
     expect(screen.getAllByRole("button", { name: /시나리오 훈련/ }).length).toBeGreaterThanOrEqual(3);
     expect(screen.queryByText("EVA QUESTION")).not.toBeInTheDocument();
   });
+
+  it("keeps every STEP 4 learning action in a single-line card footer", async () => {
+    saveTrainingSelection({ courseId: "course-3", levelId: "advanced" });
+    const { container } = render(
+      <MemoryRouter initialEntries={["/training/scripts/"]}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(
+      await screen.findByRole("heading", {
+        name: "질문을 통째로 외우지 말고, 핵심 장면을 연습하세요.",
+      })
+    ).toBeInTheDocument();
+
+    const cards = Array.from(container.querySelectorAll("[data-script-card]"));
+    const actions = screen.getAllByRole("button", { name: "스크립트 학습하기" });
+    expect(cards).toHaveLength(4);
+    expect(actions).toHaveLength(4);
+    actions.forEach((action) => {
+      expect(action).toHaveClass("whitespace-nowrap");
+      expect(action.parentElement).toHaveAttribute("data-script-card-action");
+      expect(action.parentElement).toHaveClass("mt-auto", "pt-6");
+    });
+  });
 });

@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { AppShell } from "./components/layout/AppShell";
+import { SIDEBAR_EXPANDED_STORAGE_KEY } from "./components/layout/ExpandableSidebar";
 import { Toast } from "./components/ui/Toast";
 import type { ViewId } from "./components/layout/Sidebar";
 import { viewIdForPath, viewPathForId } from "./lib/routes";
@@ -166,6 +167,12 @@ export default function App() {
     window.scrollTo(0, 0);
     document.querySelector("main")?.scrollTo?.(0, 0);
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (isLanding) {
+      window.sessionStorage.removeItem(SIDEBAR_EXPANDED_STORAGE_KEY);
+    }
+  }, [isLanding]);
 
   useEffect(() => {
     if (!toast) return;

@@ -3,15 +3,18 @@ import { Link } from "react-router-dom";
 import { magazineArticles } from "../../data/magazine";
 import { Badge } from "../ui/Badge";
 import { Card } from "../ui/Card";
+import { topLevelNavigation } from "../layout/topLevelNavigation";
+import { PageIntro } from "../ui/PageIntro";
 
 export function MagazineList() {
   return (
     <div className="space-y-6">
-      <header className="max-w-4xl">
-        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-indigo-600 dark:text-indigo-300">OOM Magazine</p>
-        <h1 className="mt-2 text-balance text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">외우는 답에서, 나답게 이어 말하는 답으로</h1>
-        <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">짧게 훑고 필요한 글을 골라 읽을 수 있도록, 학습 노트를 목록으로 모았습니다.</p>
-      </header>
+      <PageIntro
+        description="짧게 훑고 필요한 글을 골라 읽을 수 있도록, 학습 노트를 목록으로 모았습니다."
+        icon={topLevelNavigation.magazine.icon}
+        tag={topLevelNavigation.magazine.label}
+        title="외우는 답에서, 나답게 이어 말하는 답으로"
+      />
 
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {magazineArticles.map((article) => (

@@ -4,7 +4,6 @@ import {
   ChartNoAxesCombined,
   ClipboardList,
   Compass,
-  Layers3,
   Mic,
   Route as RouteIcon,
   SlidersHorizontal,
@@ -17,6 +16,8 @@ import { Card } from "../ui/Card";
 import { useTrainingSelection } from "../../training/TrainingSelectionContext";
 import { discoveredCourses } from "../../training/courseRegistry";
 import { TRAINING_LEVELS } from "../../training/levels";
+import { topLevelNavigation } from "../layout/topLevelNavigation";
+import { PageIntro } from "../ui/PageIntro";
 
 const trainingSteps: Array<{
   id: ViewId;
@@ -88,20 +89,12 @@ export function TrainingHub({ onNavigate }: { onNavigate: (view: ViewId) => void
 
   return (
     <div className="space-y-8">
-      {/* Hero Section */}
-      <div>
-        <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
-          <Layers3 className="h-5 w-5" />
-          <Badge tone="indigo">OPIc 실전 훈련하기</Badge>
-        </div>
-        <h1 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
-          최소한의 스토리로, 더 많은 질문에 답하는 6 STEP 훈련
-        </h1>
-        <p className="mt-2 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">
-          많은 답변을 외우는 대신 서베이를 전략적으로 고정하고, 하나의 장면을 여러 질문에 재사용하며,
-          같은 이야기를 목표 등급에 맞게 성장시키는 훈련입니다.
-        </p>
-      </div>
+      <PageIntro
+        description="많은 답변을 외우는 대신 서베이를 전략적으로 고정하고, 하나의 장면을 여러 질문에 재사용하며, 같은 이야기를 목표 등급에 맞게 성장시키는 훈련입니다."
+        icon={topLevelNavigation.training.icon}
+        tag={topLevelNavigation.training.label}
+        title="최소한의 스토리로, 더 많은 질문에 답하는 6 STEP 훈련"
+      />
 
       {/* Purpose / Concept / Method Compact Section */}
       <div className="grid gap-4 md:grid-cols-3">

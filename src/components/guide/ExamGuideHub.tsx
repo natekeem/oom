@@ -13,9 +13,10 @@ import {
   examGuideSections,
   type ExamGuideSection,
 } from "../../data/examGuideContent";
-import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
+import { topLevelNavigation } from "../layout/topLevelNavigation";
+import { PageIntro } from "../ui/PageIntro";
 
 const iconsBySection: Record<ExamGuideSection, LucideIcon> = {
   "exam-overview": GraduationCap,
@@ -33,15 +34,12 @@ export function ExamGuideHub({
 }) {
   return (
     <div className="space-y-6">
-      <section className="border-l-4 border-indigo-500 pl-4">
-        <Badge tone="indigo">OPIc 수험 가이드</Badge>
-        <h1 className="mt-3 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
-          신청 전부터 성적 활용까지, 필요한 정보를 순서대로 확인하세요.
-        </h1>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">
-          시험의 구조와 등급을 이해하고, 시험 화면 조작법을 미리 익힌 뒤 신청 규정과 당일 준비물을 확인하여 성적·인증서까지 체계적으로 관리할 수 있도록 구성했습니다.
-        </p>
-      </section>
+      <PageIntro
+        description="시험의 구조와 등급을 이해하고, 시험 화면 조작법을 미리 익힌 뒤 신청 규정과 당일 준비물을 확인하여 성적·인증서까지 체계적으로 관리할 수 있도록 구성했습니다."
+        icon={topLevelNavigation.examGuide.icon}
+        tag={topLevelNavigation.examGuide.label}
+        title="신청 전부터 성적 활용까지, 필요한 정보를 순서대로 확인하세요."
+      />
 
       <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {examGuideSections.map((section) => {

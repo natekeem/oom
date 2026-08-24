@@ -28,6 +28,8 @@ The root route is the exception: `/` renders `src/landing/LandingPage.tsx` as an
 | `AppShell` | Desktop shell, fixed-height sidebar frame with main-content scrolling, mobile controls, training-only sticky header, progress bar, next-step button |
 | `ExpandableSidebar` | Desktop/mobile navigation, guide and training expanders, theme control |
 | `Sidebar.tsx` | `ViewId` contract and dynamic page-title mapping (`getViewTitle`) |
+| `topLevelNavigation.ts` | Shared labels and icons for top-level sidebar items and their matching page introductions |
+| `PageIntro` | Shared tag -> title -> description structure for the guide, training, magazine, and AI settings overview pages |
 | `Toast` | Shared completion, warning, and error feedback |
 | `OomBrandMark` | Shared inline-SVG OOM identity used by the landing navigation, active sidebar brand header, and About overview |
 

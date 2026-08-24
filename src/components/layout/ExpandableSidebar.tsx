@@ -1,10 +1,5 @@
 import {
-  Bot,
-  BookOpenCheck,
-  BookOpenText,
   ChevronDown,
-  CirclePlay,
-  House,
   Moon,
   Sparkles,
   Sun,
@@ -17,6 +12,7 @@ import type { ViewId } from "./Sidebar";
 import { useTrainingSelection } from "../../training/TrainingSelectionContext";
 import { resolveTrainingContext } from "../../training/courseRegistry";
 import { OomBrandMark } from "../brand/OomBrandMark";
+import { topLevelNavigation } from "./topLevelNavigation";
 
 type ExpandableSidebarProps = {
   activeView: ViewId;
@@ -446,16 +442,16 @@ export function ExpandableSidebar({
         <NavigationButton
           active={activeView === "about"}
           depth={0}
-          icon={House}
-          label="오픽온미란?"
+          icon={topLevelNavigation.about.icon}
+          label={topLevelNavigation.about.label}
           onClick={() => navigate("about")}
         />
 
         <CollapsibleSection
           active={guideActive}
           depth={0}
-          icon={BookOpenCheck}
-          label="OPIc 수험 가이드"
+          icon={topLevelNavigation.examGuide.icon}
+          label={topLevelNavigation.examGuide.label}
           onNavigate={() => {
             setExpanded((prev) => expandSmartly(prev, "guide"));
             navigate("exam-guide");
@@ -479,8 +475,8 @@ export function ExpandableSidebar({
         <CollapsibleSection
           active={trainingActive}
           depth={0}
-          icon={CirclePlay}
-          label="OPIc 실전 훈련하기"
+          icon={topLevelNavigation.training.icon}
+          label={topLevelNavigation.training.label}
           onNavigate={() => {
             setExpanded((prev) => expandSmartly(prev, "training"));
             navigate("training-hub");
@@ -576,15 +572,15 @@ export function ExpandableSidebar({
         <NavigationButton
           active={activeView === "magazine-list"}
           depth={0}
-          icon={BookOpenText}
-          label="오픽 매거진"
+          icon={topLevelNavigation.magazine.icon}
+          label={topLevelNavigation.magazine.label}
           onClick={() => navigate("magazine-list")}
         />
         <NavigationButton
           active={activeView === "ai-settings"}
           depth={0}
-          icon={Bot}
-          label="AI 피드백 / 설정"
+          icon={topLevelNavigation.aiSettings.icon}
+          label={topLevelNavigation.aiSettings.label}
           onClick={() => navigate("ai-settings")}
         />
       </nav>

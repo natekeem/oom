@@ -1,7 +1,9 @@
-import { Info, Sparkles } from "lucide-react";
+import { Info } from "lucide-react";
 import type { LlmSettings, SttSettings } from "../../types";
 import { Card } from "../ui/Card";
 import { AiSettingsPanel } from "./AiSettingsPanel";
+import { topLevelNavigation } from "../layout/topLevelNavigation";
+import { PageIntro } from "../ui/PageIntro";
 
 type AiSettingsViewProps = {
   settings: LlmSettings;
@@ -20,18 +22,12 @@ export function AiSettingsView({
 }: AiSettingsViewProps) {
   return (
     <div className="space-y-6">
-      <div>
-        <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
-          <Sparkles className="h-5 w-5" />
-          <span className="text-sm font-semibold">AI 피드백 / STT 설정</span>
-        </div>
-        <h1 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
-          내부 LLM 및 STT 서비스를 훈련 흐름에 연결합니다.
-        </h1>
-        <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-          브라우저에서 사내 API를 직접 호출합니다. API가 CORS 요청을 허용해야 하며, 설정되지 않아도 내장 질문과 훈련 기능은 계속 사용할 수 있습니다.
-        </p>
-      </div>
+      <PageIntro
+        description="브라우저에서 사내 API를 직접 호출합니다. API가 CORS 요청을 허용해야 하며, 설정되지 않아도 내장 질문과 훈련 기능은 계속 사용할 수 있습니다."
+        icon={topLevelNavigation.aiSettings.icon}
+        tag="AI 피드백 / STT 설정"
+        title="내부 LLM 및 STT 서비스를 훈련 흐름에 연결합니다."
+      />
       <AiSettingsPanel
         onChange={onChange}
         onSave={onSave}
@@ -73,4 +69,3 @@ function Feature({ title, text }: { title: string; text: string }) {
     </Card>
   );
 }
-

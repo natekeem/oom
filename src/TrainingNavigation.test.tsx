@@ -21,24 +21,24 @@ describe("training navigation", () => {
 
     expect(screen.queryByText("훈련 진행 0%")).not.toBeInTheDocument();
 
-    // /training/ is Overview Hub
+    // /training/ is TrainingHub with overview
     expect(
       await screen.findByRole("heading", { name: "최소한의 스토리로, 더 많은 질문에 답하는 6 STEP 훈련" }, { timeout: 4000 })
     ).toBeInTheDocument();
-    expect(screen.getByText("6 STEP 로드맵")).toBeInTheDocument();
+    expect(screen.getByText("OPIc 실전 훈련 6 STEP 로드맵")).toBeInTheDocument();
 
-    // Click STEP 1
-    await user.click(screen.getByRole("button", { name: "STEP 1. 목표 구간 · 코스 설정" }));
+    // Click STEP 1 button
+    await user.click(screen.getByRole("button", { name: /STEP 1 이동/ }));
     expect(
       await screen.findByRole("heading", { name: "목표 구간과 학습 코스를 먼저 설정합니다." }, { timeout: 4000 })
     ).toBeInTheDocument();
     expect(screen.getByText("훈련 진행 0%")).toBeInTheDocument();
 
-    // Click STEP 5
-    const step5Button = screen.getByRole("button", { name: "STEP 5. 롤플레이 공식" });
-    await user.click(step5Button);
+    // Navigate to STEP 5 (roleplay)
+    await user.click(screen.getByRole("button", { name: /이전으로/ }));
+    await user.click(screen.getByRole("button", { name: /STEP 5 이동/ }));
 
-    // Wait for heading
+    // Wait for roleplay heading
     await waitFor(
       () => expect(
         screen.getByRole("heading", {

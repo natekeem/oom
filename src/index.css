@@ -46,6 +46,8 @@
 @layer base {
   :root {
     --app-bg: #f4f4f5; /* zinc-100 */
+    --oom-wave-neutral: #a1a1aa; /* zinc-400 */
+    --oom-wave-progress: #6366f1; /* indigo-500 */
     --scroll-thumb: rgba(113, 113, 122, 0.3);
     --scroll-thumb-hover: rgba(82, 82, 91, 0.5);
     --sidebar-scroll-thumb: rgba(113, 113, 122, 0.2);
@@ -54,6 +56,8 @@
 
   html.dark {
     --app-bg: #09090b; /* zinc-950 */
+    --oom-wave-neutral: #52525b; /* zinc-600 */
+    --oom-wave-progress: #818cf8; /* indigo-400 */
     --scroll-thumb: rgba(161, 161, 170, 0.2);
     --scroll-thumb-hover: rgba(212, 212, 216, 0.4);
     --sidebar-scroll-thumb: rgba(161, 161, 170, 0.15);

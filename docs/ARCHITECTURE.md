@@ -13,6 +13,7 @@ OOM is a browser-only React application built by Vite. It has no server route, d
   - `oom-theme` for dark mode
   - `oom-llm-settings` for the user-entered LLM configuration
   - `oom-training-selection-v1` for the selected Course and Level
+  - `oom.tts.preferences` for independent exam-question and script-playback Kokoro voices
 - Deployment target: GitHub Pages or any static host serving `dist/`
 
 GitHub Pages has no server rewrite. `scripts/generate-static-routes.mjs` runs after Vite build and writes route-specific `dist/**/index.html` files with SEO metadata, canonical URLs, Open Graph tags, and static body content while preserving the built JavaScript bundle. Magazine routes read `src/data/magazine.ts` and render the article title, summary, takeaway, disclaimer, sections, paragraphs, bullets, examples, and notes into the route HTML so `view-source:` contains the learning article body.
@@ -75,10 +76,10 @@ Parent hubs explain the purpose of their child pages. Parent routes should not s
 | Training overview | `TrainingHub` | Overview Hub: 6 STEP overview roadmap, concept explanation |
 | Training setup | `TrainingSetupView` | STEP 1: Target level and course selection |
 | Survey | `BackgroundSurveySheet` | STEP 2: Recommended survey learning, full survey-like list, course-specific recommendation view, rehearsal mode and scoring |
-| Difficulty | `DifficultyGuide` | STEP 3: Source-owned Level presets plus a local-only exam difficulty preview that never mutates training selection |
-| Script training | `ScriptHub`, `ScriptDashboardV2`, `ScriptTrainingTabs`, `ScriptTrainingGuide`, `MemoryModeToggle`, `TtsControls` | STEP 4: One core story per group, same-story question variations, Level-aware replacement cues, and function-based answer blueprint |
+| Difficulty | `DifficultyGuide`, `VoiceSettings` | STEP 3: Source-owned Level presets plus a local-only exam difficulty preview and independent exam/script voice preferences; neither mutates training selection |
+| Script training | `ScriptHub`, `ScriptDashboardV2`, `ScriptTrainingTabs`, `ScriptTrainingGuide`, `MemoryModeToggle`, `TtsControls`, `OomWavePlayer` | STEP 4: One core story per group, same-story question variations, Level-aware replacement cues, function-based answer blueprint, and `scriptVoice` Kokoro playback with seekable Studio Bars |
 | Role-play | `RoleplayHub`, `RoleplayViewV2` | STEP 5: Quick scenario access plus a collapsible six-function CORE/OPTIONAL menu and three course-owned scenarios |
-| Practice | `PracticeView`, `ExamScreenShell`, `ExamInterviewer`, `PracticeReviewPanel`, `Recorder` | STEP 6: Audio-first exam console (listen count 0/2, EVA, level timer), headless recorder engine, in-memory replay, optional STT/editable transcript, KEEP/FIX/RETRY coaching, and same-question retry |
+| Practice | `PracticeView`, `ExamScreenShell`, `ExamInterviewer`, `OomWavePlayer`, `PracticeReviewPanel`, `Recorder` | STEP 6: Audio-first exam console using `examVoice` without bypassing listen count 0/2, compact non-seekable Studio Bars, EVA, level timer, headless recorder engine, in-memory replay, optional STT/editable transcript, KEEP/FIX/RETRY coaching, and same-question retry |
 | AI settings | `AiSettingsView`, `AiSettingsPanel` | Runtime-only LLM and STT endpoint / request-shape configuration |
 | Legal pages | `LegalPageView` | About, privacy, contact, terms, editorial policy, and image credit content for public trust and static SEO |
 
@@ -129,13 +130,15 @@ Do not duplicate these values in view components. Add to the relevant data owner
 
 | Capability | Module | Behavior |
 | --- | --- | --- |
-| TTS | `lib/speech.ts` | Uses Web Speech API, prefers `en-US`, then `en-GB`, then other English voices |
+| TTS | `lib/tts/*`, `workers/kokoro.worker.ts`, `lib/speech.ts` | Lazily loads one q8/WASM Kokoro model in a Worker, queues browser-local generation, combines sentence segments into one WAV so long scripts are not truncated, keeps a small session audio cache, and preserves Web Speech (`en-US` → `en-GB` → other English) as the failure fallback |
 | Recording | `lib/recorder.ts` and `Recorder` | Uses `MediaRecorder` and `getUserMedia`; `mode="engine"` preserves lifecycle without rendering duplicate controls; audio remains in browser memory |
 | LLM | `lib/llm.ts` | Calls the configured endpoint directly from the browser |
 
 `callInternalLlm` supports OpenAI-compatible, generic messages, and custom JSON-body modes. The app can send Bearer, `x-api-key`, or no authentication header. Endpoint CORS support is required.
 
 Never put a real API key in source, fixtures, documentation examples, or commits.
+
+Phase 1 Kokoro model files are fetched from the configured Hugging Face model source only on first TTS use and use the browser cache. They are not bundled at app startup or mirrored into this repository; a self-hosted model source remains a separate Phase 2 concern behind the same TTS engine boundary.
 
 The AdSense loader is route-aware. Content routes may load the publisher script, while practice, AI settings, magazine index, and legal/trust routes do not load it. `scripts/generate-static-routes.mjs` applies the same rule to crawler-visible HTML.
 

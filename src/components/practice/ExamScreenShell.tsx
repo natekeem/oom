@@ -8,6 +8,7 @@ import {
   Square,
   Volume2,
 } from "lucide-react";
+import type { ReactNode } from "react";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { ExamInterviewer } from "./ExamInterviewer";
@@ -84,6 +85,8 @@ type ExamScreenShellProps = {
   activeAnnotation?: number;
   onAnnotationSelect?: (id: number) => void;
   questionChanged?: boolean;
+  audioPlayer?: ReactNode;
+  ttsStatus?: string;
 };
 
 /**
@@ -120,6 +123,8 @@ export function ExamScreenShell({
   activeAnnotation,
   onAnnotationSelect,
   questionChanged = false,
+  audioPlayer,
+  ttsStatus,
 }: ExamScreenShellProps) {
   const recording = state === "recording";
   const canListen = !recording && !isSpeaking && listenCount < maxListenCount && Boolean(questionPrompt);
@@ -225,15 +230,16 @@ export function ExamScreenShell({
                   </button>
                 </div>
                 <p className="mt-3 text-xs font-medium text-zinc-300">
-                  {isSpeaking
+                  {ttsStatus ?? (isSpeaking
                     ? "질문 음성을 재생하고 있습니다..."
                     : listenCount >= maxListenCount
                     ? "청취 횟수(최대 2회)가 완료되었습니다."
-                    : "버튼을 눌러 질문을 청취하세요."}
+                    : "버튼을 눌러 질문을 청취하세요.")}
                 </p>
                 <p className="mt-1 text-[11px] text-zinc-500">
                   실제 시험에서는 질문을 최대 2회까지 들을 수 있습니다.
                 </p>
+                {audioPlayer ? <div className="mt-3 w-full min-w-0">{audioPlayer}</div> : null}
               </div>
 
               {/* Spacing alignment */}

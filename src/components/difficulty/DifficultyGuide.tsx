@@ -7,6 +7,7 @@ import { TrainingSelectionGuard } from "../training/TrainingSelectionGuard";
 import type { ViewId } from "../layout/Sidebar";
 import type { ResolvedTrainingContext } from "../../training/types";
 import { TRAINING_LEVELS, formatTrainingPreset } from "../../training/levels";
+import { VoiceSettings } from "./VoiceSettings";
 
 function DifficultyGuideContent({
   resolved,
@@ -94,6 +95,7 @@ function DifficultyGuideContent({
           </div>
         </Card>
       </div>
+      <VoiceSettings />
       <section className="grid gap-5 lg:grid-cols-3">
         {TRAINING_LEVELS.map((level) => {
           const active = level.id === currentLevel.id;

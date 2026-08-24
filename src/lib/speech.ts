@@ -17,7 +17,13 @@ export function stopSpeech() {
   }
 }
 
-export function speakText(text: string, rate: number) {
+export type SpeechCallbacks = {
+  onStart?: () => void;
+  onEnd?: () => void;
+  onError?: (error: SpeechSynthesisErrorEvent) => void;
+};
+
+export function speakText(text: string, rate: number, callbacks?: SpeechCallbacks) {
   if (!isSpeechSupported()) {
     throw new Error("이 브라우저는 음성 읽기 기능을 지원하지 않습니다.");
   }
@@ -28,5 +34,9 @@ export function speakText(text: string, rate: number) {
   utterance.lang = voice?.lang ?? "en-US";
   utterance.voice = voice ?? null;
   utterance.rate = rate;
+  utterance.onstart = () => callbacks?.onStart?.();
+  utterance.onend = () => callbacks?.onEnd?.();
+  utterance.onerror = (event) => callbacks?.onError?.(event);
   window.speechSynthesis.speak(utterance);
+  return utterance;
 }

@@ -39,7 +39,7 @@ OOM은 사내 구성원이 OPIc 영어 말하기를 체계적으로 연습하도
 - 스크립트 전체/블라인드/키워드 암기 모드
 - canonical bilingual base question, 질문 변형별 bilingual prompt와 full-answer before/after, Level-aware KEEP / CHANGE / DROP, 그리고 canonical 선택 fact의 `이 질문에서는 필수` 승격
 - 원문을 바꾸지 않고 모든 Level에서 3개 학습 구간을 파생하며, 선택 확장은 해당 구간 안의 1~2개 fact로만 연습
-- Web Speech API 기반 영어 TTS와 속도 조절
+- 브라우저 로컬 Kokoro 영어 TTS(시험/스크립트 음성 분리), 실제 음원 파형, Web Speech API fallback과 속도 조절
 - 클립보드 복사 피드백
 - MediaRecorder 기반 브라우저 내 녹음 및 재생
 - 브라우저 `localStorage` 기반 내부 LLM 설정

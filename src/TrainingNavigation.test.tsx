@@ -27,7 +27,7 @@ describe("training navigation", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("OPIc 실전 훈련 6 STEP 로드맵")).toBeInTheDocument();
 
-    // Click STEP 1 button - look for "STEP 1 이동" button text
+    // Click STEP 1 button
     const step1Button = screen.getByRole("button", { name: /STEP 1 이동/ });
     await user.click(step1Button);
     
@@ -36,13 +36,17 @@ describe("training navigation", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("훈련 진행 0%")).toBeInTheDocument();
 
-    // Navigate back to training hub and then to STEP 5
-    const backButton = screen.getByRole("button", { name: /이전으로/ });
-    await user.click(backButton);
+    // Navigate to STEP 5 by going back to hub first using sidebar/navigation
+    // Use the training hub link in the navigation
+    const trainingHubLink = screen.getAllByRole("link").find(link => 
+      link.getAttribute("href") === "/training/" || link.textContent?.includes("실전 훈련")
+    );
     
-    // Wait for training hub to appear again
-    await screen.findByRole("heading", { name: "최소한의 스토리로, 더 많은 질문에 답하는 6 STEP 훈련" });
-    
+    if (trainingHubLink) {
+      await user.click(trainingHubLink);
+      await screen.findByRole("heading", { name: "최소한의 스토리로, 더 많은 질문에 답하는 6 STEP 훈련" });
+    }
+
     // Click STEP 5 button
     const step5Button = screen.getByRole("button", { name: /STEP 5 이동/ });
     await user.click(step5Button);

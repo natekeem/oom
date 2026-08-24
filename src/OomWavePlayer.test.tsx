@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { OomWavePlayer } from "./components/audio/OomWavePlayer";
 
 const waveMocks = vi.hoisted(() => ({
@@ -46,6 +47,31 @@ beforeEach(() => {
 });
 
 describe("OomWavePlayer", () => {
+  it("reserves the script player shell before audio exists and delegates Play intent", async () => {
+    const user = userEvent.setup();
+    const onRequestPlay = vi.fn();
+
+    render(
+      <OomWavePlayer
+        blob={null}
+        onRequestPlay={onRequestPlay}
+        shellState="idle"
+        statusText="재생하면 음성을 준비합니다."
+        variant="script"
+      />,
+    );
+
+    expect(screen.getByTestId("oom-wave-player-script")).toHaveAttribute(
+      "data-state",
+      "idle",
+    );
+    expect(screen.getByRole("status")).toHaveTextContent("재생하면 음성을 준비합니다.");
+    expect(waveMocks.create).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole("button", { name: "영어 스크립트 재생" }));
+    expect(onRequestPlay).toHaveBeenCalledOnce();
+  });
+
   it("mounts actual Blob audio with non-seekable compact exam policy and cleans up", () => {
     const blob = new Blob(["audio"], { type: "audio/wav" });
     const { unmount } = render(
@@ -82,6 +108,9 @@ describe("OomWavePlayer", () => {
     expect(waveMocks.destroy).toHaveBeenCalledTimes(1);
     expect(URL.revokeObjectURL).toHaveBeenCalledTimes(1);
     expect(waveMocks.create).toHaveBeenCalledTimes(2);
+
+    rerender(<OomWavePlayer blob={null} shellState="idle" variant="script" />);
+    expect(screen.getByText("0:00 / 0:00")).toBeInTheDocument();
 
     unmount();
     expect(waveMocks.destroy).toHaveBeenCalledTimes(2);

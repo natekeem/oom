@@ -245,9 +245,14 @@ export function ScriptDetail({ script, settings, onToast }: ScriptDetailProps) {
           </section>
         )}
 
-        <div className="mt-5 flex flex-col gap-4 border-t border-zinc-100 pt-5 dark:border-zinc-800 sm:flex-row sm:items-center sm:justify-between">
-          <TtsControls onError={(message) => onToast("TTS 오류", message, "error")} text={script.englishScript} />
-          <div className="flex flex-wrap gap-2">
+        <div className="mt-5 space-y-4 border-t border-zinc-100 pt-5 dark:border-zinc-800">
+          <TtsControls
+            key={`tts:${structureKey}`}
+            levelId={script.trainingLevelId ?? "advanced"}
+            onError={(message) => onToast("TTS 오류", message, "error")}
+            text={script.englishScript}
+          />
+          <div className="flex flex-wrap justify-end gap-2">
             <Button aria-label="영어 스크립트 복사" onClick={copyScript} size="sm" variant="secondary"><Clipboard className="h-3.5 w-3.5" />복사</Button>
             <Button aria-label="AI로 자연스럽게 스크립트 변형" disabled={variationLoading} onClick={createVariation} size="sm"><Sparkles className="h-3.5 w-3.5" />{variationLoading ? "변형 중" : "AI로 자연스럽게 변형"}</Button>
           </div>

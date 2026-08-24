@@ -53,6 +53,15 @@ self.addEventListener("message", async (event: MessageEvent<GenerateMessage>) =>
 
     const segments = splitTtsText(message.text);
     const chunks: PcmAudioChunk[] = [];
+    const generationStartedAt = performance.now();
+
+    self.postMessage({
+      type: "generation-progress",
+      requestId: message.requestId,
+      progress: 0,
+      completedChunks: 0,
+      totalChunks: segments.length,
+    });
 
     for (let index = 0; index < segments.length; index += 1) {
       const audio = await tts.generate(segments[index], {
@@ -64,6 +73,8 @@ self.addEventListener("message", async (event: MessageEvent<GenerateMessage>) =>
         type: "generation-progress",
         requestId: message.requestId,
         progress: ((index + 1) / segments.length) * 100,
+        completedChunks: index + 1,
+        totalChunks: segments.length,
       });
     }
 
@@ -73,6 +84,9 @@ self.addEventListener("message", async (event: MessageEvent<GenerateMessage>) =>
       type: "generated",
       requestId: message.requestId,
       blob: encodePcm16Wav(combined.audio, combined.sampleRate),
+      audioDurationSeconds: combined.audio.length / combined.sampleRate,
+      chunkCount: segments.length,
+      generationMs: performance.now() - generationStartedAt,
     });
   } catch (error) {
     self.postMessage({

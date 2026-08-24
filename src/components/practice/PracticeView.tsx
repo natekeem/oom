@@ -3,6 +3,7 @@ import { callInternalLlm } from "../../lib/llm";
 import { transcribeAudio } from "../../lib/stt";
 import { stopSpeech } from "../../lib/speech";
 import { getTtsManager } from "../../lib/tts/TtsManager";
+import { EXAM_TTS_RATE } from "../../lib/tts/ratePreferences";
 import type { TtsRuntimeStatus } from "../../lib/tts/types";
 import { useTtsPreferences } from "../../lib/tts/useTtsPreferences";
 import { formatTime } from "../../lib/utils";
@@ -203,7 +204,12 @@ function PracticeViewContent({
       return `음성 모델 준비 중 · 최초 1회${progress}`;
     }
     if (status.phase === "generating") {
-      const progress = typeof status.progress === "number" ? ` · ${Math.round(status.progress)}%` : "";
+      const progress =
+        typeof status.completedChunks === "number" && typeof status.totalChunks === "number"
+          ? ` · ${status.completedChunks}/${status.totalChunks}`
+          : typeof status.progress === "number"
+            ? ` · ${Math.round(status.progress)}%`
+            : "";
       return `질문 음성 생성 중${progress}`;
     }
     if (status.phase === "fallback") return "시스템 음성으로 재생 중";
@@ -227,7 +233,7 @@ function PracticeViewContent({
 
     try {
       const source = await getTtsManager().preparePlayback(
-        { text: question.prompt, voice: preferences.examVoice, speed: 0.95 },
+        { text: question.prompt, voice: preferences.examVoice, speed: EXAM_TTS_RATE },
         (status) => {
           if (requestId === listenRequestRef.current) {
             setQuestionTtsStatus(describeTtsStatus(status));

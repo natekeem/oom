@@ -23,6 +23,9 @@ export type TtsAudio = {
   mimeType: string;
   engine: "kokoro";
   voice: OomVoiceId;
+  audioDurationSeconds?: number;
+  chunkCount?: number;
+  engineGenerationMs?: number;
 };
 
 export type TtsRuntimePhase =
@@ -34,6 +37,8 @@ export type TtsRuntimePhase =
 export type TtsRuntimeStatus = {
   phase: TtsRuntimePhase;
   progress?: number;
+  completedChunks?: number;
+  totalChunks?: number;
 };
 
 export type TtsStatusListener = (status: TtsRuntimeStatus) => void;
@@ -55,6 +60,7 @@ export type TtsPlaybackSource =
       voice: OomVoiceId;
       engine: "kokoro";
       cached: boolean;
+      cacheHit: "memory" | "indexeddb" | "miss";
     }
   | {
       kind: "web-speech";

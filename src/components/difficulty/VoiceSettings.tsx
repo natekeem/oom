@@ -29,7 +29,12 @@ function statusMessage(status: TtsRuntimeStatus) {
     return `음성 모델 준비 중 · 최초 1회${progress}`;
   }
   if (status.phase === "generating") {
-    const progress = typeof status.progress === "number" ? ` · ${Math.round(status.progress)}%` : "";
+    const progress =
+      typeof status.completedChunks === "number" && typeof status.totalChunks === "number"
+        ? ` · ${status.completedChunks}/${status.totalChunks}`
+        : typeof status.progress === "number"
+          ? ` · ${Math.round(status.progress)}%`
+          : "";
     return `미리듣기 음성 생성 중${progress}`;
   }
   if (status.phase === "fallback") return "시스템 음성으로 재생 중";

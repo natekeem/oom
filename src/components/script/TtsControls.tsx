@@ -1,24 +1,36 @@
-import { LoaderCircle, Pause, Play, Volume2 } from "lucide-react";
+import { Volume2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { stopSpeech } from "../../lib/speech";
+import {
+  DEFAULT_SCRIPT_RATE_BY_LEVEL,
+  MAX_SCRIPT_RATE,
+  MIN_SCRIPT_RATE,
+  readScriptRate,
+  SCRIPT_RATE_STEP,
+  writeScriptRate,
+} from "../../lib/tts/ratePreferences";
 import { getTtsManager } from "../../lib/tts/TtsManager";
 import type { TtsRuntimeStatus } from "../../lib/tts/types";
 import { useTtsPreferences } from "../../lib/tts/useTtsPreferences";
+import type { TrainingLevelId } from "../../training/types";
 import { OomWavePlayer, type OomWavePlayerHandle } from "../audio/OomWavePlayer";
-import { Button } from "../ui/Button";
 
 type TtsControlsProps = {
   text: string;
+  levelId: TrainingLevelId;
   onError: (message: string) => void;
 };
 
-export function TtsControls({ text, onError }: TtsControlsProps) {
-  const [rate, setRate] = useState(1);
+type PlayerShellState = "idle" | "loading" | "ready" | "fallback" | "error";
+
+const IDLE_STATUS = "재생하면 음성을 준비합니다.";
+
+export function TtsControls({ text, levelId, onError }: TtsControlsProps) {
+  const [rate, setRate] = useState(() => readScriptRate(levelId));
   const [blob, setBlob] = useState<Blob | null>(null);
   const [playRequest, setPlayRequest] = useState(0);
-  const [status, setStatus] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [fallback, setFallback] = useState(false);
+  const [status, setStatus] = useState(IDLE_STATUS);
+  const [shellState, setShellState] = useState<PlayerShellState>("idle");
   const requestRef = useRef(0);
   const manualStopRef = useRef(false);
   const playerRef = useRef<OomWavePlayerHandle | null>(null);
@@ -33,28 +45,29 @@ export function TtsControls({ text, onError }: TtsControlsProps) {
 
   const updateStatus = (next: TtsRuntimeStatus) => {
     if (next.phase === "loading-model") {
-      const progress = typeof next.progress === "number" ? ` · ${Math.round(next.progress)}%` : "";
+      const progress =
+        typeof next.progress === "number" ? ` · ${Math.round(next.progress)}%` : "";
       setStatus(`음성 모델 준비 중 · 최초 1회${progress}`);
-      setLoading(true);
-      setFallback(false);
+      setShellState("loading");
       return;
     }
     if (next.phase === "generating") {
-      const progress = typeof next.progress === "number" ? ` · ${Math.round(next.progress)}%` : "";
-      setStatus(`스크립트 음성 생성 중${progress}`);
-      setLoading(true);
-      setFallback(false);
+      const chunkProgress =
+        typeof next.completedChunks === "number" && typeof next.totalChunks === "number"
+          ? ` · ${next.completedChunks}/${next.totalChunks}`
+          : typeof next.progress === "number"
+            ? ` · ${Math.round(next.progress)}%`
+            : "";
+      setStatus(`스크립트 음성 생성 중${chunkProgress}`);
+      setShellState("loading");
       return;
     }
     if (next.phase === "fallback") {
       setStatus("시스템 음성으로 재생 중");
-      setLoading(false);
-      setFallback(true);
+      setShellState("fallback");
       return;
     }
     setStatus("스크립트 음성 준비 완료");
-    setLoading(false);
-    setFallback(false);
   };
 
   const play = async () => {
@@ -64,9 +77,8 @@ export function TtsControls({ text, onError }: TtsControlsProps) {
     stopSpeech();
     manualStopRef.current = false;
     setBlob(null);
-    setStatus("음성 모델 준비 중 · 최초 1회");
-    setLoading(true);
-    setFallback(false);
+    setStatus("저장된 음성 확인 중");
+    setShellState("loading");
 
     try {
       const source = await getTtsManager().preparePlayback(
@@ -82,22 +94,29 @@ export function TtsControls({ text, onError }: TtsControlsProps) {
         setBlob(source.blob);
         setPlayRequest(requestId);
         setStatus("Kokoro 스크립트 음성 재생 중");
-        setLoading(false);
+        setShellState("ready");
         return;
       }
 
+      setShellState("fallback");
+      setStatus("시스템 음성으로 재생 중");
       source.play({
         onEnd: () => {
-          if (requestId === requestRef.current) setStatus("재생 완료");
+          if (requestId !== requestRef.current) return;
+          setStatus("시스템 음성 재생 완료");
+          setShellState("idle");
         },
         onError: () => {
           if (requestId !== requestRef.current) return;
           setStatus("시스템 음성을 재생할 수 없습니다.");
+          setShellState("error");
           onError("시스템 음성을 재생할 수 없습니다.");
         },
       });
     } catch (error) {
-      setLoading(false);
+      if (requestId !== requestRef.current) return;
+      setStatus("음성을 준비할 수 없습니다.");
+      setShellState("error");
       onError(error instanceof Error ? error.message : "음성 읽기를 시작할 수 없습니다.");
     }
   };
@@ -107,64 +126,107 @@ export function TtsControls({ text, onError }: TtsControlsProps) {
     manualStopRef.current = true;
     playerRef.current?.stop();
     stopSpeech();
-    setLoading(false);
-    setStatus("재생 정지");
+    if (blob) {
+      setShellState("ready");
+      setStatus("재생 정지");
+      return;
+    }
+    setShellState("idle");
+    setStatus(IDLE_STATUS);
   };
 
+  const handleRateChange = (nextRate: number) => {
+    stop();
+    setBlob(null);
+    setRate(nextRate);
+    writeScriptRate(levelId, nextRate);
+    setShellState("idle");
+    setStatus(IDLE_STATUS);
+  };
+
+  const defaultRate = DEFAULT_SCRIPT_RATE_BY_LEVEL[levelId];
+
   return (
-    <div className="min-w-0 flex-1 space-y-3">
-      <div className="flex flex-wrap items-center gap-3">
-        <Button aria-label="영어 스크립트 재생" disabled={loading} onClick={() => void play()} size="sm" variant="secondary">
-          {loading ? <LoaderCircle className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
-          듣기
-        </Button>
-        <Button aria-label="영어 스크립트 정지" onClick={stop} size="sm" variant="ghost"><Pause className="h-3.5 w-3.5" />정지</Button>
-        <label className="flex min-w-48 flex-1 items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
-          <Volume2 className="h-4 w-4" />
+    <div
+      className="w-full min-w-0 rounded-md border border-zinc-200 bg-zinc-50/75 p-3 dark:border-zinc-800 dark:bg-zinc-950/70 sm:p-4"
+      data-testid="script-audio-controls"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-[10px] font-extrabold tracking-[0.16em] text-zinc-500 dark:text-zinc-400">
+          SCRIPT AUDIO
+        </p>
+        <span aria-live="polite" className="sr-only">
+          {status}
+        </span>
+      </div>
+
+      <OomWavePlayer
+        autoPlayRequest={playRequest}
+        blob={blob}
+        className="mt-2"
+        onError={(error) => {
+          setShellState("error");
+          setStatus("음성을 재생할 수 없습니다.");
+          onError(error.message);
+        }}
+        onFinish={() => setStatus("재생 완료")}
+        onPlaybackChange={(playing) => {
+          if (playing) {
+            manualStopRef.current = false;
+            setStatus("Kokoro 스크립트 음성 재생 중");
+            return;
+          }
+          setStatus(manualStopRef.current ? "재생 정지" : "일시정지");
+          manualStopRef.current = false;
+        }}
+        onRequestPlay={() => void play()}
+        onRequestStop={stop}
+        ref={playerRef}
+        shellState={shellState}
+        statusText={status}
+        variant="script"
+      />
+
+      <div className="mt-3 border-t border-zinc-200 pt-3 dark:border-zinc-800">
+        <div className="flex items-center justify-between gap-3">
+          <label
+            className="flex items-center gap-1.5 text-xs font-semibold text-zinc-600 dark:text-zinc-300"
+            htmlFor="script-playback-rate"
+          >
+            <Volume2 className="h-3.5 w-3.5" />
+            재생 속도
+          </label>
+          <div className="flex items-center gap-1.5">
+            {Math.abs(rate - defaultRate) < Number.EPSILON ? (
+              <span className="rounded bg-zinc-200/80 px-1.5 py-0.5 text-[9px] font-bold text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+                기본
+              </span>
+            ) : null}
+            <span className="w-12 text-right text-xs font-extrabold text-zinc-800 dark:text-zinc-100">
+              {rate.toFixed(2)}×
+            </span>
+          </div>
+        </div>
+        <div className="mt-2 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2">
+          <span className="font-mono text-[9px] text-zinc-400 dark:text-zinc-500">
+            {MIN_SCRIPT_RATE.toFixed(2)}
+          </span>
           <input
-            aria-label="TTS 속도"
-            className="accent-indigo-600"
-            max="1.1"
-            min="0.8"
-            onChange={(event) => {
-              stop();
-              setBlob(null);
-              setRate(Number(event.target.value));
-            }}
-            step="0.1"
+            aria-label="스크립트 재생 속도"
+            className="h-4 w-full cursor-pointer accent-indigo-600"
+            id="script-playback-rate"
+            max={MAX_SCRIPT_RATE}
+            min={MIN_SCRIPT_RATE}
+            onChange={(event) => handleRateChange(Number(event.target.value))}
+            step={SCRIPT_RATE_STEP}
             type="range"
             value={rate}
           />
-          <span className="w-8 font-semibold text-zinc-800 dark:text-zinc-100">{rate.toFixed(1)}x</span>
-        </label>
+          <span className="font-mono text-[9px] text-zinc-400 dark:text-zinc-500">
+            {MAX_SCRIPT_RATE.toFixed(2)}
+          </span>
+        </div>
       </div>
-      {status ? (
-        <p
-          aria-live="polite"
-          className={`text-[11px] font-semibold ${fallback ? "text-amber-700 dark:text-amber-300" : "text-zinc-500 dark:text-zinc-400"}`}
-        >
-          {status}
-        </p>
-      ) : null}
-      {blob ? (
-        <OomWavePlayer
-          autoPlayRequest={playRequest}
-          blob={blob}
-          onError={(error) => onError(error.message)}
-          onFinish={() => setStatus("재생 완료")}
-          onPlaybackChange={(playing) => {
-            if (playing) {
-              manualStopRef.current = false;
-              setStatus("Kokoro 스크립트 음성 재생 중");
-              return;
-            }
-            setStatus(manualStopRef.current ? "재생 정지" : "일시정지");
-            manualStopRef.current = false;
-          }}
-          ref={playerRef}
-          variant="script"
-        />
-      ) : null}
     </div>
   );
 }

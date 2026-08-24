@@ -12,8 +12,21 @@ type WorkerMessage =
       payload?: { progress?: unknown };
     }
   | { type: "model-ready"; requestId: string }
-  | { type: "generation-progress"; requestId: string; progress: number }
-  | { type: "generated"; requestId: string; blob: Blob }
+  | {
+      type: "generation-progress";
+      requestId: string;
+      progress: number;
+      completedChunks: number;
+      totalChunks: number;
+    }
+  | {
+      type: "generated";
+      requestId: string;
+      blob: Blob;
+      audioDurationSeconds?: number;
+      chunkCount?: number;
+      generationMs?: number;
+    }
   | { type: "generate-error"; requestId: string; error?: string };
 
 type PendingRequest = {
@@ -83,7 +96,12 @@ export class KokoroBrowserEngine implements TtsEngine {
     }
 
     if (message.type === "generation-progress") {
-      pending.onStatus?.({ phase: "generating", progress: message.progress });
+      pending.onStatus?.({
+        phase: "generating",
+        progress: message.progress,
+        completedChunks: message.completedChunks,
+        totalChunks: message.totalChunks,
+      });
       return;
     }
 
@@ -96,6 +114,9 @@ export class KokoroBrowserEngine implements TtsEngine {
         mimeType: message.blob.type || "audio/wav",
         engine: "kokoro",
         voice: pending.voice,
+        audioDurationSeconds: message.audioDurationSeconds,
+        chunkCount: message.chunkCount,
+        engineGenerationMs: message.generationMs,
       });
       return;
     }

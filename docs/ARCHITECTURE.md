@@ -14,6 +14,8 @@ OOM is a browser-only React application built by Vite. It has no server route, d
   - `oom-llm-settings` for the user-entered LLM configuration
   - `oom-training-selection-v1` for the selected Course and Level
   - `oom.tts.preferences` for independent exam-question and script-playback Kokoro voices
+  - `oom.tts.scriptRates` for Level-specific STEP 4 playback rates
+  - bounded IndexedDB `oom-tts-audio-cache` for reusable Kokoro WAV Blobs and LRU metadata
 - Deployment target: GitHub Pages or any static host serving `dist/`
 
 GitHub Pages has no server rewrite. `scripts/generate-static-routes.mjs` runs after Vite build and writes route-specific `dist/**/index.html` files with SEO metadata, canonical URLs, Open Graph tags, and static body content while preserving the built JavaScript bundle. Magazine routes read `src/data/magazine.ts` and render the article title, summary, takeaway, disclaimer, sections, paragraphs, bullets, examples, and notes into the route HTML so `view-source:` contains the learning article body.
@@ -130,7 +132,7 @@ Do not duplicate these values in view components. Add to the relevant data owner
 
 | Capability | Module | Behavior |
 | --- | --- | --- |
-| TTS | `lib/tts/*`, `workers/kokoro.worker.ts`, `lib/speech.ts` | Lazily loads one q8/WASM Kokoro model in a Worker, queues browser-local generation, combines sentence segments into one WAV so long scripts are not truncated, keeps a small session audio cache, and preserves Web Speech (`en-US` → `en-GB` → other English) as the failure fallback |
+| TTS | `lib/tts/*`, `workers/kokoro.worker.ts`, `lib/speech.ts` | Lazily loads one q8/WASM Kokoro model in a Worker, queues browser-local generation, reports real sentence-chunk progress, combines segments into one WAV, keeps an 8-entry memory LRU plus optional 24-entry IndexedDB LRU keyed by model/voice/rate/text hash, and preserves Web Speech (`en-US` → `en-GB` → other English) as the failure fallback |
 | Recording | `lib/recorder.ts` and `Recorder` | Uses `MediaRecorder` and `getUserMedia`; `mode="engine"` preserves lifecycle without rendering duplicate controls; audio remains in browser memory |
 | LLM | `lib/llm.ts` | Calls the configured endpoint directly from the browser |
 
@@ -139,6 +141,8 @@ Do not duplicate these values in view components. Add to the relevant data owner
 Never put a real API key in source, fixtures, documentation examples, or commits.
 
 Phase 1 Kokoro model files are fetched from the configured Hugging Face model source only on first TTS use and use the browser cache. They are not bundled at app startup or mirrored into this repository; a self-hosted model source remains a separate Phase 2 concern behind the same TTS engine boundary.
+
+STEP 4 starts TTS cache lookup and generation only after Play intent. Script playback rate is stored per Level and participates in the cache key; STEP 6 exam-question playback remains fixed at 1.00×. IndexedDB is an optional optimization: unavailable storage, quota errors, and private-mode failures continue through memory cache, Kokoro generation, and the existing Web Speech fallback.
 
 The AdSense loader is route-aware. Content routes may load the publisher script, while practice, AI settings, magazine index, and legal/trust routes do not load it. `scripts/generate-static-routes.mjs` applies the same rule to crawler-visible HTML.
 

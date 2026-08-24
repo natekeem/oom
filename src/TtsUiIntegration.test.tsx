@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DifficultyGuide } from "./components/difficulty/DifficultyGuide";
 import { PracticeView } from "./components/practice/PracticeView";
@@ -12,6 +12,8 @@ import {
   TRAINING_SELECTION_STORAGE_KEY,
 } from "./training/storage";
 import { writeTtsPreferences } from "./lib/tts/preferences";
+import { SCRIPT_RATE_PREFERENCES_STORAGE_KEY } from "./lib/tts/ratePreferences";
+import type { TrainingLevelId } from "./training/types";
 import type { LlmSettings, ScriptItem } from "./types";
 
 const ttsMocks = vi.hoisted(() => ({
@@ -103,6 +105,8 @@ describe("voice preference consumers", () => {
     const script = getScript();
 
     render(<ScriptDetail onToast={vi.fn()} script={script} settings={settings} />);
+    expect(screen.getByTestId("oom-wave-player-script")).toHaveAttribute("data-state", "idle");
+    expect(screen.getAllByText("재생하면 음성을 준비합니다.")).toHaveLength(2);
     await user.click(screen.getByRole("button", { name: "영어 스크립트 재생" }));
 
     await waitFor(() =>
@@ -115,6 +119,86 @@ describe("voice preference consumers", () => {
         expect.any(Function),
       ),
     );
+  });
+
+  it("restores and stores compact script rates per Level without generating on slider input", async () => {
+    const { rerender } = render(
+      <ScriptDetail onToast={vi.fn()} script={getScript("advanced")} settings={settings} />,
+    );
+    const slider = screen.getByRole("slider", { name: "스크립트 재생 속도" });
+    expect(slider).toHaveValue("1");
+
+    fireEvent.change(slider, { target: { value: "1.05" } });
+    expect(ttsMocks.preparePlayback).not.toHaveBeenCalled();
+    expect(
+      JSON.parse(localStorage.getItem(SCRIPT_RATE_PREFERENCES_STORAGE_KEY) ?? "{}"),
+    ).toEqual({ advanced: 1.05 });
+
+    rerender(
+      <ScriptDetail onToast={vi.fn()} script={getScript("intermediate")} settings={settings} />,
+    );
+    await waitFor(() =>
+      expect(screen.getByRole("slider", { name: "스크립트 재생 속도" })).toHaveValue("0.95"),
+    );
+
+    rerender(
+      <ScriptDetail onToast={vi.fn()} script={getScript("foundation")} settings={settings} />,
+    );
+    await waitFor(() =>
+      expect(screen.getByRole("slider", { name: "스크립트 재생 속도" })).toHaveValue("0.9"),
+    );
+
+    rerender(
+      <ScriptDetail onToast={vi.fn()} script={getScript("advanced")} settings={settings} />,
+    );
+    await waitFor(() =>
+      expect(screen.getByRole("slider", { name: "스크립트 재생 속도" })).toHaveValue("1.05"),
+    );
+  });
+
+  it("keeps the same player shell while showing real chunk generation progress", async () => {
+    const user = userEvent.setup();
+    let resolvePlayback:
+      | ((source: {
+          kind: "web-speech";
+          voice: "af_bella";
+          fallback: true;
+          error: Error;
+          play: () => void;
+        }) => void)
+      | undefined;
+    ttsMocks.preparePlayback.mockImplementationOnce(
+      async (
+        _input: { voice: string },
+        onStatus?: (status: {
+          phase: string;
+          completedChunks?: number;
+          totalChunks?: number;
+        }) => void,
+      ) => {
+        onStatus?.({ phase: "generating", completedChunks: 6, totalChunks: 14 });
+        return new Promise((resolve) => {
+          resolvePlayback = resolve;
+        });
+      },
+    );
+
+    render(<ScriptDetail onToast={vi.fn()} script={getScript()} settings={settings} />);
+    const reservedShell = screen.getByTestId("oom-wave-player-script");
+    await user.click(screen.getByRole("button", { name: "영어 스크립트 재생" }));
+
+    expect(screen.getByTestId("oom-wave-player-script")).toBe(reservedShell);
+    expect(reservedShell).toHaveAttribute("data-state", "loading");
+    expect(screen.getAllByText("스크립트 음성 생성 중 · 6/14")).toHaveLength(2);
+
+    resolvePlayback?.({
+      kind: "web-speech",
+      voice: "af_bella",
+      fallback: true,
+      error: new Error("test fallback"),
+      play: vi.fn(),
+    });
+    await waitFor(() => expect(reservedShell).toHaveAttribute("data-state", "fallback"));
   });
 
   it("uses examVoice while preserving the 0/2 to 2/2 listen cap", async () => {
@@ -138,19 +222,19 @@ describe("voice preference consumers", () => {
     expect(listen).toBeDisabled();
     expect(ttsMocks.preparePlayback).toHaveBeenCalledTimes(2);
     for (const [input] of ttsMocks.preparePlayback.mock.calls) {
-      expect(input).toEqual(expect.objectContaining({ voice: "af_sarah", speed: 0.95 }));
+      expect(input).toEqual(expect.objectContaining({ voice: "af_sarah", speed: 1 }));
     }
   });
 });
 
-function getScript(): ScriptItem {
-  const resolved = resolveTrainingContext("course-1", "advanced");
+function getScript(levelId: TrainingLevelId = "advanced"): ScriptItem {
+  const resolved = resolveTrainingContext("course-1", levelId);
   const story = resolved.storylines[0];
   return {
     id: story.id,
     group: story.group,
     title: story.title,
-    goalLevel: "AL",
+    goalLevel: levelId === "advanced" ? "AL" : levelId === "intermediate" ? "IH" : "IM3",
     surveyBadges: story.surveyOptionIds,
     strategy: story.core.anchorScene,
     covers: story.core.reusableFor,
@@ -160,9 +244,9 @@ function getScript(): ScriptItem {
     koreanSummary: story.active.koreanSummary,
     englishScript: story.active.englishScript,
     pointNotes: story.active.skills,
-    trainingLevelId: "advanced",
-    trainingPresetLabel: "1구간 · AL · 60~90초",
-    targetSeconds: [60, 90],
+    trainingLevelId: levelId,
+    trainingPresetLabel: resolved.level.displayName,
+    targetSeconds: resolved.level.targetSeconds,
     trainingCourseId: "course-1",
     baseQuestion: story.baseQuestion,
   };

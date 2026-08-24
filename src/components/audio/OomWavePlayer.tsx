@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { Pause, Play, RotateCcw } from "lucide-react";
+import { LoaderCircle, Pause, Play, RotateCcw } from "lucide-react";
 import WaveSurfer from "wavesurfer.js";
 import { cn } from "../../lib/utils";
 
@@ -9,7 +9,7 @@ export type OomWavePlayerHandle = {
 };
 
 type OomWavePlayerProps = {
-  blob: Blob;
+  blob?: Blob | null;
   variant?: "exam" | "script";
   controls?: boolean;
   autoPlayRequest?: number;
@@ -18,6 +18,10 @@ type OomWavePlayerProps = {
   onPlaybackChange?: (playing: boolean) => void;
   onFinish?: () => void;
   onError?: (error: Error) => void;
+  shellState?: "idle" | "loading" | "ready" | "fallback" | "error";
+  statusText?: string;
+  onRequestPlay?: () => void;
+  onRequestStop?: () => void;
 };
 
 function formatAudioTime(value: number) {
@@ -47,6 +51,10 @@ export const OomWavePlayer = forwardRef<OomWavePlayerHandle, OomWavePlayerProps>
       onPlaybackChange,
       onFinish,
       onError,
+      shellState = blob ? "ready" : "idle",
+      statusText = "재생하면 음성을 준비합니다.",
+      onRequestPlay,
+      onRequestStop,
     },
     ref,
   ) {
@@ -101,7 +109,7 @@ export const OomWavePlayer = forwardRef<OomWavePlayerHandle, OomWavePlayerProps>
 
     useEffect(() => {
       const container = containerRef.current;
-      if (!container) return;
+      if (!container || !blob) return;
 
       readyRef.current = false;
       setPlaying(false);
@@ -188,6 +196,16 @@ export const OomWavePlayer = forwardRef<OomWavePlayerHandle, OomWavePlayerProps>
     };
 
     const consoleSurface = surface === "console";
+    const hasAudio = Boolean(blob);
+    const waveHeightClass = variant === "exam" ? "h-[34px]" : "h-[54px]";
+    const placeholderAction =
+      shellState === "loading" || shellState === "fallback" ? onRequestStop : onRequestPlay;
+    const placeholderActionLabel =
+      shellState === "loading"
+        ? "음성 준비 중지"
+        : shellState === "fallback"
+          ? "시스템 음성 정지"
+          : "영어 스크립트 재생";
 
     return (
       <div
@@ -197,23 +215,40 @@ export const OomWavePlayer = forwardRef<OomWavePlayerHandle, OomWavePlayerProps>
           className,
         )}
         data-seek-enabled={variant === "script"}
+        data-state={shellState}
         data-testid={`oom-wave-player-${variant}`}
       >
         {controls ? (
           <button
-            aria-label={playing ? "음성 일시정지" : finished ? "음성 다시 재생" : "음성 재생"}
+            aria-label={
+              hasAudio
+                ? playing
+                  ? "음성 일시정지"
+                  : finished
+                    ? "음성 다시 재생"
+                    : "음성 재생"
+                : placeholderActionLabel
+            }
             className={cn(
               "grid h-9 w-9 shrink-0 place-items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
               consoleSurface
                 ? "border-zinc-700 bg-zinc-900 text-zinc-100 hover:border-indigo-500 hover:text-indigo-300"
                 : "border-zinc-200 bg-white text-zinc-800 hover:border-indigo-300 hover:text-indigo-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:border-indigo-600 dark:hover:text-indigo-300",
             )}
-            onClick={() =>
-              void togglePlayback().catch((error) => callbacksRef.current.onError?.(error))
-            }
+            onClick={() => {
+              if (!hasAudio) {
+                placeholderAction?.();
+                return;
+              }
+              void togglePlayback().catch((error) => callbacksRef.current.onError?.(error));
+            }}
             type="button"
           >
-            {playing ? (
+            {!hasAudio && shellState === "loading" ? (
+              <LoaderCircle className="h-4 w-4 animate-spin" />
+            ) : !hasAudio && shellState === "fallback" ? (
+              <Pause className="h-4 w-4" />
+            ) : playing ? (
               <Pause className="h-4 w-4" />
             ) : finished ? (
               <RotateCcw className="h-4 w-4" />
@@ -224,19 +259,60 @@ export const OomWavePlayer = forwardRef<OomWavePlayerHandle, OomWavePlayerProps>
         ) : null}
 
         <div className="min-w-0">
-          <div
-            aria-label="생성된 음성 파형"
-            className="w-full min-w-0 overflow-hidden"
-            ref={containerRef}
-            role="img"
-          />
+          <div className={cn("relative w-full min-w-0 overflow-hidden", waveHeightClass)}>
+            {blob ? (
+              <div
+                aria-label="생성된 음성 파형"
+                className={cn("w-full min-w-0 overflow-hidden", waveHeightClass)}
+                ref={containerRef}
+                role="img"
+              />
+            ) : (
+              <div
+                aria-live="polite"
+                className={cn(
+                  "flex h-full flex-col justify-center gap-2",
+                  shellState === "loading" && "animate-pulse",
+                )}
+                role="status"
+              >
+                <div aria-hidden="true" className="flex items-center gap-1">
+                  {Array.from({ length: 18 }, (_, index) => (
+                    <span
+                      className={cn(
+                        "h-px min-w-1 flex-1 rounded-full",
+                        consoleSurface
+                          ? "bg-zinc-700"
+                          : "bg-zinc-300 dark:bg-zinc-700",
+                        index % 4 === 0 && "opacity-50",
+                      )}
+                      key={index}
+                    />
+                  ))}
+                </div>
+                <p
+                  className={cn(
+                    "truncate text-[10px] font-semibold",
+                    shellState === "error" || shellState === "fallback"
+                      ? "text-amber-700 dark:text-amber-300"
+                      : consoleSurface
+                        ? "text-zinc-400"
+                        : "text-zinc-500 dark:text-zinc-400",
+                  )}
+                >
+                  {statusText}
+                </p>
+              </div>
+            )}
+          </div>
           <p
             className={cn(
               "mt-1 text-right font-mono text-[10px]",
               consoleSurface ? "text-zinc-400" : "text-zinc-500 dark:text-zinc-400",
             )}
           >
-            {formatAudioTime(currentTime)} / {formatAudioTime(duration)}
+            {formatAudioTime(hasAudio ? currentTime : 0)} /{" "}
+            {formatAudioTime(hasAudio ? duration : 0)}
           </p>
         </div>
       </div>

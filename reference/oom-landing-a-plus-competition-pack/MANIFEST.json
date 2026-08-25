@@ -1,0 +1,147 @@
+[
+  {
+    "path": "README_START_HERE.md",
+    "bytes": 3969,
+    "sha256": "faeeda7dbc04aeb52d56f835781bcdd90d6b6639313a3e43737310cc98d2aa42"
+  },
+  {
+    "path": "docs/BRAND_LOGO_BRIEF.md",
+    "bytes": 1467,
+    "sha256": "a529b250b7ff37c99993fa56b6ed136643c5d2ffb6a800c86028f58ee0f8b1bd"
+  },
+  {
+    "path": "docs/CODEX_IMPLEMENTATION_PROMPT.md",
+    "bytes": 9603,
+    "sha256": "961b79580905ba1ac8e23006958108be76836bcd2a4828ec7c9ac6bb9f5d98a3"
+  },
+  {
+    "path": "docs/IMPLEMENTATION_PLAN.md",
+    "bytes": 2436,
+    "sha256": "e4938c08acca7a68da947da15fc631fe8dc92fc3c49f93740f83ff5981ee74d5"
+  },
+  {
+    "path": "docs/MOTION_CHOREOGRAPHY.md",
+    "bytes": 5105,
+    "sha256": "aa6c73ec96a5348af3ce0e0a2d0a6e033b5560d4e9e4beaecb684b55a7461ae2"
+  },
+  {
+    "path": "docs/PERFORMANCE_ACCESSIBILITY.md",
+    "bytes": 2511,
+    "sha256": "13f76ac2c3c38cd6ad79b5fa5f06c586f004969f9a473bb94e3301df431d55e1"
+  },
+  {
+    "path": "docs/PRD.md",
+    "bytes": 6189,
+    "sha256": "a07ae9e04f5179ec43fb68395544b159f99c1cfac4a0d4515462257dbffb0d96"
+  },
+  {
+    "path": "docs/QA_ACCEPTANCE.md",
+    "bytes": 1956,
+    "sha256": "d2159f6d9f2d3fb8e5c2470742168e820cf8c4fa8e05a608341cca7a0abc944d"
+  },
+  {
+    "path": "docs/REFERENCE_NOTES.md",
+    "bytes": 1296,
+    "sha256": "ef56d5b22fe58980e41cbc2dacb7e09938f00b530dcecf56ef426b346ef46563"
+  },
+  {
+    "path": "docs/TECH_ARCHITECTURE.md",
+    "bytes": 5556,
+    "sha256": "0dafa3a616ec696bf8c4fdde75f1de22154154b87385ada56f92c3600f4ce8dd"
+  },
+  {
+    "path": "reference/a-plus-prototype.html",
+    "bytes": 15016,
+    "sha256": "9898de36b821c87fb30d3c0839c3d872de52675ab7ebd364190b1eb96229de4d"
+  },
+  {
+    "path": "reference-react/README.md",
+    "bytes": 497,
+    "sha256": "a13846fece99ab20e2c071fb525cd77bbfaa96d84621be5c45a8d780d125843e"
+  },
+  {
+    "path": "reference-react/package-additions.json",
+    "bytes": 497,
+    "sha256": "519a2a9094baf7581aeaf60484afa7693bc2ae17773e60ececa9334087ecd3c6"
+  },
+  {
+    "path": "reference-react/src/landing/LandingPage.tsx",
+    "bytes": 2866,
+    "sha256": "7770a4576645688183fc3692bd32236f1f7e5f1ce7ab1a75c35800aa23833fdb"
+  },
+  {
+    "path": "reference-react/src/landing/ROUTE_INTEGRATION_EXAMPLE.tsx",
+    "bytes": 308,
+    "sha256": "15fa0a674eedb4df6b3d6ae6f7deabdd7e8979672ae7d1a7086951cd71bd4773"
+  },
+  {
+    "path": "reference-react/src/landing/components/PointerSignalTrail.tsx",
+    "bytes": 3826,
+    "sha256": "06530d562eae57cfb9e11691e89e9d39cb24c630b3d7b5631bdc346c8ccf9573"
+  },
+  {
+    "path": "reference-react/src/landing/hooks/useLandingCapabilities.ts",
+    "bytes": 1754,
+    "sha256": "26cd217b3eb721c3637fc8afef2a2cb4784d7158673e08d9b5054f0163247560"
+  },
+  {
+    "path": "reference-react/src/landing/hooks/useLandingLenis.ts",
+    "bytes": 767,
+    "sha256": "ffa5e2a20e0eef3fc568a797e9fb1a71e81c26e5b8af2a1c5eaf8a41eb7f3998"
+  },
+  {
+    "path": "reference-react/src/landing/hooks/useLandingScrollTimeline.ts",
+    "bytes": 2033,
+    "sha256": "d50ce870224f78282c52e92ad24721682f62acc4724d72429833bfff3ea3f4bd"
+  },
+  {
+    "path": "reference-react/src/landing/landingMotionStore.ts",
+    "bytes": 1016,
+    "sha256": "cb02fc09d3e0e5f898bdc688f135f2bfb78fa81d12f3de9bad019e4c60e7ad4b"
+  },
+  {
+    "path": "reference-react/src/landing/sections/ExamSection.tsx",
+    "bytes": 1746,
+    "sha256": "2a318486d0436f8fd9750648675afeccbbf9ae1683653882f40c802721a99f41"
+  },
+  {
+    "path": "reference-react/src/landing/sections/HeroSection.tsx",
+    "bytes": 1404,
+    "sha256": "c621e91ed78c6f7f0f27e92f3f5fb3867ffa1ba35cd5c920d8f6ff472fe188b9"
+  },
+  {
+    "path": "reference-react/src/landing/sections/JourneySection.tsx",
+    "bytes": 1252,
+    "sha256": "740a4f1c6d98a8f1f98baf02282e86888f8caebca221b594c2200713269f025e"
+  },
+  {
+    "path": "reference-react/src/landing/sections/LevelsSection.tsx",
+    "bytes": 1257,
+    "sha256": "3eb0e3e9f50dce25395fbc131143c077584a0b79d50360be0e5cec977e4faace"
+  },
+  {
+    "path": "reference-react/src/landing/sections/StorySection.tsx",
+    "bytes": 936,
+    "sha256": "f56d33fa47cb08e891d3b86ecc9a20178ea7a9544393ca36726e23b23e1a0d1b"
+  },
+  {
+    "path": "reference-react/src/landing/three/MorphingSignalPoints.tsx",
+    "bytes": 5121,
+    "sha256": "0f92758e55d3887f6311daeb1cdee96b234fe52725acd23270ee7916ac5016f7"
+  },
+  {
+    "path": "reference-react/src/landing/three/VoiceUniverseCanvas.tsx",
+    "bytes": 843,
+    "sha256": "67ee3e95fba578346e94b977112a34220f0342ac235b0540bdb9d4e8ffe242a2"
+  },
+  {
+    "path": "reference-react/src/landing/three/shaders/signal.frag.glsl",
+    "bytes": 278,
+    "sha256": "0b7361010e6f6ed7099c9a020b818baefeb1de7709fb4251125d8268f60ab4ca"
+  },
+  {
+    "path": "reference-react/src/landing/three/shaders/signal.vert.glsl",
+    "bytes": 605,
+    "sha256": "f167fb2ab4eebcc110c7341e5c13926abc9f9ac3b6ce762898aef656ae603044"
+  }
+]

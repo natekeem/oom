@@ -1,0 +1,132 @@
+[
+  {
+    "path": ".gitignore",
+    "bytes": 34,
+    "sha256": "dd70969fb0e63258af71d960052e6de9ff66ef389bf584e52e8b52dd6d85b1a6"
+  },
+  {
+    "path": "README.md",
+    "bytes": 3278,
+    "sha256": "239f1cec3a84fa30a9476d989303e23577947a05a8b54add556972f494d43452"
+  },
+  {
+    "path": "START_HERE.txt",
+    "bytes": 685,
+    "sha256": "a93f1354f952d7f32fb2b9d0fcb4e086af94228c97c8ecb8dfdcbc3f15e8333d"
+  },
+  {
+    "path": "docs/BACKEND_MIGRATION.md",
+    "bytes": 1776,
+    "sha256": "e14c4f889a3fc1c36d99d449616c9b01715ec3666a5c0e9fa59d7475412f2ac5"
+  },
+  {
+    "path": "docs/RESEARCH.md",
+    "bytes": 2089,
+    "sha256": "a7d3646c024bf74544556ae4f50fef8615c64e9b66b241837b7b57f1bae732f6"
+  },
+  {
+    "path": "docs/SELF_HOST_MODEL.md",
+    "bytes": 1023,
+    "sha256": "f34a56f511474754c3deec73ab45e7dc72687a287b25b02eaac18a99fcdb2c0f"
+  },
+  {
+    "path": "docs/WAVEFORM_DECISION.md",
+    "bytes": 1387,
+    "sha256": "da065a56fa2ada833630dddb2b4b0748a88552013b9fa33339132c5710d9cac5"
+  },
+  {
+    "path": "index.html",
+    "bytes": 480,
+    "sha256": "a6b912f7a257e9a3daab6e47a950cdbacb26d40909a82837028ef6fbf72e8f50"
+  },
+  {
+    "path": "package.json",
+    "bytes": 523,
+    "sha256": "b1acf46a2e43d87f1ffb4c91b744e0e6aed67f47bf95636926814c713c33e831"
+  },
+  {
+    "path": "public/models/README.md",
+    "bytes": 301,
+    "sha256": "f96f9df828f91e3b8020b702188fcef7e86429a3b3da12ad11a050a3eb1f11b1"
+  },
+  {
+    "path": "src/App.tsx",
+    "bytes": 13535,
+    "sha256": "5e955bb9a5d70fe1dfed777903dce3969cdb1200c8120c997ad1ad4646185822"
+  },
+  {
+    "path": "src/components/Rating.tsx",
+    "bytes": 549,
+    "sha256": "699a030a20bca92e5280dce26d212f6ef0ec3189669badc0004006c7e8f6e474"
+  },
+  {
+    "path": "src/components/SystemVoicePanel.tsx",
+    "bytes": 2036,
+    "sha256": "40b9ad7efac1ee432087b444995fd236e75d60ef2b9d1aa9b5d5c31fed6f3768"
+  },
+  {
+    "path": "src/components/VoiceCard.tsx",
+    "bytes": 2842,
+    "sha256": "d6f4313c4be9e521388ab785bcc7c653013880249b737b845a588b9910f247ff"
+  },
+  {
+    "path": "src/components/WavePlayer.tsx",
+    "bytes": 3000,
+    "sha256": "551f11cea8fda8ba1f4f5ce77a3f7d042637e29c01857e7c23922b804e48468f"
+  },
+  {
+    "path": "src/lib/kokoroClient.ts",
+    "bytes": 2862,
+    "sha256": "21ef021fc1922b9ed0bb45a8460c1566a2ba72906ba355a735a6215dcbd83237"
+  },
+  {
+    "path": "src/lib/types.ts",
+    "bytes": 623,
+    "sha256": "3a65cf4f973123ea07387fa4083fd1b1ee8966d5f0c645386ece882cab7b358d"
+  },
+  {
+    "path": "src/lib/voiceCandidates.ts",
+    "bytes": 1688,
+    "sha256": "15f44b4ff2d07e5871a9d3657c3c26b1b4c43e6df3037dc7c42b8740bb2bb894"
+  },
+  {
+    "path": "src/main.tsx",
+    "bytes": 238,
+    "sha256": "41431cb94a112ca05f90ca6037229d09d4bb8ecc1c27ae3bb3740ace8f01d2a6"
+  },
+  {
+    "path": "src/styles.css",
+    "bytes": 13018,
+    "sha256": "d2ff60b5b2810f7ab98d6f172c20831b4c72d24869d8ac35abd7107413ea543f"
+  },
+  {
+    "path": "src/vite-env.d.ts",
+    "bytes": 38,
+    "sha256": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5"
+  },
+  {
+    "path": "src/workers/kokoro.worker.ts",
+    "bytes": 3275,
+    "sha256": "b633a0b6b91d696ac26485c6ad58ed0276a0bdc3fe1da8d64ad0f4d3cbfccfc7"
+  },
+  {
+    "path": "tsconfig.app.json",
+    "bytes": 520,
+    "sha256": "ec0799efb62df990c329d3f7d0c0149eb0a32738abc797a2374f535751cb73f7"
+  },
+  {
+    "path": "tsconfig.json",
+    "bytes": 119,
+    "sha256": "770b4140bbb581e2dfd9ea9946ffc9c75a1d86ba7d2db5f77c83e37cbdf9d808"
+  },
+  {
+    "path": "tsconfig.node.json",
+    "bytes": 211,
+    "sha256": "4d899360a26430461f39fa0b9297a566eab26e2fc53c28c6eb34d3c5f344d9c6"
+  },
+  {
+    "path": "vite.config.ts",
+    "bytes": 392,
+    "sha256": "05c514c467c9c4a8f1a094a0ff04cb89861300ce6c7cdd84e22966df208ec080"
+  }
+]

@@ -1,0 +1,19 @@
+{
+  "pack": "OOM Exam Experience Pack",
+  "created_for": "natekeem/oom",
+  "primary_prompt": "PROMPT_GEMINI_36_FLASH.md",
+  "production_asset_candidates": [
+    "assets/generated/eva-interviewer-reference.png"
+  ],
+  "visual_targets": [
+    "assets/generated/exam-screen-wireframe.png",
+    "assets/generated/review-screen-wireframe.png"
+  ],
+  "reference_code": [
+    "reference-code/ExamInterviewer.reference.tsx",
+    "reference-code/ExamScreenShell.reference.tsx",
+    "reference-code/PracticeReviewPanel.reference.tsx",
+    "reference-code/ExamGuideScreen.reference.tsx",
+    "reference-code/sttUiStatus.reference.ts"
+  ]
+}

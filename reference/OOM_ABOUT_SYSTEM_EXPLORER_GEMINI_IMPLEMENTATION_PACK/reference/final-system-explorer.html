@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>OOM About — Final System Explorer</title>
+<style>
+:root{
+  --bg:#07080b;--side:#090a0e;--fg:#f5f6f9;--muted:#9299a8;
+  --panel:#11131a;--panel2:#171923;--line:#292c36;--line2:#3a3e4b;
+  --violet:#675eff;--violet2:#9ba6ff;--mint:#5ce0b4;--cyan:#72bfff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{height:100vh;overflow:hidden}
+button{font:inherit}
+.shell{display:grid;grid-template-columns:220px minmax(0,1fr);height:100vh}
+.sidebar{background:var(--side);border-right:1px solid #23252c;padding:16px 12px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:26px}
+.brandMark{width:34px;height:34px;border:1px solid #9ba8ff;border-radius:50%;display:grid;place-items:center;flex:none}
+.brandMark:after{content:"";width:12px;height:12px;border:2px solid #9ba8ff;border-radius:50%}
+.brand b{display:block;font-size:14px}.brand small{display:block;font-size:10px;color:#979dab;margin-top:2px}
+.nav{display:grid;gap:5px}.nav div{padding:9px 11px;border-radius:7px;color:#c7c9d2;font-size:12px}.nav .active{background:#5148e7;color:#fff}
+.sidefoot{margin-top:auto;color:#7e8594;font-size:10px;line-height:1.6}
+
+.main{display:flex;flex-direction:column;min-width:0}
+.content{width:min(1120px,calc(100% - 56px));margin:0 auto;padding:21px 0 12px;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;gap:12px;flex:1;min-height:0}
+.header{display:flex;gap:14px;align-items:flex-start}
+.headerMark{width:42px;height:42px;border:1px solid #9ca9ff;border-radius:50%;display:grid;place-items:center;flex:none}
+.headerMark:after{content:"";width:14px;height:14px;border:2px solid #9ca9ff;border-radius:50%}
+.eyebrow{font-size:10px;letter-spacing:.22em;color:#9ea8ff;font-weight:700}
+.header h1{font-size:30px;line-height:1;margin:5px 0 7px;letter-spacing:-.045em}
+.lead{font-size:13px;color:#d3d5dc;margin:0;white-space:nowrap}
+
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px 0}
+.metric{display:flex;align-items:baseline;gap:7px;padding:0 16px;border-right:1px solid var(--line)}
+.metric:first-child{padding-left:0}.metric:last-child{border-right:0}
+.metric b{font-size:21px;letter-spacing:-.04em}.metric span{font-size:9px;letter-spacing:.14em;color:#8f96a5}
+
+.workspace{display:grid;grid-template-columns:270px minmax(0,1fr);gap:12px;min-height:0}
+.inputs{display:grid;grid-template-rows:minmax(0,1fr) minmax(0,1fr) auto;gap:10px;min-height:0}
+.inputCard{border:1px solid var(--line);border-radius:17px;background:#11131a;padding:15px;display:flex;flex-direction:column;min-height:0;transition:.22s;position:relative;overflow:hidden}
+.inputCard:after{content:"";position:absolute;width:170px;height:170px;border-radius:50%;right:-100px;bottom:-105px;border:1px solid transparent;transition:.22s;pointer-events:none}
+.inputCard.course.focused{border-color:#6b65ff;background:#151627}.inputCard.course.focused:after{border-color:rgba(107,101,255,.22)}
+.inputCard.level.focused{border-color:#45c895;background:#121d1a}.inputCard.level.focused:after{border-color:rgba(69,200,149,.2)}
+.cardTop{display:flex;align-items:center;justify-content:space-between}.cardTop b{font-size:10px;letter-spacing:.15em;color:#a1a8b6}.inputTag{font-size:8px;letter-spacing:.1em;color:#858c9b;border:1px solid #303440;border-radius:999px;padding:3px 6px}
+.inputCard h2{font-size:17px;letter-spacing:-.03em;margin:9px 0 3px}.inputCard p{font-size:10px;line-height:1.45;color:#858d9d;margin:0}
+.choices{display:grid;gap:5px;margin-top:auto;padding-top:10px}
+.choice{border:1px solid #2c303a;background:#15171e;color:#aeb3c0;border-radius:8px;padding:7px 8px;text-align:left;cursor:pointer;transition:.16s;font-size:9px;position:relative;z-index:2}
+.choice:hover{border-color:#4c5160;color:#fff}.choice.selected{border-color:#6964ee;background:#1b1c2b;color:#fff}
+.level .choice.selected{border-color:#45be91;background:#16241f}
+.choice strong{font-size:9px}.choice span{float:right;color:#777e8f;font-size:8px}
+.fullBtn{border:1px solid #30333e;background:#0f1015;color:#969dad;border-radius:10px;padding:9px;cursor:pointer;font-size:9px;transition:.18s}
+.fullBtn:hover,.fullBtn.active{border-color:#595e70;color:#e5e7ec;background:#14161d}
+
+.system{border:1px solid var(--line);border-radius:19px;background:linear-gradient(135deg,#101118,#0b0c10);padding:14px;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;gap:10px;min-height:0;position:relative;overflow:hidden}
+.systemGlow{position:absolute;width:370px;height:370px;border-radius:50%;left:50%;top:45%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(103,94,255,.1),transparent 68%);pointer-events:none;transition:.3s}
+.systemHeader{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2}
+.systemHeader b{font-size:10px;letter-spacing:.16em;color:#a4aab8}
+.focusLabel{font-size:8px;color:#8a91a1;border:1px solid #303440;border-radius:999px;padding:4px 7px}
+.contextBar{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid #323649;background:#141723;border-radius:12px;padding:9px 11px;position:relative;z-index:2;transition:.2s}
+.contextBar:before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:#7771ff}
+.contextBar b{font-size:9px;letter-spacing:.12em;color:#aab2ff}.contextBar strong{font-size:11px;margin-left:8px}.contextMeta{font-size:8px;color:#9299a8}
+
+.map{display:grid;grid-template-columns:1fr 36px 1fr;gap:8px;align-items:stretch;min-height:0;position:relative;z-index:2}
+.col{display:grid;grid-template-rows:repeat(3,1fr);gap:7px;min-height:0}
+.module{border:1px solid #292d36;border-radius:11px;background:#15171e;padding:9px 10px;opacity:.5;transition:.22s;position:relative;overflow:hidden;min-height:0}
+.module:after{content:"";position:absolute;inset:auto 0 0 0;height:1px;background:transparent;transition:.22s}
+.module b{font-size:8px;letter-spacing:.12em;color:#9ca3b1}.module strong{display:block;font-size:10px;margin-top:3px}.module small{display:block;font-size:8px;color:#858c9b;margin-top:3px;line-height:1.35}
+.module.active{opacity:1;border-color:#5e61d8;background:#181925;transform:translateX(2px)}
+.module.active:after{background:#615cd9}
+.module.levelActive{opacity:1;border-color:#43b98f;background:#14201c;transform:translateX(2px)}
+.module.levelActive:after{background:#43b98f}
+.module.both{opacity:1;border-color:#6a6f94;background:#181a24}
+.module.flash{animation:flash .55s ease}
+@keyframes flash{0%{box-shadow:0 0 0 rgba(0,0,0,0)}42%{box-shadow:0 0 22px rgba(117,124,255,.24)}100%{box-shadow:0 0 0 rgba(0,0,0,0)}}
+.hubWrap{display:flex;align-items:center;justify-content:center;position:relative}
+.hubWrap:before{content:"";position:absolute;top:0;bottom:0;width:1px;background:linear-gradient(transparent,#343847 15%,#343847 85%,transparent)}
+.hub{width:34px;height:34px;border-radius:50%;border:1px solid #63697d;background:#11131a;display:grid;place-items:center;z-index:2;color:#b0b5c3;font-size:12px;transition:.22s}
+.hub.hot{border-color:#7d78ff;box-shadow:0 0 20px rgba(103,94,255,.18)}
+.output{border:1px solid #31354a;border-radius:11px;background:#141621;padding:9px 10px;opacity:.7;transition:.22s}
+.output.active{opacity:1;border-color:#6560d8;background:#181a29}
+.output b{font-size:8px;letter-spacing:.12em;color:#aab1ff}.output strong{display:block;font-size:10px;margin-top:3px}.output small{display:block;font-size:8px;color:#858c9c;margin-top:3px}
+
+.lower{display:grid;grid-template-columns:1.1fr .9fr;gap:8px;position:relative;z-index:2}
+.stepRail,.aiCoach{border:1px solid #2c303a;border-radius:11px;background:#12141a;padding:9px 10px;transition:.22s}
+.stepRail b,.aiCoach b{font-size:8px;letter-spacing:.12em;color:#a0a7b5}.steps{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:7px}
+.step{border-radius:6px;border:1px solid #292d37;padding:5px 2px;text-align:center;font-size:7px;color:#7f8797;transition:.18s}.step.hot{border-color:#5e61d8;color:#e7e8ed;background:#191b26}
+.aiCoach{background:linear-gradient(135deg,#17182a,#11131a)}.aiCoach b{color:#aab2ff}.feedback{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:7px}.fb{border:1px solid #2d3140;border-radius:6px;padding:5px;text-align:center;font-size:7px;color:#9299a9;transition:.18s}.fb.hot{border-color:#6267dc;color:#f0f1f4;background:#1a1c2b}
+
+.bottom{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.summary{font-size:9px;color:#8d94a3}.summary strong{color:#d9dbe1}
+.cta{display:flex;gap:7px}.btn{padding:9px 11px;border-radius:8px;border:1px solid #343743;color:#d9dbe1;text-decoration:none;font-size:10px;font-weight:700}.btn.primary{background:#6259f4;border-color:#6259f4;color:#fff}
+.footer{height:40px;border-top:1px solid #22242a;display:flex;align-items:center;justify-content:center;color:#717887;font-size:9px}
+
+@media(max-width:1050px){
+ body{height:auto;overflow:auto}.shell{grid-template-columns:1fr;height:auto}.sidebar{display:none}
+ .content{width:min(920px,calc(100% - 32px));padding:20px 0}.lead{white-space:normal}
+ .workspace{grid-template-columns:1fr}.inputs{grid-template-columns:1fr 1fr;grid-template-rows:auto}.fullBtn{grid-column:1/-1}
+ .footer{margin-top:20px}
+}
+@media(max-width:680px){
+ .metrics{grid-template-columns:repeat(2,1fr);gap:7px}.metric{border:0;padding:4px 0}
+ .inputs{grid-template-columns:1fr}.fullBtn{grid-column:auto}
+ .map{grid-template-columns:1fr}.hubWrap{display:none}.lower{grid-template-columns:1fr}
+ .bottom{grid-template-columns:1fr}.lead{white-space:normal}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brandMark"></div><div><b>오픽온미</b><small>OOM · OPIc On Me</small></div></div>
+    <div class="nav"><div class="active">오픽온미란?</div><div>OPIc 수험 가이드</div><div>OPIc 실전 훈련하기</div><div>오픽 매거진</div><div>AI 피드백 / 설정</div></div>
+    <div class="sidefoot">라이트 모드<br><br>© 2026 오픽온미</div>
+  </aside>
+
+  <main class="main">
+    <div class="content">
+      <header class="header">
+        <div class="headerMark"></div>
+        <div>
+          <div class="eyebrow">OOM · OPIC ON ME</div>
+          <h1>오픽온미란?</h1>
+          <p class="lead">Course로 준비 범위를 정하고, Level로 답변 밀도를 맞춘 뒤, 6단계 훈련과 AI 재시도로 연결합니다.</p>
+        </div>
+      </header>
+
+      <section class="metrics" aria-label="OOM 구성">
+        <div class="metric"><b>3</b><span>COURSES</span></div>
+        <div class="metric"><b>3</b><span>LEVELS</span></div>
+        <div class="metric"><b>6</b><span>STEPS</span></div>
+        <div class="metric"><b>AI</b><span>COACH</span></div>
+      </section>
+
+      <section class="workspace">
+        <div class="inputs">
+          <article class="inputCard course focused" id="courseCard">
+            <div class="cardTop"><b>COURSE</b><span class="inputTag">WHAT</span></div>
+            <h2>무엇을 준비할지</h2>
+            <p>반복해서 쓸 이야기의 맥락과 소재를 정합니다.</p>
+            <div class="choices" id="courseChoices">
+              <button class="choice selected" data-course="Everyday & Getaway"><strong>01 · Everyday & Getaway</strong><span>일상 · 여행</span></button>
+              <button class="choice" data-course="Culture & City"><strong>02 · Culture & City</strong><span>문화 · 도시</span></button>
+              <button class="choice" data-course="Nature & Weekend"><strong>03 · Nature & Weekend</strong><span>자연 · 주말</span></button>
+            </div>
+          </article>
+
+          <article class="inputCard level" id="levelCard">
+            <div class="cardTop"><b>LEVEL</b><span class="inputTag">HOW MUCH</span></div>
+            <h2>얼마나 깊게 말할지</h2>
+            <p>같은 장면의 길이와 구체성을 목표에 맞게 조절합니다.</p>
+            <div class="choices" id="levelChoices">
+              <button class="choice" data-level="3구간" data-time="30–45초"><strong>3구간 · Foundation</strong><span>30–45초</span></button>
+              <button class="choice selected" data-level="2구간" data-time="45–65초"><strong>2구간 · Intermediate</strong><span>45–65초</span></button>
+              <button class="choice" data-level="1구간" data-time="60–90초"><strong>1구간 · Advanced</strong><span>60–90초</span></button>
+            </div>
+          </article>
+
+          <button class="fullBtn" id="fullBtn">전체 시스템 보기</button>
+        </div>
+
+        <article class="system" id="system">
+          <div class="systemGlow"></div>
+          <div class="systemHeader">
+            <b>OOM TRAINING SYSTEM</b>
+            <span class="focusLabel" id="focusLabel">COURSE FOCUS</span>
+          </div>
+
+          <div class="contextBar" id="contextBar">
+            <div><b>TRAINING CONTEXT</b><strong id="resolvedContext">Everyday & Getaway × 2구간</strong></div>
+            <span class="contextMeta" id="resolvedMeta">Intermediate · 45–65초</span>
+          </div>
+
+          <div class="map">
+            <div class="col">
+              <div class="module courseAffected active"><b>STEP 2</b><strong>추천 서베이</strong><small>Course가 준비할 범위를 정합니다.</small></div>
+              <div class="module courseAffected active"><b>STORY POOL</b><strong>핵심 장면</strong><small>같은 story를 여러 질문에 재사용.</small></div>
+              <div class="module levelAffected"><b>STEP 3</b><strong>난이도</strong><small>Level이 질문 복잡도를 조절합니다.</small></div>
+            </div>
+
+            <div class="hubWrap"><div class="hub hot" id="hub">O</div></div>
+
+            <div class="col">
+              <div class="module bothAffected active"><b>STEP 4</b><strong>스크립트 · 질문 변형</strong><small>Course의 사실을 Level 밀도로 말합니다.</small></div>
+              <div class="module levelAffected"><b>ANSWER DENSITY</b><strong>길이 · 구체성</strong><small id="densityText">2구간 · 45–65초</small></div>
+              <div class="output active" id="practiceOutput"><b>STEP 6</b><strong>실전 연습</strong><small>Listen → Speak → Review → Retry</small></div>
+            </div>
+          </div>
+
+          <div class="lower">
+            <div class="stepRail">
+              <b>6 STEP TRAINING PATH</b>
+              <div class="steps" id="steps">
+                <div class="step">1<br>목표·코스</div><div class="step hot">2<br>서베이</div><div class="step">3<br>난이도</div><div class="step hot">4<br>스크립트</div><div class="step">5<br>롤플레이</div><div class="step hot">6<br>실전</div>
+              </div>
+            </div>
+            <div class="aiCoach" id="aiCoach">
+              <b>AI COACH</b>
+              <div class="feedback"><div class="fb">KEEP</div><div class="fb">FIX</div><div class="fb">RETRY</div></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="bottom">
+        <div class="summary" id="summary"><strong>현재 흐름:</strong> Everyday & Getaway의 story를 준비하고 → 2구간 밀도로 바꾸어 → 말하고 AI 피드백으로 다시 시도합니다.</div>
+        <div class="cta"><a href="#" class="btn primary">실전 훈련 둘러보기</a><a href="#" class="btn">수험 가이드</a></div>
+      </section>
+    </div>
+    <footer class="footer">OOM · OPIc On Me</footer>
+  </main>
+</div>
+
+<script>
+const courseCard = document.getElementById('courseCard');
+const levelCard = document.getElementById('levelCard');
+const courseChoices = [...document.querySelectorAll('#courseChoices .choice')];
+const levelChoices = [...document.querySelectorAll('#levelChoices .choice')];
+const courseAffected = [...document.querySelectorAll('.courseAffected')];
+const levelAffected = [...document.querySelectorAll('.levelAffected')];
+const bothAffected = [...document.querySelectorAll('.bothAffected')];
+const steps = [...document.querySelectorAll('.step')];
+const aiCoach = document.getElementById('aiCoach');
+const practiceOutput = document.getElementById('practiceOutput');
+const hub = document.getElementById('hub');
+const focusLabel = document.getElementById('focusLabel');
+const fullBtn = document.getElementById('fullBtn');
+
+let selectedCourse = 'Everyday & Getaway';
+let selectedLevel = '2구간';
+let selectedTime = '45–65초';
+let mode = 'course';
+
+function flash(elements){
+  elements.forEach(el=>{
+    el.classList.remove('flash');
+    void el.offsetWidth;
+    el.classList.add('flash');
+  });
+}
+
+function clearHighlights(){
+  [...courseAffected,...levelAffected,...bothAffected].forEach(el=>el.classList.remove('active','levelActive','both'));
+  steps.forEach(el=>el.classList.remove('hot'));
+  aiCoach.querySelectorAll('.fb').forEach(el=>el.classList.remove('hot'));
+  courseCard.classList.remove('focused');
+  levelCard.classList.remove('focused');
+  fullBtn.classList.remove('active');
+}
+
+function updateContext(){
+  document.getElementById('resolvedContext').textContent = `${selectedCourse} × ${selectedLevel}`;
+  document.getElementById('resolvedMeta').textContent = `${selectedLevel === '1구간' ? 'Advanced' : selectedLevel === '2구간' ? 'Intermediate' : 'Foundation'} · ${selectedTime}`;
+  document.getElementById('densityText').textContent = `${selectedLevel} · ${selectedTime}`;
+  document.getElementById('summary').innerHTML = `<strong>현재 흐름:</strong> ${selectedCourse}의 story를 준비하고 → ${selectedLevel} 밀도로 바꾸어 → 말하고 AI 피드백으로 다시 시도합니다.`;
+}
+
+function setMode(next){
+  mode = next;
+  clearHighlights();
+  hub.classList.add('hot');
+  practiceOutput.classList.add('active');
+
+  if(next === 'course'){
+    focusLabel.textContent = 'COURSE FOCUS';
+    courseCard.classList.add('focused');
+    courseAffected.forEach(el=>el.classList.add('active'));
+    bothAffected.forEach(el=>el.classList.add('active'));
+    [1,3,5].forEach(i=>steps[i].classList.add('hot'));
+    flash([...courseAffected,...bothAffected,practiceOutput]);
+  } else if(next === 'level'){
+    focusLabel.textContent = 'LEVEL FOCUS';
+    levelCard.classList.add('focused');
+    levelAffected.forEach(el=>el.classList.add('levelActive'));
+    bothAffected.forEach(el=>el.classList.add('both'));
+    [0,2,3,5].forEach(i=>steps[i].classList.add('hot'));
+    aiCoach.querySelectorAll('.fb').forEach(el=>el.classList.add('hot'));
+    flash([...levelAffected,...bothAffected,practiceOutput,aiCoach]);
+  } else {
+    focusLabel.textContent = 'FULL SYSTEM';
+    courseCard.classList.add('focused'); levelCard.classList.add('focused'); fullBtn.classList.add('active');
+    courseAffected.forEach(el=>el.classList.add('active'));
+    levelAffected.forEach(el=>el.classList.add('levelActive'));
+    bothAffected.forEach(el=>el.classList.add('both'));
+    steps.forEach(el=>el.classList.add('hot'));
+    aiCoach.querySelectorAll('.fb').forEach(el=>el.classList.add('hot'));
+    flash([...courseAffected,...levelAffected,...bothAffected,practiceOutput,aiCoach]);
+  }
+}
+
+courseCard.addEventListener('click', e=>{
+  if(!e.target.closest('.choice')) setMode('course');
+});
+levelCard.addEventListener('click', e=>{
+  if(!e.target.closest('.choice')) setMode('level');
+});
+
+courseChoices.forEach(btn=>btn.addEventListener('click', e=>{
+  e.stopPropagation();
+  courseChoices.forEach(x=>x.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedCourse = btn.dataset.course;
+  updateContext(); setMode('course');
+}));
+
+levelChoices.forEach(btn=>btn.addEventListener('click', e=>{
+  e.stopPropagation();
+  levelChoices.forEach(x=>x.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedLevel = btn.dataset.level;
+  selectedTime = btn.dataset.time;
+  updateContext(); setMode('level');
+}));
+
+fullBtn.addEventListener('click',()=>setMode('all'));
+
+[...document.querySelectorAll('.module'),practiceOutput,aiCoach].forEach(el=>{
+  el.addEventListener('pointerenter',()=>{ if(matchMedia('(pointer:fine)').matches) el.classList.add('flash') });
+});
+</script>
+</body>
+</html>

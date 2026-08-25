@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "gsap": "3.13.x-or-compatible",
+    "@gsap/react": "latest-compatible",
+    "lenis": "latest-compatible",
+    "three": "compatible-with-r3f",
+    "@react-three/fiber": "8.x when React is 18",
+    "@react-three/drei": "compatible-with-r3f"
+  },
+  "optionalDependencies": {
+    "@react-three/postprocessing": "only after performance measurement"
+  },
+  "notes": [
+    "Inspect actual repository React version first.",
+    "Do not overwrite existing versions blindly."
+  ]
+}

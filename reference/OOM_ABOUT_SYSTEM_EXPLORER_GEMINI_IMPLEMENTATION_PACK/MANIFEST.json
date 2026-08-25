@@ -1,0 +1,102 @@
+[
+  {
+    "path": "README_START_HERE.md",
+    "bytes": 3050,
+    "sha256": "3d79d0fe5c55d8113fec138af3bdf23ef1b6fa3c2c6d38b93d09ee30c6060d55"
+  },
+  {
+    "path": "docs/ABOUT_SYSTEM_EXPLORER_PRD.md",
+    "bytes": 6782,
+    "sha256": "497f880663c00a6650ff948cd5492359411b6d4ae3d889063a5bd2503e037bfb"
+  },
+  {
+    "path": "docs/AGENT_CHECKLIST_SHORT.md",
+    "bytes": 758,
+    "sha256": "a9709529700d8d4512a7f5ae528b41a63acf76bbce211805311963982c370ce1"
+  },
+  {
+    "path": "docs/FUTURE_COURSE_SCALING.md",
+    "bytes": 2737,
+    "sha256": "ec40b77f59a435232c2710d68534c04e5380ded66a47c9f0b7205794b225e961"
+  },
+  {
+    "path": "docs/GEMINI_IMPLEMENTATION_PROMPT.md",
+    "bytes": 11756,
+    "sha256": "e31bbecd165c9769c7827cd94383ffcf938a2a5de213f06f79650c2d6c90f2b5"
+  },
+  {
+    "path": "docs/INTEGRATION_PLAN.md",
+    "bytes": 2495,
+    "sha256": "d6ae7073edc071f7fe89a035823a3f47c2b71d4a5dcd3226e0e4f0e9e54c2514"
+  },
+  {
+    "path": "docs/INTERACTION_STATE_MACHINE.md",
+    "bytes": 2412,
+    "sha256": "5669421ad71336fa9d7947c4174df908b4e59009cdaffdefeb394cad2be84dcc"
+  },
+  {
+    "path": "docs/PRODUCT_DECISIONS.md",
+    "bytes": 2896,
+    "sha256": "3fa027e144b90e1949ef8a67616b5ad87bc5728a0b6ad6cbe28a6c6a3ff5b0d6"
+  },
+  {
+    "path": "docs/QA_ACCEPTANCE.md",
+    "bytes": 2321,
+    "sha256": "bc61c71322305afab0e548a9b0bea51a6f80937063acf16e5022c8883ac1ed99"
+  },
+  {
+    "path": "reference/final-system-explorer.html",
+    "bytes": 20518,
+    "sha256": "1c0fb93ab96aa377384c111a3a7bc1eb607e7cf115e36584ce997968c81f4562"
+  },
+  {
+    "path": "reference-react/README.md",
+    "bytes": 341,
+    "sha256": "0e62f396740b41b09a6acd8f0867aecc5b83592e919800e50f0969356fcf2b56"
+  },
+  {
+    "path": "reference-react/src/components/about/AboutCourseSelector.tsx",
+    "bytes": 2508,
+    "sha256": "7d907ceea7237ecf8610c8085947d57157fcdb6aacb9508fd4356f6792c21ed7"
+  },
+  {
+    "path": "reference-react/src/components/about/AboutLevelSelector.tsx",
+    "bytes": 1759,
+    "sha256": "73d8dff36b7c05aef1334bd585db04308b07269265e5821ab1b51fb487427669"
+  },
+  {
+    "path": "reference-react/src/components/about/AboutSystemExplorer.tsx",
+    "bytes": 2009,
+    "sha256": "83d7f5abb16956c181549a5a59d4c314d75bb79a370bc02a3aaf16a5c7157194"
+  },
+  {
+    "path": "reference-react/src/components/about/AboutTrainingMap.tsx",
+    "bytes": 3683,
+    "sha256": "20943b9d16bd243e470ec06e1a285e7eff8f8aa0aa212f405e8dc846da32691b"
+  },
+  {
+    "path": "reference-react/src/components/about/__tests__/AboutSystemExplorer.test.example.tsx",
+    "bytes": 968,
+    "sha256": "e8cb607f8d147d943f4ebed29d11ca5ec10cc23581388c35e7279bf585588e3f"
+  },
+  {
+    "path": "reference-react/src/components/about/about-system-explorer.css",
+    "bytes": 1893,
+    "sha256": "b7d4639dfd9d598bd41c7293b371196b39ed449b04e3aed28a1a0efab5c8d352"
+  },
+  {
+    "path": "reference-react/src/components/about/aboutSystemModel.example.ts",
+    "bytes": 1223,
+    "sha256": "dc33415183cbe32690e4ff23598d454892351247be82e8c49c4698223322960b"
+  },
+  {
+    "path": "reference-react/src/components/about/types.ts",
+    "bytes": 653,
+    "sha256": "b4a70efeac448d1ec56bb43d0329d28e929171e688411dfa7d143e1db3396fe5"
+  },
+  {
+    "path": "reference-react/src/components/about/useAboutExplorer.ts",
+    "bytes": 1880,
+    "sha256": "651607a4386635c8f0ea989b2999ec74dd12e9a4cbb2507de39809f924ae12a5"
+  }
+]

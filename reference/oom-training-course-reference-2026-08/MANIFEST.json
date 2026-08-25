@@ -1,0 +1,219 @@
+{
+  "generatedAt": "2026-08-19",
+  "purpose": "OOM 3-course × 3-level training architecture reference pack",
+  "counts": {
+    "courses": 3,
+    "levels": 3,
+    "course-1Storylines": 4,
+    "course-1Roleplays": 3,
+    "course-1Questions": 36,
+    "course-2Storylines": 4,
+    "course-2Roleplays": 3,
+    "course-2Questions": 36,
+    "course-3Storylines": 4,
+    "course-3Roleplays": 3,
+    "course-3Questions": 36
+  },
+  "files": [
+    {
+      "path": "README_START_HERE.md",
+      "sha256": "9337954c3f7ff273d177ea50359d1776af3aed23fde9944126e25eb495fc4219",
+      "bytes": 2572
+    },
+    {
+      "path": "content/course-1-questions.json",
+      "sha256": "63af4db3141c6a64631fa60206e9b23230aae43e32494eea4d203387ae1a302f",
+      "bytes": 11283
+    },
+    {
+      "path": "content/course-1-roleplays.json",
+      "sha256": "932b07247ecec2ea8f2babf9f59117a46d3b7782d9de3ba98bd9c825fbc5eff2",
+      "bytes": 5787
+    },
+    {
+      "path": "content/course-1-storylines.json",
+      "sha256": "5152c6cd42957b41906d9a5d03dbe456f4dc85fe54db89754d31b9f27befe5bf",
+      "bytes": 15956
+    },
+    {
+      "path": "content/course-1-survey.json",
+      "sha256": "2b7860bc7c7f9d2aaf5c023f78a60e40f47fd8f2b08c724a0f8e1e4606967c15",
+      "bytes": 797
+    },
+    {
+      "path": "content/course-2-questions.json",
+      "sha256": "ac242a1a5ed7ebc64a6d2870c211ff395af526fbf4e00caf48c70dde721eac7d",
+      "bytes": 11535
+    },
+    {
+      "path": "content/course-2-roleplays.json",
+      "sha256": "dabb7d31a83f4feb73d77d38b8f448c2ddb9e600b1fef10d6800b279d1db3076",
+      "bytes": 5629
+    },
+    {
+      "path": "content/course-2-storylines.json",
+      "sha256": "3de09c83f8f2d1a6a5f8b99309f0c902c1c5e09cc0806be659f828575b192c89",
+      "bytes": 15570
+    },
+    {
+      "path": "content/course-2-survey.json",
+      "sha256": "178fd0450f105e5ffa619862cc17958e16cc9594505c2287cfbc3297851a9f80",
+      "bytes": 1106
+    },
+    {
+      "path": "content/course-3-questions.json",
+      "sha256": "95cc8f7aa1e77f03c39b519ae0c183bbf8c771fc3ba335b8287adbb183e62bc9",
+      "bytes": 12049
+    },
+    {
+      "path": "content/course-3-roleplays.json",
+      "sha256": "a5107fced5acfe7e9234e8a68bff06840c225370af4091f9905a5546977dde03",
+      "bytes": 5862
+    },
+    {
+      "path": "content/course-3-storylines.json",
+      "sha256": "e750bb09b0dd48969bc5c8b42a2b7616c3a9a994ebbcf70f3a6cbc32ba4eabf5",
+      "bytes": 17536
+    },
+    {
+      "path": "content/course-3-survey.json",
+      "sha256": "ad780f54392644b67b05d778ec422442ad0ff90c6f24ecad676c9c8b97fc4d4f",
+      "bytes": 1222
+    },
+    {
+      "path": "content/courses.json",
+      "sha256": "e744ae6c012b44806a4a926fd9a753f73f8d731e71defe62b7d100ebb294b94b",
+      "bytes": 2472
+    },
+    {
+      "path": "content/levels.json",
+      "sha256": "f959cf7590fa696dcc8afcbed15656b325bd1e4da873ba9a73647e9cde368bed",
+      "bytes": 1969
+    },
+    {
+      "path": "docs/00_EXECUTIVE_SUMMARY.md",
+      "sha256": "bc21509952ea8efa514955b44de33601b2293f1ff4de04f2d54377d75e40ef9d",
+      "bytes": 2172
+    },
+    {
+      "path": "docs/01_FINAL_PRODUCT_MODEL.md",
+      "sha256": "602d7d6a33b9f1ee9c812c6355abb2009a2ad11ada3eb42c51b6c6fdd0e44222",
+      "bytes": 1745
+    },
+    {
+      "path": "docs/02_CURRENT_REPO_ANALYSIS.md",
+      "sha256": "d684b18a3cebe9ff73af3f5bdaae1e7e8217e19aae4f69d7fedd367b2f99697c",
+      "bytes": 2072
+    },
+    {
+      "path": "docs/03_TARGET_ARCHITECTURE.md",
+      "sha256": "6636a7fb11e75dc29e5a750cb42eef9e3713300a100e01950fa437bdd941ede0",
+      "bytes": 2316
+    },
+    {
+      "path": "docs/04_CONTENT_AUTHORING_RULES.md",
+      "sha256": "e11fc1ef27018e8357e58d5681389e15435f332adb15fe52a1ad4625be3c958e",
+      "bytes": 2468
+    },
+    {
+      "path": "docs/05_COURSE_CONTENT_SPEC.md",
+      "sha256": "a32d4c5026b50e3addccb78ce57edef9d79e15bdcceb36ee83cb91717507fa16",
+      "bytes": 2847
+    },
+    {
+      "path": "docs/06_UI_UX_FLOW.md",
+      "sha256": "d1fb4804c595a69e255a8822c03ab93b812bb038e7ad1b222730f9b7b8dbac59",
+      "bytes": 2523
+    },
+    {
+      "path": "docs/07_MIGRATION_PLAN.md",
+      "sha256": "5da575218a33751a91cc12dbcfea4aa72f03f85d9a1393abc33f3bf16d9bcae9",
+      "bytes": 3124
+    },
+    {
+      "path": "docs/08_CODEX_MASTER_PROMPT.md",
+      "sha256": "31639c517d531cd761857f124f5b2d246e98d3a2fe654346c3dffd46d5d281f4",
+      "bytes": 8384
+    },
+    {
+      "path": "docs/09_ACCEPTANCE_CRITERIA.md",
+      "sha256": "2aeba58fcd220ce6a269689106fe6a7490ca5b2baede6a613c40593b556aecea",
+      "bytes": 2280
+    },
+    {
+      "path": "docs/10_SOURCE_NOTES.md",
+      "sha256": "f8f7e27cf23fb41ac749446b165b3df19853ccdbf094638855bab4356fbaedbd",
+      "bytes": 3910
+    },
+    {
+      "path": "docs/11_P1_P2_IDEAS.md",
+      "sha256": "d56a151a55b2101a3ac846cef7bc9b36f08525caff9bdefc0d2a6cc6b22f06c0",
+      "bytes": 1641
+    },
+    {
+      "path": "docs/12_CONTENT_AUDIT.md",
+      "sha256": "1da0c1c0f4d014990e5c0677529211f23f3a7145024dc25fb468a41c0faec198",
+      "bytes": 2080
+    },
+    {
+      "path": "docs/13_COURSE_STRATEGY_REVIEW.md",
+      "sha256": "ecb4777402fa1454db2f324f10b32fab8aa5bfbcdb8ac5a3ce7f9463b8027a26",
+      "bytes": 4647
+    },
+    {
+      "path": "docs/14_ADDING_FUTURE_COURSES.md",
+      "sha256": "0a03a8eb6f144f9987fbace7590cce9cd96814479235b4985f1d32c17f43f7a1",
+      "bytes": 1618
+    },
+    {
+      "path": "docs/15_FILE_MAPPING.md",
+      "sha256": "6fa265aa050c807db327c580a04b95440520cbecbd87aec068034624458f6bca",
+      "bytes": 1250
+    },
+    {
+      "path": "reference/README.md",
+      "sha256": "fe330c5561b9c60840f6d1f0b533cead59dadc2a16526ea76872096d3023822a",
+      "bytes": 456
+    },
+    {
+      "path": "reference/autoCourseRegistry.reference.ts",
+      "sha256": "e9afa764dc6fcf8ffbd39bd4d871725431f0e26bf1d9a3e76c333992019cc80c",
+      "bytes": 1752
+    },
+    {
+      "path": "reference/levels.reference.ts",
+      "sha256": "96dbaa797c3e16cbac31f5cb52be80a225b60a9b7bb9f612d2bdd5ec051821ac",
+      "bytes": 1351
+    },
+    {
+      "path": "reference/trainingRegistry.reference.ts",
+      "sha256": "84ccbef5c570ff0960e9cd9e530cdf76bed8ac6645d2ec4e3907c3058f3e4d15",
+      "bytes": 1677
+    },
+    {
+      "path": "reference/trainingSelectionStorage.reference.ts",
+      "sha256": "bcea93f03074f820bac7f5b945719475e41c1a7d20b74c92bd0e4678b221fb85",
+      "bytes": 958
+    },
+    {
+      "path": "reference/trainingTypes.reference.ts",
+      "sha256": "e2dc2a5b955253524f647e1dde8b84214ab2025582327c05ad59ca18cf5d0c3b",
+      "bytes": 2562
+    },
+    {
+      "path": "reference/ui/TrainingSelectionContext.reference.tsx",
+      "sha256": "31a315bab0fc035b1d72a1ed0e047b54e614c5aa1f5c9665acb2eb87e3b56782",
+      "bytes": 1116
+    },
+    {
+      "path": "reference/ui/TrainingSetupView.reference.tsx",
+      "sha256": "037272af202ae548c8cd0f88392c9a1bffcd7621dd15ec7266aec65cd9259a63",
+      "bytes": 3516
+    },
+    {
+      "path": "reference/validateTrainingContent.reference.ts",
+      "sha256": "78ce8ba44c1b9bdf0eea3fcebb0cc92c39fd73458aaae41406da2f9e2d8c1ce5",
+      "bytes": 1792
+    }
+  ]
+}

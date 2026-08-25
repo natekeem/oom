@@ -1,0 +1,34 @@
+{
+  "id": "course-1-survey",
+  "courseId": "course-1",
+  "profileOptionIds": [
+    "work-none",
+    "student-no",
+    "education-over-five"
+  ],
+  "residenceOptionIds": [
+    "residence-family"
+  ],
+  "activityOptionIds": [
+    "leisure-park",
+    "leisure-beach",
+    "leisure-cafe",
+    "leisure-shopping",
+    "interest-music",
+    "interest-cooking",
+    "sport-tennis",
+    "sport-jogging",
+    "sport-walking",
+    "vacation-home",
+    "vacation-domestic",
+    "vacation-overseas"
+  ],
+  "displaySummary": [
+    "일 경험 없음 / 학생 아님 / 수강 후 5년 이상",
+    "가족과 함께 주택 또는 아파트 거주",
+    "공원 · 해변 · 카페 · 쇼핑",
+    "음악 · 요리",
+    "테니스 · 조깅 · 걷기",
+    "집 휴가 · 국내 여행 · 해외 여행"
+  ]
+}

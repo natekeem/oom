@@ -9,4 +9,3 @@ coverage
 vite.config.js
 vite.config.d.ts
 *.log
-reference

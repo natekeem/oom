@@ -1,0 +1,18 @@
+OOM Kokoro Voice + Wave Lab
+
+1) Node.js 20 이상 설치
+2) 이 폴더에서 터미널 실행
+
+npm install
+npm run dev
+
+3) Chrome 또는 Edge에서 Vite가 표시하는 localhost 주소 접속
+4) 처음 음성을 만들 때 Kokoro q8 모델 다운로드/초기화가 발생합니다.
+5) '6개 후보 모두 생성' 또는 개별 '이 음성 생성'으로 비교합니다.
+
+추천 비교 순서:
+- 시험 질문 음성 탭: Heart / Bella / Sarah / Nicole 먼저 비교
+- 스크립트 재생 음성 탭: Bella / Heart / Nicole / Nova 비교
+- Waveform: A Studio Bars → C Voice Print → B Soft Wave 순서로 확인
+
+선택 결과는 이 Dev Lab의 localStorage에만 저장됩니다.

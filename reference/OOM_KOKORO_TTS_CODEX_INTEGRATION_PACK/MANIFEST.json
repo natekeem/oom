@@ -1,0 +1,92 @@
+[
+  {
+    "path": "CODEX_INTEGRATION_PROMPT.md",
+    "bytes": 7809,
+    "sha256": "9c7df94af8c991c145cfcdf72272b4fd8c8d027398b600992aac54f2bb783b44"
+  },
+  {
+    "path": "README_START_HERE.md",
+    "bytes": 1696,
+    "sha256": "418eb3fe90bbd153ae8ccf588c004a591b16176d7026b3a562eeddd615e122b3"
+  },
+  {
+    "path": "docs/INTEGRATION_ARCHITECTURE.md",
+    "bytes": 3563,
+    "sha256": "c2ff9e6d3bff5c772ba3c3357bf08f6830a5832f9a5ef62c1d63987572ae89ef"
+  },
+  {
+    "path": "docs/MODEL_ASSET_PHASE2.md",
+    "bytes": 931,
+    "sha256": "a5e4f0f806bcd16b72eb1b1893b2a19131047a3048d3e8c497b3115c82b5553a"
+  },
+  {
+    "path": "docs/PHASE1_RUNTIME_STRATEGY.md",
+    "bytes": 1129,
+    "sha256": "df7a82199d312cae09f5513541ee0dfae50a3e3e68f75852de7ebcf11bdfc5e3"
+  },
+  {
+    "path": "docs/PRODUCT_DECISIONS.md",
+    "bytes": 2948,
+    "sha256": "290b685153f4bc31c75a2c5b419f3c2051b1f24b7ab54563f867cc8b861eaac9"
+  },
+  {
+    "path": "docs/QA_ACCEPTANCE.md",
+    "bytes": 2039,
+    "sha256": "ed0bb9deae63294c60dae6a73529e0591ac48915089439f558f1efdf3261a72b"
+  },
+  {
+    "path": "reference-code/audio/OomWavePlayer.tsx",
+    "bytes": 1653,
+    "sha256": "0849b80d7b37bb5bb05dd2fea7933bc3133c5953dc2cd0f6e8cb665aaae2dfc3"
+  },
+  {
+    "path": "reference-code/audio/oomWavePlayer.css",
+    "bytes": 320,
+    "sha256": "fbc2480a8ab9dec6a9d768e512819a8f18e4e70a07646765dd08c3fff2bab54f"
+  },
+  {
+    "path": "reference-code/tts/KokoroBrowserEngine.ts",
+    "bytes": 1894,
+    "sha256": "c840aba4bf195c5fb7c480dfa6592c5ed6a29997f69eeb3e4ab0c1418eb80496"
+  },
+  {
+    "path": "reference-code/tts/TtsManager.ts",
+    "bytes": 508,
+    "sha256": "e3ae202c0b2fd1daf63e3e53b2b137194f65b41731633c2cfd838c9da98564e3"
+  },
+  {
+    "path": "reference-code/tts/TtsPreferences.ts",
+    "bytes": 921,
+    "sha256": "f441c6c826b9ce962958a0b1260528f92ac067582b1fa5b3b83f1cbcfef2bf21"
+  },
+  {
+    "path": "reference-code/tts/WebSpeechFallback.ts",
+    "bytes": 911,
+    "sha256": "a6e9e5626f1edd7eb178b21213dead526f7a7fb506c5b3cecf2adfc2a3cc2c04"
+  },
+  {
+    "path": "reference-code/tts/types.ts",
+    "bytes": 563,
+    "sha256": "0f5da1026b960134ea3f0074ba5e158c9ae40a585965734dff03bdbc8f7b493e"
+  },
+  {
+    "path": "reference-code/tts/useTtsPreferences.ts",
+    "bytes": 813,
+    "sha256": "f6b95465e8429ecda4ef48b10038a44405939e29b7c8808636ba6415e240d61e"
+  },
+  {
+    "path": "reference-code/tts/voiceConfig.ts",
+    "bytes": 754,
+    "sha256": "d84ac3d1a0cf2b51b06114b5aff140b385adc3268518acc356f9510987624058"
+  },
+  {
+    "path": "reference-code/ui/VoiceSettingsReference.tsx",
+    "bytes": 1716,
+    "sha256": "a2c1123f8c9152b60b38ed8a38293c7d9ef133ae9aa4bda738638409581d9b92"
+  },
+  {
+    "path": "reference-code/workers/kokoro.worker.ts",
+    "bytes": 1445,
+    "sha256": "70c3fb30d1ff040b24a8dad04cf70d76802196887623f017d986f73860c5e1da"
+  }
+]

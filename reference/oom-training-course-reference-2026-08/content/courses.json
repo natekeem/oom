@@ -1,0 +1,68 @@
+[
+  {
+    "id": "course-1",
+    "version": 1,
+    "title": "코스 1 · Everyday & Getaway",
+    "subtitle": "가족·일상·취미·짧은 여행을 네 개의 재사용 장면으로 묶는 균형형 코스",
+    "description": "현재 OOM의 main 4개 스크립트를 1구간 기준점으로 유지한다. 가족 여행, 카페/휴식, 테니스/쇼핑, 집/동네를 통해 익숙한 일상 주제와 경험·변화·문제 해결을 균형 있게 연습한다.",
+    "surveyPresetId": "course-1-survey",
+    "storylineIds": [
+      "outdoor-travel",
+      "indoor-rest",
+      "sports-hobby",
+      "home-residence"
+    ],
+    "roleplayIds": [
+      "hotel-booking",
+      "tennis-court",
+      "cleaning-reschedule"
+    ],
+    "practiceQuestionPoolId": "course-1-questions",
+    "status": "ready",
+    "recommendedBadge": "균형형"
+  },
+  {
+    "id": "course-2",
+    "version": 1,
+    "title": "코스 2 · Culture & City",
+    "subtitle": "문화·도시형 설문과 스토리로 구성한 두 번째 코스",
+    "description": "2025~2026 공개 서베이 전략에서 자주 언급되는 준비 효율형 조합을 바탕으로, Course 1과 다른 4개의 anchor scene을 새로 작성했다.",
+    "surveyPresetId": "course-2-survey",
+    "storylineIds": [
+      "culture-night",
+      "smart-shopping",
+      "light-fitness",
+      "solo-staycation"
+    ],
+    "roleplayIds": [
+      "ticket-seat-problem",
+      "store-exchange",
+      "city-tour-change"
+    ],
+    "practiceQuestionPoolId": "course-2-questions",
+    "status": "ready",
+    "recommendedBadge": "준비 효율 추천"
+  },
+  {
+    "id": "course-3",
+    "version": 1,
+    "title": "코스 3 · Nature & Weekend",
+    "subtitle": "공원·하이킹·캠핑·사진·박물관·여행을 주말 경험으로 압축한 아웃도어형 코스",
+    "description": "자연·사진·주말 활동을 좋아하는 학습자용 선택형 코스다. Course 2보다 고유 어휘는 조금 늘지만, 12개 선택 항목을 네 개의 anchor scene으로 묶어 준비 범위를 통제한다.",
+    "surveyPresetId": "course-3-survey",
+    "storylineIds": [
+      "trail-photo",
+      "coastal-camp",
+      "museum-reading",
+      "shared-home-vacation"
+    ],
+    "roleplayIds": [
+      "campground-weather-change",
+      "museum-ticket-policy",
+      "rental-car-problem"
+    ],
+    "practiceQuestionPoolId": "course-3-questions",
+    "status": "ready",
+    "recommendedBadge": "아웃도어형"
+  }
+]

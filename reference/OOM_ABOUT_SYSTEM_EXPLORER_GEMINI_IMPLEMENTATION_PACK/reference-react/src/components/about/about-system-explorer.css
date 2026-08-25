@@ -1,0 +1,102 @@
+/*
+REFERENCE ONLY.
+Map these rules to current OOM Tailwind/CSS tokens.
+Do not introduce a second visual design system.
+*/
+
+.about-explorer {
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 0.75rem;
+  min-height: 0;
+}
+
+.about-explorer__inputs {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 0.625rem;
+  min-height: 0;
+}
+
+.about-input-card {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.about-option-list {
+  display: grid;
+  gap: 0.3125rem;
+  margin-top: auto;
+  padding-top: 0.625rem;
+}
+
+.about-option-list--scrollable {
+  /*
+  Adjust after measuring current OOM typography.
+  Goal: show ~3 to 3.25 options, then internal scroll.
+  */
+  max-height: 8.75rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.about-system-map {
+  min-width: 0;
+  min-height: 0;
+}
+
+.about-system-map__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.25rem minmax(0, 1fr);
+  gap: 0.5rem;
+}
+
+@media (max-width: 64rem) {
+  .about-explorer {
+    grid-template-columns: 1fr;
+  }
+
+  .about-explorer__inputs {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+  }
+
+  .about-explorer__all {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 42.5rem) {
+  .about-explorer__inputs {
+    grid-template-columns: 1fr;
+  }
+
+  .about-explorer__all {
+    grid-column: auto;
+  }
+
+  /*
+  On small mobile, avoid tiny nested scroll.
+  Let Course choices grow with the document.
+  */
+  .about-option-list--scrollable {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .about-system-map__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-explorer *,
+  .about-explorer *::before,
+  .about-explorer *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen, waitFor, within } from "@testing-librar
 import userEvent from "@testing-library/user-event";
 import { DifficultyGuide } from "./components/difficulty/DifficultyGuide";
 import { PracticeView } from "./components/practice/PracticeView";
+import { RoleplayViewV2 } from "./components/roleplay/RoleplayViewV2";
 import { ScriptDetail } from "./components/script/ScriptDetail";
 import { resolveTrainingContext } from "./training/courseRegistry";
 import { TrainingSelectionProvider } from "./training/TrainingSelectionContext";
@@ -104,6 +105,13 @@ describe("STEP 3 voice settings", () => {
     const scriptGroup = screen.getByRole("group", { name: "스크립트 재생 음성 선택" });
     expect(within(examGroup).getAllByRole("button")).toHaveLength(4);
     expect(within(scriptGroup).getAllByRole("button")).toHaveLength(4);
+    expect(screen.getAllByTestId("oom-wave-player-script")).toHaveLength(2);
+    expect(
+      screen.queryByRole("button", { name: "시험 질문 음성 미리듣기" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "스크립트 재생 음성 미리듣기" }),
+    ).not.toBeInTheDocument();
     expect(within(examGroup).getByRole("button", { name: "Heart" })).toHaveAttribute(
       "aria-pressed",
       "true",
@@ -113,6 +121,10 @@ describe("STEP 3 voice settings", () => {
       "true",
     );
     expect(within(examGroup).getByText("균형 잡히고 또렷한 톤")).toBeInTheDocument();
+    expect(within(examGroup).getByText("균형 잡히고 또렷한 톤")).toHaveClass(
+      "whitespace-nowrap",
+      "text-[9px]",
+    );
     expect(within(examGroup).getByText("부드럽고 자연스러운 톤")).toBeInTheDocument();
     expect(within(examGroup).getByText("차분하고 담백한 톤")).toBeInTheDocument();
     expect(within(examGroup).getByText("밝고 가벼운 톤")).toBeInTheDocument();
@@ -127,7 +139,9 @@ describe("STEP 3 voice settings", () => {
     expect(localStorage.getItem(TRAINING_SELECTION_STORAGE_KEY)).toBe(selectionBefore);
     expect(loadTrainingSelection()).toMatchObject({ courseId: "course-1", levelId: "advanced" });
 
-    await user.click(screen.getByRole("button", { name: "시험 질문 음성 미리듣기" }));
+    await user.click(
+      await screen.findByRole("button", { name: "시험 질문 음성 재생" }),
+    );
     await waitFor(() =>
       expect(ttsMocks.preparePlayback).toHaveBeenCalledWith(
         expect.objectContaining({ voice: "af_sky" }),
@@ -139,6 +153,72 @@ describe("STEP 3 voice settings", () => {
 });
 
 describe("voice preference consumers", () => {
+  it("uses scriptVoice for the current STEP 5 role-play English example", async () => {
+    const user = userEvent.setup();
+    writeTtsPreferences({ examVoice: "af_heart", scriptVoice: "af_sky" });
+    const roleplay = resolveTrainingContext("course-1", "advanced").roleplays[0];
+
+    render(
+      <TrainingSelectionProvider>
+        <RoleplayViewV2
+          onToast={vi.fn()}
+          settings={settings}
+          slotIndex={0}
+        />
+      </TrainingSelectionProvider>,
+    );
+
+    expect(screen.getByTestId("roleplay-audio-controls")).toBeInTheDocument();
+    await user.click(
+      await screen.findByRole("button", { name: "영어 롤플레이 답변 재생" }),
+    );
+
+    await waitFor(() =>
+      expect(ttsMocks.preparePlayback).toHaveBeenCalledWith(
+        expect.objectContaining({
+          text: roleplay.active.englishExample,
+          voice: "af_sky",
+          speed: 1,
+        }),
+        expect.any(Function),
+        { skipStatic: false },
+      ),
+    );
+  });
+
+  it("preloads the current STEP 5 role-play example from static assets", async () => {
+    const user = userEvent.setup();
+    const peaks = Array.from({ length: 256 }, () => 0.45);
+    ttsMocks.resolveStaticPlayback.mockResolvedValue({
+      kind: "static",
+      url: "/generated-tts/audio/roleplay/sky.webm",
+      peaks,
+      duration: 42,
+      bytes: 336000,
+      mimeType: "audio/webm; codecs=opus",
+      voice: "af_sky",
+      engine: "static",
+    });
+    writeTtsPreferences({ examVoice: "af_heart", scriptVoice: "af_sky" });
+
+    render(
+      <TrainingSelectionProvider>
+        <RoleplayViewV2 onToast={vi.fn()} settings={settings} slotIndex={0} />
+      </TrainingSelectionProvider>,
+    );
+
+    const player = await screen.findByTestId("oom-wave-player-script");
+    await waitFor(() => expect(player).toHaveAttribute("data-source", "static"));
+    expect(uiWaveMocks.load).toHaveBeenCalledWith(
+      "/generated-tts/audio/roleplay/sky.webm",
+      [peaks],
+      42,
+    );
+
+    await user.click(screen.getByRole("button", { name: "롤플레이 답변 음성 재생" }));
+    expect(ttsMocks.preparePlayback).not.toHaveBeenCalled();
+  });
+
   it("uses a STEP 4 static URL and peaks without requesting runtime generation", async () => {
     const user = userEvent.setup();
     const peaks = Array.from({ length: 256 }, () => 0.5);

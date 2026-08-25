@@ -20,13 +20,25 @@ type TtsControlsProps = {
   text: string;
   levelId: TrainingLevelId;
   onError: (message: string) => void;
+  audioLabel?: string;
+  playerActionLabel?: string;
+  requestPlayLabel?: string;
+  testId?: string;
 };
 
 type PlayerShellState = "idle" | "loading" | "ready" | "fallback" | "error";
 
 const IDLE_STATUS = "재생하면 음성을 준비합니다.";
 
-export function TtsControls({ text, levelId, onError }: TtsControlsProps) {
+export function TtsControls({
+  text,
+  levelId,
+  onError,
+  audioLabel = "SCRIPT AUDIO",
+  playerActionLabel,
+  requestPlayLabel,
+  testId = "script-audio-controls",
+}: TtsControlsProps) {
   const { preferences } = useTtsPreferences();
   const [rate, setRate] = useState(() => readScriptRate(levelId));
   const inputKey = `${preferences.scriptVoice}\u0000${text}`;
@@ -191,11 +203,11 @@ export function TtsControls({ text, levelId, onError }: TtsControlsProps) {
   return (
     <div
       className="w-full min-w-0 rounded-md border border-zinc-200 bg-zinc-50/75 p-3 dark:border-zinc-800 dark:bg-zinc-950/70 sm:p-4"
-      data-testid="script-audio-controls"
+      data-testid={testId}
     >
       <div className="flex items-center justify-between gap-3">
         <p className="text-[10px] font-extrabold tracking-[0.16em] text-zinc-500 dark:text-zinc-400">
-          SCRIPT AUDIO
+          {audioLabel}
         </p>
         <span aria-live="polite" className="sr-only">
           {visibleStatus}
@@ -203,6 +215,7 @@ export function TtsControls({ text, levelId, onError }: TtsControlsProps) {
       </div>
 
       <OomWavePlayer
+        actionLabel={playerActionLabel}
         audioUrl={source?.kind === "static" ? source.url : undefined}
         autoPlayRequest={playRequest}
         blob={source?.kind === "audio" ? source.blob : undefined}
@@ -233,6 +246,7 @@ export function TtsControls({ text, levelId, onError }: TtsControlsProps) {
         precomputedDuration={source?.kind === "static" ? source.duration : undefined}
         precomputedPeaks={source?.kind === "static" ? source.peaks : undefined}
         ref={playerRef}
+        requestPlayLabel={requestPlayLabel}
         shellState={visibleShellState}
         statusText={visibleStatus}
         variant="script"

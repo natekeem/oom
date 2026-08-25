@@ -40,7 +40,7 @@ OOM은 사내 구성원이 OPIc 영어 말하기를 체계적으로 연습하도
 - canonical bilingual base question, 질문 변형별 bilingual prompt와 full-answer before/after, Level-aware KEEP / CHANGE / DROP, 그리고 canonical 선택 fact의 `이 질문에서는 필수` 승격
 - 원문을 바꾸지 않고 모든 Level에서 3개 학습 구간을 파생하며, 선택 확장은 해당 구간 안의 1~2개 fact로만 연습
 - 브라우저 로컬 Kokoro 영어 TTS(시험/스크립트 음성 분리), 실제 음원 파형, Web Speech API fallback과 속도 조절
-- current playable STEP 3/4/6 정적 WebM/Opus 음원을 먼저 사용하고, 미포함/재생 실패 시 Kokoro → Web Speech로 이어지는 static-first 재생
+- current playable STEP 3/4/5/6 정적 WebM/Opus 음원을 먼저 사용하고, 미포함/재생 실패 시 Kokoro → Web Speech로 이어지는 static-first 재생
 - 클립보드 복사 피드백
 - MediaRecorder 기반 브라우저 내 녹음 및 재생
 - 브라우저 `localStorage` 기반 내부 LLM 설정
@@ -87,7 +87,7 @@ npm run tts:generate
 npm run tts:validate
 ```
 
-각 generate 명령이 출력하는 dev-only URL을 브라우저에서 열고 `생성 시작`을 누릅니다. 부분 진행은 `public/generated-tts/tts-manifest.staging.json`에만 기록되며, exact 146 texts × 4 voices가 모두 검증된 경우에만 production `tts-manifest.json`이 생성됩니다.
+각 generate 명령이 출력하는 dev-only URL을 브라우저에서 열고 `생성 시작`을 누릅니다. 부분 진행은 `public/generated-tts/tts-manifest.staging.json`에만 기록되며, exact 173 texts × 4 voices가 모두 검증된 경우에만 production `tts-manifest.json`이 생성됩니다.
 
 ## GitHub Pages 배포
 

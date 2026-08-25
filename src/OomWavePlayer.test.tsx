@@ -68,9 +68,15 @@ describe("OomWavePlayer", () => {
       />,
     );
 
-    expect(screen.getByTestId("oom-wave-player-script")).toHaveAttribute(
+    const player = screen.getByTestId("oom-wave-player-script");
+    expect(player).toHaveAttribute(
       "data-state",
       "idle",
+    );
+    expect(player).toHaveAttribute("data-control-alignment", "wave-center");
+    expect(screen.getByRole("button", { name: "영어 스크립트 재생" })).toHaveClass(
+      "row-start-1",
+      "self-center",
     );
     expect(screen.getByRole("status")).toHaveTextContent("재생하면 음성을 준비합니다.");
     expect(screen.getByRole("img", { name: "음성 준비 전 안내 파형" })).toBeInTheDocument();

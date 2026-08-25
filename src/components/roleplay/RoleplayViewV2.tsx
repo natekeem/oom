@@ -9,6 +9,7 @@ import { Card } from "../ui/Card";
 import { TrainingSelectionGuard } from "../training/TrainingSelectionGuard";
 import type { ViewId } from "../layout/Sidebar";
 import type { ResolvedTrainingContext } from "../../training/types";
+import { TtsControls } from "../script/TtsControls";
 
 type RoleplayViewV2Props = {
   slotIndex?: number;
@@ -236,16 +237,17 @@ function RoleplayViewV2Content({
             ))}
           </div>
           <div className="mt-5 border-t border-zinc-100 pt-5 dark:border-zinc-800">
-            <p className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-              현재 레벨 핵심 훈련 포인트
-            </p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {scenario.active.focus.map((item) => (
-                <Badge key={item} tone="emerald">
-                  {item}
-                </Badge>
-              ))}
-            </div>
+            <TtsControls
+              audioLabel="ROLEPLAY AUDIO"
+              levelId={resolved.level.id}
+              onError={(message) =>
+                onToast("롤플레이 음성을 재생할 수 없습니다.", message, "error")
+              }
+              playerActionLabel="롤플레이 답변 음성"
+              requestPlayLabel="영어 롤플레이 답변 재생"
+              testId="roleplay-audio-controls"
+              text={scenario.active.englishExample}
+            />
           </div>
         </Card>
       </section>

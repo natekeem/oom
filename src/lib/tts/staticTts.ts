@@ -5,8 +5,8 @@ const STATIC_TTS_ROOT = "generated-tts";
 const STATIC_TTS_MANIFEST = "tts-manifest.json";
 const STATIC_TTS_PROFILE = "kokoro-82m-natural-1.0-v1";
 const STATIC_TTS_NORMALIZATION = "unicode-nfc-trim-whitespace-v1";
-const STATIC_TTS_EXPECTED_TEXTS = 146;
-const STATIC_TTS_EXPECTED_ASSETS = 584;
+const STATIC_TTS_EXPECTED_TEXTS = 173;
+const STATIC_TTS_EXPECTED_ASSETS = 692;
 const STATIC_TTS_PEAK_COUNT = 256;
 const STATIC_TTS_MIME_TYPE = "audio/webm; codecs=opus" as const;
 const STATIC_TTS_CAPABILITY_MIME_TYPE = 'audio/webm; codecs="opus"';
@@ -99,8 +99,8 @@ export class ManifestStaticTtsResolver implements StaticTtsResolver {
 
   private loadManifest() {
     if (!this.manifestPromise) {
-      this.manifestPromise = fetch(baseUrl(`${STATIC_TTS_ROOT}/${STATIC_TTS_MANIFEST}`), {
-        cache: "force-cache",
+      const pending = fetch(baseUrl(`${STATIC_TTS_ROOT}/${STATIC_TTS_MANIFEST}`), {
+        cache: "no-cache",
       })
         .then(async (response) => {
           if (!response.ok) return null;
@@ -108,6 +108,12 @@ export class ManifestStaticTtsResolver implements StaticTtsResolver {
           return isCompleteManifest(manifest) ? manifest : null;
         })
         .catch(() => null);
+      this.manifestPromise = pending;
+      void pending.then((manifest) => {
+        if (!manifest && this.manifestPromise === pending) {
+          this.manifestPromise = null;
+        }
+      });
     }
     return this.manifestPromise;
   }
@@ -116,7 +122,7 @@ export class ManifestStaticTtsResolver implements StaticTtsResolver {
     const url = baseUrl(`${STATIC_TTS_ROOT}/${path}`);
     let promise = this.peaksPromises.get(url);
     if (!promise) {
-      promise = fetch(url, { cache: "force-cache" })
+      const pending = fetch(url, { cache: "force-cache" })
         .then(async (response) => {
           if (!response.ok) return null;
           const value: unknown = await response.json();
@@ -136,7 +142,13 @@ export class ManifestStaticTtsResolver implements StaticTtsResolver {
             : null;
         })
         .catch(() => null);
-      this.peaksPromises.set(url, promise);
+      promise = pending;
+      this.peaksPromises.set(url, pending);
+      void pending.then((peaks) => {
+        if (!peaks && this.peaksPromises.get(url) === pending) {
+          this.peaksPromises.delete(url);
+        }
+      });
     }
     return promise;
   }

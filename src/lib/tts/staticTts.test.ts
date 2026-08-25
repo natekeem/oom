@@ -47,7 +47,7 @@ describe("ManifestStaticTtsResolver", () => {
     expect(fetchMock).toHaveBeenNthCalledWith(
       1,
       "/generated-tts/tts-manifest.json",
-      { cache: "force-cache" },
+      { cache: "no-cache" },
     );
     expect(fetchMock).toHaveBeenNthCalledWith(
       2,
@@ -79,6 +79,49 @@ describe("ManifestStaticTtsResolver", () => {
       new ManifestStaticTtsResolver().resolve({ text: "Hello", voice: "af_heart" }),
     ).resolves.toBeNull();
   });
+
+  it("revalidates after a stale manifest instead of permanently falling back to runtime TTS", async () => {
+    const hash = await sha256TtsText("Hello");
+    const staleManifest = completeManifest(hash!);
+    staleManifest.coverage.expectedTexts = 146;
+    staleManifest.coverage.completedTexts = 146;
+    staleManifest.coverage.expectedVoiceAssets = 584;
+    staleManifest.coverage.completedVoiceAssets = 584;
+    const currentManifest = completeManifest(hash!);
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => staleManifest })
+      .mockResolvedValueOnce({ ok: true, json: async () => currentManifest })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          version: 1,
+          method: "pcm16-window-max-global-normalized",
+          duration: 5.25,
+          peaks,
+        }),
+      });
+    vi.stubGlobal("fetch", fetchMock);
+    const resolver = new ManifestStaticTtsResolver();
+
+    await expect(
+      resolver.resolve({ text: "Hello", voice: "af_heart" }),
+    ).resolves.toBeNull();
+    await expect(
+      resolver.resolve({ text: "Hello", voice: "af_heart" }),
+    ).resolves.toMatchObject({ kind: "static", voice: "af_heart" });
+
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      "/generated-tts/tts-manifest.json",
+      { cache: "no-cache" },
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      "/generated-tts/tts-manifest.json",
+      { cache: "no-cache" },
+    );
+  });
 });
 
 function completeManifest(hash: string) {
@@ -96,14 +139,14 @@ function completeManifest(hash: string) {
     waveform: { count: 256 },
     voices: ["af_heart", "af_bella", "af_sarah", "af_sky"],
     coverage: {
-      expectedTexts: 146,
-      expectedVoiceAssets: 584,
-      completedTexts: 146,
-      completedVoiceAssets: 584,
+      expectedTexts: 173,
+      expectedVoiceAssets: 692,
+      completedTexts: 173,
+      completedVoiceAssets: 692,
       complete: true,
     },
     entries: Object.fromEntries(
-      Array.from({ length: 146 }, (_, index) => {
+      Array.from({ length: 173 }, (_, index) => {
         const entryHash = index === 0 ? hash : `${index}`.padStart(64, "0");
         return [entryHash, {
         audio: {

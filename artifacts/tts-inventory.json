@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "baseline": {
-    "head": "b75fa4c329cc1c7a91b17030fcf5451dc7451249",
-    "originMain": "b75fa4c329cc1c7a91b17030fcf5451dc7451249"
+    "head": "773150b82a78671bb53feb5e5ab3cd832cf2edb7",
+    "originMain": "773150b82a78671bb53feb5e5ab3cd832cf2edb7"
   },
   "generatedBy": "npm run tts:audit",
   "normalization": {
@@ -33,31 +33,31 @@
   },
   "summary": {
     "currentTtsInputs": {
-      "logicalItems": 146,
-      "uniqueTexts": 146,
+      "logicalItems": 173,
+      "uniqueTexts": 173,
       "duplicateItems": 0,
       "duplicateSavingsPct": 0,
-      "estimatedSingleVoiceMinutes": 38.89,
-      "estimatedFourVoiceMinutes": 155.55,
-      "fourVoiceFiles": 584,
+      "estimatedSingleVoiceMinutes": 48.58,
+      "estimatedFourVoiceMinutes": 194.32,
+      "fourVoiceFiles": 692,
       "storageBytes": {
-        "wavPcm24kMono16": 447974400,
-        "opus48k": 55996800,
-        "opus64k": 74662400
+        "wavPcm24kMono16": 559641600,
+        "opus48k": 69955200,
+        "opus64k": 93273600
       }
     },
     "expandedStaticCandidates": {
-      "logicalItems": 317,
-      "uniqueTexts": 287,
+      "logicalItems": 344,
+      "uniqueTexts": 314,
       "duplicateItems": 30,
-      "duplicateSavingsPct": 9.46,
-      "estimatedSingleVoiceMinutes": 125.43,
-      "estimatedFourVoiceMinutes": 501.71,
-      "fourVoiceFiles": 1148,
+      "duplicateSavingsPct": 8.72,
+      "estimatedSingleVoiceMinutes": 135.12,
+      "estimatedFourVoiceMinutes": 540.48,
+      "fourVoiceFiles": 1256,
       "storageBytes": {
-        "wavPcm24kMono16": 1444915200,
-        "opus48k": 180614400,
-        "opus64k": 240819200
+        "wavPcm24kMono16": 1556582400,
+        "opus48k": 194572800,
+        "opus64k": 259430400
       }
     },
     "currentStaticCoveragePct": 100,
@@ -103,6 +103,20 @@
         "wavPcm24kMono16": 12288000,
         "opus48k": 1536000,
         "opus64k": 2048000
+      }
+    },
+    "step5RoleplayAnswerExamples": {
+      "logicalItems": 27,
+      "uniqueTexts": 27,
+      "duplicateItems": 0,
+      "duplicateSavingsPct": 0,
+      "estimatedSingleVoiceMinutes": 9.69,
+      "estimatedFourVoiceMinutes": 38.77,
+      "fourVoiceFiles": 108,
+      "storageBytes": {
+        "wavPcm24kMono16": 111667200,
+        "opus48k": 13958400,
+        "opus64k": 18611200
       }
     },
     "step6PracticeQuestions": {
@@ -193,6 +207,22 @@
       }
     },
     {
+      "category": "step5-roleplay-example",
+      "label": "STEP 5 level-specific answer examples",
+      "logicalItems": 27,
+      "uniqueTexts": 27,
+      "duplicateItems": 0,
+      "duplicateSavingsPct": 0,
+      "estimatedSingleVoiceMinutes": 9.69,
+      "estimatedFourVoiceMinutes": 38.77,
+      "fourVoiceFiles": 108,
+      "storageBytes": {
+        "wavPcm24kMono16": 111667200,
+        "opus48k": 13958400,
+        "opus64k": 18611200
+      }
+    },
+    {
       "category": "step6-question",
       "label": "STEP 6 practice questions",
       "logicalItems": 108,
@@ -251,17 +281,18 @@
       "resolvedVariantAnswers": 16,
       "practiceQuestions": 12,
       "roleplayPromptSlots": 3,
-      "logicalItems": 35,
-      "uniqueTexts": 33,
+      "roleplayAnswerExamples": 3,
+      "logicalItems": 38,
+      "uniqueTexts": 36,
       "duplicateItems": 2,
-      "duplicateSavingsPct": 5.71,
-      "estimatedSingleVoiceMinutes": 19.18,
-      "estimatedFourVoiceMinutes": 76.72,
-      "fourVoiceFiles": 132,
+      "duplicateSavingsPct": 5.26,
+      "estimatedSingleVoiceMinutes": 20.8,
+      "estimatedFourVoiceMinutes": 83.2,
+      "fourVoiceFiles": 144,
       "storageBytes": {
-        "wavPcm24kMono16": 220953600,
-        "opus48k": 27619200,
-        "opus64k": 36825600
+        "wavPcm24kMono16": 239616000,
+        "opus48k": 29952000,
+        "opus64k": 39936000
       }
     },
     {
@@ -273,17 +304,18 @@
       "resolvedVariantAnswers": 16,
       "practiceQuestions": 12,
       "roleplayPromptSlots": 3,
-      "logicalItems": 35,
-      "uniqueTexts": 33,
+      "roleplayAnswerExamples": 3,
+      "logicalItems": 38,
+      "uniqueTexts": 36,
       "duplicateItems": 2,
-      "duplicateSavingsPct": 5.71,
-      "estimatedSingleVoiceMinutes": 14.19,
-      "estimatedFourVoiceMinutes": 56.77,
-      "fourVoiceFiles": 132,
+      "duplicateSavingsPct": 5.26,
+      "estimatedSingleVoiceMinutes": 15.15,
+      "estimatedFourVoiceMinutes": 60.59,
+      "fourVoiceFiles": 144,
       "storageBytes": {
-        "wavPcm24kMono16": 163507200,
-        "opus48k": 20438400,
-        "opus64k": 27251200
+        "wavPcm24kMono16": 174489600,
+        "opus48k": 21811200,
+        "opus64k": 29081600
       }
     },
     {
@@ -295,17 +327,18 @@
       "resolvedVariantAnswers": 16,
       "practiceQuestions": 12,
       "roleplayPromptSlots": 3,
-      "logicalItems": 35,
-      "uniqueTexts": 33,
+      "roleplayAnswerExamples": 3,
+      "logicalItems": 38,
+      "uniqueTexts": 36,
       "duplicateItems": 2,
-      "duplicateSavingsPct": 5.71,
-      "estimatedSingleVoiceMinutes": 8.45,
-      "estimatedFourVoiceMinutes": 33.79,
-      "fourVoiceFiles": 132,
+      "duplicateSavingsPct": 5.26,
+      "estimatedSingleVoiceMinutes": 9.12,
+      "estimatedFourVoiceMinutes": 36.48,
+      "fourVoiceFiles": 144,
       "storageBytes": {
-        "wavPcm24kMono16": 97305600,
-        "opus48k": 12163200,
-        "opus64k": 16217600
+        "wavPcm24kMono16": 105062400,
+        "opus48k": 13132800,
+        "opus64k": 17510400
       }
     },
     {
@@ -317,17 +350,18 @@
       "resolvedVariantAnswers": 16,
       "practiceQuestions": 12,
       "roleplayPromptSlots": 3,
-      "logicalItems": 35,
-      "uniqueTexts": 34,
+      "roleplayAnswerExamples": 3,
+      "logicalItems": 38,
+      "uniqueTexts": 37,
       "duplicateItems": 1,
-      "duplicateSavingsPct": 2.86,
-      "estimatedSingleVoiceMinutes": 18.71,
-      "estimatedFourVoiceMinutes": 74.83,
-      "fourVoiceFiles": 136,
+      "duplicateSavingsPct": 2.63,
+      "estimatedSingleVoiceMinutes": 20.36,
+      "estimatedFourVoiceMinutes": 81.44,
+      "fourVoiceFiles": 148,
       "storageBytes": {
-        "wavPcm24kMono16": 215500800,
-        "opus48k": 26937600,
-        "opus64k": 35916800
+        "wavPcm24kMono16": 234547200,
+        "opus48k": 29318400,
+        "opus64k": 39091200
       }
     },
     {
@@ -339,17 +373,18 @@
       "resolvedVariantAnswers": 16,
       "practiceQuestions": 12,
       "roleplayPromptSlots": 3,
-      "logicalItems": 35,
-      "uniqueTexts": 34,
+      "roleplayAnswerExamples": 3,
+      "logicalItems": 38,
+      "uniqueTexts": 37,
       "duplicateItems": 1,
-      "duplicateSavingsPct": 2.86,
-      "estimatedSingleVoiceMinutes": 14.19,
-      "estimatedFourVoiceMinutes": 56.75,
-      "fourVoiceFiles": 136,
+      "duplicateSavingsPct": 2.63,
+      "estimatedSingleVoiceMinutes": 15.01,
+      "estimatedFourVoiceMinutes": 60.05,
+      "fourVoiceFiles": 148,
       "storageBytes": {
-        "wavPcm24kMono16": 163430400,
-        "opus48k": 20428800,
-        "opus64k": 27238400
+        "wavPcm24kMono16": 172953600,
+        "opus48k": 21619200,
+        "opus64k": 28825600
       }
     },
     {
@@ -361,17 +396,18 @@
       "resolvedVariantAnswers": 16,
       "practiceQuestions": 12,
       "roleplayPromptSlots": 3,
-      "logicalItems": 35,
-      "uniqueTexts": 34,
+      "roleplayAnswerExamples": 3,
+      "logicalItems": 38,
+      "uniqueTexts": 37,
       "duplicateItems": 1,
-      "duplicateSavingsPct": 2.86,
-      "estimatedSingleVoiceMinutes": 8.53,
-      "estimatedFourVoiceMinutes": 34.11,
-      "fourVoiceFiles": 136,
+      "duplicateSavingsPct": 2.63,
+      "estimatedSingleVoiceMinutes": 9.17,
+      "estimatedFourVoiceMinutes": 36.69,
+      "fourVoiceFiles": 148,
       "storageBytes": {
-        "wavPcm24kMono16": 98227200,
-        "opus48k": 12278400,
-        "opus64k": 16371200
+        "wavPcm24kMono16": 105676800,
+        "opus48k": 13209600,
+        "opus64k": 17612800
       }
     },
     {
@@ -383,17 +419,18 @@
       "resolvedVariantAnswers": 16,
       "practiceQuestions": 12,
       "roleplayPromptSlots": 3,
-      "logicalItems": 35,
-      "uniqueTexts": 34,
+      "roleplayAnswerExamples": 3,
+      "logicalItems": 38,
+      "uniqueTexts": 37,
       "duplicateItems": 1,
-      "duplicateSavingsPct": 2.86,
-      "estimatedSingleVoiceMinutes": 19.87,
-      "estimatedFourVoiceMinutes": 79.47,
-      "fourVoiceFiles": 136,
+      "duplicateSavingsPct": 2.63,
+      "estimatedSingleVoiceMinutes": 21.57,
+      "estimatedFourVoiceMinutes": 86.29,
+      "fourVoiceFiles": 148,
       "storageBytes": {
-        "wavPcm24kMono16": 228864000,
-        "opus48k": 28608000,
-        "opus64k": 38144000
+        "wavPcm24kMono16": 248524800,
+        "opus48k": 31065600,
+        "opus64k": 41420800
       }
     },
     {
@@ -405,17 +442,18 @@
       "resolvedVariantAnswers": 16,
       "practiceQuestions": 12,
       "roleplayPromptSlots": 3,
-      "logicalItems": 35,
-      "uniqueTexts": 34,
+      "roleplayAnswerExamples": 3,
+      "logicalItems": 38,
+      "uniqueTexts": 37,
       "duplicateItems": 1,
-      "duplicateSavingsPct": 2.86,
-      "estimatedSingleVoiceMinutes": 14.88,
-      "estimatedFourVoiceMinutes": 59.52,
-      "fourVoiceFiles": 136,
+      "duplicateSavingsPct": 2.63,
+      "estimatedSingleVoiceMinutes": 15.87,
+      "estimatedFourVoiceMinutes": 63.49,
+      "fourVoiceFiles": 148,
       "storageBytes": {
-        "wavPcm24kMono16": 171417600,
-        "opus48k": 21427200,
-        "opus64k": 28569600
+        "wavPcm24kMono16": 182860800,
+        "opus48k": 22857600,
+        "opus64k": 30476800
       }
     },
     {
@@ -427,17 +465,18 @@
       "resolvedVariantAnswers": 16,
       "practiceQuestions": 12,
       "roleplayPromptSlots": 3,
-      "logicalItems": 35,
-      "uniqueTexts": 34,
+      "roleplayAnswerExamples": 3,
+      "logicalItems": 38,
+      "uniqueTexts": 37,
       "duplicateItems": 1,
-      "duplicateSavingsPct": 2.86,
-      "estimatedSingleVoiceMinutes": 9.43,
-      "estimatedFourVoiceMinutes": 37.73,
-      "fourVoiceFiles": 136,
+      "duplicateSavingsPct": 2.63,
+      "estimatedSingleVoiceMinutes": 10.05,
+      "estimatedFourVoiceMinutes": 40.21,
+      "fourVoiceFiles": 148,
       "storageBytes": {
-        "wavPcm24kMono16": 108672000,
-        "opus48k": 13584000,
-        "opus64k": 18112000
+        "wavPcm24kMono16": 115814400,
+        "opus48k": 14476800,
+        "opus64k": 19302400
       }
     }
   ],
@@ -446,57 +485,57 @@
       {
         "courseId": "course-1",
         "courseTitle": "Everyday & Getaway",
-        "logicalItems": 105,
-        "uniqueTexts": 93,
+        "logicalItems": 114,
+        "uniqueTexts": 102,
         "duplicateItems": 12,
-        "duplicateSavingsPct": 11.43,
-        "estimatedSingleVoiceMinutes": 41.1,
-        "estimatedFourVoiceMinutes": 164.4,
-        "fourVoiceFiles": 372,
+        "duplicateSavingsPct": 10.53,
+        "estimatedSingleVoiceMinutes": 44.35,
+        "estimatedFourVoiceMinutes": 177.39,
+        "fourVoiceFiles": 408,
         "storageBytes": {
-          "wavPcm24kMono16": 473472000,
-          "opus48k": 59184000,
-          "opus64k": 78912000
+          "wavPcm24kMono16": 510873600,
+          "opus48k": 63859200,
+          "opus64k": 85145600
         }
       },
       {
         "courseId": "course-2",
         "courseTitle": "Culture & City",
-        "logicalItems": 105,
-        "uniqueTexts": 96,
+        "logicalItems": 114,
+        "uniqueTexts": 105,
         "duplicateItems": 9,
-        "duplicateSavingsPct": 8.57,
-        "estimatedSingleVoiceMinutes": 40.63,
-        "estimatedFourVoiceMinutes": 162.53,
-        "fourVoiceFiles": 384,
+        "duplicateSavingsPct": 7.89,
+        "estimatedSingleVoiceMinutes": 43.76,
+        "estimatedFourVoiceMinutes": 175.04,
+        "fourVoiceFiles": 420,
         "storageBytes": {
-          "wavPcm24kMono16": 468096000,
-          "opus48k": 58512000,
-          "opus64k": 78016000
+          "wavPcm24kMono16": 504115200,
+          "opus48k": 63014400,
+          "opus64k": 84019200
         }
       },
       {
         "courseId": "course-3",
         "courseTitle": "Nature & Weekend",
-        "logicalItems": 105,
-        "uniqueTexts": 96,
+        "logicalItems": 114,
+        "uniqueTexts": 105,
         "duplicateItems": 9,
-        "duplicateSavingsPct": 8.57,
-        "estimatedSingleVoiceMinutes": 43.55,
-        "estimatedFourVoiceMinutes": 174.21,
-        "fourVoiceFiles": 384,
+        "duplicateSavingsPct": 7.89,
+        "estimatedSingleVoiceMinutes": 46.87,
+        "estimatedFourVoiceMinutes": 187.49,
+        "fourVoiceFiles": 420,
         "storageBytes": {
-          "wavPcm24kMono16": 501734400,
-          "opus48k": 62716800,
-          "opus64k": 83622400
+          "wavPcm24kMono16": 539980800,
+          "opus48k": 67497600,
+          "opus64k": 89996800
         }
       }
     ],
     "average": {
-      "uniqueTexts": 95,
-      "fourVoiceFiles": 380,
-      "estimatedSingleVoiceMinutes": 41.76,
-      "opus64kBytes": 80183466.66666667
+      "uniqueTexts": 104,
+      "fourVoiceFiles": 416,
+      "estimatedSingleVoiceMinutes": 44.99333333333333,
+      "opus64kBytes": 86387200
     }
   },
   "questionDuplication": {
@@ -1441,6 +1480,25 @@
       "estimatedMinutes": 0.147
     },
     {
+      "logicalId": "roleplay:course-1:advanced:hotel-booking:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-1",
+      "levelId": "advanced",
+      "roleplayId": "hotel-booking",
+      "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+      "sourceKey": "hotel-booking.levels.advanced.englishExample",
+      "text": "Hello, I'm sorry, but there seems to be a problem with my family reservation. I booked an ocean-view room for two nights, but the room we received faces the parking lot. Could you first check whether the original room type is available today? If it is fully booked, would it be possible to move us tomorrow and offer a partial refund for tonight, or suggest another room with a similar view? I understand the hotel may be busy, so I would appreciate whichever option causes the least disruption.",
+      "normalizedText": "Hello, I'm sorry, but there seems to be a problem with my family reservation. I booked an ocean-view room for two nights, but the room we received faces the parking lot. Could you first check whether the original room type is available today? If it is fully booked, would it be possible to move us tomorrow and offer a partial refund for tonight, or suggest another room with a similar view? I understand the hotel may be busy, so I would appreciate whichever option causes the least disruption.",
+      "textHash": "c74ca8fa318e0977b602d919e2015da94fc99c26e9cfb02cd57c54c500c4c54f",
+      "characters": 495,
+      "words": 88,
+      "estimatedDurationSeconds": 35.2,
+      "estimatedMinutes": 0.587
+    },
+    {
       "logicalId": "roleplay:course-1:advanced:tennis-court",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -1460,6 +1518,25 @@
       "estimatedMinutes": 0.12
     },
     {
+      "logicalId": "roleplay:course-1:advanced:tennis-court:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-1",
+      "levelId": "advanced",
+      "roleplayId": "tennis-court",
+      "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+      "sourceKey": "tennis-court.levels.advanced.englishExample",
+      "text": "Hello, I'm calling about our Saturday morning tennis reservation. I received a notice that the outdoor courts may close because of the rain, and my practice partner and I already arranged our schedules around the booking. Could you check whether an indoor court is available around the same time? If all indoor courts are full, Sunday afternoon would work, or we could keep the payment as credit for next weekend. Could you tell me which option has no extra fee?",
+      "normalizedText": "Hello, I'm calling about our Saturday morning tennis reservation. I received a notice that the outdoor courts may close because of the rain, and my practice partner and I already arranged our schedules around the booking. Could you check whether an indoor court is available around the same time? If all indoor courts are full, Sunday afternoon would work, or we could keep the payment as credit for next weekend. Could you tell me which option has no extra fee?",
+      "textHash": "f97b921b02a293ce458051fa16013a19c352dbec5ba2ba3d8bad9a91e49d274b",
+      "characters": 462,
+      "words": 80,
+      "estimatedDurationSeconds": 32,
+      "estimatedMinutes": 0.533
+    },
+    {
       "logicalId": "roleplay:course-1:advanced:cleaning-reschedule",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -1477,6 +1554,25 @@
       "words": 14,
       "estimatedDurationSeconds": 5.6,
       "estimatedMinutes": 0.093
+    },
+    {
+      "logicalId": "roleplay:course-1:advanced:cleaning-reschedule:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-1",
+      "levelId": "advanced",
+      "roleplayId": "cleaning-reschedule",
+      "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+      "sourceKey": "cleaning-reschedule.levels.advanced.englishExample",
+      "text": "Hi, I'm calling about the cleaning appointment scheduled for this Saturday afternoon. A family event was unexpectedly moved to the same time, so nobody will be home to let the cleaner in. Could we move it to Tuesday evening or next Saturday morning? If those times are unavailable, I would be happy to keep the payment as credit. Please let me know whether any change fee applies and what the earliest available slot would be.",
+      "normalizedText": "Hi, I'm calling about the cleaning appointment scheduled for this Saturday afternoon. A family event was unexpectedly moved to the same time, so nobody will be home to let the cleaner in. Could we move it to Tuesday evening or next Saturday morning? If those times are unavailable, I would be happy to keep the payment as credit. Please let me know whether any change fee applies and what the earliest available slot would be.",
+      "textHash": "931ba8fc9405f71f5e6981447279abef02fd0fcaa9f26f3ba37dbe827034443d",
+      "characters": 426,
+      "words": 75,
+      "estimatedDurationSeconds": 30,
+      "estimatedMinutes": 0.5
     },
     {
       "logicalId": "question:course-1:advanced:course-1-advanced-q25",
@@ -2214,6 +2310,25 @@
       "estimatedMinutes": 0.147
     },
     {
+      "logicalId": "roleplay:course-1:intermediate:hotel-booking:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-1",
+      "levelId": "intermediate",
+      "roleplayId": "hotel-booking",
+      "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+      "sourceKey": "hotel-booking.levels.intermediate.englishExample",
+      "text": "Hello, I have a problem with my reservation. I booked an ocean-view room for my family, but the room we received faces the parking lot. Could you check if another ocean-view room is available? If not, could we move tomorrow or get a partial refund? Thank you for your help.",
+      "normalizedText": "Hello, I have a problem with my reservation. I booked an ocean-view room for my family, but the room we received faces the parking lot. Could you check if another ocean-view room is available? If not, could we move tomorrow or get a partial refund? Thank you for your help.",
+      "textHash": "1d6cb14926c38a4d08bcde5f2ed49916c32aa49320c712478b0876c24c452391",
+      "characters": 273,
+      "words": 50,
+      "estimatedDurationSeconds": 20,
+      "estimatedMinutes": 0.333
+    },
+    {
       "logicalId": "roleplay:course-1:intermediate:tennis-court",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -2233,6 +2348,25 @@
       "estimatedMinutes": 0.12
     },
     {
+      "logicalId": "roleplay:course-1:intermediate:tennis-court:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-1",
+      "levelId": "intermediate",
+      "roleplayId": "tennis-court",
+      "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+      "sourceKey": "tennis-court.levels.intermediate.englishExample",
+      "text": "Hello, I have a tennis court reservation for Saturday morning, but I heard the outdoor court may close because of the rain. My friend and I still want to practice. Is an indoor court available? If not, can we move the reservation to Sunday afternoon or keep the payment as credit?",
+      "normalizedText": "Hello, I have a tennis court reservation for Saturday morning, but I heard the outdoor court may close because of the rain. My friend and I still want to practice. Is an indoor court available? If not, can we move the reservation to Sunday afternoon or keep the payment as credit?",
+      "textHash": "e40479f26a20d08f0c714ff1581e1330537096a15d362a7d16762e0bfbf8a742",
+      "characters": 280,
+      "words": 51,
+      "estimatedDurationSeconds": 20.4,
+      "estimatedMinutes": 0.34
+    },
+    {
       "logicalId": "roleplay:course-1:intermediate:cleaning-reschedule",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -2250,6 +2384,25 @@
       "words": 14,
       "estimatedDurationSeconds": 5.6,
       "estimatedMinutes": 0.093
+    },
+    {
+      "logicalId": "roleplay:course-1:intermediate:cleaning-reschedule:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-1",
+      "levelId": "intermediate",
+      "roleplayId": "cleaning-reschedule",
+      "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+      "sourceKey": "cleaning-reschedule.levels.intermediate.englishExample",
+      "text": "Hello, I'm calling about my cleaning appointment this Saturday afternoon. A family event changed, so nobody will be home. Can I move the appointment to Tuesday evening or Saturday morning next week? Please also tell me if there is a change fee.",
+      "normalizedText": "Hello, I'm calling about my cleaning appointment this Saturday afternoon. A family event changed, so nobody will be home. Can I move the appointment to Tuesday evening or Saturday morning next week? Please also tell me if there is a change fee.",
+      "textHash": "779da838381fa77a56266e1ddf39955c9a7626a58ebe94528ba1a2703a0e9984",
+      "characters": 244,
+      "words": 42,
+      "estimatedDurationSeconds": 16.8,
+      "estimatedMinutes": 0.28
     },
     {
       "logicalId": "question:course-1:intermediate:course-1-intermediate-q13",
@@ -2987,6 +3140,25 @@
       "estimatedMinutes": 0.147
     },
     {
+      "logicalId": "roleplay:course-1:foundation:hotel-booking:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-1",
+      "levelId": "foundation",
+      "roleplayId": "hotel-booking",
+      "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+      "sourceKey": "hotel-booking.levels.foundation.englishExample",
+      "text": "Hi, I have a problem with my room. I booked an ocean-view room, but this room does not have an ocean view. Could you check my reservation? If possible, can I move to another room? Thank you.",
+      "normalizedText": "Hi, I have a problem with my room. I booked an ocean-view room, but this room does not have an ocean view. Could you check my reservation? If possible, can I move to another room? Thank you.",
+      "textHash": "6cff4c8cd7ae7e11f2a65ff536b423dba21e12af6a0dd30c47a3bf1110ba7ac1",
+      "characters": 190,
+      "words": 37,
+      "estimatedDurationSeconds": 14.8,
+      "estimatedMinutes": 0.247
+    },
+    {
       "logicalId": "roleplay:course-1:foundation:tennis-court",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -3006,6 +3178,25 @@
       "estimatedMinutes": 0.12
     },
     {
+      "logicalId": "roleplay:course-1:foundation:tennis-court:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-1",
+      "levelId": "foundation",
+      "roleplayId": "tennis-court",
+      "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+      "sourceKey": "tennis-court.levels.foundation.englishExample",
+      "text": "Hi, I have a tennis court reservation for Saturday, but it is raining. Can I change the time? Do you have an indoor court? If not, can I use the reservation on another day? Thank you.",
+      "normalizedText": "Hi, I have a tennis court reservation for Saturday, but it is raining. Can I change the time? Do you have an indoor court? If not, can I use the reservation on another day? Thank you.",
+      "textHash": "0d41ad19505407baa66ccffe9c56c3fc8ed1958135ffc5834c6641f5790f624b",
+      "characters": 183,
+      "words": 36,
+      "estimatedDurationSeconds": 14.4,
+      "estimatedMinutes": 0.24
+    },
+    {
       "logicalId": "roleplay:course-1:foundation:cleaning-reschedule",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -3023,6 +3214,25 @@
       "words": 14,
       "estimatedDurationSeconds": 5.6,
       "estimatedMinutes": 0.093
+    },
+    {
+      "logicalId": "roleplay:course-1:foundation:cleaning-reschedule:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-1",
+      "levelId": "foundation",
+      "roleplayId": "cleaning-reschedule",
+      "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+      "sourceKey": "cleaning-reschedule.levels.foundation.englishExample",
+      "text": "Hi, I need to change my cleaning appointment this Saturday. I have a family event. Can I move it to next week? Is Tuesday evening available? Thank you.",
+      "normalizedText": "Hi, I need to change my cleaning appointment this Saturday. I have a family event. Can I move it to next week? Is Tuesday evening available? Thank you.",
+      "textHash": "0d9df119c975aa0c9929492002b444b9e9525339b16c54146f083f41baf5a801",
+      "characters": 151,
+      "words": 28,
+      "estimatedDurationSeconds": 11.2,
+      "estimatedMinutes": 0.187
     },
     {
       "logicalId": "question:course-1:foundation:course-1-foundation-q01",
@@ -3760,6 +3970,25 @@
       "estimatedMinutes": 0.127
     },
     {
+      "logicalId": "roleplay:course-2:advanced:ticket-seat-problem:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-2",
+      "levelId": "advanced",
+      "roleplayId": "ticket-seat-problem",
+      "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+      "sourceKey": "ticket-seat-problem.levels.advanced.englishExample",
+      "text": "Hello, I need some help with two tickets for tonight's performance. I selected two seats together when I booked online, but the issued tickets are in different rows, which makes it difficult because I came with a friend. Could you check whether any two adjacent seats are available, even in a different section? If the venue is full, we could attend the later show, or I would like to know whether a refund or credit is possible. Which option would be easiest to process?",
+      "normalizedText": "Hello, I need some help with two tickets for tonight's performance. I selected two seats together when I booked online, but the issued tickets are in different rows, which makes it difficult because I came with a friend. Could you check whether any two adjacent seats are available, even in a different section? If the venue is full, we could attend the later show, or I would like to know whether a refund or credit is possible. Which option would be easiest to process?",
+      "textHash": "4e84aac257b2ddce3e21ceaa1ae1c2891f4a2b44a858c65e4d99fe629c190f02",
+      "characters": 471,
+      "words": 84,
+      "estimatedDurationSeconds": 33.6,
+      "estimatedMinutes": 0.56
+    },
+    {
       "logicalId": "roleplay:course-2:advanced:store-exchange",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -3779,6 +4008,25 @@
       "estimatedMinutes": 0.127
     },
     {
+      "logicalId": "roleplay:course-2:advanced:store-exchange:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-2",
+      "levelId": "advanced",
+      "roleplayId": "store-exchange",
+      "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+      "sourceKey": "store-exchange.levels.advanced.englishExample",
+      "text": "Hi, I bought these wireless earphones here three days ago after trying the display model, but the pair I received keeps losing connection during normal use. I brought the receipt, original box, and all accessories. Could you first check whether I qualify for an exchange? If the same model is out of stock, I would be open to paying the difference for another model, or receiving store credit. If neither is possible, please explain the refund policy and the fastest option.",
+      "normalizedText": "Hi, I bought these wireless earphones here three days ago after trying the display model, but the pair I received keeps losing connection during normal use. I brought the receipt, original box, and all accessories. Could you first check whether I qualify for an exchange? If the same model is out of stock, I would be open to paying the difference for another model, or receiving store credit. If neither is possible, please explain the refund policy and the fastest option.",
+      "textHash": "befeb06100206e7cb2ff7048585552901c7fdcc1edde51ec5e7661e4bba49888",
+      "characters": 474,
+      "words": 81,
+      "estimatedDurationSeconds": 32.4,
+      "estimatedMinutes": 0.54
+    },
+    {
       "logicalId": "roleplay:course-2:advanced:city-tour-change",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -3796,6 +4044,25 @@
       "words": 21,
       "estimatedDurationSeconds": 8.4,
       "estimatedMinutes": 0.14
+    },
+    {
+      "logicalId": "roleplay:course-2:advanced:city-tour-change:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-2",
+      "levelId": "advanced",
+      "roleplayId": "city-tour-change",
+      "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+      "sourceKey": "city-tour-change.levels.advanced.englishExample",
+      "text": "Hello, I'm calling about my 10 a.m. city tour reservation. The train company changed my arrival time, so I will not reach the city until around 11, and I do not want to keep the group waiting. Could you move me to an afternoon departure if there is space? If all tours are full today, tomorrow morning would also work, or I could accept credit for a future booking. Could you tell me whether any change fee applies and which option you recommend?",
+      "normalizedText": "Hello, I'm calling about my 10 a.m. city tour reservation. The train company changed my arrival time, so I will not reach the city until around 11, and I do not want to keep the group waiting. Could you move me to an afternoon departure if there is space? If all tours are full today, tomorrow morning would also work, or I could accept credit for a future booking. Could you tell me whether any change fee applies and which option you recommend?",
+      "textHash": "b485fbd9d2e1db7faa6e61f4ae0489ec54658e6d48e4bd27dc8393316c3a9cce",
+      "characters": 446,
+      "words": 83,
+      "estimatedDurationSeconds": 33.2,
+      "estimatedMinutes": 0.553
     },
     {
       "logicalId": "question:course-2:advanced:course-2-advanced-q25",
@@ -4533,6 +4800,25 @@
       "estimatedMinutes": 0.127
     },
     {
+      "logicalId": "roleplay:course-2:intermediate:ticket-seat-problem:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-2",
+      "levelId": "intermediate",
+      "roleplayId": "ticket-seat-problem",
+      "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+      "sourceKey": "ticket-seat-problem.levels.intermediate.englishExample",
+      "text": "Hello, I booked two seats together for tonight's show, but the tickets I received are in different rows. Could you check if there are two seats together? If not, can we change to a later show or get a refund?",
+      "normalizedText": "Hello, I booked two seats together for tonight's show, but the tickets I received are in different rows. Could you check if there are two seats together? If not, can we change to a later show or get a refund?",
+      "textHash": "29dc66bc39ebc7ca3b89cc2bfce02a3175a433f252207da66917cd962a277584",
+      "characters": 208,
+      "words": 40,
+      "estimatedDurationSeconds": 16,
+      "estimatedMinutes": 0.267
+    },
+    {
       "logicalId": "roleplay:course-2:intermediate:store-exchange",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -4552,6 +4838,25 @@
       "estimatedMinutes": 0.127
     },
     {
+      "logicalId": "roleplay:course-2:intermediate:store-exchange:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-2",
+      "levelId": "intermediate",
+      "roleplayId": "store-exchange",
+      "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+      "sourceKey": "store-exchange.levels.intermediate.englishExample",
+      "text": "Hello, I bought these wireless earphones here three days ago, but the connection keeps dropping. I have the receipt and the box. Could I exchange them for another pair? If that model is not available, can I get store credit or a refund?",
+      "normalizedText": "Hello, I bought these wireless earphones here three days ago, but the connection keeps dropping. I have the receipt and the box. Could I exchange them for another pair? If that model is not available, can I get store credit or a refund?",
+      "textHash": "c4b39a1566e2ddf2f58db096359bf2e9356432a83d0f371ee504ff84bb068094",
+      "characters": 236,
+      "words": 43,
+      "estimatedDurationSeconds": 17.2,
+      "estimatedMinutes": 0.287
+    },
+    {
       "logicalId": "roleplay:course-2:intermediate:city-tour-change",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -4569,6 +4874,25 @@
       "words": 21,
       "estimatedDurationSeconds": 8.4,
       "estimatedMinutes": 0.14
+    },
+    {
+      "logicalId": "roleplay:course-2:intermediate:city-tour-change:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-2",
+      "levelId": "intermediate",
+      "roleplayId": "city-tour-change",
+      "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+      "sourceKey": "city-tour-change.levels.intermediate.englishExample",
+      "text": "Hello, I booked the 10 a.m. city tour, but my train schedule changed and I will arrive around 11. Is there an afternoon tour I can join? If it is full, can I move the booking to tomorrow or get credit?",
+      "normalizedText": "Hello, I booked the 10 a.m. city tour, but my train schedule changed and I will arrive around 11. Is there an afternoon tour I can join? If it is full, can I move the booking to tomorrow or get credit?",
+      "textHash": "f3bc8ff88cb7d9c49e57160edf9fb9560a6bf9a624da97abba2b4bb485dc2601",
+      "characters": 201,
+      "words": 41,
+      "estimatedDurationSeconds": 16.4,
+      "estimatedMinutes": 0.273
     },
     {
       "logicalId": "question:course-2:intermediate:course-2-intermediate-q13",
@@ -5306,6 +5630,25 @@
       "estimatedMinutes": 0.127
     },
     {
+      "logicalId": "roleplay:course-2:foundation:ticket-seat-problem:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-2",
+      "levelId": "foundation",
+      "roleplayId": "ticket-seat-problem",
+      "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+      "sourceKey": "ticket-seat-problem.levels.foundation.englishExample",
+      "text": "Hi, I think there is a problem with my ticket. I booked two seats together, but these seats are separate. Can you change the seats? If not, can we watch another show? Thank you.",
+      "normalizedText": "Hi, I think there is a problem with my ticket. I booked two seats together, but these seats are separate. Can you change the seats? If not, can we watch another show? Thank you.",
+      "textHash": "75c30614c5edbd2ace79b03d49af8d499f3047e8fa4b6bb02d1c27676e5dbbb2",
+      "characters": 177,
+      "words": 34,
+      "estimatedDurationSeconds": 13.6,
+      "estimatedMinutes": 0.227
+    },
+    {
       "logicalId": "roleplay:course-2:foundation:store-exchange",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -5325,6 +5668,25 @@
       "estimatedMinutes": 0.127
     },
     {
+      "logicalId": "roleplay:course-2:foundation:store-exchange:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-2",
+      "levelId": "foundation",
+      "roleplayId": "store-exchange",
+      "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+      "sourceKey": "store-exchange.levels.foundation.englishExample",
+      "text": "Hi, I bought these earphones here, but they do not work well. The connection stops often. Can I exchange them? If not, can I get a refund? I have the receipt.",
+      "normalizedText": "Hi, I bought these earphones here, but they do not work well. The connection stops often. Can I exchange them? If not, can I get a refund? I have the receipt.",
+      "textHash": "0517215dd8dbd8394e23d42a4df37fc4548ae0218c42e3daaf429d68c4d62424",
+      "characters": 158,
+      "words": 31,
+      "estimatedDurationSeconds": 12.4,
+      "estimatedMinutes": 0.207
+    },
+    {
       "logicalId": "roleplay:course-2:foundation:city-tour-change",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -5342,6 +5704,25 @@
       "words": 21,
       "estimatedDurationSeconds": 8.4,
       "estimatedMinutes": 0.14
+    },
+    {
+      "logicalId": "roleplay:course-2:foundation:city-tour-change:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-2",
+      "levelId": "foundation",
+      "roleplayId": "city-tour-change",
+      "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+      "sourceKey": "city-tour-change.levels.foundation.englishExample",
+      "text": "Hi, I booked a city tour for 10 a.m., but my train will arrive late. Can I change to the afternoon tour? If not, can I use the ticket tomorrow? Thank you.",
+      "normalizedText": "Hi, I booked a city tour for 10 a.m., but my train will arrive late. Can I change to the afternoon tour? If not, can I use the ticket tomorrow? Thank you.",
+      "textHash": "b9d7ffb33e505c51e502e829de85a6eccafddb798688445144b1e112fa5b7ee3",
+      "characters": 154,
+      "words": 32,
+      "estimatedDurationSeconds": 12.8,
+      "estimatedMinutes": 0.213
     },
     {
       "logicalId": "question:course-2:foundation:course-2-foundation-q01",
@@ -6079,6 +6460,25 @@
       "estimatedMinutes": 0.087
     },
     {
+      "logicalId": "roleplay:course-3:advanced:campground-weather-change:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-3",
+      "levelId": "advanced",
+      "roleplayId": "campground-weather-change",
+      "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+      "sourceKey": "campground-weather-change.levels.advanced.englishExample",
+      "text": "Hello, I’m calling about my coastal campsite reservation for this Saturday. The latest forecast shows strong wind, and I’m concerned that our small tent may not be safe in an exposed site. Could you first check whether we can move the reservation to Sunday without losing the payment? If Sunday is full, I’d also be interested in a cabin or a more sheltered site for Saturday. Could you compare the additional cost and cancellation rules for those options so I can choose the safest one?",
+      "normalizedText": "Hello, I’m calling about my coastal campsite reservation for this Saturday. The latest forecast shows strong wind, and I’m concerned that our small tent may not be safe in an exposed site. Could you first check whether we can move the reservation to Sunday without losing the payment? If Sunday is full, I’d also be interested in a cabin or a more sheltered site for Saturday. Could you compare the additional cost and cancellation rules for those options so I can choose the safest one?",
+      "textHash": "ba5bf0c42e7e5379128000c49fbfea070defbd4fd332bc93f7ec2cb0333b4eb5",
+      "characters": 487,
+      "words": 85,
+      "estimatedDurationSeconds": 34,
+      "estimatedMinutes": 0.567
+    },
+    {
       "logicalId": "roleplay:course-3:advanced:museum-ticket-policy",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -6098,6 +6498,25 @@
       "estimatedMinutes": 0.12
     },
     {
+      "logicalId": "roleplay:course-3:advanced:museum-ticket-policy:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-3",
+      "levelId": "advanced",
+      "roleplayId": "museum-ticket-policy",
+      "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+      "sourceKey": "museum-ticket-policy.levels.advanced.englishExample",
+      "text": "Hello, I have a timed ticket for the photography exhibition at 2 p.m., but my bus has been delayed and I will probably arrive about forty minutes late. Could you tell me whether the ticket is still valid, or whether I should move it to the next available time slot? I’m also bringing my phone because I enjoy photography. Are personal photos allowed in this exhibition if I avoid flash, and are there any rooms where photography is completely restricted?",
+      "normalizedText": "Hello, I have a timed ticket for the photography exhibition at 2 p.m., but my bus has been delayed and I will probably arrive about forty minutes late. Could you tell me whether the ticket is still valid, or whether I should move it to the next available time slot? I’m also bringing my phone because I enjoy photography. Are personal photos allowed in this exhibition if I avoid flash, and are there any rooms where photography is completely restricted?",
+      "textHash": "623dd40de458466dc0d3063397ec0c85daa39c736530406ad80c7a8e1476da21",
+      "characters": 454,
+      "words": 80,
+      "estimatedDurationSeconds": 32,
+      "estimatedMinutes": 0.533
+    },
+    {
       "logicalId": "roleplay:course-3:advanced:rental-car-problem",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -6115,6 +6534,25 @@
       "words": 16,
       "estimatedDurationSeconds": 6.4,
       "estimatedMinutes": 0.107
+    },
+    {
+      "logicalId": "roleplay:course-3:advanced:rental-car-problem:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-3",
+      "levelId": "advanced",
+      "roleplayId": "rental-car-problem",
+      "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+      "sourceKey": "rental-car-problem.levels.advanced.englishExample",
+      "text": "Hello, I reserved a compact car for a coastal road trip because I’m more comfortable with a smaller vehicle, but I was told that only a large SUV is available. Could you check nearby inventory for a compact or midsize car first? If there is no smaller vehicle today, I could take the SUV as long as there is no upgrade charge, or I could wait for the next returned car if the delay is reasonable. Could you explain which option would affect my return time or total price the least?",
+      "normalizedText": "Hello, I reserved a compact car for a coastal road trip because I’m more comfortable with a smaller vehicle, but I was told that only a large SUV is available. Could you check nearby inventory for a compact or midsize car first? If there is no smaller vehicle today, I could take the SUV as long as there is no upgrade charge, or I could wait for the next returned car if the delay is reasonable. Could you explain which option would affect my return time or total price the least?",
+      "textHash": "15ed135a76cf58b847d4fd357a6de6eeb70842dfd8bb68f315639eb7cf1a5e66",
+      "characters": 481,
+      "words": 91,
+      "estimatedDurationSeconds": 36.4,
+      "estimatedMinutes": 0.607
     },
     {
       "logicalId": "question:course-3:advanced:course-3-advanced-q25",
@@ -6852,6 +7290,25 @@
       "estimatedMinutes": 0.087
     },
     {
+      "logicalId": "roleplay:course-3:intermediate:campground-weather-change:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-3",
+      "levelId": "intermediate",
+      "roleplayId": "campground-weather-change",
+      "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+      "sourceKey": "campground-weather-change.levels.intermediate.englishExample",
+      "text": "Hello, I have a tent-site reservation for Saturday, but the forecast says there may be very strong wind near the coast. Could I move the reservation to Sunday? If that is not possible, do you have a cabin or a more protected site available? Please also tell me if there is a change fee.",
+      "normalizedText": "Hello, I have a tent-site reservation for Saturday, but the forecast says there may be very strong wind near the coast. Could I move the reservation to Sunday? If that is not possible, do you have a cabin or a more protected site available? Please also tell me if there is a change fee.",
+      "textHash": "9a483671f7de04492307449b9114583b955c97fda692d496ef2c7c4989c16716",
+      "characters": 286,
+      "words": 54,
+      "estimatedDurationSeconds": 21.6,
+      "estimatedMinutes": 0.36
+    },
+    {
       "logicalId": "roleplay:course-3:intermediate:museum-ticket-policy",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -6871,6 +7328,25 @@
       "estimatedMinutes": 0.12
     },
     {
+      "logicalId": "roleplay:course-3:intermediate:museum-ticket-policy:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-3",
+      "levelId": "intermediate",
+      "roleplayId": "museum-ticket-policy",
+      "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+      "sourceKey": "museum-ticket-policy.levels.intermediate.englishExample",
+      "text": "Hello, I have a 2 p.m. ticket for the photography exhibition, but my bus is delayed and I may arrive around 2:40. Can I use the same ticket for a later time slot? Also, are phone pictures allowed if I do not use a flash?",
+      "normalizedText": "Hello, I have a 2 p.m. ticket for the photography exhibition, but my bus is delayed and I may arrive around 2:40. Can I use the same ticket for a later time slot? Also, are phone pictures allowed if I do not use a flash?",
+      "textHash": "937d39613e8cfb0758e88827fecd2e003c01bb6c453ee289426ed511f3fbc783",
+      "characters": 220,
+      "words": 45,
+      "estimatedDurationSeconds": 18,
+      "estimatedMinutes": 0.3
+    },
+    {
       "logicalId": "roleplay:course-3:intermediate:rental-car-problem",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -6888,6 +7364,25 @@
       "words": 16,
       "estimatedDurationSeconds": 6.4,
       "estimatedMinutes": 0.107
+    },
+    {
+      "logicalId": "roleplay:course-3:intermediate:rental-car-problem:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-3",
+      "levelId": "intermediate",
+      "roleplayId": "rental-car-problem",
+      "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+      "sourceKey": "rental-car-problem.levels.intermediate.englishExample",
+      "text": "Hello, I reserved a compact car for a weekend trip, but only a large SUV is ready. I am not comfortable driving such a big car. Could you check for another compact or midsize car? If none is available, can I use a different model without paying an upgrade fee?",
+      "normalizedText": "Hello, I reserved a compact car for a weekend trip, but only a large SUV is ready. I am not comfortable driving such a big car. Could you check for another compact or midsize car? If none is available, can I use a different model without paying an upgrade fee?",
+      "textHash": "689bd1f54b57723bd8f0f07ac0a010ef208766cbded2aeb6cf8552647146163b",
+      "characters": 260,
+      "words": 50,
+      "estimatedDurationSeconds": 20,
+      "estimatedMinutes": 0.333
     },
     {
       "logicalId": "question:course-3:intermediate:course-3-intermediate-q13",
@@ -7625,6 +8120,25 @@
       "estimatedMinutes": 0.087
     },
     {
+      "logicalId": "roleplay:course-3:foundation:campground-weather-change:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-3",
+      "levelId": "foundation",
+      "roleplayId": "campground-weather-change",
+      "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+      "sourceKey": "campground-weather-change.levels.foundation.englishExample",
+      "text": "Hi, I have a campsite reservation for Saturday, but the weather forecast says there will be strong wind. Can I change the date? If not, do you have a cabin? Thank you.",
+      "normalizedText": "Hi, I have a campsite reservation for Saturday, but the weather forecast says there will be strong wind. Can I change the date? If not, do you have a cabin? Thank you.",
+      "textHash": "1ae7f97af4e6a0360b745fa77c5a692837c5e449644dd8584d154ae167a85056",
+      "characters": 167,
+      "words": 32,
+      "estimatedDurationSeconds": 12.8,
+      "estimatedMinutes": 0.213
+    },
+    {
       "logicalId": "roleplay:course-3:foundation:museum-ticket-policy",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -7644,6 +8158,25 @@
       "estimatedMinutes": 0.12
     },
     {
+      "logicalId": "roleplay:course-3:foundation:museum-ticket-policy:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-3",
+      "levelId": "foundation",
+      "roleplayId": "museum-ticket-policy",
+      "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+      "sourceKey": "museum-ticket-policy.levels.foundation.englishExample",
+      "text": "Hi, I have a ticket for the 2 p.m. exhibition, but I may be late. Can I enter at 3 p.m.? Also, can I take pictures inside? Thank you.",
+      "normalizedText": "Hi, I have a ticket for the 2 p.m. exhibition, but I may be late. Can I enter at 3 p.m.? Also, can I take pictures inside? Thank you.",
+      "textHash": "211502dc8b89b608989a91d2ef74eca6dcec503a0f50c043aa076c15f4b6ea76",
+      "characters": 133,
+      "words": 29,
+      "estimatedDurationSeconds": 11.6,
+      "estimatedMinutes": 0.193
+    },
+    {
       "logicalId": "roleplay:course-3:foundation:rental-car-problem",
       "sourceType": "roleplay",
       "category": "step5-roleplay",
@@ -7661,6 +8194,25 @@
       "words": 16,
       "estimatedDurationSeconds": 6.4,
       "estimatedMinutes": 0.107
+    },
+    {
+      "logicalId": "roleplay:course-3:foundation:rental-car-problem:answer",
+      "sourceType": "roleplay-example",
+      "category": "step5-roleplay-example",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "courseId": "course-3",
+      "levelId": "foundation",
+      "roleplayId": "rental-car-problem",
+      "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+      "sourceKey": "rental-car-problem.levels.foundation.englishExample",
+      "text": "Hi, I booked a small car, but this car is too big for me. Do you have another small car? If not, can I get the same price for a different car?",
+      "normalizedText": "Hi, I booked a small car, but this car is too big for me. Do you have another small car? If not, can I get the same price for a different car?",
+      "textHash": "50b2fa590208c5318ff7f95c16ae436a360daebf0996a6b1bf035ba69b9e455c",
+      "characters": 142,
+      "words": 32,
+      "estimatedDurationSeconds": 12.8,
+      "estimatedMinutes": 0.213
     },
     {
       "logicalId": "question:course-3:foundation:course-3-foundation-q01",

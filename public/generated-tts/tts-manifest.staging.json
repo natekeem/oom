@@ -30,10 +30,10 @@
     }
   ],
   "coverage": {
-    "expectedTexts": 146,
-    "expectedVoiceAssets": 584,
-    "completedTexts": 146,
-    "completedVoiceAssets": 584,
+    "expectedTexts": 173,
+    "expectedVoiceAssets": 692,
+    "completedTexts": 173,
+    "completedVoiceAssets": 692,
     "complete": true
   },
   "entries": {
@@ -342,6 +342,66 @@
         }
       }
     },
+    "0517215dd8dbd8394e23d42a4df37fc4548ae0218c42e3daaf429d68c4d62424": {
+      "characters": 158,
+      "words": 31,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+          "sourceKey": "store-exchange.levels.foundation.englishExample",
+          "courseId": "course-2",
+          "levelId": "foundation",
+          "roleplayId": "store-exchange"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/0517215dd8dbd8394e23d42a4df37fc4548ae0218c42e3daaf429d68c4d62424/heart.webm",
+          "peaksUrl": "audio/0517215dd8dbd8394e23d42a4df37fc4548ae0218c42e3daaf429d68c4d62424/heart.peaks.json",
+          "duration": 12.688,
+          "bytes": 93606,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/0517215dd8dbd8394e23d42a4df37fc4548ae0218c42e3daaf429d68c4d62424/bella.webm",
+          "peaksUrl": "audio/0517215dd8dbd8394e23d42a4df37fc4548ae0218c42e3daaf429d68c4d62424/bella.peaks.json",
+          "duration": 13.888,
+          "bytes": 101487,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/0517215dd8dbd8394e23d42a4df37fc4548ae0218c42e3daaf429d68c4d62424/sarah.webm",
+          "peaksUrl": "audio/0517215dd8dbd8394e23d42a4df37fc4548ae0218c42e3daaf429d68c4d62424/sarah.peaks.json",
+          "duration": 14.888,
+          "bytes": 104805,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/0517215dd8dbd8394e23d42a4df37fc4548ae0218c42e3daaf429d68c4d62424/sky.webm",
+          "peaksUrl": "audio/0517215dd8dbd8394e23d42a4df37fc4548ae0218c42e3daaf429d68c4d62424/sky.peaks.json",
+          "duration": 13.913,
+          "bytes": 104224,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
     "065c0e0ee07dbf63377434a1f05868ddef2c043badd5cfce9927302574ced128": {
       "characters": 126,
       "words": 20,
@@ -456,6 +516,126 @@
           "peaksUrl": "audio/0890111df3668016264ecf5a78a7ef78c559c80bd28e0a69ff18e986f1ac87fe/sky.peaks.json",
           "duration": 7.328,
           "bytes": 58458,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
+    "0d41ad19505407baa66ccffe9c56c3fc8ed1958135ffc5834c6641f5790f624b": {
+      "characters": 183,
+      "words": 36,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+          "sourceKey": "tennis-court.levels.foundation.englishExample",
+          "courseId": "course-1",
+          "levelId": "foundation",
+          "roleplayId": "tennis-court"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/0d41ad19505407baa66ccffe9c56c3fc8ed1958135ffc5834c6641f5790f624b/heart.webm",
+          "peaksUrl": "audio/0d41ad19505407baa66ccffe9c56c3fc8ed1958135ffc5834c6641f5790f624b/heart.peaks.json",
+          "duration": 14.163,
+          "bytes": 106746,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/0d41ad19505407baa66ccffe9c56c3fc8ed1958135ffc5834c6641f5790f624b/bella.webm",
+          "peaksUrl": "audio/0d41ad19505407baa66ccffe9c56c3fc8ed1958135ffc5834c6641f5790f624b/bella.peaks.json",
+          "duration": 15.288,
+          "bytes": 114930,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/0d41ad19505407baa66ccffe9c56c3fc8ed1958135ffc5834c6641f5790f624b/sarah.webm",
+          "peaksUrl": "audio/0d41ad19505407baa66ccffe9c56c3fc8ed1958135ffc5834c6641f5790f624b/sarah.peaks.json",
+          "duration": 16.338,
+          "bytes": 117583,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/0d41ad19505407baa66ccffe9c56c3fc8ed1958135ffc5834c6641f5790f624b/sky.webm",
+          "peaksUrl": "audio/0d41ad19505407baa66ccffe9c56c3fc8ed1958135ffc5834c6641f5790f624b/sky.peaks.json",
+          "duration": 15.363,
+          "bytes": 115180,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
+    "0d9df119c975aa0c9929492002b444b9e9525339b16c54146f083f41baf5a801": {
+      "characters": 151,
+      "words": 28,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+          "sourceKey": "cleaning-reschedule.levels.foundation.englishExample",
+          "courseId": "course-1",
+          "levelId": "foundation",
+          "roleplayId": "cleaning-reschedule"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/0d9df119c975aa0c9929492002b444b9e9525339b16c54146f083f41baf5a801/heart.webm",
+          "peaksUrl": "audio/0d9df119c975aa0c9929492002b444b9e9525339b16c54146f083f41baf5a801/heart.peaks.json",
+          "duration": 12.088,
+          "bytes": 90745,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/0d9df119c975aa0c9929492002b444b9e9525339b16c54146f083f41baf5a801/bella.webm",
+          "peaksUrl": "audio/0d9df119c975aa0c9929492002b444b9e9525339b16c54146f083f41baf5a801/bella.peaks.json",
+          "duration": 12.888,
+          "bytes": 92120,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/0d9df119c975aa0c9929492002b444b9e9525339b16c54146f083f41baf5a801/sarah.webm",
+          "peaksUrl": "audio/0d9df119c975aa0c9929492002b444b9e9525339b16c54146f083f41baf5a801/sarah.peaks.json",
+          "duration": 14.138,
+          "bytes": 101581,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/0d9df119c975aa0c9929492002b444b9e9525339b16c54146f083f41baf5a801/sky.webm",
+          "peaksUrl": "audio/0d9df119c975aa0c9929492002b444b9e9525339b16c54146f083f41baf5a801/sky.peaks.json",
+          "duration": 13.063,
+          "bytes": 98561,
           "mimeType": "audio/webm; codecs=opus",
           "generator": {
             "dtype": "fp32",
@@ -645,6 +825,66 @@
         }
       }
     },
+    "15ed135a76cf58b847d4fd357a6de6eeb70842dfd8bb68f315639eb7cf1a5e66": {
+      "characters": 481,
+      "words": 91,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+          "sourceKey": "rental-car-problem.levels.advanced.englishExample",
+          "courseId": "course-3",
+          "levelId": "advanced",
+          "roleplayId": "rental-car-problem"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/15ed135a76cf58b847d4fd357a6de6eeb70842dfd8bb68f315639eb7cf1a5e66/heart.webm",
+          "peaksUrl": "audio/15ed135a76cf58b847d4fd357a6de6eeb70842dfd8bb68f315639eb7cf1a5e66/heart.peaks.json",
+          "duration": 32.343,
+          "bytes": 259061,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/15ed135a76cf58b847d4fd357a6de6eeb70842dfd8bb68f315639eb7cf1a5e66/bella.webm",
+          "peaksUrl": "audio/15ed135a76cf58b847d4fd357a6de6eeb70842dfd8bb68f315639eb7cf1a5e66/bella.peaks.json",
+          "duration": 33.393,
+          "bytes": 268546,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/15ed135a76cf58b847d4fd357a6de6eeb70842dfd8bb68f315639eb7cf1a5e66/sarah.webm",
+          "peaksUrl": "audio/15ed135a76cf58b847d4fd357a6de6eeb70842dfd8bb68f315639eb7cf1a5e66/sarah.peaks.json",
+          "duration": 33.368,
+          "bytes": 260503,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/15ed135a76cf58b847d4fd357a6de6eeb70842dfd8bb68f315639eb7cf1a5e66/sky.webm",
+          "peaksUrl": "audio/15ed135a76cf58b847d4fd357a6de6eeb70842dfd8bb68f315639eb7cf1a5e66/sky.peaks.json",
+          "duration": 32.168,
+          "bytes": 249767,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
     "15ed820275a766d3c6e90232534290ad71f05c7c2aadac15be09f0d5ed6dec59": {
       "characters": 429,
       "words": 84,
@@ -757,6 +997,66 @@
           "peaksUrl": "audio/1766c126ebe3b123c6ab4b4d889ad03370e833de14ed52f6779284541d3cab50/sky.peaks.json",
           "duration": 65.043,
           "bytes": 499033,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
+    "1ae7f97af4e6a0360b745fa77c5a692837c5e449644dd8584d154ae167a85056": {
+      "characters": 167,
+      "words": 32,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+          "sourceKey": "campground-weather-change.levels.foundation.englishExample",
+          "courseId": "course-3",
+          "levelId": "foundation",
+          "roleplayId": "campground-weather-change"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/1ae7f97af4e6a0360b745fa77c5a692837c5e449644dd8584d154ae167a85056/heart.webm",
+          "peaksUrl": "audio/1ae7f97af4e6a0360b745fa77c5a692837c5e449644dd8584d154ae167a85056/heart.peaks.json",
+          "duration": 12.518,
+          "bytes": 96010,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/1ae7f97af4e6a0360b745fa77c5a692837c5e449644dd8584d154ae167a85056/bella.webm",
+          "peaksUrl": "audio/1ae7f97af4e6a0360b745fa77c5a692837c5e449644dd8584d154ae167a85056/bella.peaks.json",
+          "duration": 13.518,
+          "bytes": 102882,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/1ae7f97af4e6a0360b745fa77c5a692837c5e449644dd8584d154ae167a85056/sarah.webm",
+          "peaksUrl": "audio/1ae7f97af4e6a0360b745fa77c5a692837c5e449644dd8584d154ae167a85056/sarah.peaks.json",
+          "duration": 13.918,
+          "bytes": 102064,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/1ae7f97af4e6a0360b745fa77c5a692837c5e449644dd8584d154ae167a85056/sky.webm",
+          "peaksUrl": "audio/1ae7f97af4e6a0360b745fa77c5a692837c5e449644dd8584d154ae167a85056/sky.peaks.json",
+          "duration": 12.868,
+          "bytes": 97897,
           "mimeType": "audio/webm; codecs=opus",
           "generator": {
             "dtype": "fp32",
@@ -886,6 +1186,66 @@
         }
       }
     },
+    "1d6cb14926c38a4d08bcde5f2ed49916c32aa49320c712478b0876c24c452391": {
+      "characters": 273,
+      "words": 50,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+          "sourceKey": "hotel-booking.levels.intermediate.englishExample",
+          "courseId": "course-1",
+          "levelId": "intermediate",
+          "roleplayId": "hotel-booking"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/1d6cb14926c38a4d08bcde5f2ed49916c32aa49320c712478b0876c24c452391/heart.webm",
+          "peaksUrl": "audio/1d6cb14926c38a4d08bcde5f2ed49916c32aa49320c712478b0876c24c452391/heart.peaks.json",
+          "duration": 19.013,
+          "bytes": 145271,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/1d6cb14926c38a4d08bcde5f2ed49916c32aa49320c712478b0876c24c452391/bella.webm",
+          "peaksUrl": "audio/1d6cb14926c38a4d08bcde5f2ed49916c32aa49320c712478b0876c24c452391/bella.peaks.json",
+          "duration": 20.463,
+          "bytes": 153344,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/1d6cb14926c38a4d08bcde5f2ed49916c32aa49320c712478b0876c24c452391/sarah.webm",
+          "peaksUrl": "audio/1d6cb14926c38a4d08bcde5f2ed49916c32aa49320c712478b0876c24c452391/sarah.peaks.json",
+          "duration": 21.088,
+          "bytes": 155653,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/1d6cb14926c38a4d08bcde5f2ed49916c32aa49320c712478b0876c24c452391/sky.webm",
+          "peaksUrl": "audio/1d6cb14926c38a4d08bcde5f2ed49916c32aa49320c712478b0876c24c452391/sky.peaks.json",
+          "duration": 19.988,
+          "bytes": 152124,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
     "20567582d4e5f97cbbee73f27bbf2a2dc08c7969a1ff3396ce32632d6ff8c230": {
       "characters": 112,
       "words": 20,
@@ -939,6 +1299,66 @@
           "peaksUrl": "audio/20567582d4e5f97cbbee73f27bbf2a2dc08c7969a1ff3396ce32632d6ff8c230/sky.peaks.json",
           "duration": 7.878,
           "bytes": 61719,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
+    "211502dc8b89b608989a91d2ef74eca6dcec503a0f50c043aa076c15f4b6ea76": {
+      "characters": 133,
+      "words": 29,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+          "sourceKey": "museum-ticket-policy.levels.foundation.englishExample",
+          "courseId": "course-3",
+          "levelId": "foundation",
+          "roleplayId": "museum-ticket-policy"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/211502dc8b89b608989a91d2ef74eca6dcec503a0f50c043aa076c15f4b6ea76/heart.webm",
+          "peaksUrl": "audio/211502dc8b89b608989a91d2ef74eca6dcec503a0f50c043aa076c15f4b6ea76/heart.peaks.json",
+          "duration": 12.363,
+          "bytes": 91895,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/211502dc8b89b608989a91d2ef74eca6dcec503a0f50c043aa076c15f4b6ea76/bella.webm",
+          "peaksUrl": "audio/211502dc8b89b608989a91d2ef74eca6dcec503a0f50c043aa076c15f4b6ea76/bella.peaks.json",
+          "duration": 13.488,
+          "bytes": 99767,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/211502dc8b89b608989a91d2ef74eca6dcec503a0f50c043aa076c15f4b6ea76/sarah.webm",
+          "peaksUrl": "audio/211502dc8b89b608989a91d2ef74eca6dcec503a0f50c043aa076c15f4b6ea76/sarah.peaks.json",
+          "duration": 14.363,
+          "bytes": 101191,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/211502dc8b89b608989a91d2ef74eca6dcec503a0f50c043aa076c15f4b6ea76/sky.webm",
+          "peaksUrl": "audio/211502dc8b89b608989a91d2ef74eca6dcec503a0f50c043aa076c15f4b6ea76/sky.peaks.json",
+          "duration": 13.613,
+          "bytes": 101032,
           "mimeType": "audio/webm; codecs=opus",
           "generator": {
             "dtype": "fp32",
@@ -1305,6 +1725,66 @@
           "peaksUrl": "audio/288d2a0c8e07f92f296ea17dc702680fd7f83e8a9a9e7edfe8845e043bbdd351/sky.peaks.json",
           "duration": 5.228,
           "bytes": 41485,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
+    "29dc66bc39ebc7ca3b89cc2bfce02a3175a433f252207da66917cd962a277584": {
+      "characters": 208,
+      "words": 40,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+          "sourceKey": "ticket-seat-problem.levels.intermediate.englishExample",
+          "courseId": "course-2",
+          "levelId": "intermediate",
+          "roleplayId": "ticket-seat-problem"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/29dc66bc39ebc7ca3b89cc2bfce02a3175a433f252207da66917cd962a277584/heart.webm",
+          "peaksUrl": "audio/29dc66bc39ebc7ca3b89cc2bfce02a3175a433f252207da66917cd962a277584/heart.peaks.json",
+          "duration": 13.273,
+          "bytes": 105482,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/29dc66bc39ebc7ca3b89cc2bfce02a3175a433f252207da66917cd962a277584/bella.webm",
+          "peaksUrl": "audio/29dc66bc39ebc7ca3b89cc2bfce02a3175a433f252207da66917cd962a277584/bella.peaks.json",
+          "duration": 14.148,
+          "bytes": 112931,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/29dc66bc39ebc7ca3b89cc2bfce02a3175a433f252207da66917cd962a277584/sarah.webm",
+          "peaksUrl": "audio/29dc66bc39ebc7ca3b89cc2bfce02a3175a433f252207da66917cd962a277584/sarah.peaks.json",
+          "duration": 14.498,
+          "bytes": 112191,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/29dc66bc39ebc7ca3b89cc2bfce02a3175a433f252207da66917cd962a277584/sky.webm",
+          "peaksUrl": "audio/29dc66bc39ebc7ca3b89cc2bfce02a3175a433f252207da66917cd962a277584/sky.peaks.json",
+          "duration": 13.823,
+          "bytes": 107884,
           "mimeType": "audio/webm; codecs=opus",
           "generator": {
             "dtype": "fp32",
@@ -2711,6 +3191,66 @@
         }
       }
     },
+    "4e84aac257b2ddce3e21ceaa1ae1c2891f4a2b44a858c65e4d99fe629c190f02": {
+      "characters": 471,
+      "words": 84,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+          "sourceKey": "ticket-seat-problem.levels.advanced.englishExample",
+          "courseId": "course-2",
+          "levelId": "advanced",
+          "roleplayId": "ticket-seat-problem"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/4e84aac257b2ddce3e21ceaa1ae1c2891f4a2b44a858c65e4d99fe629c190f02/heart.webm",
+          "peaksUrl": "audio/4e84aac257b2ddce3e21ceaa1ae1c2891f4a2b44a858c65e4d99fe629c190f02/heart.peaks.json",
+          "duration": 29.463,
+          "bytes": 233812,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/4e84aac257b2ddce3e21ceaa1ae1c2891f4a2b44a858c65e4d99fe629c190f02/bella.webm",
+          "peaksUrl": "audio/4e84aac257b2ddce3e21ceaa1ae1c2891f4a2b44a858c65e4d99fe629c190f02/bella.peaks.json",
+          "duration": 30.513,
+          "bytes": 236717,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/4e84aac257b2ddce3e21ceaa1ae1c2891f4a2b44a858c65e4d99fe629c190f02/sarah.webm",
+          "peaksUrl": "audio/4e84aac257b2ddce3e21ceaa1ae1c2891f4a2b44a858c65e4d99fe629c190f02/sarah.peaks.json",
+          "duration": 31.338,
+          "bytes": 241424,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/4e84aac257b2ddce3e21ceaa1ae1c2891f4a2b44a858c65e4d99fe629c190f02/sky.webm",
+          "peaksUrl": "audio/4e84aac257b2ddce3e21ceaa1ae1c2891f4a2b44a858c65e4d99fe629c190f02/sky.peaks.json",
+          "duration": 30.288,
+          "bytes": 233798,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
     "4f4f32c0c156068642dde4ccb4faf7a36350209d33d0c314e759fd6d607a4ead": {
       "characters": 89,
       "words": 18,
@@ -2824,6 +3364,66 @@
           "peaksUrl": "audio/4fcbbaf4b40d1bec9315917a53a8bacc0a37d58e24da5d0a933285d8cd04acfc/sky.peaks.json",
           "duration": 36.453,
           "bytes": 274514,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
+    "50b2fa590208c5318ff7f95c16ae436a360daebf0996a6b1bf035ba69b9e455c": {
+      "characters": 142,
+      "words": 32,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+          "sourceKey": "rental-car-problem.levels.foundation.englishExample",
+          "courseId": "course-3",
+          "levelId": "foundation",
+          "roleplayId": "rental-car-problem"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/50b2fa590208c5318ff7f95c16ae436a360daebf0996a6b1bf035ba69b9e455c/heart.webm",
+          "peaksUrl": "audio/50b2fa590208c5318ff7f95c16ae436a360daebf0996a6b1bf035ba69b9e455c/heart.peaks.json",
+          "duration": 9.948,
+          "bytes": 76389,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/50b2fa590208c5318ff7f95c16ae436a360daebf0996a6b1bf035ba69b9e455c/bella.webm",
+          "peaksUrl": "audio/50b2fa590208c5318ff7f95c16ae436a360daebf0996a6b1bf035ba69b9e455c/bella.peaks.json",
+          "duration": 11.098,
+          "bytes": 85193,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/50b2fa590208c5318ff7f95c16ae436a360daebf0996a6b1bf035ba69b9e455c/sarah.webm",
+          "peaksUrl": "audio/50b2fa590208c5318ff7f95c16ae436a360daebf0996a6b1bf035ba69b9e455c/sarah.peaks.json",
+          "duration": 11.373,
+          "bytes": 84095,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/50b2fa590208c5318ff7f95c16ae436a360daebf0996a6b1bf035ba69b9e455c/sky.webm",
+          "peaksUrl": "audio/50b2fa590208c5318ff7f95c16ae436a360daebf0996a6b1bf035ba69b9e455c/sky.peaks.json",
+          "duration": 10.623,
+          "bytes": 83162,
           "mimeType": "audio/webm; codecs=opus",
           "generator": {
             "dtype": "fp32",
@@ -3503,6 +4103,66 @@
         }
       }
     },
+    "623dd40de458466dc0d3063397ec0c85daa39c736530406ad80c7a8e1476da21": {
+      "characters": 454,
+      "words": 80,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+          "sourceKey": "museum-ticket-policy.levels.advanced.englishExample",
+          "courseId": "course-3",
+          "levelId": "advanced",
+          "roleplayId": "museum-ticket-policy"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/623dd40de458466dc0d3063397ec0c85daa39c736530406ad80c7a8e1476da21/heart.webm",
+          "peaksUrl": "audio/623dd40de458466dc0d3063397ec0c85daa39c736530406ad80c7a8e1476da21/heart.peaks.json",
+          "duration": 29.718,
+          "bytes": 238742,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/623dd40de458466dc0d3063397ec0c85daa39c736530406ad80c7a8e1476da21/bella.webm",
+          "peaksUrl": "audio/623dd40de458466dc0d3063397ec0c85daa39c736530406ad80c7a8e1476da21/bella.peaks.json",
+          "duration": 30.918,
+          "bytes": 249257,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/623dd40de458466dc0d3063397ec0c85daa39c736530406ad80c7a8e1476da21/sarah.webm",
+          "peaksUrl": "audio/623dd40de458466dc0d3063397ec0c85daa39c736530406ad80c7a8e1476da21/sarah.peaks.json",
+          "duration": 31.293,
+          "bytes": 245219,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/623dd40de458466dc0d3063397ec0c85daa39c736530406ad80c7a8e1476da21/sky.webm",
+          "peaksUrl": "audio/623dd40de458466dc0d3063397ec0c85daa39c736530406ad80c7a8e1476da21/sky.peaks.json",
+          "duration": 30.068,
+          "bytes": 235809,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
     "6312bdd906428b4ace658c224fcc1233020312c77c2f5f48347f11fc7809411d": {
       "characters": 966,
       "words": 190,
@@ -3616,6 +4276,66 @@
           "peaksUrl": "audio/6384447e1827ecb484ab0cbaaa2ddcc79c6c8af180488526d07065b4d164b8bb/sky.peaks.json",
           "duration": 11.478,
           "bytes": 88580,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
+    "689bd1f54b57723bd8f0f07ac0a010ef208766cbded2aeb6cf8552647146163b": {
+      "characters": 260,
+      "words": 50,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+          "sourceKey": "rental-car-problem.levels.intermediate.englishExample",
+          "courseId": "course-3",
+          "levelId": "intermediate",
+          "roleplayId": "rental-car-problem"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/689bd1f54b57723bd8f0f07ac0a010ef208766cbded2aeb6cf8552647146163b/heart.webm",
+          "peaksUrl": "audio/689bd1f54b57723bd8f0f07ac0a010ef208766cbded2aeb6cf8552647146163b/heart.peaks.json",
+          "duration": 18.268,
+          "bytes": 143181,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/689bd1f54b57723bd8f0f07ac0a010ef208766cbded2aeb6cf8552647146163b/bella.webm",
+          "peaksUrl": "audio/689bd1f54b57723bd8f0f07ac0a010ef208766cbded2aeb6cf8552647146163b/bella.peaks.json",
+          "duration": 19.643,
+          "bytes": 154876,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/689bd1f54b57723bd8f0f07ac0a010ef208766cbded2aeb6cf8552647146163b/sarah.webm",
+          "peaksUrl": "audio/689bd1f54b57723bd8f0f07ac0a010ef208766cbded2aeb6cf8552647146163b/sarah.peaks.json",
+          "duration": 20.143,
+          "bytes": 152728,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/689bd1f54b57723bd8f0f07ac0a010ef208766cbded2aeb6cf8552647146163b/sky.webm",
+          "peaksUrl": "audio/689bd1f54b57723bd8f0f07ac0a010ef208766cbded2aeb6cf8552647146163b/sky.peaks.json",
+          "duration": 19.318,
+          "bytes": 147838,
           "mimeType": "audio/webm; codecs=opus",
           "generator": {
             "dtype": "fp32",
@@ -3807,6 +4527,66 @@
         }
       }
     },
+    "6cff4c8cd7ae7e11f2a65ff536b423dba21e12af6a0dd30c47a3bf1110ba7ac1": {
+      "characters": 190,
+      "words": 37,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+          "sourceKey": "hotel-booking.levels.foundation.englishExample",
+          "courseId": "course-1",
+          "levelId": "foundation",
+          "roleplayId": "hotel-booking"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/6cff4c8cd7ae7e11f2a65ff536b423dba21e12af6a0dd30c47a3bf1110ba7ac1/heart.webm",
+          "peaksUrl": "audio/6cff4c8cd7ae7e11f2a65ff536b423dba21e12af6a0dd30c47a3bf1110ba7ac1/heart.peaks.json",
+          "duration": 14.438,
+          "bytes": 108455,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/6cff4c8cd7ae7e11f2a65ff536b423dba21e12af6a0dd30c47a3bf1110ba7ac1/bella.webm",
+          "peaksUrl": "audio/6cff4c8cd7ae7e11f2a65ff536b423dba21e12af6a0dd30c47a3bf1110ba7ac1/bella.peaks.json",
+          "duration": 15.663,
+          "bytes": 116751,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/6cff4c8cd7ae7e11f2a65ff536b423dba21e12af6a0dd30c47a3bf1110ba7ac1/sarah.webm",
+          "peaksUrl": "audio/6cff4c8cd7ae7e11f2a65ff536b423dba21e12af6a0dd30c47a3bf1110ba7ac1/sarah.peaks.json",
+          "duration": 16.513,
+          "bytes": 118208,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/6cff4c8cd7ae7e11f2a65ff536b423dba21e12af6a0dd30c47a3bf1110ba7ac1/sky.webm",
+          "peaksUrl": "audio/6cff4c8cd7ae7e11f2a65ff536b423dba21e12af6a0dd30c47a3bf1110ba7ac1/sky.peaks.json",
+          "duration": 15.288,
+          "bytes": 112921,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
     "6dd1d5db40909d1567b5cf7584564e76cc97135313f908a7aa5c211c88f97379": {
       "characters": 131,
       "words": 20,
@@ -3928,6 +4708,66 @@
         }
       }
     },
+    "75c30614c5edbd2ace79b03d49af8d499f3047e8fa4b6bb02d1c27676e5dbbb2": {
+      "characters": 177,
+      "words": 34,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+          "sourceKey": "ticket-seat-problem.levels.foundation.englishExample",
+          "courseId": "course-2",
+          "levelId": "foundation",
+          "roleplayId": "ticket-seat-problem"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/75c30614c5edbd2ace79b03d49af8d499f3047e8fa4b6bb02d1c27676e5dbbb2/heart.webm",
+          "peaksUrl": "audio/75c30614c5edbd2ace79b03d49af8d499f3047e8fa4b6bb02d1c27676e5dbbb2/heart.peaks.json",
+          "duration": 13.063,
+          "bytes": 98144,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/75c30614c5edbd2ace79b03d49af8d499f3047e8fa4b6bb02d1c27676e5dbbb2/bella.webm",
+          "peaksUrl": "audio/75c30614c5edbd2ace79b03d49af8d499f3047e8fa4b6bb02d1c27676e5dbbb2/bella.peaks.json",
+          "duration": 14.063,
+          "bytes": 101234,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/75c30614c5edbd2ace79b03d49af8d499f3047e8fa4b6bb02d1c27676e5dbbb2/sarah.webm",
+          "peaksUrl": "audio/75c30614c5edbd2ace79b03d49af8d499f3047e8fa4b6bb02d1c27676e5dbbb2/sarah.peaks.json",
+          "duration": 15.263,
+          "bytes": 110176,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/75c30614c5edbd2ace79b03d49af8d499f3047e8fa4b6bb02d1c27676e5dbbb2/sky.webm",
+          "peaksUrl": "audio/75c30614c5edbd2ace79b03d49af8d499f3047e8fa4b6bb02d1c27676e5dbbb2/sky.peaks.json",
+          "duration": 13.888,
+          "bytes": 104881,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
     "7730b793fd0bcb9ae1330548fae1d0350330d7923f00ab242117c359d06880c0": {
       "characters": 249,
       "words": 53,
@@ -3980,6 +4820,66 @@
           "peaksUrl": "audio/7730b793fd0bcb9ae1330548fae1d0350330d7923f00ab242117c359d06880c0/sky.peaks.json",
           "duration": 17.768,
           "bytes": 134688,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
+    "779da838381fa77a56266e1ddf39955c9a7626a58ebe94528ba1a2703a0e9984": {
+      "characters": 244,
+      "words": 42,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+          "sourceKey": "cleaning-reschedule.levels.intermediate.englishExample",
+          "courseId": "course-1",
+          "levelId": "intermediate",
+          "roleplayId": "cleaning-reschedule"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/779da838381fa77a56266e1ddf39955c9a7626a58ebe94528ba1a2703a0e9984/heart.webm",
+          "peaksUrl": "audio/779da838381fa77a56266e1ddf39955c9a7626a58ebe94528ba1a2703a0e9984/heart.peaks.json",
+          "duration": 16.718,
+          "bytes": 131829,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/779da838381fa77a56266e1ddf39955c9a7626a58ebe94528ba1a2703a0e9984/bella.webm",
+          "peaksUrl": "audio/779da838381fa77a56266e1ddf39955c9a7626a58ebe94528ba1a2703a0e9984/bella.peaks.json",
+          "duration": 18.193,
+          "bytes": 137572,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/779da838381fa77a56266e1ddf39955c9a7626a58ebe94528ba1a2703a0e9984/sarah.webm",
+          "peaksUrl": "audio/779da838381fa77a56266e1ddf39955c9a7626a58ebe94528ba1a2703a0e9984/sarah.peaks.json",
+          "duration": 18.493,
+          "bytes": 139237,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/779da838381fa77a56266e1ddf39955c9a7626a58ebe94528ba1a2703a0e9984/sky.webm",
+          "peaksUrl": "audio/779da838381fa77a56266e1ddf39955c9a7626a58ebe94528ba1a2703a0e9984/sky.peaks.json",
+          "duration": 17.268,
+          "bytes": 133149,
           "mimeType": "audio/webm; codecs=opus",
           "generator": {
             "dtype": "fp32",
@@ -4838,6 +5738,126 @@
         }
       }
     },
+    "931ba8fc9405f71f5e6981447279abef02fd0fcaa9f26f3ba37dbe827034443d": {
+      "characters": 426,
+      "words": 75,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+          "sourceKey": "cleaning-reschedule.levels.advanced.englishExample",
+          "courseId": "course-1",
+          "levelId": "advanced",
+          "roleplayId": "cleaning-reschedule"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/931ba8fc9405f71f5e6981447279abef02fd0fcaa9f26f3ba37dbe827034443d/heart.webm",
+          "peaksUrl": "audio/931ba8fc9405f71f5e6981447279abef02fd0fcaa9f26f3ba37dbe827034443d/heart.peaks.json",
+          "duration": 26.863,
+          "bytes": 207891,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/931ba8fc9405f71f5e6981447279abef02fd0fcaa9f26f3ba37dbe827034443d/bella.webm",
+          "peaksUrl": "audio/931ba8fc9405f71f5e6981447279abef02fd0fcaa9f26f3ba37dbe827034443d/bella.peaks.json",
+          "duration": 28.588,
+          "bytes": 220911,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/931ba8fc9405f71f5e6981447279abef02fd0fcaa9f26f3ba37dbe827034443d/sarah.webm",
+          "peaksUrl": "audio/931ba8fc9405f71f5e6981447279abef02fd0fcaa9f26f3ba37dbe827034443d/sarah.peaks.json",
+          "duration": 28.988,
+          "bytes": 223821,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/931ba8fc9405f71f5e6981447279abef02fd0fcaa9f26f3ba37dbe827034443d/sky.webm",
+          "peaksUrl": "audio/931ba8fc9405f71f5e6981447279abef02fd0fcaa9f26f3ba37dbe827034443d/sky.peaks.json",
+          "duration": 27.713,
+          "bytes": 214220,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
+    "937d39613e8cfb0758e88827fecd2e003c01bb6c453ee289426ed511f3fbc783": {
+      "characters": 220,
+      "words": 45,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+          "sourceKey": "museum-ticket-policy.levels.intermediate.englishExample",
+          "courseId": "course-3",
+          "levelId": "intermediate",
+          "roleplayId": "museum-ticket-policy"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/937d39613e8cfb0758e88827fecd2e003c01bb6c453ee289426ed511f3fbc783/heart.webm",
+          "peaksUrl": "audio/937d39613e8cfb0758e88827fecd2e003c01bb6c453ee289426ed511f3fbc783/heart.peaks.json",
+          "duration": 16.818,
+          "bytes": 129578,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/937d39613e8cfb0758e88827fecd2e003c01bb6c453ee289426ed511f3fbc783/bella.webm",
+          "peaksUrl": "audio/937d39613e8cfb0758e88827fecd2e003c01bb6c453ee289426ed511f3fbc783/bella.peaks.json",
+          "duration": 18.068,
+          "bytes": 138158,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/937d39613e8cfb0758e88827fecd2e003c01bb6c453ee289426ed511f3fbc783/sarah.webm",
+          "peaksUrl": "audio/937d39613e8cfb0758e88827fecd2e003c01bb6c453ee289426ed511f3fbc783/sarah.peaks.json",
+          "duration": 18.343,
+          "bytes": 136008,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/937d39613e8cfb0758e88827fecd2e003c01bb6c453ee289426ed511f3fbc783/sky.webm",
+          "peaksUrl": "audio/937d39613e8cfb0758e88827fecd2e003c01bb6c453ee289426ed511f3fbc783/sky.peaks.json",
+          "duration": 17.543,
+          "bytes": 132900,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
     "997e56de3cd9627c43a1a9baccda29a32e97ea1242ccb0fef5b911d099a3bc5d": {
       "characters": 86,
       "words": 16,
@@ -5013,6 +6033,66 @@
           "peaksUrl": "audio/9a12210043a411b05d4f0557a063bd41f9899f47202ccdaa91da67241efeb9da/sky.peaks.json",
           "duration": 3.658,
           "bytes": 30525,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
+    "9a483671f7de04492307449b9114583b955c97fda692d496ef2c7c4989c16716": {
+      "characters": 286,
+      "words": 54,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+          "sourceKey": "campground-weather-change.levels.intermediate.englishExample",
+          "courseId": "course-3",
+          "levelId": "intermediate",
+          "roleplayId": "campground-weather-change"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/9a483671f7de04492307449b9114583b955c97fda692d496ef2c7c4989c16716/heart.webm",
+          "peaksUrl": "audio/9a483671f7de04492307449b9114583b955c97fda692d496ef2c7c4989c16716/heart.peaks.json",
+          "duration": 19.143,
+          "bytes": 149800,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/9a483671f7de04492307449b9114583b955c97fda692d496ef2c7c4989c16716/bella.webm",
+          "peaksUrl": "audio/9a483671f7de04492307449b9114583b955c97fda692d496ef2c7c4989c16716/bella.peaks.json",
+          "duration": 20.518,
+          "bytes": 160757,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/9a483671f7de04492307449b9114583b955c97fda692d496ef2c7c4989c16716/sarah.webm",
+          "peaksUrl": "audio/9a483671f7de04492307449b9114583b955c97fda692d496ef2c7c4989c16716/sarah.peaks.json",
+          "duration": 20.443,
+          "bytes": 155281,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/9a483671f7de04492307449b9114583b955c97fda692d496ef2c7c4989c16716/sky.webm",
+          "peaksUrl": "audio/9a483671f7de04492307449b9114583b955c97fda692d496ef2c7c4989c16716/sky.peaks.json",
+          "duration": 19.793,
+          "bytes": 151838,
           "mimeType": "audio/webm; codecs=opus",
           "generator": {
             "dtype": "fp32",
@@ -5987,6 +7067,66 @@
         }
       }
     },
+    "b485fbd9d2e1db7faa6e61f4ae0489ec54658e6d48e4bd27dc8393316c3a9cce": {
+      "characters": 446,
+      "words": 83,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+          "sourceKey": "city-tour-change.levels.advanced.englishExample",
+          "courseId": "course-2",
+          "levelId": "advanced",
+          "roleplayId": "city-tour-change"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/b485fbd9d2e1db7faa6e61f4ae0489ec54658e6d48e4bd27dc8393316c3a9cce/heart.webm",
+          "peaksUrl": "audio/b485fbd9d2e1db7faa6e61f4ae0489ec54658e6d48e4bd27dc8393316c3a9cce/heart.peaks.json",
+          "duration": 29.733,
+          "bytes": 230958,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/b485fbd9d2e1db7faa6e61f4ae0489ec54658e6d48e4bd27dc8393316c3a9cce/bella.webm",
+          "peaksUrl": "audio/b485fbd9d2e1db7faa6e61f4ae0489ec54658e6d48e4bd27dc8393316c3a9cce/bella.peaks.json",
+          "duration": 31.883,
+          "bytes": 244118,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/b485fbd9d2e1db7faa6e61f4ae0489ec54658e6d48e4bd27dc8393316c3a9cce/sarah.webm",
+          "peaksUrl": "audio/b485fbd9d2e1db7faa6e61f4ae0489ec54658e6d48e4bd27dc8393316c3a9cce/sarah.peaks.json",
+          "duration": 32.133,
+          "bytes": 241506,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/b485fbd9d2e1db7faa6e61f4ae0489ec54658e6d48e4bd27dc8393316c3a9cce/sky.webm",
+          "peaksUrl": "audio/b485fbd9d2e1db7faa6e61f4ae0489ec54658e6d48e4bd27dc8393316c3a9cce/sky.peaks.json",
+          "duration": 30.983,
+          "bytes": 234772,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
     "b6307bd6cbc56800986a10a6f3f6728f37516580a090bc3201ad037ece3816f1": {
       "characters": 52,
       "words": 9,
@@ -6169,6 +7309,126 @@
         }
       }
     },
+    "b9d7ffb33e505c51e502e829de85a6eccafddb798688445144b1e112fa5b7ee3": {
+      "characters": 154,
+      "words": 32,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+          "sourceKey": "city-tour-change.levels.foundation.englishExample",
+          "courseId": "course-2",
+          "levelId": "foundation",
+          "roleplayId": "city-tour-change"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/b9d7ffb33e505c51e502e829de85a6eccafddb798688445144b1e112fa5b7ee3/heart.webm",
+          "peaksUrl": "audio/b9d7ffb33e505c51e502e829de85a6eccafddb798688445144b1e112fa5b7ee3/heart.peaks.json",
+          "duration": 11.993,
+          "bytes": 91462,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/b9d7ffb33e505c51e502e829de85a6eccafddb798688445144b1e112fa5b7ee3/bella.webm",
+          "peaksUrl": "audio/b9d7ffb33e505c51e502e829de85a6eccafddb798688445144b1e112fa5b7ee3/bella.peaks.json",
+          "duration": 13.243,
+          "bytes": 101166,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/b9d7ffb33e505c51e502e829de85a6eccafddb798688445144b1e112fa5b7ee3/sarah.webm",
+          "peaksUrl": "audio/b9d7ffb33e505c51e502e829de85a6eccafddb798688445144b1e112fa5b7ee3/sarah.peaks.json",
+          "duration": 13.818,
+          "bytes": 100476,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/b9d7ffb33e505c51e502e829de85a6eccafddb798688445144b1e112fa5b7ee3/sky.webm",
+          "peaksUrl": "audio/b9d7ffb33e505c51e502e829de85a6eccafddb798688445144b1e112fa5b7ee3/sky.peaks.json",
+          "duration": 12.843,
+          "bytes": 96781,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
+    "ba5bf0c42e7e5379128000c49fbfea070defbd4fd332bc93f7ec2cb0333b4eb5": {
+      "characters": 487,
+      "words": 85,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-3/roleplays.ts",
+          "sourceKey": "campground-weather-change.levels.advanced.englishExample",
+          "courseId": "course-3",
+          "levelId": "advanced",
+          "roleplayId": "campground-weather-change"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/ba5bf0c42e7e5379128000c49fbfea070defbd4fd332bc93f7ec2cb0333b4eb5/heart.webm",
+          "peaksUrl": "audio/ba5bf0c42e7e5379128000c49fbfea070defbd4fd332bc93f7ec2cb0333b4eb5/heart.peaks.json",
+          "duration": 31.638,
+          "bytes": 251458,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/ba5bf0c42e7e5379128000c49fbfea070defbd4fd332bc93f7ec2cb0333b4eb5/bella.webm",
+          "peaksUrl": "audio/ba5bf0c42e7e5379128000c49fbfea070defbd4fd332bc93f7ec2cb0333b4eb5/bella.peaks.json",
+          "duration": 33.713,
+          "bytes": 262033,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/ba5bf0c42e7e5379128000c49fbfea070defbd4fd332bc93f7ec2cb0333b4eb5/sarah.webm",
+          "peaksUrl": "audio/ba5bf0c42e7e5379128000c49fbfea070defbd4fd332bc93f7ec2cb0333b4eb5/sarah.peaks.json",
+          "duration": 33.388,
+          "bytes": 258364,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/ba5bf0c42e7e5379128000c49fbfea070defbd4fd332bc93f7ec2cb0333b4eb5/sky.webm",
+          "peaksUrl": "audio/ba5bf0c42e7e5379128000c49fbfea070defbd4fd332bc93f7ec2cb0333b4eb5/sky.peaks.json",
+          "duration": 31.813,
+          "bytes": 246677,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
     "bb0a298dccfb927ddca5694acbdac0d4d7804a99cd06ec3d3caeb513abf70054": {
       "characters": 781,
       "words": 154,
@@ -6342,6 +7602,66 @@
           "peaksUrl": "audio/bd39da2a2ab6de8837006fc9fd745440f585db4e70dbd79f3a48b9b7114887d0/sky.peaks.json",
           "duration": 6.578,
           "bytes": 51102,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
+    "befeb06100206e7cb2ff7048585552901c7fdcc1edde51ec5e7661e4bba49888": {
+      "characters": 474,
+      "words": 81,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+          "sourceKey": "store-exchange.levels.advanced.englishExample",
+          "courseId": "course-2",
+          "levelId": "advanced",
+          "roleplayId": "store-exchange"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/befeb06100206e7cb2ff7048585552901c7fdcc1edde51ec5e7661e4bba49888/heart.webm",
+          "peaksUrl": "audio/befeb06100206e7cb2ff7048585552901c7fdcc1edde51ec5e7661e4bba49888/heart.peaks.json",
+          "duration": 30.788,
+          "bytes": 245830,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/befeb06100206e7cb2ff7048585552901c7fdcc1edde51ec5e7661e4bba49888/bella.webm",
+          "peaksUrl": "audio/befeb06100206e7cb2ff7048585552901c7fdcc1edde51ec5e7661e4bba49888/bella.peaks.json",
+          "duration": 32.463,
+          "bytes": 259303,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/befeb06100206e7cb2ff7048585552901c7fdcc1edde51ec5e7661e4bba49888/sarah.webm",
+          "peaksUrl": "audio/befeb06100206e7cb2ff7048585552901c7fdcc1edde51ec5e7661e4bba49888/sarah.peaks.json",
+          "duration": 32.638,
+          "bytes": 253148,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/befeb06100206e7cb2ff7048585552901c7fdcc1edde51ec5e7661e4bba49888/sky.webm",
+          "peaksUrl": "audio/befeb06100206e7cb2ff7048585552901c7fdcc1edde51ec5e7661e4bba49888/sky.peaks.json",
+          "duration": 31.188,
+          "bytes": 243014,
           "mimeType": "audio/webm; codecs=opus",
           "generator": {
             "dtype": "fp32",
@@ -6649,6 +7969,66 @@
         }
       }
     },
+    "c4b39a1566e2ddf2f58db096359bf2e9356432a83d0f371ee504ff84bb068094": {
+      "characters": 236,
+      "words": 43,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+          "sourceKey": "store-exchange.levels.intermediate.englishExample",
+          "courseId": "course-2",
+          "levelId": "intermediate",
+          "roleplayId": "store-exchange"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/c4b39a1566e2ddf2f58db096359bf2e9356432a83d0f371ee504ff84bb068094/heart.webm",
+          "peaksUrl": "audio/c4b39a1566e2ddf2f58db096359bf2e9356432a83d0f371ee504ff84bb068094/heart.peaks.json",
+          "duration": 15.743,
+          "bytes": 122007,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/c4b39a1566e2ddf2f58db096359bf2e9356432a83d0f371ee504ff84bb068094/bella.webm",
+          "peaksUrl": "audio/c4b39a1566e2ddf2f58db096359bf2e9356432a83d0f371ee504ff84bb068094/bella.peaks.json",
+          "duration": 16.793,
+          "bytes": 129981,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/c4b39a1566e2ddf2f58db096359bf2e9356432a83d0f371ee504ff84bb068094/sarah.webm",
+          "peaksUrl": "audio/c4b39a1566e2ddf2f58db096359bf2e9356432a83d0f371ee504ff84bb068094/sarah.peaks.json",
+          "duration": 17.743,
+          "bytes": 132818,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/c4b39a1566e2ddf2f58db096359bf2e9356432a83d0f371ee504ff84bb068094/sky.webm",
+          "peaksUrl": "audio/c4b39a1566e2ddf2f58db096359bf2e9356432a83d0f371ee504ff84bb068094/sky.peaks.json",
+          "duration": 16.893,
+          "bytes": 128369,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
     "c515b06dc6e804d0675bf2967144885c6755ea70e1befbb9a0c48a5fbd501566": {
       "characters": 77,
       "words": 16,
@@ -6702,6 +8082,66 @@
           "peaksUrl": "audio/c515b06dc6e804d0675bf2967144885c6755ea70e1befbb9a0c48a5fbd501566/sky.peaks.json",
           "duration": 5.483,
           "bytes": 43616,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
+    "c74ca8fa318e0977b602d919e2015da94fc99c26e9cfb02cd57c54c500c4c54f": {
+      "characters": 495,
+      "words": 88,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+          "sourceKey": "hotel-booking.levels.advanced.englishExample",
+          "courseId": "course-1",
+          "levelId": "advanced",
+          "roleplayId": "hotel-booking"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/c74ca8fa318e0977b602d919e2015da94fc99c26e9cfb02cd57c54c500c4c54f/heart.webm",
+          "peaksUrl": "audio/c74ca8fa318e0977b602d919e2015da94fc99c26e9cfb02cd57c54c500c4c54f/heart.peaks.json",
+          "duration": 31.763,
+          "bytes": 248834,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/c74ca8fa318e0977b602d919e2015da94fc99c26e9cfb02cd57c54c500c4c54f/bella.webm",
+          "peaksUrl": "audio/c74ca8fa318e0977b602d919e2015da94fc99c26e9cfb02cd57c54c500c4c54f/bella.peaks.json",
+          "duration": 33.388,
+          "bytes": 260314,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/c74ca8fa318e0977b602d919e2015da94fc99c26e9cfb02cd57c54c500c4c54f/sarah.webm",
+          "peaksUrl": "audio/c74ca8fa318e0977b602d919e2015da94fc99c26e9cfb02cd57c54c500c4c54f/sarah.peaks.json",
+          "duration": 33.988,
+          "bytes": 257730,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/c74ca8fa318e0977b602d919e2015da94fc99c26e9cfb02cd57c54c500c4c54f/sky.webm",
+          "peaksUrl": "audio/c74ca8fa318e0977b602d919e2015da94fc99c26e9cfb02cd57c54c500c4c54f/sky.peaks.json",
+          "duration": 32.588,
+          "bytes": 247658,
           "mimeType": "audio/webm; codecs=opus",
           "generator": {
             "dtype": "fp32",
@@ -8108,6 +9548,66 @@
         }
       }
     },
+    "e40479f26a20d08f0c714ff1581e1330537096a15d362a7d16762e0bfbf8a742": {
+      "characters": 280,
+      "words": 51,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+          "sourceKey": "tennis-court.levels.intermediate.englishExample",
+          "courseId": "course-1",
+          "levelId": "intermediate",
+          "roleplayId": "tennis-court"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/e40479f26a20d08f0c714ff1581e1330537096a15d362a7d16762e0bfbf8a742/heart.webm",
+          "peaksUrl": "audio/e40479f26a20d08f0c714ff1581e1330537096a15d362a7d16762e0bfbf8a742/heart.peaks.json",
+          "duration": 18.593,
+          "bytes": 145329,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/e40479f26a20d08f0c714ff1581e1330537096a15d362a7d16762e0bfbf8a742/bella.webm",
+          "peaksUrl": "audio/e40479f26a20d08f0c714ff1581e1330537096a15d362a7d16762e0bfbf8a742/bella.peaks.json",
+          "duration": 19.893,
+          "bytes": 154927,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/e40479f26a20d08f0c714ff1581e1330537096a15d362a7d16762e0bfbf8a742/sarah.webm",
+          "peaksUrl": "audio/e40479f26a20d08f0c714ff1581e1330537096a15d362a7d16762e0bfbf8a742/sarah.peaks.json",
+          "duration": 20.443,
+          "bytes": 154556,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/e40479f26a20d08f0c714ff1581e1330537096a15d362a7d16762e0bfbf8a742/sky.webm",
+          "peaksUrl": "audio/e40479f26a20d08f0c714ff1581e1330537096a15d362a7d16762e0bfbf8a742/sky.peaks.json",
+          "duration": 19.493,
+          "bytes": 149069,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
     "e6355bb058b1778f68994bb3ed674093a8eff071e3536bbfa6885d5cf7229561": {
       "characters": 98,
       "words": 16,
@@ -8535,6 +10035,66 @@
         }
       }
     },
+    "f3bc8ff88cb7d9c49e57160edf9fb9560a6bf9a624da97abba2b4bb485dc2601": {
+      "characters": 201,
+      "words": 41,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-2/roleplays.ts",
+          "sourceKey": "city-tour-change.levels.intermediate.englishExample",
+          "courseId": "course-2",
+          "levelId": "intermediate",
+          "roleplayId": "city-tour-change"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/f3bc8ff88cb7d9c49e57160edf9fb9560a6bf9a624da97abba2b4bb485dc2601/heart.webm",
+          "peaksUrl": "audio/f3bc8ff88cb7d9c49e57160edf9fb9560a6bf9a624da97abba2b4bb485dc2601/heart.peaks.json",
+          "duration": 14.918,
+          "bytes": 114851,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/f3bc8ff88cb7d9c49e57160edf9fb9560a6bf9a624da97abba2b4bb485dc2601/bella.webm",
+          "peaksUrl": "audio/f3bc8ff88cb7d9c49e57160edf9fb9560a6bf9a624da97abba2b4bb485dc2601/bella.peaks.json",
+          "duration": 16.318,
+          "bytes": 125096,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/f3bc8ff88cb7d9c49e57160edf9fb9560a6bf9a624da97abba2b4bb485dc2601/sarah.webm",
+          "peaksUrl": "audio/f3bc8ff88cb7d9c49e57160edf9fb9560a6bf9a624da97abba2b4bb485dc2601/sarah.peaks.json",
+          "duration": 16.418,
+          "bytes": 121228,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/f3bc8ff88cb7d9c49e57160edf9fb9560a6bf9a624da97abba2b4bb485dc2601/sky.webm",
+          "peaksUrl": "audio/f3bc8ff88cb7d9c49e57160edf9fb9560a6bf9a624da97abba2b4bb485dc2601/sky.peaks.json",
+          "duration": 15.843,
+          "bytes": 119234,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
     "f3c61c828fe9801c7827ae36670683cbf2465f52cb4dd701dd622b2d99ea5857": {
       "characters": 108,
       "words": 20,
@@ -8588,6 +10148,66 @@
           "peaksUrl": "audio/f3c61c828fe9801c7827ae36670683cbf2465f52cb4dd701dd622b2d99ea5857/sky.peaks.json",
           "duration": 8.103,
           "bytes": 64316,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
+    "f97b921b02a293ce458051fa16013a19c352dbec5ba2ba3d8bad9a91e49d274b": {
+      "characters": 462,
+      "words": 80,
+      "sources": [
+        {
+          "type": "roleplay-example",
+          "sourcePath": "src/data/training/courses/course-1/roleplays.ts",
+          "sourceKey": "tennis-court.levels.advanced.englishExample",
+          "courseId": "course-1",
+          "levelId": "advanced",
+          "roleplayId": "tennis-court"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/f97b921b02a293ce458051fa16013a19c352dbec5ba2ba3d8bad9a91e49d274b/heart.webm",
+          "peaksUrl": "audio/f97b921b02a293ce458051fa16013a19c352dbec5ba2ba3d8bad9a91e49d274b/heart.peaks.json",
+          "duration": 29.188,
+          "bytes": 229837,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/f97b921b02a293ce458051fa16013a19c352dbec5ba2ba3d8bad9a91e49d274b/bella.webm",
+          "peaksUrl": "audio/f97b921b02a293ce458051fa16013a19c352dbec5ba2ba3d8bad9a91e49d274b/bella.peaks.json",
+          "duration": 31.188,
+          "bytes": 242300,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/f97b921b02a293ce458051fa16013a19c352dbec5ba2ba3d8bad9a91e49d274b/sarah.webm",
+          "peaksUrl": "audio/f97b921b02a293ce458051fa16013a19c352dbec5ba2ba3d8bad9a91e49d274b/sarah.peaks.json",
+          "duration": 30.813,
+          "bytes": 236596,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/f97b921b02a293ce458051fa16013a19c352dbec5ba2ba3d8bad9a91e49d274b/sky.webm",
+          "peaksUrl": "audio/f97b921b02a293ce458051fa16013a19c352dbec5ba2ba3d8bad9a91e49d274b/sky.peaks.json",
+          "duration": 30.038,
+          "bytes": 230445,
           "mimeType": "audio/webm; codecs=opus",
           "generator": {
             "dtype": "fp32",

@@ -539,6 +539,9 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
     expect(await screen.findByText('6단계 문제 해결 공식 요약')).toBeInTheDocument();
     expect(screen.getAllByText('STEP 5. 롤플레이 공식').length).toBeGreaterThan(0);
     expect(screen.getByRole('button', { name: '롤플레이 공식 전체보기' })).toBeInTheDocument();
+    expect(screen.getByTestId('roleplay-audio-controls')).toBeInTheDocument();
+    expect(screen.getByText('ROLEPLAY AUDIO')).toBeInTheDocument();
+    expect(screen.queryByText('현재 레벨 핵심 훈련 포인트')).not.toBeInTheDocument();
   });
 
   /* 24. Progress mapping across 6 steps */

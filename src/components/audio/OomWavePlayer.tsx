@@ -26,6 +26,8 @@ type OomWavePlayerProps = {
   statusText?: string;
   onRequestPlay?: () => void;
   onRequestStop?: () => void;
+  actionLabel?: string;
+  requestPlayLabel?: string;
 };
 
 export const OOM_IDLE_WAVEFORM_PEAKS = [
@@ -70,6 +72,8 @@ export const OomWavePlayer = forwardRef<OomWavePlayerHandle, OomWavePlayerProps>
       statusText = "",
       onRequestPlay,
       onRequestStop,
+      actionLabel = "음성",
+      requestPlayLabel = "영어 스크립트 재생",
     },
     ref,
   ) {
@@ -300,18 +304,21 @@ export const OomWavePlayer = forwardRef<OomWavePlayerHandle, OomWavePlayerProps>
       shellState === "loading" || shellState === "fallback" ? onRequestStop : onRequestPlay;
     const placeholderActionLabel =
       shellState === "loading"
-        ? "음성 준비 중지"
+        ? `${actionLabel} 준비 중지`
         : shellState === "fallback"
-          ? "시스템 음성 정지"
-          : "영어 스크립트 재생";
+          ? `${actionLabel} 시스템 음성 정지`
+          : requestPlayLabel;
 
     return (
       <div
         className={cn(
-          "grid min-w-0 items-center gap-2",
-          controls ? "grid-cols-[auto_minmax(0,1fr)]" : "grid-cols-1",
+          "grid min-w-0 gap-x-2",
+          controls
+            ? "grid-cols-[auto_minmax(0,1fr)] grid-rows-[auto_auto]"
+            : "grid-cols-1 grid-rows-[auto_auto]",
           className,
         )}
+        data-control-alignment="wave-center"
         data-seek-enabled={variant === "script"}
         data-playback-rate={playbackRate.toFixed(2)}
         data-source={audioUrl ? "static" : blob ? "blob" : "none"}
@@ -323,14 +330,14 @@ export const OomWavePlayer = forwardRef<OomWavePlayerHandle, OomWavePlayerProps>
             aria-label={
               hasAudio
                 ? playing
-                  ? "음성 일시정지"
+                  ? `${actionLabel} 일시정지`
                   : finished
-                    ? "음성 다시 재생"
-                    : "음성 재생"
+                    ? `${actionLabel} 다시 재생`
+                    : `${actionLabel} 재생`
                 : placeholderActionLabel
             }
             className={cn(
-              "grid h-9 w-9 shrink-0 place-items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+              "row-start-1 grid h-9 w-9 shrink-0 place-items-center self-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
               consoleSurface
                 ? "border-zinc-700 bg-zinc-900 text-zinc-100 hover:border-indigo-500 hover:text-indigo-300"
                 : "border-zinc-200 bg-white text-zinc-800 hover:border-indigo-300 hover:text-indigo-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:border-indigo-600 dark:hover:text-indigo-300",
@@ -358,7 +365,7 @@ export const OomWavePlayer = forwardRef<OomWavePlayerHandle, OomWavePlayerProps>
           </button>
         ) : null}
 
-        <div className="min-w-0">
+        <div className={cn("row-start-1 min-w-0", controls && "col-start-2")}>
           <div className={cn("relative w-full min-w-0 overflow-hidden", waveHeightClass)}>
             <div
               aria-label={hasAudio ? "생성된 음성 파형" : "음성 준비 전 안내 파형"}
@@ -371,32 +378,37 @@ export const OomWavePlayer = forwardRef<OomWavePlayerHandle, OomWavePlayerProps>
               role="img"
             />
           </div>
-          <div className="mt-1 flex min-w-0 items-center justify-between gap-2">
-            <p
-              aria-live="polite"
-              className={cn(
-                "min-w-0 truncate text-[10px] font-semibold",
-                shellState === "error" || shellState === "fallback"
-                  ? "text-amber-700 dark:text-amber-300"
-                  : consoleSurface
-                    ? "text-zinc-400"
-                    : "text-zinc-500 dark:text-zinc-400",
-              )}
-              role="status"
-            >
-              {statusText}
-            </p>
-            <p
-              className={cn(
-                "shrink-0 text-right font-mono text-[10px]",
-                consoleSurface ? "text-zinc-400" : "text-zinc-500 dark:text-zinc-400",
-              )}
-            >
-              {hasAudio
-                ? `${formatAudioTime(currentTime)} / ${formatAudioTime(duration)}`
-                : "--:--"}
-            </p>
-          </div>
+        </div>
+        <div
+          className={cn(
+            "row-start-2 mt-1 flex min-w-0 items-center justify-between gap-2",
+            controls && "col-start-2",
+          )}
+        >
+          <p
+            aria-live="polite"
+            className={cn(
+              "min-w-0 truncate text-[10px] font-semibold",
+              shellState === "error" || shellState === "fallback"
+                ? "text-amber-700 dark:text-amber-300"
+                : consoleSurface
+                  ? "text-zinc-400"
+                  : "text-zinc-500 dark:text-zinc-400",
+            )}
+            role="status"
+          >
+            {statusText}
+          </p>
+          <p
+            className={cn(
+              "shrink-0 text-right font-mono text-[10px]",
+              consoleSurface ? "text-zinc-400" : "text-zinc-500 dark:text-zinc-400",
+            )}
+          >
+            {hasAudio
+              ? `${formatAudioTime(currentTime)} / ${formatAudioTime(duration)}`
+              : "--:--"}
+          </p>
         </div>
       </div>
     );

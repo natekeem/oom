@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   computePcm16Waveform,
+  loadPlayableInventory,
   selectPilotTargets,
   STATIC_TTS_PEAK_COUNT,
 } from "./static-tts-assets.mjs";
@@ -24,6 +25,17 @@ function pcmWav(samples, sampleRate = 24_000) {
 }
 
 describe("static TTS asset helpers", () => {
+  it("includes all 27 current roleplay examples in the 173-text playable inventory", async () => {
+    const inventory = await loadPlayableInventory();
+    expect(inventory.entries).toHaveLength(173);
+    expect(inventory.targets).toHaveLength(692);
+    expect(
+      inventory.entries.filter((entry) =>
+        entry.categories.includes("step5-roleplay-example"),
+      ),
+    ).toHaveLength(27);
+  });
+
   it("creates deterministic non-placeholder normalized peaks from PCM16", () => {
     const samples = Array.from({ length: 24_000 }, (_, index) =>
       Math.round(Math.sin(index / 20) * (index < 12_000 ? 4_000 : 12_000)),

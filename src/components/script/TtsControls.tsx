@@ -1,6 +1,7 @@
 import { Volume2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { stopSpeech } from "../../lib/speech";
+import { KOKORO_SYNTHESIS_RATE } from "../../lib/tts/kokoroConfig";
 import {
   DEFAULT_SCRIPT_RATE_BY_LEVEL,
   MAX_SCRIPT_RATE,
@@ -10,7 +11,7 @@ import {
   writeScriptRate,
 } from "../../lib/tts/ratePreferences";
 import { getTtsManager } from "../../lib/tts/TtsManager";
-import type { TtsRuntimeStatus } from "../../lib/tts/types";
+import type { TtsMediaPlaybackSource, TtsPlaybackSource, TtsRuntimeStatus } from "../../lib/tts/types";
 import { useTtsPreferences } from "../../lib/tts/useTtsPreferences";
 import type { TrainingLevelId } from "../../training/types";
 import { OomWavePlayer, type OomWavePlayerHandle } from "../audio/OomWavePlayer";
@@ -26,15 +27,22 @@ type PlayerShellState = "idle" | "loading" | "ready" | "fallback" | "error";
 const IDLE_STATUS = "재생하면 음성을 준비합니다.";
 
 export function TtsControls({ text, levelId, onError }: TtsControlsProps) {
+  const { preferences } = useTtsPreferences();
   const [rate, setRate] = useState(() => readScriptRate(levelId));
-  const [blob, setBlob] = useState<Blob | null>(null);
+  const inputKey = `${preferences.scriptVoice}\u0000${text}`;
+  const [storedSource, setStoredSource] = useState<{
+    inputKey: string;
+    source: TtsMediaPlaybackSource;
+  } | null>(null);
+  const source = storedSource?.inputKey === inputKey ? storedSource.source : null;
+  const sourceIsStale = storedSource !== null && storedSource.inputKey !== inputKey;
   const [playRequest, setPlayRequest] = useState(0);
   const [status, setStatus] = useState(IDLE_STATUS);
   const [shellState, setShellState] = useState<PlayerShellState>("idle");
   const requestRef = useRef(0);
   const manualStopRef = useRef(false);
+  const staticFallbackAttemptRef = useRef(false);
   const playerRef = useRef<OomWavePlayerHandle | null>(null);
-  const { preferences } = useTtsPreferences();
 
   useEffect(() => {
     return () => {
@@ -42,6 +50,20 @@ export function TtsControls({ text, levelId, onError }: TtsControlsProps) {
       stopSpeech();
     };
   }, []);
+
+  useEffect(() => {
+    requestRef.current += 1;
+    const requestId = requestRef.current;
+    staticFallbackAttemptRef.current = false;
+    void getTtsManager()
+      .resolveStaticPlayback({ text, voice: preferences.scriptVoice, speed: 1 })
+      .then((staticSource) => {
+        if (requestId !== requestRef.current || !staticSource) return;
+        setStoredSource({ inputKey, source: staticSource });
+        setShellState("ready");
+        setStatus("정적 스크립트 음성 준비 완료");
+      });
+  }, [inputKey, preferences.scriptVoice, text]);
 
   const updateStatus = (next: TtsRuntimeStatus) => {
     if (next.phase === "loading-model") {
@@ -70,49 +92,57 @@ export function TtsControls({ text, levelId, onError }: TtsControlsProps) {
     setStatus("스크립트 음성 준비 완료");
   };
 
-  const play = async () => {
+  const playFallbackSource = (fallback: Extract<TtsPlaybackSource, { kind: "web-speech" }>, requestId: number) => {
+    setShellState("fallback");
+    setStatus("시스템 음성으로 재생 중");
+    fallback.play({
+      onEnd: () => {
+        if (requestId !== requestRef.current) return;
+        setStatus("시스템 음성 재생 완료");
+        setShellState("idle");
+      },
+      onError: () => {
+        if (requestId !== requestRef.current) return;
+        setStatus("시스템 음성을 재생할 수 없습니다.");
+        setShellState("error");
+        onError("시스템 음성을 재생할 수 없습니다.");
+      },
+    });
+  };
+
+  const prepareAndPlay = async (skipStatic = false) => {
     requestRef.current += 1;
     const requestId = requestRef.current;
     playerRef.current?.stop();
     stopSpeech();
     manualStopRef.current = false;
-    setBlob(null);
+    setStoredSource(null);
     setStatus("저장된 음성 확인 중");
     setShellState("loading");
 
     try {
       const source = await getTtsManager().preparePlayback(
-        { text, voice: preferences.scriptVoice, speed: rate },
+        {
+          text,
+          voice: preferences.scriptVoice,
+          speed: KOKORO_SYNTHESIS_RATE,
+        },
         (next) => {
           if (requestId === requestRef.current) updateStatus(next);
         },
+        { skipStatic },
       );
 
       if (requestId !== requestRef.current) return;
 
-      if (source.kind === "audio") {
-        setBlob(source.blob);
+      if (source.kind === "audio" || source.kind === "static") {
+        setStoredSource({ inputKey, source });
         setPlayRequest(requestId);
-        setStatus("Kokoro 스크립트 음성 재생 중");
+        setStatus(source.kind === "static" ? "정적 스크립트 음성 재생 중" : "Kokoro 스크립트 음성 재생 중");
         setShellState("ready");
         return;
       }
-
-      setShellState("fallback");
-      setStatus("시스템 음성으로 재생 중");
-      source.play({
-        onEnd: () => {
-          if (requestId !== requestRef.current) return;
-          setStatus("시스템 음성 재생 완료");
-          setShellState("idle");
-        },
-        onError: () => {
-          if (requestId !== requestRef.current) return;
-          setStatus("시스템 음성을 재생할 수 없습니다.");
-          setShellState("error");
-          onError("시스템 음성을 재생할 수 없습니다.");
-        },
-      });
+      playFallbackSource(source, requestId);
     } catch (error) {
       if (requestId !== requestRef.current) return;
       setStatus("음성을 준비할 수 없습니다.");
@@ -121,12 +151,26 @@ export function TtsControls({ text, levelId, onError }: TtsControlsProps) {
     }
   };
 
+  const play = async () => {
+    if (source) {
+      requestRef.current += 1;
+      playerRef.current?.stop();
+      stopSpeech();
+      manualStopRef.current = false;
+      setPlayRequest(requestRef.current);
+      setShellState("ready");
+      setStatus(source.kind === "static" ? "정적 스크립트 음성 재생 중" : "Kokoro 스크립트 음성 재생 중");
+      return;
+    }
+    await prepareAndPlay();
+  };
+
   const stop = () => {
     requestRef.current += 1;
     manualStopRef.current = true;
     playerRef.current?.stop();
     stopSpeech();
-    if (blob) {
+    if (source) {
       setShellState("ready");
       setStatus("재생 정지");
       return;
@@ -136,15 +180,13 @@ export function TtsControls({ text, levelId, onError }: TtsControlsProps) {
   };
 
   const handleRateChange = (nextRate: number) => {
-    stop();
-    setBlob(null);
     setRate(nextRate);
     writeScriptRate(levelId, nextRate);
-    setShellState("idle");
-    setStatus(IDLE_STATUS);
   };
 
   const defaultRate = DEFAULT_SCRIPT_RATE_BY_LEVEL[levelId];
+  const visibleStatus = sourceIsStale ? IDLE_STATUS : status;
+  const visibleShellState = sourceIsStale ? "idle" : shellState;
 
   return (
     <div
@@ -156,15 +198,21 @@ export function TtsControls({ text, levelId, onError }: TtsControlsProps) {
           SCRIPT AUDIO
         </p>
         <span aria-live="polite" className="sr-only">
-          {status}
+          {visibleStatus}
         </span>
       </div>
 
       <OomWavePlayer
+        audioUrl={source?.kind === "static" ? source.url : undefined}
         autoPlayRequest={playRequest}
-        blob={blob}
+        blob={source?.kind === "audio" ? source.blob : undefined}
         className="mt-2"
         onError={(error) => {
+          if (source?.kind === "static" && !staticFallbackAttemptRef.current) {
+            staticFallbackAttemptRef.current = true;
+            void prepareAndPlay(true);
+            return;
+          }
           setShellState("error");
           setStatus("음성을 재생할 수 없습니다.");
           onError(error.message);
@@ -173,7 +221,7 @@ export function TtsControls({ text, levelId, onError }: TtsControlsProps) {
         onPlaybackChange={(playing) => {
           if (playing) {
             manualStopRef.current = false;
-            setStatus("Kokoro 스크립트 음성 재생 중");
+            setStatus(source?.kind === "static" ? "정적 스크립트 음성 재생 중" : "Kokoro 스크립트 음성 재생 중");
             return;
           }
           setStatus(manualStopRef.current ? "재생 정지" : "일시정지");
@@ -181,9 +229,12 @@ export function TtsControls({ text, levelId, onError }: TtsControlsProps) {
         }}
         onRequestPlay={() => void play()}
         onRequestStop={stop}
+        playbackRate={rate}
+        precomputedDuration={source?.kind === "static" ? source.duration : undefined}
+        precomputedPeaks={source?.kind === "static" ? source.peaks : undefined}
         ref={playerRef}
-        shellState={shellState}
-        statusText={status}
+        shellState={visibleShellState}
+        statusText={visibleStatus}
         variant="script"
       />
 

@@ -4,7 +4,7 @@ import { transcribeAudio } from "../../lib/stt";
 import { stopSpeech } from "../../lib/speech";
 import { getTtsManager } from "../../lib/tts/TtsManager";
 import { EXAM_TTS_RATE } from "../../lib/tts/ratePreferences";
-import type { TtsRuntimeStatus } from "../../lib/tts/types";
+import type { TtsMediaPlaybackSource, TtsRuntimeStatus } from "../../lib/tts/types";
 import { useTtsPreferences } from "../../lib/tts/useTtsPreferences";
 import { formatTime } from "../../lib/utils";
 import type { LlmSettings, SttSettings } from "../../types";
@@ -79,7 +79,7 @@ function PracticeViewContent({
 
   const [listenCount, setListenCount] = useState(0);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [questionAudioBlob, setQuestionAudioBlob] = useState<Blob | null>(null);
+  const [questionAudioSource, setQuestionAudioSource] = useState<TtsMediaPlaybackSource | null>(null);
   const [questionPlayRequest, setQuestionPlayRequest] = useState(0);
   const [questionTtsStatus, setQuestionTtsStatus] = useState("");
   const [showQuestionText, setShowQuestionText] = useState(false);
@@ -102,6 +102,7 @@ function PracticeViewContent({
   const recorderRef = useRef<RecorderHandle | null>(null);
   const questionPlayerRef = useRef<OomWavePlayerHandle | null>(null);
   const listenRequestRef = useRef(0);
+  const staticFallbackAttemptRef = useRef(false);
   const sttAbortRef = useRef<AbortController | null>(null);
   const attemptIdRef = useRef(0);
   const timerIntervalRef = useRef<number | null>(null);
@@ -109,6 +110,23 @@ function PracticeViewContent({
   const targetRangeLabel = `${resolved.level.targetSeconds[0]}–${resolved.level.targetSeconds[1]}초`;
   const levelLabel = `${resolved.level.displayName} (${resolved.level.targetLabel})`;
   const { preferences } = useTtsPreferences();
+
+  useEffect(() => {
+    listenRequestRef.current += 1;
+    const requestId = listenRequestRef.current;
+    staticFallbackAttemptRef.current = false;
+    if (!question) return;
+    void getTtsManager()
+      .resolveStaticPlayback({ text: question.prompt, voice: preferences.examVoice, speed: EXAM_TTS_RATE })
+      .then((staticSource) => {
+        if (requestId !== listenRequestRef.current || !staticSource) return;
+        setQuestionAudioSource(staticSource);
+        setQuestionTtsStatus("정적 질문 음성 준비 완료");
+      });
+  }, [preferences.examVoice, question]);
+
+  const activeQuestionAudioSource =
+    questionAudioSource?.voice === preferences.examVoice ? questionAudioSource : null;
 
   // Cleanup on unmount
   useEffect(() => {
@@ -172,7 +190,7 @@ function PracticeViewContent({
     setQuestion(next);
     setListenCount(0);
     setIsSpeaking(false);
-    setQuestionAudioBlob(null);
+    setQuestionAudioSource(null);
     setQuestionTtsStatus("");
     setShowQuestionText(false);
     setShowStoryHint(false);
@@ -216,21 +234,8 @@ function PracticeViewContent({
     return "질문 음성 준비 완료";
   };
 
-  const handleListen = async () => {
-    if (!question || sessionState === "recording" || listenCount >= 2) return;
-
-    listenRequestRef.current += 1;
-    const requestId = listenRequestRef.current;
-    setListenCount((count) => count + 1);
-    setIsSpeaking(true);
-    stopSpeech();
-
-    if (questionAudioBlob) {
-      setQuestionTtsStatus("Kokoro 질문 음성 재생 중");
-      setQuestionPlayRequest(requestId);
-      return;
-    }
-
+  const prepareQuestionPlayback = async (requestId: number, skipStatic = false) => {
+    if (!question) return;
     try {
       const source = await getTtsManager().preparePlayback(
         { text: question.prompt, voice: preferences.examVoice, speed: EXAM_TTS_RATE },
@@ -239,14 +244,15 @@ function PracticeViewContent({
             setQuestionTtsStatus(describeTtsStatus(status));
           }
         },
+        { skipStatic },
       );
 
       if (requestId !== listenRequestRef.current) return;
 
-      if (source.kind === "audio") {
-        setQuestionAudioBlob(source.blob);
+      if (source.kind === "audio" || source.kind === "static") {
+        setQuestionAudioSource(source);
         setQuestionPlayRequest(requestId);
-        setQuestionTtsStatus("Kokoro 질문 음성 재생 중");
+        setQuestionTtsStatus(source.kind === "static" ? "정적 질문 음성 재생 중" : "Kokoro 질문 음성 재생 중");
         return;
       }
 
@@ -273,9 +279,26 @@ function PracticeViewContent({
         error instanceof Error
           ? `${error.message} 문제 텍스트 보기 버튼으로 질문을 확인해 주세요.`
           : "문제 텍스트 보기 버튼으로 질문을 확인해 주세요.",
-        "info"
+        "info",
       );
     }
+  };
+
+  const handleListen = async () => {
+    if (!question || sessionState === "recording" || listenCount >= 2) return;
+
+    listenRequestRef.current += 1;
+    const requestId = listenRequestRef.current;
+    setListenCount((count) => count + 1);
+    setIsSpeaking(true);
+    stopSpeech();
+
+    if (activeQuestionAudioSource) {
+      setQuestionTtsStatus(activeQuestionAudioSource.kind === "static" ? "정적 질문 음성 재생 중" : "Kokoro 질문 음성 재생 중");
+      setQuestionPlayRequest(requestId);
+      return;
+    }
+    await prepareQuestionPlayback(requestId);
   };
 
   const startAnswer = async () => {
@@ -389,7 +412,7 @@ function PracticeViewContent({
     attemptIdRef.current += 1;
     setListenCount(0);
     setIsSpeaking(false);
-    setQuestionAudioBlob(null);
+    setQuestionAudioSource(null);
     setQuestionTtsStatus("");
     setShowQuestionText(false);
     setShowStoryHint(false);
@@ -533,12 +556,20 @@ function PracticeViewContent({
 
       {/* Phase A: Exam Screen Console */}
       <ExamScreenShell
-        audioPlayer={questionAudioBlob ? (
+        audioPlayer={activeQuestionAudioSource ? (
           <OomWavePlayer
+            audioUrl={activeQuestionAudioSource.kind === "static" ? activeQuestionAudioSource.url : undefined}
             autoPlayRequest={questionPlayRequest}
-            blob={questionAudioBlob}
+            blob={activeQuestionAudioSource.kind === "audio" ? activeQuestionAudioSource.blob : undefined}
             controls={false}
             onError={(error) => {
+              if (activeQuestionAudioSource.kind === "static" && !staticFallbackAttemptRef.current) {
+                staticFallbackAttemptRef.current = true;
+                setQuestionAudioSource(null);
+                setQuestionTtsStatus("정적 음성 오류 · 브라우저 음성 준비 중");
+                void prepareQuestionPlayback(listenRequestRef.current, true);
+                return;
+              }
               setIsSpeaking(false);
               setQuestionTtsStatus("질문 음성을 재생할 수 없습니다.");
               onToast("질문 음성 재생 실패", error.message, "error");
@@ -549,8 +580,12 @@ function PracticeViewContent({
             }}
             onPlaybackChange={(playing) => {
               setIsSpeaking(playing);
-              if (playing) setQuestionTtsStatus("Kokoro 질문 음성 재생 중");
+              if (playing) {
+                setQuestionTtsStatus(activeQuestionAudioSource.kind === "static" ? "정적 질문 음성 재생 중" : "Kokoro 질문 음성 재생 중");
+              }
             }}
+            precomputedDuration={activeQuestionAudioSource.kind === "static" ? activeQuestionAudioSource.duration : undefined}
+            precomputedPeaks={activeQuestionAudioSource.kind === "static" ? activeQuestionAudioSource.peaks : undefined}
             ref={questionPlayerRef}
             surface="console"
             variant="exam"

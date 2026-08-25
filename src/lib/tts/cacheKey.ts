@@ -1,16 +1,23 @@
-import { KOKORO_MODEL_VERSION } from "./kokoroConfig";
+import {
+  KOKORO_MODEL_VERSION,
+  KOKORO_SYNTHESIS_PROFILE,
+} from "./kokoroConfig";
 import type { TtsGenerateInput } from "./types";
 
 export type TtsCacheIdentity = {
   key: string;
   modelVersion: string;
   voice: TtsGenerateInput["voice"];
-  rate: number;
+  synthesisProfile: string;
   textHash: string;
 };
 
 export function normalizeTtsText(text: string) {
-  return text.trim().replace(/\s+/g, " ");
+  return text
+    .normalize("NFC")
+    .replace(/\r\n?/g, "\n")
+    .trim()
+    .replace(/\s+/gu, " ");
 }
 
 function fallbackTextHash(text: string) {
@@ -22,7 +29,7 @@ function fallbackTextHash(text: string) {
   return `fnv1a-${(hash >>> 0).toString(16).padStart(8, "0")}`;
 }
 
-async function hashText(text: string) {
+export async function sha256TtsText(text: string): Promise<string | null> {
   if (typeof crypto !== "undefined" && crypto.subtle && typeof TextEncoder !== "undefined") {
     try {
       const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
@@ -32,22 +39,25 @@ async function hashText(text: string) {
     }
   }
 
-  return fallbackTextHash(text);
+  return null;
+}
+
+async function hashText(text: string) {
+  return (await sha256TtsText(text)) ?? fallbackTextHash(text);
 }
 
 export async function createTtsCacheIdentity(
   input: TtsGenerateInput,
   modelVersion = KOKORO_MODEL_VERSION,
+  synthesisProfile = KOKORO_SYNTHESIS_PROFILE,
 ): Promise<TtsCacheIdentity> {
-  const rate = input.speed ?? 1;
   const textHash = await hashText(normalizeTtsText(input.text));
-  const rateKey = rate.toString();
 
   return {
-    key: `${modelVersion}:${input.voice}:${rateKey}:${textHash}`,
+    key: `${modelVersion}:${synthesisProfile}:${input.voice}:${textHash}`,
     modelVersion,
     voice: input.voice,
-    rate,
+    synthesisProfile,
     textHash,
   };
 }

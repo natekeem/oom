@@ -19,6 +19,20 @@ declare module "kokoro-js" {
     toBlob: () => Blob;
   };
 
+  export type KokoroStreamChunk = {
+    text: string;
+    phonemes: string;
+    audio: KokoroRawAudio;
+  };
+
+  export class TextSplitterStream {
+    push(...texts: string[]): void;
+    close(): void;
+    flush(): void;
+    readonly sentences: string[];
+    [Symbol.asyncIterator](): AsyncGenerator<string, void, void>;
+  }
+
   export class KokoroTTS {
     static from_pretrained(
       modelId: string,
@@ -33,5 +47,18 @@ declare module "kokoro-js" {
       text: string,
       options?: { voice?: KokoroVoiceId; speed?: number },
     ): Promise<KokoroRawAudio>;
+
+    stream(
+      text: string | TextSplitterStream,
+      options?: {
+        voice?: KokoroVoiceId;
+        speed?: number;
+        split_pattern?: RegExp;
+      },
+    ): AsyncGenerator<KokoroStreamChunk, void, void>;
+
+    model?: {
+      dispose?: () => Promise<void> | void;
+    };
   }
 }

@@ -5,6 +5,7 @@ import {
   KOKORO_DEVICE,
   KOKORO_DTYPE,
   KOKORO_MODEL_ID,
+  KOKORO_SYNTHESIS_RATE,
 } from "../lib/tts/kokoroConfig";
 import type { OomVoiceId } from "../lib/tts/types";
 import {
@@ -19,7 +20,6 @@ type GenerateMessage = {
   requestId: string;
   text: string;
   voice: OomVoiceId;
-  speed: number;
 };
 
 let ttsPromise: Promise<KokoroTTS> | null = null;
@@ -66,7 +66,7 @@ self.addEventListener("message", async (event: MessageEvent<GenerateMessage>) =>
     for (let index = 0; index < segments.length; index += 1) {
       const audio = await tts.generate(segments[index], {
         voice: message.voice,
-        speed: message.speed,
+        speed: KOKORO_SYNTHESIS_RATE,
       });
       chunks.push({ audio: audio.audio, sampleRate: audio.sampling_rate });
       self.postMessage({

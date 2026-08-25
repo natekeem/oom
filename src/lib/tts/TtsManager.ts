@@ -1,6 +1,8 @@
 import { speakText, type SpeechCallbacks } from "../speech";
 import { createTtsCacheIdentity, type TtsCacheIdentity } from "./cacheKey";
 import { KokoroBrowserEngine } from "./KokoroBrowserEngine";
+import { KOKORO_SYNTHESIS_RATE } from "./kokoroConfig";
+import { getStaticTtsResolver, type StaticTtsResolver } from "./staticTts";
 import {
   IndexedDbAudioCache,
   type PersistentAudioCache,
@@ -52,7 +54,7 @@ function debugPerformance(input: {
     textChars: input.request.text.length,
     chunks: input.record.chunkCount,
     voice: input.request.voice,
-    rate: input.request.speed ?? 1,
+    synthesisRate: KOKORO_SYNTHESIS_RATE,
     generationMs: Math.round(input.generationMs),
     engineGenerationMs:
       typeof input.engineGenerationMs === "number"
@@ -79,7 +81,12 @@ export class TtsManager {
     private readonly engine: TtsEngine = new KokoroBrowserEngine(),
     private readonly fallbackSpeak: FallbackSpeak = speakText,
     private readonly persistentCache: PersistentAudioCache = new IndexedDbAudioCache(),
+    private readonly staticResolver: StaticTtsResolver = getStaticTtsResolver(),
   ) {}
+
+  async resolveStaticPlayback(input: TtsGenerateInput) {
+    return this.staticResolver.resolve({ ...input, speed: KOKORO_SYNTHESIS_RATE });
+  }
 
   private remember(record: PersistentAudioCacheRecord) {
     this.audioCache.delete(record.key);
@@ -107,7 +114,7 @@ export class TtsManager {
       record.key === identity.key &&
       record.modelVersion === identity.modelVersion &&
       record.voice === identity.voice &&
-      record.rate === identity.rate &&
+      record.synthesisProfile === identity.synthesisProfile &&
       record.textHash === identity.textHash
     );
   }
@@ -160,7 +167,7 @@ export class TtsManager {
         byteSize: audio.blob.size,
         modelVersion: identity.modelVersion,
         voice: identity.voice,
-        rate: identity.rate,
+        synthesisProfile: identity.synthesisProfile,
         textHash: identity.textHash,
         audioDurationSeconds: audio.audioDurationSeconds,
         chunkCount: audio.chunkCount,
@@ -199,15 +206,24 @@ export class TtsManager {
   async preparePlayback(
     input: TtsGenerateInput,
     onStatus?: TtsStatusListener,
+    options?: { skipStatic?: boolean },
   ): Promise<TtsPlaybackSource> {
     const startedAt = now();
-    const identity = await createTtsCacheIdentity(input);
+    const synthesisInput = { ...input, speed: KOKORO_SYNTHESIS_RATE };
+    if (!options?.skipStatic) {
+      const staticSource = await this.resolveStaticPlayback(synthesisInput);
+      if (staticSource) {
+        onStatus?.({ phase: "ready" });
+        return staticSource;
+      }
+    }
+    const identity = await createTtsCacheIdentity(synthesisInput);
     const memory = this.readMemory(identity);
 
     if (memory) {
       onStatus?.({ phase: "ready" });
       debugPerformance({
-        request: input,
+        request: synthesisInput,
         record: memory,
         generationMs: 0,
         cacheHit: "memory",
@@ -235,7 +251,12 @@ export class TtsManager {
       entry.listeners.forEach((listener) => listener(status));
     };
 
-    entry.promise = this.prepareUncachedPlayback(input, identity, emitStatus, startedAt).finally(
+    entry.promise = this.prepareUncachedPlayback(
+      synthesisInput,
+      identity,
+      emitStatus,
+      startedAt,
+    ).finally(
       () => {
         if (this.inFlight.get(identity.key) === entry) this.inFlight.delete(identity.key);
       },

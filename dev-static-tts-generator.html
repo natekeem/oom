@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OOM Static TTS Generator</title>
+    <style>
+      :root { color-scheme: dark; font-family: Inter, system-ui, sans-serif; background: #09090b; color: #f4f4f5; }
+      body { margin: 0; padding: 28px; }
+      main { width: min(1180px, 100%); margin: 0 auto; }
+      h1 { margin: 0; font-size: 24px; }
+      p { color: #a1a1aa; line-height: 1.6; }
+      button { margin: 12px 8px 12px 0; padding: 10px 16px; border: 0; border-radius: 8px; background: #4f46e5; color: white; font-weight: 800; cursor: pointer; }
+      button.secondary { background: #3f3f46; }
+      button:disabled { cursor: not-allowed; opacity: .5; }
+      #generator-status { min-height: 24px; color: #a5b4fc; font-weight: 800; }
+      #generator-log { height: 300px; overflow: auto; padding: 14px; border: 1px solid #27272a; border-radius: 8px; background: #18181b; font: 12px/1.7 ui-monospace, monospace; }
+      .error { color: #fda4af; }
+      #pilot-results { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin-top: 20px; }
+      .pilot-card { min-width: 0; padding: 12px; border: 1px solid #3f3f46; border-radius: 8px; background: #18181b; }
+      .pilot-card strong, .pilot-card span { display: block; }
+      .pilot-card span { margin: 3px 0 10px; color: #a1a1aa; font-size: 11px; }
+      audio { width: 100%; margin-top: 8px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>OOM Static TTS Generator · <span id="generator-mode">loading</span></h1>
+      <p>Dev-only. WebGPU fp32를 우선 사용하고 unavailable/error이면 q8 WASM으로 fallback합니다. 각 WAV는 서버에서 WebM Opus 64k + 256 real PCM peaks로 검증·저장됩니다.</p>
+      <button id="run-generator" type="button">생성 시작</button>
+      <button class="secondary" disabled id="stop-generator" type="button">현재 target 후 중지</button>
+      <p id="generator-status" role="status">실행 대기</p>
+      <div id="generator-log" aria-label="Generator log"></div>
+      <section id="pilot-results" aria-label="Pilot audio and waveform results"></section>
+    </main>
+    <script type="module" src="/scripts/static-tts-generator-client.ts"></script>
+  </body>
+</html>

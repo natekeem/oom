@@ -4,7 +4,7 @@ import { OomWavePlayer, type OomWavePlayerHandle } from "../audio/OomWavePlayer"
 import { Button } from "../ui/Button";
 import { stopSpeech } from "../../lib/speech";
 import { getTtsManager } from "../../lib/tts/TtsManager";
-import type { OomVoiceId, TtsRuntimeStatus } from "../../lib/tts/types";
+import type { OomVoiceId, TtsMediaPlaybackSource, TtsRuntimeStatus } from "../../lib/tts/types";
 import { useTtsPreferences } from "../../lib/tts/useTtsPreferences";
 import {
   EXAM_PREVIEW_TEXT,
@@ -16,7 +16,7 @@ type VoiceUse = "exam" | "script";
 
 type PreviewState = {
   use: VoiceUse;
-  blob: Blob | null;
+  source: TtsMediaPlaybackSource | null;
   playRequest: number;
   message: string;
   loading: boolean;
@@ -45,6 +45,7 @@ export function VoiceSettings() {
   const { preferences, setExamVoice, setScriptVoice } = useTtsPreferences();
   const [preview, setPreview] = useState<PreviewState | null>(null);
   const requestIdRef = useRef(0);
+  const staticFallbackAttemptRef = useRef(false);
   const playerRef = useRef<OomWavePlayerHandle | null>(null);
 
   useEffect(() => {
@@ -58,6 +59,7 @@ export function VoiceSettings() {
     requestIdRef.current += 1;
     playerRef.current?.stop();
     stopSpeech();
+    staticFallbackAttemptRef.current = false;
     setPreview(null);
   };
 
@@ -67,7 +69,8 @@ export function VoiceSettings() {
     else setScriptVoice(voice);
   };
 
-  const playPreview = async (use: VoiceUse) => {
+  const playPreview = async (use: VoiceUse, skipStatic = false) => {
+    if (!skipStatic) staticFallbackAttemptRef.current = false;
     requestIdRef.current += 1;
     const requestId = requestIdRef.current;
     playerRef.current?.stop();
@@ -78,9 +81,9 @@ export function VoiceSettings() {
 
     setPreview({
       use,
-      blob: null,
+      source: null,
       playRequest: 0,
-      message: "음성 모델 준비 중 · 최초 1회",
+      message: "저장된 음성 확인 중",
       loading: true,
       fallback: false,
     });
@@ -102,16 +105,17 @@ export function VoiceSettings() {
               : current,
           );
         },
+        { skipStatic },
       );
 
       if (requestId !== requestIdRef.current) return;
 
-      if (source.kind === "audio") {
+      if (source.kind === "audio" || source.kind === "static") {
         setPreview({
           use,
-          blob: source.blob,
+          source,
           playRequest: requestId,
-          message: "Kokoro 미리듣기 재생 중",
+          message: source.kind === "static" ? "정적 미리듣기 재생 중" : "Kokoro 미리듣기 재생 중",
           loading: false,
           fallback: false,
         });
@@ -120,7 +124,7 @@ export function VoiceSettings() {
 
       setPreview({
         use,
-        blob: null,
+        source: null,
         playRequest: 0,
         message: "시스템 음성으로 재생 중",
         loading: false,
@@ -150,7 +154,7 @@ export function VoiceSettings() {
       if (requestId !== requestIdRef.current) return;
       setPreview({
         use,
-        blob: null,
+        source: null,
         playRequest: 0,
         message: error instanceof Error ? error.message : "음성을 재생할 수 없습니다.",
         loading: false,
@@ -187,6 +191,11 @@ export function VoiceSettings() {
               current?.use === "exam" ? { ...current, message } : current,
             )
           }
+          onStaticError={() => {
+            if (staticFallbackAttemptRef.current) return;
+            staticFallbackAttemptRef.current = true;
+            void playPreview("exam", true);
+          }}
           onSelect={(voice) => selectVoice("exam", voice)}
           preview={preview?.use === "exam" ? preview : null}
           playerRef={playerRef}
@@ -203,6 +212,11 @@ export function VoiceSettings() {
               current?.use === "script" ? { ...current, message } : current,
             )
           }
+          onStaticError={() => {
+            if (staticFallbackAttemptRef.current) return;
+            staticFallbackAttemptRef.current = true;
+            void playPreview("script", true);
+          }}
           onSelect={(voice) => selectVoice("script", voice)}
           preview={preview?.use === "script" ? preview : null}
           playerRef={playerRef}
@@ -220,6 +234,7 @@ function VoiceRow({
   label,
   onPreview,
   onPreviewMessage,
+  onStaticError,
   onSelect,
   preview,
   playerRef,
@@ -231,6 +246,7 @@ function VoiceRow({
   label: string;
   onPreview: () => void;
   onPreviewMessage: (message: string) => void;
+  onStaticError: () => void;
   onSelect: (voice: OomVoiceId) => void;
   preview: PreviewState | null;
   playerRef: RefObject<OomWavePlayerHandle>;
@@ -262,8 +278,9 @@ function VoiceRow({
           const active = activeVoice === voice.id;
           return (
             <button
+              aria-label={voice.label}
               aria-pressed={active}
-              className={`min-h-9 rounded-md border px-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+              className={`min-h-11 rounded-md border px-3 py-1.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
                 active
                   ? "border-indigo-500 bg-indigo-600 text-white dark:border-indigo-400 dark:bg-indigo-500"
                   : "border-zinc-200 bg-white text-zinc-600 hover:border-indigo-300 hover:text-indigo-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-indigo-700 dark:hover:text-indigo-300"
@@ -272,7 +289,14 @@ function VoiceRow({
               onClick={() => onSelect(voice.id)}
               type="button"
             >
-              {voice.label}
+              <span className="block text-xs font-semibold">{voice.label}</span>
+              <span
+                className={`mt-0.5 block whitespace-nowrap text-[9px] font-medium ${
+                  active ? "text-indigo-100" : "text-zinc-400 dark:text-zinc-500"
+                }`}
+              >
+                {voice.description}
+              </span>
             </button>
           );
         })}
@@ -295,16 +319,31 @@ function VoiceRow({
             {preview.loading ? <LoaderCircle className="h-3 w-3 animate-spin" /> : null}
             {preview.message}
           </p>
-          {preview.blob ? (
+          {preview.source ? (
             <OomWavePlayer
+              audioUrl={preview.source.kind === "static" ? preview.source.url : undefined}
               autoPlayRequest={preview.playRequest}
-              blob={preview.blob}
+              blob={preview.source.kind === "audio" ? preview.source.blob : undefined}
               className="mt-2"
-              onError={() => onPreviewMessage("음성을 재생할 수 없습니다.")}
+              onError={() => {
+                if (preview.source?.kind === "static") {
+                  onStaticError();
+                  return;
+                }
+                onPreviewMessage("음성을 재생할 수 없습니다.");
+              }}
               onFinish={() => onPreviewMessage("미리듣기 완료")}
               onPlaybackChange={(playing) =>
-                onPreviewMessage(playing ? "Kokoro 미리듣기 재생 중" : "미리듣기 일시정지")
+                onPreviewMessage(
+                  playing
+                    ? preview.source?.kind === "static"
+                      ? "정적 미리듣기 재생 중"
+                      : "Kokoro 미리듣기 재생 중"
+                    : "미리듣기 일시정지",
+                )
               }
+              precomputedDuration={preview.source.kind === "static" ? preview.source.duration : undefined}
+              precomputedPeaks={preview.source.kind === "static" ? preview.source.peaks : undefined}
               ref={playerRef}
               variant="script"
             />

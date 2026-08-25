@@ -161,7 +161,6 @@ export class KokoroBrowserEngine implements TtsEngine {
         requestId,
         text: input.text,
         voice: input.voice,
-        speed: input.speed ?? 1,
       });
     });
   }

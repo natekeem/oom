@@ -132,7 +132,7 @@ Do not duplicate these values in view components. Add to the relevant data owner
 
 | Capability | Module | Behavior |
 | --- | --- | --- |
-| TTS | `lib/tts/*`, `workers/kokoro.worker.ts`, `lib/speech.ts` | Lazily loads one q8/WASM Kokoro model in a Worker, queues browser-local generation, reports real sentence-chunk progress, combines segments into one WAV, keeps an 8-entry memory LRU plus optional 24-entry IndexedDB LRU keyed by model/voice/rate/text hash, and preserves Web Speech (`en-US` → `en-GB` → other English) as the failure fallback |
+| TTS | `public/generated-tts/*`, `lib/tts/*`, `workers/kokoro.worker.ts`, `lib/speech.ts` | Resolves a production-complete static WebM/Opus manifest first for the current STEP 3/4/6 texts and four locked voices. Static hits load their direct base-safe URL and 256 PCM-derived peaks without starting the Worker or duplicating the file in IndexedDB. Misses and media errors continue through the existing lazy q8/WASM Kokoro Worker, optional memory/IndexedDB WAV cache, and Web Speech fallback. |
 | Recording | `lib/recorder.ts` and `Recorder` | Uses `MediaRecorder` and `getUserMedia`; `mode="engine"` preserves lifecycle without rendering duplicate controls; audio remains in browser memory |
 | LLM | `lib/llm.ts` | Calls the configured endpoint directly from the browser |
 
@@ -140,9 +140,13 @@ Do not duplicate these values in view components. Add to the relevant data owner
 
 Never put a real API key in source, fixtures, documentation examples, or commits.
 
-Phase 1 Kokoro model files are fetched from the configured Hugging Face model source only on first TTS use and use the browser cache. They are not bundled at app startup or mirrored into this repository; a self-hosted model source remains a separate Phase 2 concern behind the same TTS engine boundary.
+Kokoro model files are still fetched from the configured Hugging Face model source only on a static miss or static media failure and use the browser cache. They are not bundled at app startup. Static WebM/Opus assets are repository-owned deployment files under `public/generated-tts/`; runtime accepts only the exact production-complete `tts-manifest.json`, never the resumable staging manifest.
 
-STEP 4 starts TTS cache lookup and generation only after Play intent. Script playback rate is stored per Level and participates in the cache key; STEP 6 exam-question playback remains fixed at 1.00×. IndexedDB is an optional optimization: unavailable storage, quota errors, and private-mode failures continue through memory cache, Kokoro generation, and the existing Web Speech fallback.
+STEP 4 pre-resolves exact static coverage and displays the real precomputed waveform before Play. Kokoro synthesis and static assets stay fixed at 1.00×; the per-Level script rate changes only WaveSurfer `playbackRate` with pitch preservation, so a live slider change keeps the current position and never changes static/cache identity. STEP 6 pre-resolves the current question without consuming a listen and remains fixed at 1.00×, non-seekable, and capped at 0/2–2/2. A static URL/load failure is bypassed once for that request and continues through Kokoro → Web Speech. IndexedDB remains an optional runtime-generation optimization and never stores static assets.
+
+`scripts/generate-static-tts.mjs`, `scripts/static-tts-assets.mjs`, and the dev-only `dev-static-tts-generator.html` own resumable pre-generation. The generator derives the target set from the audited current-playable inventory, synthesizes fp32/WebGPU when available with q8/WASM fallback, and delegates WebM Opus 64 kbps mono encoding plus ffprobe validation and 256 real PCM peaks to a local FFmpeg tool. It writes `tts-manifest.staging.json` after partial progress and promotes `tts-manifest.json` only at exact 146-text/584-asset coverage. `npm run tts:validate` independently rescans every exact target, codec/duration/channel/peaks metadata, manifest coverage, and prune dry-run.
+
+`dev-tts-benchmark.html` and `src/lib/tts/kokoroBenchmark.ts` are development-only measurement surfaces. They compare the unchanged q8/WASM runtime with Kokoro's installed `TextSplitterStream`/`stream()` API and, only when the browser exposes a WebGPU adapter, an isolated fp32/WebGPU profile. They are not imported by the production app or emitted as a production route.
 
 The AdSense loader is route-aware. Content routes may load the publisher script, while practice, AI settings, magazine index, and legal/trust routes do not load it. `scripts/generate-static-routes.mjs` applies the same rule to crawler-visible HTML.
 

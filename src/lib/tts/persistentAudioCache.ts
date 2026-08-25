@@ -15,7 +15,9 @@ export type PersistentAudioCacheRecord = {
   byteSize: number;
   modelVersion: string;
   voice: OomVoiceId;
-  rate: number;
+  synthesisProfile?: string;
+  /** Legacy metadata retained only so pre-v2 entries still count toward LRU eviction. */
+  rate?: number;
   textHash: string;
   audioDurationSeconds?: number;
   chunkCount?: number;
@@ -56,7 +58,7 @@ function isCacheRecord(value: unknown): value is PersistentAudioCacheRecord {
     typeof record.byteSize === "number" &&
     typeof record.modelVersion === "string" &&
     typeof record.voice === "string" &&
-    typeof record.rate === "number" &&
+    (typeof record.synthesisProfile === "string" || typeof record.rate === "number") &&
     typeof record.textHash === "string"
   );
 }

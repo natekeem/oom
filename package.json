@@ -12,7 +12,10 @@
     "deploy": "npm run build",
     "docs:generate": "node scripts/generate-docs.mjs",
     "docs:check": "node scripts/generate-docs.mjs --check",
-    "verify:pages": "node scripts/verify-pages-artifact.mjs"
+    "verify:pages": "node scripts/verify-pages-artifact.mjs",
+    "tts:audit": "node scripts/audit-tts-inventory.mjs",
+    "tts:generate": "node scripts/generate-static-tts.mjs",
+    "tts:validate": "node scripts/validate-static-tts.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "^8.18.0",

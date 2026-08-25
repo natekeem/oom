@@ -1,8 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { KokoroBrowserEngine } from "./KokoroBrowserEngine";
 import { TtsManager } from "./TtsManager";
-import { createTtsCacheIdentity } from "./cacheKey";
-import { KOKORO_MODEL_VERSION } from "./kokoroConfig";
+import { createTtsCacheIdentity, normalizeTtsText } from "./cacheKey";
+import {
+  KOKORO_DEVICE,
+  KOKORO_DTYPE,
+  KOKORO_MODEL_VERSION,
+  KOKORO_SYNTHESIS_PROFILE,
+  KOKORO_SYNTHESIS_RATE,
+} from "./kokoroConfig";
 import {
   MAX_PERSISTENT_AUDIO_CACHE_ENTRIES,
   selectPersistentCacheKeysForEviction,
@@ -101,18 +107,25 @@ describe("STEP 4 script rate preferences", () => {
 });
 
 describe("TTS cache identity and eviction", () => {
-  it("varies by model version, voice, rate, and normalized text hash without embedding text", async () => {
+  it("varies by model, profile, voice, and text but ignores playback rate", async () => {
     const base = { text: "Hello world", voice: "af_bella" as const, speed: 0.95 };
-    const [first, voice, rate, text, model] = await Promise.all([
+    const [first, voice, rate, text, model, profile] = await Promise.all([
       createTtsCacheIdentity(base),
       createTtsCacheIdentity({ ...base, voice: "af_sky" }),
       createTtsCacheIdentity({ ...base, speed: 1 }),
       createTtsCacheIdentity({ ...base, text: "Hello again" }),
       createTtsCacheIdentity(base, `${KOKORO_MODEL_VERSION}-next`),
+      createTtsCacheIdentity(
+        base,
+        KOKORO_MODEL_VERSION,
+        `${KOKORO_SYNTHESIS_PROFILE}-next`,
+      ),
     ]);
 
-    expect(new Set([first.key, voice.key, rate.key, text.key, model.key])).toHaveLength(5);
+    expect(rate.key).toBe(first.key);
+    expect(new Set([first.key, voice.key, text.key, model.key, profile.key])).toHaveLength(5);
     expect(first.key).not.toContain(base.text);
+    expect(first.key).toContain(KOKORO_SYNTHESIS_PROFILE);
     expect(
       (await createTtsCacheIdentity({ ...base, text: "  Hello   world  " })).key,
     ).toBe(first.key);
@@ -127,10 +140,73 @@ describe("TTS cache identity and eviction", () => {
 
     expect(selectPersistentCacheKeysForEviction(records)).toEqual(["key-0", "key-1"]);
   });
+
+  it("normalizes Unicode, line endings, and whitespace exactly once", () => {
+    expect(normalizeTtsText("  Cafe\u0301\r\n\t story  ")).toBe("Café story");
+  });
 });
 
 describe("TtsManager", () => {
-  it("returns Kokoro audio and memoizes the same text/voice/speed for the session", async () => {
+  it("returns a static hit before touching IndexedDB or the Kokoro engine", async () => {
+    const staticSource = {
+      kind: "static" as const,
+      url: "/generated-tts/audio/hash/heart.webm",
+      peaks: Array.from({ length: 256 }, () => 0.5),
+      duration: 4.2,
+      bytes: 12345,
+      mimeType: "audio/webm; codecs=opus" as const,
+      voice: "af_heart" as const,
+      engine: "static" as const,
+    };
+    const generate = vi.fn();
+    const persistentCache = createPersistentCache();
+    const staticResolver = { resolve: vi.fn().mockResolvedValue(staticSource) };
+    const manager = new TtsManager(
+      { generate } as unknown as TtsEngine,
+      undefined,
+      persistentCache,
+      staticResolver,
+    );
+
+    await expect(
+      manager.preparePlayback({ text: "Static", voice: "af_heart", speed: 0.85 }),
+    ).resolves.toBe(staticSource);
+    expect(staticResolver.resolve).toHaveBeenCalledWith(
+      expect.objectContaining({ speed: KOKORO_SYNTHESIS_RATE }),
+    );
+    expect(persistentCache.get).not.toHaveBeenCalled();
+    expect(persistentCache.set).not.toHaveBeenCalled();
+    expect(generate).not.toHaveBeenCalled();
+  });
+
+  it("can bypass one failed static URL and continue through the runtime chain", async () => {
+    const blob = new Blob(["runtime"], { type: "audio/wav" });
+    const generate = vi.fn().mockResolvedValue({
+      blob,
+      mimeType: "audio/wav",
+      engine: "kokoro",
+      voice: "af_heart",
+    });
+    const staticResolver = { resolve: vi.fn() };
+    const manager = new TtsManager(
+      { generate } as TtsEngine,
+      undefined,
+      createPersistentCache(),
+      staticResolver,
+    );
+
+    await expect(
+      manager.preparePlayback(
+        { text: "Static failed", voice: "af_heart", speed: 1 },
+        undefined,
+        { skipStatic: true },
+      ),
+    ).resolves.toMatchObject({ kind: "audio", blob, cacheHit: "miss" });
+    expect(staticResolver.resolve).not.toHaveBeenCalled();
+    expect(generate).toHaveBeenCalledOnce();
+  });
+
+  it("returns Kokoro audio and memoizes the same text/voice across playback rates", async () => {
     const blob = new Blob(["wav"], { type: "audio/wav" });
     const generate = vi.fn().mockResolvedValue({
       blob,
@@ -143,14 +219,14 @@ describe("TtsManager", () => {
     const input = { text: "Hello", voice: "af_bella" as const, speed: 1 };
 
     const first = await manager.preparePlayback(input);
-    const second = await manager.preparePlayback(input);
+    const second = await manager.preparePlayback({ ...input, speed: 0.85 });
 
     expect(first).toMatchObject({ kind: "audio", blob, cached: false, cacheHit: "miss" });
     expect(second).toMatchObject({ kind: "audio", blob, cached: true, cacheHit: "memory" });
     expect(generate).toHaveBeenCalledTimes(1);
   });
 
-  it("misses for a changed rate and reuses the old exact-rate entry when returning", async () => {
+  it("does not regenerate or miss cache solely because playback rate changes", async () => {
     const generate = vi.fn(async (input: { voice: "af_bella" }) => ({
       blob: new Blob([`wav-${generate.mock.calls.length}`], { type: "audio/wav" }),
       mimeType: "audio/wav",
@@ -166,12 +242,14 @@ describe("TtsManager", () => {
 
     const original = await manager.preparePlayback({ ...base, speed: 0.95 });
     const changed = await manager.preparePlayback({ ...base, speed: 1 });
-    const returned = await manager.preparePlayback({ ...base, speed: 0.95 });
 
     expect(original).toMatchObject({ kind: "audio", cacheHit: "miss" });
-    expect(changed).toMatchObject({ kind: "audio", cacheHit: "miss" });
-    expect(returned).toMatchObject({ kind: "audio", cacheHit: "memory" });
-    expect(generate).toHaveBeenCalledTimes(2);
+    expect(changed).toMatchObject({ kind: "audio", cacheHit: "memory" });
+    expect(generate).toHaveBeenCalledTimes(1);
+    expect(generate).toHaveBeenCalledWith(
+      expect.objectContaining({ speed: KOKORO_SYNTHESIS_RATE }),
+      expect.any(Function),
+    );
   });
 
   it("returns an IndexedDB hit without starting the Kokoro engine", async () => {
@@ -192,6 +270,35 @@ describe("TtsManager", () => {
       cacheHit: "indexeddb",
     });
     expect(generate).not.toHaveBeenCalled();
+  });
+
+  it("ignores a legacy rate-keyed record that lacks the current synthesis profile", async () => {
+    const input = { text: "Legacy cache", voice: "af_bella" as const, speed: 1 };
+    const identity = await createTtsCacheIdentity(input);
+    const legacyRecord: PersistentAudioCacheRecord = {
+      ...createCacheRecord(identity, new Blob(["legacy"], { type: "audio/wav" })),
+      synthesisProfile: undefined,
+      rate: 1,
+    };
+    const freshBlob = new Blob(["fresh"], { type: "audio/wav" });
+    const generate = vi.fn().mockResolvedValue({
+      blob: freshBlob,
+      mimeType: "audio/wav",
+      engine: "kokoro",
+      voice: "af_bella",
+    });
+    const manager = new TtsManager(
+      { generate } as TtsEngine,
+      undefined,
+      createPersistentCache({ get: vi.fn().mockResolvedValue(legacyRecord) }),
+    );
+
+    await expect(manager.preparePlayback(input)).resolves.toMatchObject({
+      kind: "audio",
+      blob: freshBlob,
+      cacheHit: "miss",
+    });
+    expect(generate).toHaveBeenCalledOnce();
   });
 
   it("reuses a generated Blob from a fresh manager instance after reload", async () => {
@@ -309,7 +416,19 @@ describe("TtsManager", () => {
     expect(statuses).toContain("fallback");
 
     if (source.kind === "web-speech") source.play();
-    expect(fallbackSpeak).toHaveBeenCalledWith("Fallback text", 0.95, undefined);
+    expect(fallbackSpeak).toHaveBeenCalledWith(
+      "Fallback text",
+      KOKORO_SYNTHESIS_RATE,
+      undefined,
+    );
+  });
+});
+
+describe("production Kokoro profile", () => {
+  it("keeps q8 WASM with fixed natural 1.00 synthesis", () => {
+    expect(KOKORO_DTYPE).toBe("q8");
+    expect(KOKORO_DEVICE).toBe("wasm");
+    expect(KOKORO_SYNTHESIS_RATE).toBe(1);
   });
 });
 
@@ -346,7 +465,7 @@ describe("KokoroBrowserEngine", () => {
 
     expect(factory).not.toHaveBeenCalled();
     const first = engine.generate(
-      { text: "First", voice: "af_heart", speed: 1 },
+      { text: "First", voice: "af_heart", speed: 0.85 },
       (status) => firstStatuses.push(status),
     );
     const second = engine.generate({ text: "Second", voice: "af_bella", speed: 1 });
@@ -357,6 +476,7 @@ describe("KokoroBrowserEngine", () => {
     expect(worker.messages).toHaveLength(1);
 
     const firstRequest = worker.messages[0] as { requestId: string };
+    expect(firstRequest).not.toHaveProperty("speed");
     worker.emitMessage({ type: "model-ready", requestId: firstRequest.requestId });
     worker.emitMessage({
       type: "generation-progress",

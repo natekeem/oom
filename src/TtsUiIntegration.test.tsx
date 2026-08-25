@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DifficultyGuide } from "./components/difficulty/DifficultyGuide";
 import { PracticeView } from "./components/practice/PracticeView";
@@ -18,11 +18,30 @@ import type { LlmSettings, ScriptItem } from "./types";
 
 const ttsMocks = vi.hoisted(() => ({
   preparePlayback: vi.fn(),
+  resolveStaticPlayback: vi.fn(),
   fallbackPlay: vi.fn(),
 }));
 
+const uiWaveMocks = vi.hoisted(() => ({
+  create: vi.fn(),
+  destroy: vi.fn(),
+  load: vi.fn().mockResolvedValue(undefined),
+  setPlaybackRate: vi.fn(),
+  stop: vi.fn(),
+  handlers: {} as Record<string, (...args: unknown[]) => void>,
+}));
+
 vi.mock("./lib/tts/TtsManager", () => ({
-  getTtsManager: () => ({ preparePlayback: ttsMocks.preparePlayback }),
+  getTtsManager: () => ({
+    preparePlayback: ttsMocks.preparePlayback,
+    resolveStaticPlayback: ttsMocks.resolveStaticPlayback,
+  }),
+}));
+
+vi.mock("wavesurfer.js", () => ({
+  default: {
+    create: uiWaveMocks.create,
+  },
 }));
 
 const settings: LlmSettings = {
@@ -36,6 +55,22 @@ const settings: LlmSettings = {
 beforeEach(() => {
   localStorage.clear();
   vi.clearAllMocks();
+  uiWaveMocks.load.mockResolvedValue(undefined);
+  uiWaveMocks.handlers = {};
+  ttsMocks.resolveStaticPlayback.mockResolvedValue(null);
+  uiWaveMocks.create.mockImplementation(() => ({
+    destroy: uiWaveMocks.destroy,
+    load: uiWaveMocks.load,
+    on: (event: string, handler: (...args: unknown[]) => void) => {
+      uiWaveMocks.handlers[event] = handler;
+    },
+    play: vi.fn().mockResolvedValue(undefined),
+    playPause: vi.fn().mockResolvedValue(undefined),
+    setPlaybackRate: uiWaveMocks.setPlaybackRate,
+    setOptions: vi.fn(),
+    setTime: vi.fn(),
+    stop: uiWaveMocks.stop,
+  }));
   saveTrainingSelection({ courseId: "course-1", levelId: "advanced" });
   ttsMocks.preparePlayback.mockImplementation(
     async (input: { voice: string }, onStatus?: (status: { phase: string }) => void) => {
@@ -77,6 +112,10 @@ describe("STEP 3 voice settings", () => {
       "aria-pressed",
       "true",
     );
+    expect(within(examGroup).getByText("균형 잡히고 또렷한 톤")).toBeInTheDocument();
+    expect(within(examGroup).getByText("부드럽고 자연스러운 톤")).toBeInTheDocument();
+    expect(within(examGroup).getByText("차분하고 담백한 톤")).toBeInTheDocument();
+    expect(within(examGroup).getByText("밝고 가벼운 톤")).toBeInTheDocument();
 
     await user.click(within(examGroup).getByRole("button", { name: "Sky" }));
     await user.click(within(scriptGroup).getByRole("button", { name: "Sarah" }));
@@ -93,12 +132,65 @@ describe("STEP 3 voice settings", () => {
       expect(ttsMocks.preparePlayback).toHaveBeenCalledWith(
         expect.objectContaining({ voice: "af_sky" }),
         expect.any(Function),
+        { skipStatic: false },
       ),
     );
   });
 });
 
 describe("voice preference consumers", () => {
+  it("uses a STEP 4 static URL and peaks without requesting runtime generation", async () => {
+    const user = userEvent.setup();
+    const peaks = Array.from({ length: 256 }, () => 0.5);
+    ttsMocks.resolveStaticPlayback.mockResolvedValue({
+      kind: "static",
+      url: "/generated-tts/audio/hash/bella.webm",
+      peaks,
+      duration: 45,
+      bytes: 360000,
+      mimeType: "audio/webm; codecs=opus",
+      voice: "af_bella",
+      engine: "static",
+    });
+
+    render(<ScriptDetail onToast={vi.fn()} script={getScript()} settings={settings} />);
+    const player = await screen.findByTestId("oom-wave-player-script");
+    await waitFor(() => expect(player).toHaveAttribute("data-source", "static"));
+    expect(uiWaveMocks.load).toHaveBeenCalledWith(
+      "/generated-tts/audio/hash/bella.webm",
+      [peaks],
+      45,
+    );
+
+    await user.click(screen.getByRole("button", { name: "음성 재생" }));
+    expect(ttsMocks.preparePlayback).not.toHaveBeenCalled();
+  });
+
+  it("bypasses a failed STEP 4 static URL exactly once and continues to runtime fallback", async () => {
+    ttsMocks.resolveStaticPlayback.mockResolvedValue({
+      kind: "static",
+      url: "/generated-tts/audio/missing/bella.webm",
+      peaks: Array.from({ length: 256 }, () => 0.5),
+      duration: 45,
+      bytes: 360000,
+      mimeType: "audio/webm; codecs=opus",
+      voice: "af_bella",
+      engine: "static",
+    });
+    uiWaveMocks.load.mockRejectedValueOnce(new Error("static 404"));
+
+    render(<ScriptDetail onToast={vi.fn()} script={getScript()} settings={settings} />);
+
+    await waitFor(() =>
+      expect(ttsMocks.preparePlayback).toHaveBeenCalledWith(
+        expect.objectContaining({ voice: "af_bella", speed: 1 }),
+        expect.any(Function),
+        { skipStatic: true },
+      ),
+    );
+    expect(ttsMocks.preparePlayback).toHaveBeenCalledTimes(1);
+  });
+
   it("uses scriptVoice for the complete STEP 4 script", async () => {
     const user = userEvent.setup();
     writeTtsPreferences({ examVoice: "af_heart", scriptVoice: "af_sky" });
@@ -117,11 +209,13 @@ describe("voice preference consumers", () => {
           speed: 1,
         }),
         expect.any(Function),
+        { skipStatic: false },
       ),
     );
   });
 
   it("restores and stores compact script rates per Level without generating on slider input", async () => {
+    const user = userEvent.setup();
     const { rerender } = render(
       <ScriptDetail onToast={vi.fn()} script={getScript("advanced")} settings={settings} />,
     );
@@ -130,6 +224,8 @@ describe("voice preference consumers", () => {
 
     fireEvent.change(slider, { target: { value: "1.05" } });
     expect(ttsMocks.preparePlayback).not.toHaveBeenCalled();
+    expect(uiWaveMocks.setPlaybackRate).toHaveBeenLastCalledWith(1.05, true);
+    expect(uiWaveMocks.stop).not.toHaveBeenCalled();
     expect(
       JSON.parse(localStorage.getItem(SCRIPT_RATE_PREFERENCES_STORAGE_KEY) ?? "{}"),
     ).toEqual({ advanced: 1.05 });
@@ -139,6 +235,15 @@ describe("voice preference consumers", () => {
     );
     await waitFor(() =>
       expect(screen.getByRole("slider", { name: "스크립트 재생 속도" })).toHaveValue("0.95"),
+    );
+
+    await user.click(screen.getByRole("button", { name: "영어 스크립트 재생" }));
+    await waitFor(() =>
+      expect(ttsMocks.preparePlayback).toHaveBeenCalledWith(
+        expect.objectContaining({ speed: 1 }),
+        expect.any(Function),
+        { skipStatic: false },
+      ),
     );
 
     rerender(
@@ -224,6 +329,41 @@ describe("voice preference consumers", () => {
     for (const [input] of ttsMocks.preparePlayback.mock.calls) {
       expect(input).toEqual(expect.objectContaining({ voice: "af_sarah", speed: 1 }));
     }
+  });
+
+  it("preloads STEP 6 static audio while keeping the compact non-seekable 0/2 contract", async () => {
+    const user = userEvent.setup();
+    const peaks = Array.from({ length: 256 }, () => 0.4);
+    ttsMocks.resolveStaticPlayback.mockResolvedValue({
+      kind: "static",
+      url: "/generated-tts/audio/question/sarah.webm",
+      peaks,
+      duration: 6.5,
+      bytes: 52000,
+      mimeType: "audio/webm; codecs=opus",
+      voice: "af_sarah",
+      engine: "static",
+    });
+    writeTtsPreferences({ examVoice: "af_sarah", scriptVoice: "af_bella" });
+
+    render(
+      <TrainingSelectionProvider>
+        <PracticeView onToast={vi.fn()} settings={settings} />
+      </TrainingSelectionProvider>,
+    );
+
+    const player = await screen.findByTestId("oom-wave-player-exam");
+    expect(player).toHaveAttribute("data-source", "static");
+    expect(player).toHaveAttribute("data-seek-enabled", "false");
+    expect(screen.getByText(/0 \/ 2/)).toBeInTheDocument();
+
+    const listen = screen.getByRole("button", { name: "질문 듣기" });
+    await user.click(listen);
+    act(() => uiWaveMocks.handlers.finish?.());
+    await user.click(listen);
+    expect(screen.getByText(/2 \/ 2/)).toBeInTheDocument();
+    expect(listen).toBeDisabled();
+    expect(ttsMocks.preparePlayback).not.toHaveBeenCalled();
   });
 });
 

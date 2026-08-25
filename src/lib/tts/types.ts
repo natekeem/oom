@@ -55,6 +55,16 @@ export type TtsFallbackCallbacks = {
 
 export type TtsPlaybackSource =
   | {
+      kind: "static";
+      url: string;
+      peaks: number[];
+      duration: number;
+      bytes: number;
+      mimeType: "audio/webm; codecs=opus";
+      voice: OomVoiceId;
+      engine: "static";
+    }
+  | {
       kind: "audio";
       blob: Blob;
       voice: OomVoiceId;
@@ -69,3 +79,5 @@ export type TtsPlaybackSource =
       error: Error;
       play: (callbacks?: TtsFallbackCallbacks) => void;
     };
+
+export type TtsMediaPlaybackSource = Extract<TtsPlaybackSource, { kind: "static" | "audio" }>;

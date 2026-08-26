@@ -9,3 +9,11 @@ coverage
 vite.config.js
 vite.config.d.ts
 *.log
+.oomsurvey-output.txt
+.vitest-output.txt
+docs/generated/tts-inventory.md
+public/generated-tts/tts-manifest.staging.json
+public/generated-tts/**/*.tmp
+public/generated-tts/audio/**/.*.wav
+public/generated-tts/audio/**/.*.webm
+public/generated-tts/audio/**/.*.peaks.json

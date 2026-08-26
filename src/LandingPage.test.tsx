@@ -245,10 +245,8 @@ describe("landing correction contracts", () => {
   it("reuses the shared OOM brand mark in landing and app navigation", () => {
     const landingSource = readFileSync(join(process.cwd(), "src", "landing", "components", "LandingNav.tsx"), "utf8");
     const sidebarSource = readFileSync(join(process.cwd(), "src", "components", "layout", "ExpandableSidebar.tsx"), "utf8");
-    const legacySidebarSource = readFileSync(join(process.cwd(), "src", "components", "layout", "UnifiedSidebar.tsx"), "utf8");
     expect(landingSource).toContain("OomBrandMark");
     expect(sidebarSource).toContain("OomBrandMark");
     expect(sidebarSource).not.toContain("GraduationCap");
-    expect(legacySidebarSource).not.toContain("GraduationCap");
   });
 });

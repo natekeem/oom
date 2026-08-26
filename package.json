@@ -9,7 +9,6 @@
     "build": "tsc -b && vite build && node scripts/generate-static-routes.mjs",
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run --config vitest.config.ts",
-    "deploy": "npm run build",
     "docs:generate": "node scripts/generate-docs.mjs",
     "docs:check": "node scripts/generate-docs.mjs --check",
     "verify:pages": "node scripts/verify-pages-artifact.mjs",

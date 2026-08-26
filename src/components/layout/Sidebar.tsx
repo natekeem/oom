@@ -18,7 +18,6 @@ export type ViewId =
   | "script-indoor"
   | "script-sports"
   | "script-home"
-  | "roleplay"
   | "roleplay-hub"
   | "roleplay-formula"
   | "roleplay-travel"
@@ -53,7 +52,6 @@ export const viewTitles: Record<ViewId, string> = {
   "script-indoor": "STEP 4. 그룹 2 스크립트",
   "script-sports": "STEP 4. 그룹 3 스크립트",
   "script-home": "STEP 4. 그룹 4 스크립트",
-  roleplay: "STEP 5. 롤플레이 공식",
   "roleplay-hub": "STEP 5. 롤플레이 공식",
   "roleplay-formula": "STEP 5. 롤플레이 공식",
   "roleplay-travel": "STEP 5. 그룹 1 롤플레이",

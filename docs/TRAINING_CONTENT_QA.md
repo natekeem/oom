@@ -1,5 +1,7 @@
 # OOM Training Content Quality Audit (Course 1–3 × Level 1–3)
 
+> **Status: HISTORICAL CONTENT AUDIT (2026-08-22).** Counts and findings describe that snapshot. Current Course scaling and authoring rules live in `TRAINING_SYSTEM.md` and `CONTENT_AUTHORING.md`.
+
 이 문서는 OOM (OPIc On Me)의 **Course × Level 아키텍처**와 **4개 만능 스토리라인 → 최대 질문 재사용** 철학에 따른 3개 코스 전체 콘텐츠 품질 감사 보고서입니다.
 
 ---

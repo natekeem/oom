@@ -1,5 +1,7 @@
 # OOM OPIc Instructor & Curriculum Audit
 
+> **Status: HISTORICAL AUDIT (2026-08-22).** This is preserved evidence from a bounded review, not the current product or authoring source of truth. Use `TRAINING_SYSTEM.md` and `CONTENT_AUTHORING.md` for current contracts.
+
 - Audit date: 2026-08-22
 - Scope: `Course 1~3 × Foundation/Intermediate/Advanced`, survey presets, canonical storylines, question variants, replacement guides, roleplays, practice pools, STEP 1~6, STEP 6 coaching prompt
 - Mode: **AUDIT ONLY** — 이 문서 외 실제 코드·콘텐츠·질문·스크립트는 수정하지 않았다.

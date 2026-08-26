@@ -213,8 +213,7 @@ export function ExpandableSidebar({
     activeView === "difficulty" ||
     scriptActive ||
     roleplayActive ||
-    activeView === "practice" ||
-    activeView === "roleplay";
+    activeView === "practice";
 
   const activeAncestors = new Set<string>();
   if (scriptActive) {

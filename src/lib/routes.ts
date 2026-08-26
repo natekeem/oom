@@ -18,7 +18,6 @@ export const viewPathForId: Record<ViewId, string> = {
   "script-indoor": "/training/scripts/indoor/",
   "script-sports": "/training/scripts/sports/",
   "script-home": "/training/scripts/home/",
-  roleplay: "/roleplay/",
   "roleplay-hub": "/roleplay/",
   "roleplay-formula": "/roleplay/formula/",
   "roleplay-travel": "/roleplay/travel/",

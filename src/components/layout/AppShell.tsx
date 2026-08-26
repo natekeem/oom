@@ -28,7 +28,6 @@ const progressMap: Partial<Record<ViewId, number>> = {
   "script-indoor": 60,
   "script-sports": 60,
   "script-home": 60,
-  roleplay: 80,
   "roleplay-hub": 80,
   "roleplay-formula": 80,
   "roleplay-travel": 80,

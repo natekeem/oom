@@ -62,7 +62,7 @@ The candidate guide and training hub are independent top-level branches. STEP 1-
 - `training-setup` (STEP 1, 0%)
 - `survey` (STEP 2, 20%), `difficulty` (STEP 3, 40%)
 - `script-hub` and `script-*` (STEP 4, 60%)
-- `roleplay`, `roleplay-hub`, `roleplay-formula`, and `roleplay-*` (STEP 5, 80%)
+- `roleplay-hub`, `roleplay-formula`, and `roleplay-*` (STEP 5, 80%)
 - `practice` (STEP 6, 100%)
 
 The header dynamically shows the current course group title and progress percentage (0% -> 20% -> 40% -> 60% -> 80% -> 100%).
@@ -105,7 +105,6 @@ Public route targets use the canonical `https://opic-on-me.com/path/` form. Inte
 | `terms` | Footer legal page | `LegalPageView` | No | `/terms/` explains study-use terms and non-affiliation |
 | `editorial-policy` | Footer trust page | `LegalPageView` | No | `/editorial-policy/` identifies operator/author responsibility and explains sourcing, review, corrections, and AI-assistance rules |
 | `image-credits` | Footer trust page | `LegalPageView` | No | `/image-credits/` lists magazine cover image credits and license links |
-| `roleplay` | Compatibility route only | `RoleplayFormulaView` | Yes, 80% | Do not add new navigation links to this alias |
 
 ## Next-Step Contract
 
@@ -115,7 +114,7 @@ Public route targets use the canonical `https://opic-on-me.com/path/` form. Inte
 survey -> difficulty -> script-outdoor -> roleplay-hub
 ```
 
-The group-specific script routes also point to `roleplay-hub`. The legacy `roleplay` alias points to `practice`, and `practice` points to `ai-settings`. Parent hubs and detailed scenario routes intentionally do not force a next step because users may choose a branch or repeat training there.
+The group-specific script routes point to `roleplay-hub`. `roleplay-hub`, its compatibility formula route, and scenario routes point to `practice`; `practice` points to `ai-settings`. `training-hub` and `script-hub` intentionally have no forced next step because the user must choose or configure a branch there.
 
 ## Synchronization Rules
 

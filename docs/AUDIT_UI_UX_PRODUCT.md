@@ -1,5 +1,7 @@
 # OOM UI/UX Product Audit
 
+> **Status: HISTORICAL AUDIT (2026-08-22).** Findings reflect the audited snapshot. Use `ARCHITECTURE.md`, `ROUTING.md`, and active source/tests for current ownership and behavior.
+
 > **VISUALLY VERIFIED** — 2026-08-22, latest local `main` (`d909740`) 기준
 
 ## Executive Summary

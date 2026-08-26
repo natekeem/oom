@@ -1,5 +1,7 @@
 # Integrated Audit Resolution
 
+> **Status: HISTORICAL RESOLUTION RECORD (2026-08-22).** This maps two audit snapshots to their implementation pass; it is not a current backlog or architecture document.
+
 이 문서는 `AUDIT_UI_UX_PRODUCT.md`와 `AUDIT_OPIC_INSTRUCTOR.md`의 findings를 2026-08-22 implementation pass에 연결합니다. 두 원본 audit 문서는 수정하거나 삭제하지 않습니다.
 
 | Finding | Action | Status | Regression / evidence |

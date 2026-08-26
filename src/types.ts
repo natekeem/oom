@@ -44,10 +44,6 @@ export type ScriptVariant = {
   englishExample?: string;
 };
 
-export type LegacyScriptVariant = Omit<ScriptVariant, "question"> & {
-  question: string;
-};
-
 export type ScriptBlockId = "answer" | "scene-action" | "result" | "expansion";
 export type LegacyScriptBlockId = "opening" | "details" | "closing";
 
@@ -80,40 +76,6 @@ export type ScriptVariantSet = {
   description: string;
   variants: ScriptVariant[];
   blueprint: ScriptBlueprintStep[];
-};
-
-export type LegacyScriptVariantSet = Omit<ScriptVariantSet, "variants"> & {
-  variants: LegacyScriptVariant[];
-};
-
-export type SurveyItem = {
-  id: string;
-  name: string;
-  category: string;
-  reason: string;
-  scriptGroup: string;
-  covers: string[];
-  recommended: boolean;
-};
-
-export type RoleplayScenario = {
-  id: string;
-  title: string;
-  group: string;
-  situation: string;
-  evaQuestion: string;
-  answerStructure: string[];
-  englishExample: string;
-  alternatives: string[];
-  levelDifferences: Record<"IM3" | "IH" | "AL", string>;
-};
-
-export type PracticeQuestion = {
-  id: string;
-  group: string;
-  prompt: string;
-  scriptId: string;
-  type: string;
 };
 
 export type LlmMode = "openai-compatible" | "generic" | "custom";

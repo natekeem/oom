@@ -37,7 +37,11 @@ ${sourceFiles.map((file) => `- \`${file}\``).join("\n")}
 - \`CLAUDE.md\`: Claude Code pointer
 - \`.roo/rules/oom-project.md\`: Roo Code pointer
 - \`docs/ARCHITECTURE.md\`: system boundaries
+- \`docs/TRAINING_SYSTEM.md\`: Course × Level and STEP 1-6 contracts
+- \`docs/CONTENT_AUTHORING.md\`: Course and content workflow
+- \`docs/TTS_AUDIO_PIPELINE.md\`: static-first TTS workflow
 - \`docs/ROUTING.md\`: view ownership and navigation map
+- \`docs/DEPLOYMENT.md\`: Pages and static-hosting workflow
 `;
 
 const outputPath = join(root, "docs", "PROJECT_SNAPSHOT.md");

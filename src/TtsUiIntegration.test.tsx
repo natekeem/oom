@@ -1,10 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router-dom";
 import { DifficultyGuide } from "./components/difficulty/DifficultyGuide";
 import { PracticeView } from "./components/practice/PracticeView";
 import { RoleplayViewV2 } from "./components/roleplay/RoleplayViewV2";
 import { ScriptDetail } from "./components/script/ScriptDetail";
+import { SelfIntroductionView } from "./components/script/SelfIntroductionView";
+import {
+  getSelfIntroduction,
+  SELF_INTRODUCTION_PROMPT,
+} from "./data/training/selfIntroduction";
 import { resolveTrainingContext } from "./training/courseRegistry";
 import { TrainingSelectionProvider } from "./training/TrainingSelectionContext";
 import {
@@ -90,6 +96,13 @@ beforeEach(() => {
   );
 });
 
+async function completePracticeWarmup(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole("button", { name: "워밍업 시작" }));
+  await user.click(await screen.findByRole("button", { name: "타이머만 시작" }));
+  await user.click(screen.getByRole("button", { name: "워밍업 종료" }));
+  await screen.findByRole("button", { name: "랜덤 질문 뽑기" }, { timeout: 2500 });
+}
+
 describe("STEP 3 voice settings", () => {
   it("exposes exactly four voices per use, persists independent choices, and leaves TrainingSelection untouched", async () => {
     const user = userEvent.setup();
@@ -153,6 +166,44 @@ describe("STEP 3 voice settings", () => {
 });
 
 describe("voice preference consumers", () => {
+  it("uses scriptVoice and a static hit for the STEP 4 self-introduction example", async () => {
+    const peaks = Array.from({ length: 256 }, () => 0.35);
+    const selfIntroduction = getSelfIntroduction("advanced");
+    ttsMocks.resolveStaticPlayback.mockResolvedValue({
+      kind: "static",
+      url: "/generated-tts/audio/self-introduction/sky.webm",
+      peaks,
+      duration: 27,
+      bytes: 216000,
+      mimeType: "audio/webm; codecs=opus",
+      voice: "af_sky",
+      engine: "static",
+    });
+    writeTtsPreferences({ examVoice: "af_heart", scriptVoice: "af_sky" });
+
+    render(
+      <MemoryRouter>
+        <TrainingSelectionProvider>
+          <SelfIntroductionView onToast={vi.fn()} />
+        </TrainingSelectionProvider>
+      </MemoryRouter>,
+    );
+
+    const player = await screen.findByTestId("oom-wave-player-script");
+    await waitFor(() => expect(player).toHaveAttribute("data-source", "static"));
+    expect(ttsMocks.resolveStaticPlayback).toHaveBeenCalledWith({
+      text: selfIntroduction.example,
+      voice: "af_sky",
+      speed: 1,
+    });
+
+    await userEvent.setup().click(
+      screen.getByRole("button", { name: "자기소개 예시 재생" }),
+    );
+    expect(ttsMocks.preparePlayback).not.toHaveBeenCalled();
+    expect(uiWaveMocks.setPlaybackRate).toHaveBeenCalledWith(1, true);
+  });
+
   it("uses scriptVoice for the current STEP 5 role-play English example", async () => {
     const user = userEvent.setup();
     writeTtsPreferences({ examVoice: "af_heart", scriptVoice: "af_sky" });
@@ -386,7 +437,7 @@ describe("voice preference consumers", () => {
     await waitFor(() => expect(reservedShell).toHaveAttribute("data-state", "fallback"));
   });
 
-  it("uses examVoice while preserving the 0/2 to 2/2 listen cap", async () => {
+  it("uses examVoice while isolating warm-up 0/2 from Question 1 0/2", async () => {
     const user = userEvent.setup();
     writeTtsPreferences({ examVoice: "af_sarah", scriptVoice: "af_bella" });
 
@@ -396,7 +447,7 @@ describe("voice preference consumers", () => {
       </TrainingSelectionProvider>,
     );
 
-    const listen = screen.getByRole("button", { name: "질문 듣기" });
+    const listen = screen.getByRole("button", { name: "워밍업 안내 듣기" });
     expect(screen.getByText(/0 \/ 2/)).toBeInTheDocument();
 
     await user.click(listen);
@@ -406,9 +457,22 @@ describe("voice preference consumers", () => {
     expect(screen.getByText(/2 \/ 2/)).toBeInTheDocument();
     expect(listen).toBeDisabled();
     expect(ttsMocks.preparePlayback).toHaveBeenCalledTimes(2);
+
+    await completePracticeWarmup(user);
+    const questionListen = screen.getByRole("button", { name: "질문 듣기" });
+    expect(screen.getByText(/0 \/ 2/)).toBeInTheDocument();
+    await user.click(questionListen);
+    await waitFor(() => expect(questionListen).not.toBeDisabled());
+    await user.click(questionListen);
+    expect(screen.getByText(/2 \/ 2/)).toBeInTheDocument();
+    expect(questionListen).toBeDisabled();
+    expect(ttsMocks.preparePlayback).toHaveBeenCalledTimes(4);
     for (const [input] of ttsMocks.preparePlayback.mock.calls) {
       expect(input).toEqual(expect.objectContaining({ voice: "af_sarah", speed: 1 }));
     }
+    expect(ttsMocks.preparePlayback.mock.calls[0][0]).toEqual(
+      expect.objectContaining({ text: SELF_INTRODUCTION_PROMPT }),
+    );
   });
 
   it("preloads STEP 6 static audio while keeping the compact non-seekable 0/2 contract", async () => {
@@ -437,12 +501,21 @@ describe("voice preference consumers", () => {
     expect(player).toHaveAttribute("data-seek-enabled", "false");
     expect(screen.getByText(/0 \/ 2/)).toBeInTheDocument();
 
-    const listen = screen.getByRole("button", { name: "질문 듣기" });
+    const listen = screen.getByRole("button", { name: "워밍업 안내 듣기" });
     await user.click(listen);
     act(() => uiWaveMocks.handlers.finish?.());
     await user.click(listen);
     expect(screen.getByText(/2 \/ 2/)).toBeInTheDocument();
     expect(listen).toBeDisabled();
+
+    await completePracticeWarmup(user);
+    expect(screen.getByText(/0 \/ 2/)).toBeInTheDocument();
+    const questionListen = screen.getByRole("button", { name: "질문 듣기" });
+    await user.click(questionListen);
+    act(() => uiWaveMocks.handlers.finish?.());
+    await user.click(questionListen);
+    expect(screen.getByText(/2 \/ 2/)).toBeInTheDocument();
+    expect(questionListen).toBeDisabled();
     expect(ttsMocks.preparePlayback).not.toHaveBeenCalled();
   });
 });

@@ -63,11 +63,13 @@ The sidebar reads the resolved storyline/roleplay `group` labels, so a Course ch
 | 1 | `/training/setup/` | `TrainingSetupView` | choose one Level and one discovered Course | 0% |
 | 2 | `/training/survey/` | `BackgroundSurveySheet` | full survey-like structure, Course recommendation, rehearsal scoring | 20% |
 | 3 | `/training/difficulty/` | `DifficultyGuide` | selected Level preset plus non-mutating difficulty simulation and voice preferences | 40% |
-| 4 | `/training/scripts/` | `ScriptHub`, `ScriptDashboardV2`, `ScriptTrainingTabs` | canonical story, prompt variation, answer blueprint | 60% |
+| 4 | `/training/scripts/` | `SelfIntroductionView`, `ScriptHub`, `ScriptDashboardV2`, `ScriptTrainingTabs` | Course-neutral self-introduction child guide, canonical story, prompt variation, answer blueprint | 60% |
 | 5 | `/roleplay/` | `RoleplayHub`, `RoleplayViewV2` | CORE/OPTIONAL function menu and Course scenarios | 80% |
-| 6 | `/practice/` | `PracticeView` | audio-first question, recording, review, retry | 100% |
+| 6 | `/practice/` | `PracticeView` | one-time self-introduction warm-up, audio-first question, recording, review, retry | 100% |
 
 The training hub is a neutral six-step overview. It does not silently select a Course or Level. The sticky title/progress header is a training-only AppShell affordance; landing, about, guide, magazine, legal, and settings routes do not show it.
+
+Self Introduction is the first single child menu under STEP 4. It does not add a seventh step or a progress slot. The same Level-aware, Course-neutral data is reused once as a warm-up before the first STEP 6 practice question; warm-up audio and recording do not enter the review, STT, or AI feedback phase.
 
 ## STEP 4 Mental Model
 

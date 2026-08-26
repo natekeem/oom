@@ -43,9 +43,9 @@ text + selected voice
 ## Surface Contracts
 
 - **STEP 3:** resolves the exam and script preview phrases for their selected voices and shows seekable waveform players.
-- **STEP 4:** resolves canonical Level script audio, shows a real waveform before Play when static coverage exists, and permits seeking/replay.
+- **STEP 4:** resolves canonical Level script audio and the self-introduction example, shows a real waveform before Play when static coverage exists, and permits seeking/replay.
 - **STEP 5:** resolves each Level-specific roleplay answer example with the script voice.
-- **STEP 6:** pre-resolves a question without consuming a listen. Playback is non-seekable, fixed at 1.00×, and consumes at most two listens.
+- **STEP 6:** pre-resolves a question (or the one-time self-introduction warm-up) without consuming a listen. Playback is non-seekable, fixed at 1.00×, and consumes at most two listens.
 
 All synthesis assets are produced at `1.00×`. STEP 4 and STEP 5 speed changes only WaveSurfer `playbackRate` with pitch preservation. Playback rate is excluded from static and runtime cache identity.
 
@@ -60,7 +60,7 @@ All synthesis assets are produced at `1.00×`. STEP 4 and STEP 5 speed changes o
 | `public/generated-tts/tts-manifest.json` | production-complete runtime manifest, tracked |
 | `public/generated-tts/tts-manifest.staging.json` | resumable/dev status output, ignored, never read by runtime |
 
-The current production snapshot contains 173 unique playable texts × 4 voices = 692 audio targets. These numbers are a generated snapshot, not an architectural constant. When content grows, update the audit and intentionally update the expected coverage contract in `scripts/static-tts-assets.mjs` only after reviewing the new inventory.
+The current production snapshot contains 177 unique playable texts × 4 locked voices = 708 audio targets, including the shared self-introduction prompt and three Level examples. These numbers are a generated snapshot, not an architectural constant. When content grows, update the audit and intentionally update the expected coverage contract in `scripts/static-tts-assets.mjs` only after reviewing the new inventory.
 
 Do not hand-edit audio, peaks, inventory, or manifest metadata. Audio and peaks must move together. The production manifest is promoted only after exact expected coverage is valid.
 

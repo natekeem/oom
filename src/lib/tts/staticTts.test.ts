@@ -139,14 +139,14 @@ function completeManifest(hash: string) {
     waveform: { count: 256 },
     voices: ["af_heart", "af_bella", "af_sarah", "af_sky"],
     coverage: {
-      expectedTexts: 173,
-      expectedVoiceAssets: 692,
-      completedTexts: 173,
-      completedVoiceAssets: 692,
+      expectedTexts: 177,
+      expectedVoiceAssets: 708,
+      completedTexts: 177,
+      completedVoiceAssets: 708,
       complete: true,
     },
     entries: Object.fromEntries(
-      Array.from({ length: 173 }, (_, index) => {
+      Array.from({ length: 177 }, (_, index) => {
         const entryHash = index === 0 ? hash : `${index}`.padStart(64, "0");
         return [entryHash, {
         audio: {

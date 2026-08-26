@@ -14,6 +14,7 @@ import { getTtsManager } from "../../lib/tts/TtsManager";
 import type { TtsMediaPlaybackSource, TtsPlaybackSource, TtsRuntimeStatus } from "../../lib/tts/types";
 import { useTtsPreferences } from "../../lib/tts/useTtsPreferences";
 import type { TrainingLevelId } from "../../training/types";
+import { cn } from "../../lib/utils";
 import { OomWavePlayer, type OomWavePlayerHandle } from "../audio/OomWavePlayer";
 
 type TtsControlsProps = {
@@ -24,6 +25,8 @@ type TtsControlsProps = {
   playerActionLabel?: string;
   requestPlayLabel?: string;
   testId?: string;
+  showRateControl?: boolean;
+  className?: string;
 };
 
 type PlayerShellState = "idle" | "loading" | "ready" | "fallback" | "error";
@@ -38,6 +41,8 @@ export function TtsControls({
   playerActionLabel,
   requestPlayLabel,
   testId = "script-audio-controls",
+  showRateControl = true,
+  className,
 }: TtsControlsProps) {
   const { preferences } = useTtsPreferences();
   const [rate, setRate] = useState(() => readScriptRate(levelId));
@@ -202,7 +207,10 @@ export function TtsControls({
 
   return (
     <div
-      className="w-full min-w-0 rounded-md border border-zinc-200 bg-zinc-50/75 p-3 dark:border-zinc-800 dark:bg-zinc-950/70 sm:p-4"
+      className={cn(
+        "w-full min-w-0 rounded-md border border-zinc-200 bg-zinc-50/75 p-3 dark:border-zinc-800 dark:bg-zinc-950/70 sm:p-4",
+        className,
+      )}
       data-testid={testId}
     >
       <div className="flex items-center justify-between gap-3">
@@ -252,7 +260,7 @@ export function TtsControls({
         variant="script"
       />
 
-      <div className="mt-3 border-t border-zinc-200 pt-3 dark:border-zinc-800">
+      {showRateControl ? <div className="mt-3 border-t border-zinc-200 pt-3 dark:border-zinc-800">
         <div className="flex items-center justify-between gap-3">
           <label
             className="flex items-center gap-1.5 text-xs font-semibold text-zinc-600 dark:text-zinc-300"
@@ -291,7 +299,7 @@ export function TtsControls({
             {MAX_SCRIPT_RATE.toFixed(2)}
           </span>
         </div>
-      </div>
+      </div> : null}
     </div>
   );
 }

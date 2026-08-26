@@ -26,6 +26,7 @@ Other owners:
 - survey form structure and rehearsal scoring: `src/data/fixedSurvey.ts`
 - Course 1 Advanced regression reference: `src/data/scripts.ts`
 - voice preview phrases: `src/lib/tts/voiceConfig.ts`
+- shared self-introduction guide and warm-up: `src/data/training/selfIntroduction.ts`
 
 Do not place Course-specific copy in general route components or SEO metadata.
 

@@ -13,7 +13,7 @@ export type RecordingResult = {
 export type RecorderHandle = {
   /** Returns true on success, false if mic permission was denied or device unavailable. */
   start: () => Promise<boolean>;
-  stop: () => void;
+  stop: (options?: { discard?: boolean }) => void;
   isRecording: () => boolean;
 };
 
@@ -123,8 +123,9 @@ export const Recorder = forwardRef<RecorderHandle, RecorderProps>(function Recor
     }
   };
 
-  const stop = () => {
+  const stop = (options?: { discard?: boolean }) => {
     if (recorderRef.current && recorderRef.current.state === "recording") {
+      if (options?.discard) discardOnStopRef.current = true;
       recorderRef.current.stop();
     }
     setIsRecording(false);
@@ -172,7 +173,7 @@ export const Recorder = forwardRef<RecorderHandle, RecorderProps>(function Recor
             {formatTime(seconds)}
           </span>
           {isRecording ? (
-            <Button onClick={stop} variant="danger">
+            <Button onClick={() => stop()} variant="danger">
               <Square className="h-4 w-4" />
               중지
             </Button>

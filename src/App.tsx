@@ -24,6 +24,7 @@ const ExamGuideDashboard = lazy(() => import("./components/guide/ExamGuideDashbo
 const ExamGuideFaq = lazy(() => import("./components/guide/ExamGuideFaq").then((module) => ({ default: module.ExamGuideFaq })));
 const ScriptHub = lazy(() => import("./components/script/ScriptHub").then((module) => ({ default: module.ScriptHub })));
 const ScriptDashboardV2 = lazy(() => import("./components/script/ScriptDashboardV2").then((module) => ({ default: module.ScriptDashboardV2 })));
+const SelfIntroductionView = lazy(() => import("./components/script/SelfIntroductionView").then((module) => ({ default: module.SelfIntroductionView })));
 const RoleplayHub = lazy(() => import("./components/roleplay/RoleplayHub").then((module) => ({ default: module.RoleplayHub })));
 const RoleplayViewV2 = lazy(() => import("./components/roleplay/RoleplayViewV2").then((module) => ({ default: module.RoleplayViewV2 })));
 const PracticeView = lazy(() => import("./components/practice/PracticeView").then((module) => ({ default: module.PracticeView })));
@@ -125,10 +126,7 @@ export default function App() {
   const [settings, setSettings] = useState<LlmSettings>(loadSettings);
   const [sttSettings, setSttSettings] = useState<SttSettings>(loadSttSettings);
   const [darkMode, setDarkMode] = useState(
-    () =>
-      window.localStorage.getItem(THEME_KEY) === "dark" ||
-      (window.localStorage.getItem(THEME_KEY) === null &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    () => window.localStorage.getItem(THEME_KEY) !== "light"
   );
   const [mobileOpen, setMobileOpen] = useState(false);
   const [toast, setToast] = useState<ToastMessage | null>(null);
@@ -311,6 +309,8 @@ export default function App() {
       <Route path="/training/difficulty/" element={<DifficultyGuide onNavigate={onNavigate} />} />
       <Route path="/training/scripts" element={<ScriptHub onNavigate={onNavigate} />} />
       <Route path="/training/scripts/" element={<ScriptHub onNavigate={onNavigate} />} />
+      <Route path="/training/scripts/self-introduction" element={<SelfIntroductionView onNavigate={onNavigate} onToast={showToast} />} />
+      <Route path="/training/scripts/self-introduction/" element={<SelfIntroductionView onNavigate={onNavigate} onToast={showToast} />} />
       <Route path="/training/scripts/outdoor" element={renderScriptSlot(0)} />
       <Route path="/training/scripts/outdoor/" element={renderScriptSlot(0)} />
       <Route path="/training/scripts/indoor" element={renderScriptSlot(1)} />

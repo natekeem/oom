@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
@@ -6,6 +6,33 @@ import { SIDEBAR_EXPANDED_STORAGE_KEY } from "./components/layout/ExpandableSide
 import { saveTrainingSelection } from "./training/storage";
 
 describe("OOM", () => {
+  it("defaults new visitors to dark mode while preserving an explicit light preference", async () => {
+    localStorage.removeItem("oom-theme");
+    document.documentElement.classList.remove("dark");
+
+    const defaultRender = render(
+      <MemoryRouter initialEntries={["/about/"]}>
+        <App />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(document.documentElement).toHaveClass("dark"));
+    expect(localStorage.getItem("oom-theme")).toBe("dark");
+    defaultRender.unmount();
+
+    localStorage.setItem("oom-theme", "light");
+    const lightRender = render(
+      <MemoryRouter initialEntries={["/about/"]}>
+        <App />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(document.documentElement).not.toHaveClass("dark"));
+    expect(localStorage.getItem("oom-theme")).toBe("light");
+    lightRender.unmount();
+    localStorage.removeItem("oom-theme");
+  });
+
   it("renders the independent landing and enters the training app shell", async () => {
     saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
     const user = userEvent.setup();

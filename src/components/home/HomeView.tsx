@@ -27,7 +27,7 @@ export function HomeView() {
           <Link to="/training/" className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-3.5 py-2.5 text-[11px] font-bold text-white no-underline transition hover:bg-indigo-700">
             실전 훈련 둘러보기
           </Link>
-          <Link to="/exam-guide/" className="inline-flex items-center justify-center rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-[11px] font-bold text-zinc-700 no-underline transition hover:bg-zinc-50">
+          <Link to="/exam-guide/" className="inline-flex items-center justify-center rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-[11px] font-bold text-zinc-700 no-underline transition hover:bg-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:border-indigo-700 dark:hover:bg-indigo-950">
             수험 가이드
           </Link>
         </div>

@@ -81,6 +81,7 @@ The full authoring sequence and current structural expectations are in `docs/CON
 - Course × Level architecture, automatic Course discovery, selection persistence, and guard behavior
 - Course 1 Advanced canonical content and its regression comparison with `src/data/scripts.ts`
 - STEP 1~6 route order and training-only progress header
+- Self Introduction is not STEP 7. It is a Course-neutral Level-aware single child menu under STEP 4, and a one-time warm-up before the first STEP 6 practice question. Do not add a progress slot or change the six-step order.
 - STEP 4 canonical storyline, three tabs, variant continuity, OPEN/SCENE/CLOSE
 - STEP 5 CORE/OPTIONAL model and Course-owned scenarios
 - STEP 6 exam/review boundary, EVA, listen 0/2, Recorder, optional STT, editable transcript, AI fallback

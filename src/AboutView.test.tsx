@@ -18,7 +18,14 @@ describe("Method Editorial About product overview", () => {
     expect(within(metrics).getByText("COACH")).toBeInTheDocument();
 
     expect(screen.getByRole("link", { name: /실전 훈련 둘러보기/ })).toHaveAttribute("href", "/training/");
-    expect(screen.getByRole("link", { name: /수험 가이드/ })).toHaveAttribute("href", "/exam-guide/");
+    const examGuideLink = screen.getByRole("link", { name: /수험 가이드/ });
+    expect(examGuideLink).toHaveAttribute("href", "/exam-guide/");
+    expect(examGuideLink).toHaveClass(
+      "dark:border-zinc-700",
+      "dark:bg-zinc-900",
+      "dark:text-zinc-100",
+      "dark:hover:bg-indigo-950",
+    );
 
     expect(container.querySelector("[data-about-overview]")).toHaveClass("max-w-7xl");
     expect(container.querySelector("[data-about-metrics]")?.children).toHaveLength(4);

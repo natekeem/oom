@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "baseline": {
-    "head": "18236b6525826bd6b14e841ceacb26a1c818a986",
-    "originMain": "18236b6525826bd6b14e841ceacb26a1c818a986"
+    "head": "3df26559af5010d0f5c39f08e26cff9197213265",
+    "originMain": "3df26559af5010d0f5c39f08e26cff9197213265"
   },
   "generatedBy": "npm run tts:audit",
   "normalization": {
@@ -33,31 +33,31 @@
   },
   "summary": {
     "currentTtsInputs": {
-      "logicalItems": 173,
-      "uniqueTexts": 173,
+      "logicalItems": 177,
+      "uniqueTexts": 177,
       "duplicateItems": 0,
       "duplicateSavingsPct": 0,
-      "estimatedSingleVoiceMinutes": 48.58,
-      "estimatedFourVoiceMinutes": 194.32,
-      "fourVoiceFiles": 692,
+      "estimatedSingleVoiceMinutes": 49.81,
+      "estimatedFourVoiceMinutes": 199.23,
+      "fourVoiceFiles": 708,
       "storageBytes": {
-        "wavPcm24kMono16": 559641600,
-        "opus48k": 69955200,
-        "opus64k": 93273600
+        "wavPcm24kMono16": 573772800,
+        "opus48k": 71721600,
+        "opus64k": 95628800
       }
     },
     "expandedStaticCandidates": {
-      "logicalItems": 344,
-      "uniqueTexts": 314,
+      "logicalItems": 348,
+      "uniqueTexts": 318,
       "duplicateItems": 30,
-      "duplicateSavingsPct": 8.72,
-      "estimatedSingleVoiceMinutes": 135.12,
-      "estimatedFourVoiceMinutes": 540.48,
-      "fourVoiceFiles": 1256,
+      "duplicateSavingsPct": 8.62,
+      "estimatedSingleVoiceMinutes": 136.35,
+      "estimatedFourVoiceMinutes": 545.39,
+      "fourVoiceFiles": 1272,
       "storageBytes": {
-        "wavPcm24kMono16": 1556582400,
-        "opus48k": 194572800,
-        "opus64k": 259430400
+        "wavPcm24kMono16": 1570713600,
+        "opus48k": 196339200,
+        "opus64k": 261785600
       }
     },
     "currentStaticCoveragePct": 100,
@@ -257,17 +257,17 @@
     {
       "category": "other-static",
       "label": "Other static TTS",
-      "logicalItems": 0,
-      "uniqueTexts": 0,
+      "logicalItems": 4,
+      "uniqueTexts": 4,
       "duplicateItems": 0,
       "duplicateSavingsPct": 0,
-      "estimatedSingleVoiceMinutes": 0,
-      "estimatedFourVoiceMinutes": 0,
-      "fourVoiceFiles": 0,
+      "estimatedSingleVoiceMinutes": 1.23,
+      "estimatedFourVoiceMinutes": 4.91,
+      "fourVoiceFiles": 16,
       "storageBytes": {
-        "wavPcm24kMono16": 0,
-        "opus48k": 0,
-        "opus64k": 0
+        "wavPcm24kMono16": 14131200,
+        "opus48k": 1766400,
+        "opus64k": 2355200
       }
     }
   ],
@@ -8485,6 +8485,73 @@
       "words": 13,
       "estimatedDurationSeconds": 5.2,
       "estimatedMinutes": 0.087
+    },
+    {
+      "logicalId": "self-intro:prompt",
+      "sourceType": "warmup-prompt",
+      "category": "other-static",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "sourcePath": "src/data/training/selfIntroduction.ts",
+      "sourceKey": "SELF_INTRODUCTION_PROMPT",
+      "text": "Let's start the interview now. Tell me something about yourself.",
+      "normalizedText": "Let's start the interview now. Tell me something about yourself.",
+      "textHash": "bd5e6775afacda28d824468cdec2cb11eb521c96dfd50c72bfd5d26eeecc3e28",
+      "characters": 64,
+      "words": 10,
+      "estimatedDurationSeconds": 4,
+      "estimatedMinutes": 0.067
+    },
+    {
+      "logicalId": "self-intro:example:advanced",
+      "sourceType": "warmup-example",
+      "category": "other-static",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "levelId": "advanced",
+      "sourcePath": "src/data/training/selfIntroduction.ts",
+      "sourceKey": "SELF_INTRODUCTION_BY_LEVEL.advanced.example",
+      "text": "Hi, it's nice to meet you. These days, I keep a fairly balanced routine, so I take care of my usual responsibilities and save some time to recharge afterward. I often listen to music, take a walk, or visit a quiet cafe when I need a break. On weekends, I like trying something different with friends or family. I'll speak as naturally as I can and share a few everyday experiences along the way.",
+      "normalizedText": "Hi, it's nice to meet you. These days, I keep a fairly balanced routine, so I take care of my usual responsibilities and save some time to recharge afterward. I often listen to music, take a walk, or visit a quiet cafe when I need a break. On weekends, I like trying something different with friends or family. I'll speak as naturally as I can and share a few everyday experiences along the way.",
+      "textHash": "c6c1d5a44a53859ac35b5238af68684b7ccb8c27845809af0675ece4080ddaf6",
+      "characters": 395,
+      "words": 74,
+      "estimatedDurationSeconds": 29.6,
+      "estimatedMinutes": 0.493
+    },
+    {
+      "logicalId": "self-intro:example:intermediate",
+      "sourceType": "warmup-example",
+      "category": "other-static",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "levelId": "intermediate",
+      "sourcePath": "src/data/training/selfIntroduction.ts",
+      "sourceKey": "SELF_INTRODUCTION_BY_LEVEL.intermediate.example",
+      "text": "Hi, it's nice to meet you. These days, I have a simple routine around work and home, and I try to make time for myself. I often listen to music or take a walk after a busy day. On weekends, I usually meet friends or relax at a cafe. I'll speak naturally and share a few everyday experiences today.",
+      "normalizedText": "Hi, it's nice to meet you. These days, I have a simple routine around work and home, and I try to make time for myself. I often listen to music or take a walk after a busy day. On weekends, I usually meet friends or relax at a cafe. I'll speak naturally and share a few everyday experiences today.",
+      "textHash": "917f18fd9ee79fcd73b06ac655edf4ea78e4edbe9989f6361ec616749c19b3f6",
+      "characters": 297,
+      "words": 59,
+      "estimatedDurationSeconds": 23.6,
+      "estimatedMinutes": 0.393
+    },
+    {
+      "logicalId": "self-intro:example:foundation",
+      "sourceType": "warmup-example",
+      "category": "other-static",
+      "staticClass": "static",
+      "currentTtsConsumer": true,
+      "levelId": "foundation",
+      "sourcePath": "src/data/training/selfIntroduction.ts",
+      "sourceKey": "SELF_INTRODUCTION_BY_LEVEL.foundation.example",
+      "text": "Hi, I'm happy to be here. These days, I spend most of my time at home and around my neighborhood. I enjoy listening to music and taking short walks on weekends. I'll try to speak comfortably and share my everyday stories.",
+      "normalizedText": "Hi, I'm happy to be here. These days, I spend most of my time at home and around my neighborhood. I enjoy listening to music and taking short walks on weekends. I'll try to speak comfortably and share my everyday stories.",
+      "textHash": "bdbc4970ea0a08023a2c7ebb1cd971bf6a49575f4c377211b5827875e3741cee",
+      "characters": 221,
+      "words": 41,
+      "estimatedDurationSeconds": 16.4,
+      "estimatedMinutes": 0.273
     }
   ]
 }

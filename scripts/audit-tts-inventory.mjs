@@ -591,6 +591,35 @@ export async function buildAudit() {
       );
     }
 
+    const selfIntro = await server.ssrLoadModule("/src/data/training/selfIntroduction.ts");
+    records.push(
+      record({
+        logicalId: "self-intro:prompt",
+        sourceType: "warmup-prompt",
+        category: "other-static",
+        staticClass: "static",
+        currentTtsConsumer: true,
+        sourcePath: "src/data/training/selfIntroduction.ts",
+        sourceKey: "SELF_INTRODUCTION_PROMPT",
+        text: selfIntro.SELF_INTRODUCTION_PROMPT,
+      }),
+    );
+    for (const level of levels) {
+      records.push(
+        record({
+          logicalId: `self-intro:example:${level.id}`,
+          sourceType: "warmup-example",
+          category: "other-static",
+          staticClass: "static",
+          currentTtsConsumer: true,
+          levelId: level.id,
+          sourcePath: "src/data/training/selfIntroduction.ts",
+          sourceKey: `SELF_INTRODUCTION_BY_LEVEL.${level.id}.example`,
+          text: selfIntro.SELF_INTRODUCTION_BY_LEVEL[level.id].example,
+        }),
+      );
+    }
+
     const currentRecords = records.filter((item) => item.currentTtsConsumer);
     const expandedSummary = summarizeInventory(records);
     const currentSummary = summarizeInventory(currentRecords);

@@ -30,10 +30,10 @@
     }
   ],
   "coverage": {
-    "expectedTexts": 173,
-    "expectedVoiceAssets": 692,
-    "completedTexts": 173,
-    "completedVoiceAssets": 692,
+    "expectedTexts": 177,
+    "expectedVoiceAssets": 708,
+    "completedTexts": 177,
+    "completedVoiceAssets": 708,
     "complete": true
   },
   "entries": {
@@ -5677,6 +5677,64 @@
         }
       }
     },
+    "917f18fd9ee79fcd73b06ac655edf4ea78e4edbe9989f6361ec616749c19b3f6": {
+      "characters": 297,
+      "words": 59,
+      "sources": [
+        {
+          "type": "warmup-example",
+          "sourcePath": "src/data/training/selfIntroduction.ts",
+          "sourceKey": "SELF_INTRODUCTION_BY_LEVEL.intermediate.example",
+          "levelId": "intermediate"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/917f18fd9ee79fcd73b06ac655edf4ea78e4edbe9989f6361ec616749c19b3f6/heart.webm",
+          "peaksUrl": "audio/917f18fd9ee79fcd73b06ac655edf4ea78e4edbe9989f6361ec616749c19b3f6/heart.peaks.json",
+          "duration": 21.713,
+          "bytes": 165444,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/917f18fd9ee79fcd73b06ac655edf4ea78e4edbe9989f6361ec616749c19b3f6/bella.webm",
+          "peaksUrl": "audio/917f18fd9ee79fcd73b06ac655edf4ea78e4edbe9989f6361ec616749c19b3f6/bella.peaks.json",
+          "duration": 23.613,
+          "bytes": 180434,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/917f18fd9ee79fcd73b06ac655edf4ea78e4edbe9989f6361ec616749c19b3f6/sarah.webm",
+          "peaksUrl": "audio/917f18fd9ee79fcd73b06ac655edf4ea78e4edbe9989f6361ec616749c19b3f6/sarah.peaks.json",
+          "duration": 23.688,
+          "bytes": 175669,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/917f18fd9ee79fcd73b06ac655edf4ea78e4edbe9989f6361ec616749c19b3f6/sky.webm",
+          "peaksUrl": "audio/917f18fd9ee79fcd73b06ac655edf4ea78e4edbe9989f6361ec616749c19b3f6/sky.peaks.json",
+          "duration": 22.513,
+          "bytes": 170254,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
     "922af77bac1ab1e97ea04b7e01acb2950e6f7282647d291ebe3ab14421cbcfa8": {
       "characters": 124,
       "words": 21,
@@ -7610,6 +7668,121 @@
         }
       }
     },
+    "bd5e6775afacda28d824468cdec2cb11eb521c96dfd50c72bfd5d26eeecc3e28": {
+      "characters": 64,
+      "words": 10,
+      "sources": [
+        {
+          "type": "warmup-prompt",
+          "sourcePath": "src/data/training/selfIntroduction.ts",
+          "sourceKey": "SELF_INTRODUCTION_PROMPT"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/bd5e6775afacda28d824468cdec2cb11eb521c96dfd50c72bfd5d26eeecc3e28/heart.webm",
+          "peaksUrl": "audio/bd5e6775afacda28d824468cdec2cb11eb521c96dfd50c72bfd5d26eeecc3e28/heart.peaks.json",
+          "duration": 4.403,
+          "bytes": 34295,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/bd5e6775afacda28d824468cdec2cb11eb521c96dfd50c72bfd5d26eeecc3e28/bella.webm",
+          "peaksUrl": "audio/bd5e6775afacda28d824468cdec2cb11eb521c96dfd50c72bfd5d26eeecc3e28/bella.peaks.json",
+          "duration": 4.728,
+          "bytes": 36082,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/bd5e6775afacda28d824468cdec2cb11eb521c96dfd50c72bfd5d26eeecc3e28/sarah.webm",
+          "peaksUrl": "audio/bd5e6775afacda28d824468cdec2cb11eb521c96dfd50c72bfd5d26eeecc3e28/sarah.peaks.json",
+          "duration": 5.428,
+          "bytes": 39997,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/bd5e6775afacda28d824468cdec2cb11eb521c96dfd50c72bfd5d26eeecc3e28/sky.webm",
+          "peaksUrl": "audio/bd5e6775afacda28d824468cdec2cb11eb521c96dfd50c72bfd5d26eeecc3e28/sky.peaks.json",
+          "duration": 4.978,
+          "bytes": 38111,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
+    "bdbc4970ea0a08023a2c7ebb1cd971bf6a49575f4c377211b5827875e3741cee": {
+      "characters": 221,
+      "words": 41,
+      "sources": [
+        {
+          "type": "warmup-example",
+          "sourcePath": "src/data/training/selfIntroduction.ts",
+          "sourceKey": "SELF_INTRODUCTION_BY_LEVEL.foundation.example",
+          "levelId": "foundation"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/bdbc4970ea0a08023a2c7ebb1cd971bf6a49575f4c377211b5827875e3741cee/heart.webm",
+          "peaksUrl": "audio/bdbc4970ea0a08023a2c7ebb1cd971bf6a49575f4c377211b5827875e3741cee/heart.peaks.json",
+          "duration": 15.693,
+          "bytes": 118436,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/bdbc4970ea0a08023a2c7ebb1cd971bf6a49575f4c377211b5827875e3741cee/bella.webm",
+          "peaksUrl": "audio/bdbc4970ea0a08023a2c7ebb1cd971bf6a49575f4c377211b5827875e3741cee/bella.peaks.json",
+          "duration": 16.818,
+          "bytes": 128256,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/bdbc4970ea0a08023a2c7ebb1cd971bf6a49575f4c377211b5827875e3741cee/sarah.webm",
+          "peaksUrl": "audio/bdbc4970ea0a08023a2c7ebb1cd971bf6a49575f4c377211b5827875e3741cee/sarah.peaks.json",
+          "duration": 17.043,
+          "bytes": 125123,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/bdbc4970ea0a08023a2c7ebb1cd971bf6a49575f4c377211b5827875e3741cee/sky.webm",
+          "peaksUrl": "audio/bdbc4970ea0a08023a2c7ebb1cd971bf6a49575f4c377211b5827875e3741cee/sky.peaks.json",
+          "duration": 16.418,
+          "bytes": 123699,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
     "befeb06100206e7cb2ff7048585552901c7fdcc1edde51ec5e7661e4bba49888": {
       "characters": 474,
       "words": 81,
@@ -8082,6 +8255,64 @@
           "peaksUrl": "audio/c515b06dc6e804d0675bf2967144885c6755ea70e1befbb9a0c48a5fbd501566/sky.peaks.json",
           "duration": 5.483,
           "bytes": 43616,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        }
+      }
+    },
+    "c6c1d5a44a53859ac35b5238af68684b7ccb8c27845809af0675ece4080ddaf6": {
+      "characters": 395,
+      "words": 74,
+      "sources": [
+        {
+          "type": "warmup-example",
+          "sourcePath": "src/data/training/selfIntroduction.ts",
+          "sourceKey": "SELF_INTRODUCTION_BY_LEVEL.advanced.example",
+          "levelId": "advanced"
+        }
+      ],
+      "audio": {
+        "af_heart": {
+          "url": "audio/c6c1d5a44a53859ac35b5238af68684b7ccb8c27845809af0675ece4080ddaf6/heart.webm",
+          "peaksUrl": "audio/c6c1d5a44a53859ac35b5238af68684b7ccb8c27845809af0675ece4080ddaf6/heart.peaks.json",
+          "duration": 27.513,
+          "bytes": 213126,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_bella": {
+          "url": "audio/c6c1d5a44a53859ac35b5238af68684b7ccb8c27845809af0675ece4080ddaf6/bella.webm",
+          "peaksUrl": "audio/c6c1d5a44a53859ac35b5238af68684b7ccb8c27845809af0675ece4080ddaf6/bella.peaks.json",
+          "duration": 29.763,
+          "bytes": 231399,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sarah": {
+          "url": "audio/c6c1d5a44a53859ac35b5238af68684b7ccb8c27845809af0675ece4080ddaf6/sarah.webm",
+          "peaksUrl": "audio/c6c1d5a44a53859ac35b5238af68684b7ccb8c27845809af0675ece4080ddaf6/sarah.peaks.json",
+          "duration": 29.188,
+          "bytes": 220527,
+          "mimeType": "audio/webm; codecs=opus",
+          "generator": {
+            "dtype": "fp32",
+            "device": "webgpu"
+          }
+        },
+        "af_sky": {
+          "url": "audio/c6c1d5a44a53859ac35b5238af68684b7ccb8c27845809af0675ece4080ddaf6/sky.webm",
+          "peaksUrl": "audio/c6c1d5a44a53859ac35b5238af68684b7ccb8c27845809af0675ece4080ddaf6/sky.peaks.json",
+          "duration": 27.588,
+          "bytes": 210396,
           "mimeType": "audio/webm; codecs=opus",
           "generator": {
             "dtype": "fp32",

@@ -16,6 +16,16 @@
     <title>오픽온미 | OPIc 말하기 연습 도구</title>
     <script>
       (function () {
+        try {
+          var storedTheme = window.localStorage.getItem('oom-theme');
+          document.documentElement.classList.toggle('dark', storedTheme !== 'light');
+        } catch (_error) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+    <script>
+      (function () {
         var searchParams = new URLSearchParams(window.location.search);
         var redirectPath = searchParams.get('p');
         if (redirectPath) {

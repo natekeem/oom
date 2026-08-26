@@ -25,15 +25,18 @@ function pcmWav(samples, sampleRate = 24_000) {
 }
 
 describe("static TTS asset helpers", () => {
-  it("includes all 27 current roleplay examples in the 173-text playable inventory", async () => {
+  it("includes all 27 current roleplay examples in the 177-text playable inventory", async () => {
     const inventory = await loadPlayableInventory();
-    expect(inventory.entries).toHaveLength(173);
-    expect(inventory.targets).toHaveLength(692);
+    expect(inventory.entries).toHaveLength(177);
+    expect(inventory.targets).toHaveLength(708);
     expect(
       inventory.entries.filter((entry) =>
         entry.categories.includes("step5-roleplay-example"),
       ),
     ).toHaveLength(27);
+    expect(
+      inventory.entries.filter((entry) => entry.categories.includes("other-static")),
+    ).toHaveLength(4);
   });
 
   it("creates deterministic non-placeholder normalized peaks from PCM16", () => {

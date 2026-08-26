@@ -56,6 +56,7 @@ function AnnotationBadge({
 }
 
 type ExamScreenShellProps = {
+  mode?: "question" | "warmup";
   courseLabel: string;
   levelLabel: string;
   questionGroup?: string;
@@ -87,6 +88,7 @@ type ExamScreenShellProps = {
   questionChanged?: boolean;
   audioPlayer?: ReactNode;
   ttsStatus?: string;
+  completionMessage?: string;
 };
 
 /**
@@ -94,6 +96,7 @@ type ExamScreenShellProps = {
  * and /exam-guide/screen/ annotated demo.
  */
 export function ExamScreenShell({
+  mode = "question",
   courseLabel,
   levelLabel,
   questionGroup,
@@ -125,13 +128,18 @@ export function ExamScreenShell({
   questionChanged = false,
   audioPlayer,
   ttsStatus,
+  completionMessage,
 }: ExamScreenShellProps) {
   const recording = state === "recording";
   const canListen = !recording && !isSpeaking && listenCount < maxListenCount && Boolean(questionPrompt);
+  const warmup = mode === "warmup";
+  const listenActionLabel = warmup ? "워밍업 안내 듣기" : "질문 듣기";
+  const startActionLabel = warmup ? "워밍업 시작" : "답변 시작";
+  const stopActionLabel = warmup ? "워밍업 종료" : "답변 종료";
 
   return (
     <section
-      aria-label="OOM OPIc 실전 연습 시험 콘솔"
+      aria-label={warmup ? "OOM OPIc 자기소개 워밍업 콘솔" : "OOM OPIc 실전 연습 시험 콘솔"}
       className="overflow-hidden rounded-xl border border-zinc-700 bg-zinc-950 text-white shadow-2xl"
     >
       {/* Top Console Bar */}
@@ -143,13 +151,15 @@ export function ExamScreenShell({
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-300">
-          <span className="font-semibold text-indigo-400">{courseLabel} 랜덤 질문</span>
+          <span className="font-semibold text-indigo-400">
+            {warmup ? "WARM-UP · 자기소개" : `${courseLabel} 랜덤 질문`}
+          </span>
           <span className="text-zinc-600">|</span>
           <span>{levelLabel}</span>
           <span className="sr-only">{levelLabel} 레벨에 맞는 질문 풀</span>
           <span className="text-zinc-600">|</span>
           <span className="rounded bg-zinc-800 px-2 py-0.5 font-mono text-[11px] text-zinc-200">
-            Practice Question
+            {warmup ? "WARM-UP" : "Practice Question"}
           </span>
         </div>
       </header>
@@ -178,7 +188,7 @@ export function ExamScreenShell({
             <div className="relative flex flex-col justify-between rounded-lg border border-zinc-800 bg-zinc-900/90 p-5 text-white">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-zinc-400">
-                  질문 청취
+                  {warmup ? "워밍업 안내" : "질문 청취"}
                 </p>
                 <div className="relative inline-flex items-center gap-1.5 rounded-md bg-zinc-800 px-2.5 py-1 text-xs font-extrabold text-white">
                   <Volume2 className="h-3.5 w-3.5 text-indigo-400" />
@@ -208,7 +218,7 @@ export function ExamScreenShell({
                     />
                   ) : null}
                   <button
-                    aria-label="질문 듣기"
+                    aria-label={listenActionLabel}
                     className={`group relative grid h-20 w-20 place-items-center rounded-full border transition duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-indigo-500/50 ${
                       canListen
                         ? "border-indigo-400 bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 hover:scale-105 hover:bg-indigo-500 active:scale-95"
@@ -231,13 +241,15 @@ export function ExamScreenShell({
                 </div>
                 <p className="mt-3 text-xs font-medium text-zinc-300">
                   {ttsStatus ?? (isSpeaking
-                    ? "질문 음성을 재생하고 있습니다..."
+                    ? warmup ? "워밍업 안내를 재생하고 있습니다..." : "질문 음성을 재생하고 있습니다..."
                     : listenCount >= maxListenCount
                     ? "청취 횟수(최대 2회)가 완료되었습니다."
-                    : "버튼을 눌러 질문을 청취하세요.")}
+                    : warmup ? "안내를 듣고 편안하게 첫 목소리를 내보세요." : "버튼을 눌러 질문을 청취하세요.")}
                 </p>
                 <p className="mt-1 text-[11px] text-zinc-500">
-                  실제 시험에서는 질문을 최대 2회까지 들을 수 있습니다.
+                  {warmup
+                    ? "워밍업 안내는 실전 문항과 별도로 최대 2회 들을 수 있습니다."
+                    : "실제 시험에서는 질문을 최대 2회까지 들을 수 있습니다."}
                 </p>
                 {audioPlayer ? <div className="mt-3 w-full min-w-0">{audioPlayer}</div> : null}
               </div>
@@ -251,7 +263,7 @@ export function ExamScreenShell({
           <div className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-4">
             <div className="flex items-center justify-between text-xs text-zinc-400">
               <span className="font-semibold uppercase tracking-wider">
-                Question Prompt
+                {warmup ? "WARM-UP PROMPT" : "Question Prompt"}
               </span>
               <Button
                 aria-expanded={showQuestionText}
@@ -288,7 +300,9 @@ export function ExamScreenShell({
 
             {!showQuestionText ? (
               <div className="mt-2 rounded-md border border-dashed border-zinc-800 bg-zinc-950/40 px-3.5 py-2.5 text-xs text-zinc-400">
-                질문 텍스트는 실제 시험처럼 숨겨져 있습니다. 음성에 집중해 보세요.
+                {warmup
+                  ? "워밍업 안내 문장은 숨겨져 있습니다. 첫 목소리와 호흡에 집중해 보세요."
+                  : "질문 텍스트는 실제 시험처럼 숨겨져 있습니다. 음성에 집중해 보세요."}
               </div>
             ) : null}
           </div>
@@ -336,13 +350,15 @@ export function ExamScreenShell({
               {/* Target Range Display */}
               <div className="rounded-md border border-zinc-800 bg-zinc-950/60 px-3.5 py-2 text-right">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
-                  OOM 연습 목표
+                  {warmup ? "첫 발화 워밍업" : "OOM 연습 목표"}
                 </p>
                 <p className="mt-0.5 text-base font-extrabold text-indigo-300 sm:text-lg">
                   {targetRangeLabel}
                 </p>
                 <p className="mt-0.5 text-[10px] text-zinc-500">
-                  실제 OPIc의 문항별 제한시간이 아닙니다.
+                  {warmup
+                    ? "평가용 문항이 아닌 OOM 발화 준비 시간입니다."
+                    : "실제 OPIc의 문항별 제한시간이 아닙니다."}
                 </p>
               </div>
 
@@ -359,22 +375,22 @@ export function ExamScreenShell({
 
                 {recording ? (
                   <Button
-                    aria-label="답변 종료"
+                    aria-label={stopActionLabel}
                     className="bg-red-600 text-white hover:bg-red-500"
                     onClick={onStopAnswer}
                   >
                     <Square className="h-4 w-4" />
-                    답변 종료
+                    {stopActionLabel}
                   </Button>
                 ) : (
                   <Button
-                    aria-label="답변 시작"
+                    aria-label={state === "complete" && warmup ? "워밍업 완료" : startActionLabel}
                     className="bg-indigo-600 text-white hover:bg-indigo-500"
-                    disabled={!questionPrompt}
+                    disabled={!questionPrompt || (state === "complete" && warmup)}
                     onClick={onStartAnswer}
                   >
                     <Mic className="h-4 w-4" />
-                    답변 시작
+                    {state === "complete" && warmup ? "워밍업 완료" : startActionLabel}
                   </Button>
                 )}
               </div>
@@ -385,7 +401,9 @@ export function ExamScreenShell({
               <div className="mt-3 rounded-md border border-amber-500/40 bg-amber-950/40 p-3 text-xs leading-5 text-amber-200">
                 <p className="font-bold">마이크를 사용할 수 없습니다.</p>
                 <p className="mt-0.5">
-                  마이크 없이 타이머만 시작하여 발화 시간을 재고, 답변 후 transcript를 직접 입력할 수 있습니다.
+                  {warmup
+                    ? "마이크 없이 타이머만 시작해 20~30초 동안 첫 목소리와 호흡을 가볍게 맞출 수 있습니다."
+                    : "마이크 없이 타이머만 시작하여 발화 시간을 재고, 답변 후 transcript를 직접 입력할 수 있습니다."}
                 </p>
                 <div className="mt-2.5 flex flex-wrap gap-2">
                   {onStartTimerOnly ? (
@@ -422,7 +440,7 @@ export function ExamScreenShell({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-zinc-400">
-                문항 정보
+                {warmup ? "워밍업" : "문항 정보"}
               </p>
               {onDrawQuestion ? (
                 <Button
@@ -450,14 +468,18 @@ export function ExamScreenShell({
             <div className="rounded-md border border-zinc-800 bg-zinc-950/60 p-4">
               <p className="text-xs font-semibold text-zinc-400">진행 상태</p>
               <p className="mt-1 text-sm font-bold text-white">
-                {questionChanged
+                {state === "complete" && completionMessage
+                  ? completionMessage
+                  : questionChanged
                   ? "✓ 새 연습 문항을 불러왔습니다."
                   : recording
                   ? "● 답변 녹음 중..."
                   : isSpeaking
                   ? "질문 청취 중"
                   : questionPrompt
-                  ? "질문을 듣고 핵심 단어를 떠올린 뒤 답변하세요."
+                  ? warmup
+                    ? "첫 목소리를 가볍게 시작해보세요."
+                    : "질문을 듣고 핵심 단어를 떠올린 뒤 답변하세요."
                   : "랜덤 질문을 뽑아 연습을 시작하세요."}
               </p>
             </div>

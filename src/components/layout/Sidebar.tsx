@@ -14,6 +14,7 @@ export type ViewId =
   | "survey"
   | "difficulty"
   | "script-hub"
+  | "script-self-introduction"
   | "script-outdoor"
   | "script-indoor"
   | "script-sports"
@@ -48,6 +49,7 @@ export const viewTitles: Record<ViewId, string> = {
   survey: "STEP 2. 추천 서베이 익히기",
   difficulty: "STEP 3. 난이도 설정",
   "script-hub": "STEP 4. 만능 스크립트",
+  "script-self-introduction": "STEP 4. 워밍업 · 자기소개",
   "script-outdoor": "STEP 4. 그룹 1 스크립트",
   "script-indoor": "STEP 4. 그룹 2 스크립트",
   "script-sports": "STEP 4. 그룹 3 스크립트",

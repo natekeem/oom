@@ -119,6 +119,17 @@ const baseRoutes = [
     ],
   },
   {
+    path: "/training/scripts/self-introduction/",
+    title: "OPIc 자기소개 워밍업 | 오픽온미",
+    description: "코스와 무관하게 현재 Level에 맞춘 짧은 자기소개 예시로 첫 목소리와 호흡을 준비합니다.",
+    heading: "STEP 4. 워밍업 · 자기소개",
+    content: [
+      "자기소개는 새 STEP이나 메인 평가 문항이 아니라 STEP 4에서 준비하는 짧은 발화 워밍업입니다.",
+      "현재 Level에 맞춘 15~30초 예시에서 일상, 좋아하는 활동, 주말 루틴 같은 단어만 내 상황에 맞게 바꿉니다.",
+      "답변 전체를 외우지 말고 첫 목소리와 호흡을 편안하게 맞춘 뒤 기존 6 STEP 훈련을 이어갑니다."
+    ],
+  },
+  {
     path: "/training/scripts/outdoor/",
     title: "OPIc 만능 스크립트 훈련 | 오픽온미",
     description: "선택한 코스의 핵심 스토리를 질문 유형별로 변형하여 연습하는 스크립트 훈련 페이지입니다.",
@@ -270,7 +281,8 @@ const pageGuides = {
   "/training/setup/": { purpose: "목표 등급과 훈련 코스를 선택해 전체 훈련 콘텐츠를 맞춤 구성하는 STEP 1 화면입니다.", how: "1구간(AL), 2구간(IH/IM3), 3구간(IM2/IM1) 중 목표를 선택하고, Everyday & Getaway, Culture & City, Nature & Weekend 코스 중 하나를 결정한 뒤 학습을 시작합니다.", benefit: "내 목표 등급에 맞는 답변 밀도와 서베이·스토리 세트가 자동으로 배정되어 불필요한 암기를 줄입니다.", checklist: ["목표 구간을 선택했다", "학습 코스를 선택했다", "이 구성으로 학습 시작을 눌렀다"], links: [["/training/", "훈련 개요 허브"], ["/training/survey/", "STEP 2 추천 서베이 익히기로 이동"]] },
   "/training/survey/": { purpose: "추천 서베이 익히기 페이지는 실제 관심사를 모두 고르는 곳이 아니라 답변 범위를 좁히기 위한 연습용 선택표입니다.", how: "현재 코스의 추천 조합을 보고 직접 골라보며 시험 전에 익숙해집니다.", benefit: "선택한 Course의 핵심 스토리를 반복 활용할 수 있도록 서베이 조합을 기억해 질문을 받았을 때 장면을 더 빨리 떠올릴 수 있습니다.", checklist: ["추천 항목을 직접 선택해 보았다", "채점하기로 누락된 항목을 점검했다", "4개 핵심 스토리 그룹과의 연계를 확인했다"], mistakes: ["남들이 많이 고른다는 이유만으로 선택한다", "선택지를 자주 바꿔 스크립트 장면이 흔들린다"], links: [["/training/difficulty/", "난이도 설정으로 이동"], ["/magazine/opic-survey-choice-guide/", "서베이 선택 가이드"]] },
   "/training/difficulty/": { purpose: "난이도 페이지는 어려운 단어를 고르는 곳이 아니라 답변 길이와 구체성의 기준을 정하는 곳입니다.", how: "목표 구간에 맞는 권장 난이도를 바탕으로 장소, 행동, 이유, 변화가 들어간 답변을 만들어 봅니다.", benefit: "목표 등급에 맞는 답변 밀도를 의식하면서도 과장된 표현 대신 익숙한 경험을 안정적으로 말할 수 있습니다.", example: "집 근처 카페를 말한다면 위치 소개에서 끝내지 말고, 언제 가는지, 무엇을 하는지, 왜 편한지까지 이어 말합니다.", checklist: ["답변 길이를 정했다", "구체적 행동 하나를 넣었다", "마무리 감정을 붙였다"], links: [["/training/scripts/", "스크립트 훈련으로 이동"], ["/magazine/opic-55-difficulty-guide/", "난이도 5-5 가이드"]] },
-  "/training/scripts/": { purpose: "스크립트 허브는 답변을 통째로 외우기보다 질문이 바뀌어도 재사용할 장면 블록을 고르는 곳입니다.", how: "선택한 코스의 핵심 스토리 그룹을 고른 뒤 전체 보기, 키워드 보기, 질문 변형 순서로 반복합니다.", benefit: "하나의 핵심 장면을 묘사, 루틴, 최근 경험, 변화 질문으로 바꾸는 감각을 만들 수 있습니다.", checklist: ["그룹 하나를 고른다", "첫 문장과 마무리를 분리해 연습한다", "질문 변형에서 전체 답변을 새로 만들지 않는다"], links: [["/training/scripts/outdoor/", "만능 스크립트 그룹 1"], ["/training/scripts/indoor/", "만능 스크립트 그룹 2"], ["/training/scripts/sports/", "만능 스크립트 그룹 3"], ["/training/scripts/home/", "만능 스크립트 그룹 4"]] },
+  "/training/scripts/": { purpose: "스크립트 허브는 답변을 통째로 외우기보다 질문이 바뀌어도 재사용할 장면 블록을 고르는 곳입니다.", how: "선택한 코스의 핵심 스토리 그룹을 고른 뒤 전체 보기, 키워드 보기, 질문 변형 순서로 반복합니다.", benefit: "하나의 핵심 장면을 묘사, 루틴, 최근 경험, 변화 질문으로 바꾸는 감각을 만들 수 있습니다.", checklist: ["그룹 하나를 고른다", "첫 문장과 마무리를 분리해 연습한다", "질문 변형에서 전체 답변을 새로 만들지 않는다"], links: [["/training/scripts/self-introduction/", "자기소개 훈련"], ["/training/scripts/outdoor/", "만능 스크립트 그룹 1"], ["/training/scripts/indoor/", "만능 스크립트 그룹 2"], ["/training/scripts/sports/", "만능 스크립트 그룹 3"], ["/training/scripts/home/", "만능 스크립트 그룹 4"]] },
+  "/training/scripts/self-introduction/": { purpose: "자기소개 페이지는 STEP 4의 Course-neutral 워밍업으로, 현재 Level에 맞는 짧은 예시를 통해 첫 목소리와 호흡을 준비하도록 돕습니다.", how: "15~30초 예시를 통째로 외우지 말고 현재 일상, 좋아하는 활동, 주말 루틴을 나타내는 단어만 내 상황에 맞게 바꿔 말합니다.", benefit: "메인 평가 문항에 들어가기 전에 긴장을 낮추고 자연스러운 발화 속도를 찾을 수 있습니다.", checklist: ["현재 Level 예시를 확인했다", "내 상황에 맞게 바꿀 단어를 골랐다", "첫 목소리와 호흡에 집중해 짧게 말했다"], links: [["/training/scripts/", "스크립트 허브"], ["/magazine/opic-self-introduction-strategy/", "자기소개 가이드"]] },
   "/training/scripts/outdoor/": { purpose: "현재 선택한 코스의 핵심 스토리를 묘사·루틴·최근 경험·변화 질문에 맞게 변형합니다.", how: "핵심 장면을 바탕으로 질문 유형별 변형 스크립트와 답변 블루프린트를 확인하며 연습합니다.", benefit: "새로운 답변을 외우지 않고도 하나의 이야기를 질문에 맞춰 자연스럽게 확장할 수 있습니다.", checklist: ["핵심 장면을 확인했다", "질문 변형 4단계를 연습했다", "답변 블루프린트를 참고해 직접 말했다"], links: [["/training/scripts/", "스크립트 허브"], ["/roleplay/", "롤플레이 공식"]] },
   "/training/scripts/indoor/": { purpose: "현재 선택한 코스의 핵심 스토리를 묘사·루틴·최근 경험·변화 질문에 맞게 변형합니다.", how: "핵심 장면을 바탕으로 질문 유형별 변형 스크립트와 답변 블루프린트를 확인하며 연습합니다.", benefit: "새로운 답변을 외우지 않고도 하나의 이야기를 질문에 맞춰 자연스럽게 확장할 수 있습니다.", checklist: ["핵심 장면을 확인했다", "질문 변형 4단계를 연습했다", "답변 블루프린트를 참고해 직접 말했다"], links: [["/training/scripts/", "스크립트 허브"], ["/roleplay/", "롤플레이 공식"]] },
   "/training/scripts/sports/": { purpose: "현재 선택한 코스의 핵심 스토리를 묘사·루틴·최근 경험·변화 질문에 맞게 변형합니다.", how: "핵심 장면을 바탕으로 질문 유형별 변형 스크립트와 답변 블루프린트를 확인하며 연습합니다.", benefit: "새로운 답변을 외우지 않고도 하나의 이야기를 질문에 맞춰 자연스럽게 확장할 수 있습니다.", checklist: ["핵심 장면을 확인했다", "질문 변형 4단계를 연습했다", "답변 블루프린트를 참고해 직접 말했다"], links: [["/training/scripts/", "스크립트 허브"], ["/roleplay/", "롤플레이 공식"]] },

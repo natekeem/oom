@@ -180,15 +180,18 @@ export function ExpandableSidebar({
   const { selection } = useTrainingSelection();
   const resolved = selection ? resolveTrainingContext(selection.courseId, selection.levelId) : null;
 
-  const scriptItems: Item[] = (resolved?.storylines ?? [
-    { id: "outdoor-travel", group: "그룹 1" },
-    { id: "indoor-rest", group: "그룹 2" },
-    { id: "sports-hobby", group: "그룹 3" },
-    { id: "home-residence", group: "그룹 4" },
-  ]).map((s, idx) => ({
-    id: scriptSlotIds[idx] ?? "script-outdoor",
-    label: s.group,
-  }));
+  const scriptItems: Item[] = [
+    { id: "script-self-introduction", label: "워밍업 · 자기소개" },
+    ...(resolved?.storylines ?? [
+      { id: "outdoor-travel", group: "그룹 1" },
+      { id: "indoor-rest", group: "그룹 2" },
+      { id: "sports-hobby", group: "그룹 3" },
+      { id: "home-residence", group: "그룹 4" },
+    ]).map((s, idx) => ({
+      id: scriptSlotIds[idx] ?? "script-outdoor",
+      label: s.group,
+    })),
+  ];
 
   const roleplayItems: Item[] = (resolved?.roleplays ?? [
     { id: "roleplay-1", group: "그룹 1" },

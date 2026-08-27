@@ -89,7 +89,7 @@ export function ScriptDashboardV2({
               <h1 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
                 선택한 코스에 최적화된 메인 스토리를 연습하세요.
               </h1>
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+              <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
                 {resolved.course.title} ({resolved.level.displayName})에 맞춘 4개 대표 장면이 제공됩니다.
                 질문별로 어떻게 유연하게 변형하는지에 집중해 보세요.
               </p>

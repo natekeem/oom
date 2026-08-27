@@ -13,7 +13,7 @@ export function ExamGuideOverview({ onSectionChange }: ExamGuideOverviewProps) {
       <section className="border-l-4 border-indigo-500 pl-4">
         <Badge tone="indigo">OPIc 소개 · 등급</Badge>
         <h1 className="mt-3 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">OPIc의 방식과 등급을 먼저 이해해요.</h1>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">OPIc은 컴퓨터를 활용한 1:1 인터뷰 방식의 외국어 말하기 평가입니다. 배경 설문과 관심사에 맞춘 문항으로 진행되며, 답변 전체를 종합해서 평가합니다. OOM은 특정 점수를 보장하지 않고, 익숙한 경험을 자연스럽게 설명하고 문제를 해결하는 말하기 구조를 연습하도록 돕습니다.</p>
+        <p className="mt-3 text-sm leading-7 text-zinc-600 dark:text-zinc-300">OPIc은 컴퓨터를 활용한 1:1 인터뷰 방식의 외국어 말하기 평가입니다. 배경 설문과 관심사에 맞춘 문항으로 진행되며, 답변 전체를 종합해서 평가합니다. OOM은 특정 점수를 보장하지 않고, 익숙한 경험을 자연스럽게 설명하고 문제를 해결하는 말하기 구조를 연습하도록 돕습니다.</p>
       </section>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

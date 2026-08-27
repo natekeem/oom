@@ -75,7 +75,7 @@ function OverviewContent({ onNavigate }: { onNavigate: (view: ViewId) => void })
         <h1 className="mt-3 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
           OPIc은 어떤 시험이고, 무엇을 준비해야 할까요?
         </h1>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">
+        <p className="mt-3 text-sm leading-7 text-zinc-600 dark:text-zinc-300">
           OPIc은 ACTFL이 개발·평가·인증하는 컴퓨터 기반 외국어 말하기 평가입니다. 실제 생활과 비즈니스 현장에서의 말하기 능력을 보기 위해, 응시자의 배경과 관심사에 맞는 질문이 개인 맞춤형으로 출제됩니다.
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
@@ -178,7 +178,7 @@ function ApplyContent() {
         <h1 className="mt-3 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
           신청 전에는 계정, 일정, 응시료를 순서대로 확인하세요.
         </h1>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">
+        <p className="mt-3 text-sm leading-7 text-zinc-600 dark:text-zinc-300">
           시험 신청은 회원가입과 본인인증 이후에 가능합니다. 접수만 끝내는 것이 아니라, 당일 신분증과 입실 시간을 준비하는 곳까지가 신청 과정의 마무리입니다.
         </p>
         <div className="mt-4">
@@ -278,7 +278,7 @@ function DayContent() {
         <h1 className="mt-3 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
           당일에는 규정 신분증과 입실 시각이 가장 먼저입니다.
         </h1>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">
+        <p className="mt-3 text-sm leading-7 text-zinc-600 dark:text-zinc-300">
           규정 신분증이 없으면 시험에 응시할 수 없고 해당 시험은 무효 처리됩니다. 특히 할인 시험이나 특정 대상 시험은 추가 소속 확인 서류가 필요한지 신청 사이트에서 함께 확인해야 합니다.
         </p>
       </section>
@@ -416,7 +416,7 @@ function ResultsContent() {
         <h1 className="mt-3 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
           시험이 끝난 뒤에도 성적 확인과 서류 관리가 이어집니다.
         </h1>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">
+        <p className="mt-3 text-sm leading-7 text-zinc-600 dark:text-zinc-300">
           성적 발표 예정일, 유효기간, 인증서 출력 방법을 미리 알고 있으면 회사·기관 제출 일정을 훨씬 안전하게 관리할 수 있습니다.
         </p>
         <div className="mt-4">

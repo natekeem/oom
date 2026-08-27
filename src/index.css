@@ -7,6 +7,12 @@
     background: #f4f4f5;
   }
 
+  @media (max-width: 1023px) {
+    html {
+      scrollbar-gutter: stable;
+    }
+  }
+
   html.dark {
     background: #09090b;
   }
@@ -88,6 +94,12 @@
   .oom-main-scroll {
     scrollbar-width: auto;
     scrollbar-color: var(--scroll-thumb) transparent;
+  }
+
+  @media (min-width: 1024px) {
+    .oom-main-scroll {
+      scrollbar-gutter: stable;
+    }
   }
   
   .oom-main-scroll::-webkit-scrollbar {

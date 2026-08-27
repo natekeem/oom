@@ -13,7 +13,7 @@ export function LegalPageView({ pageId }: LegalPageViewProps) {
       <header>
         <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">{page.eyebrow}</p>
         <h1 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">{page.title}</h1>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">{page.description}</p>
+        <p className="mt-3 text-sm leading-7 text-zinc-600 dark:text-zinc-300">{page.description}</p>
         <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">최종 업데이트: {page.updatedAt}</p>
       </header>
       <div className="space-y-4">

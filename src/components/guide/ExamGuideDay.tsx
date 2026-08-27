@@ -13,7 +13,7 @@ export function ExamGuideDay({ onSectionChange }: ExamGuideDayProps) {
   return (
     <div className="space-y-6">
       <ExamGuideTabs activeSection="exam-day" onSectionChange={onSectionChange} />
-      <section className="border-l-4 border-indigo-500 pl-4"><Badge tone="indigo">신분증 · 입실 · 진행</Badge><h1 className="mt-3 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">시험 당일은 시간표처럼 보고 준비하세요.</h1><p className="mt-3 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">입실 시간과 규정 신분증은 답변 실력만큼 중요합니다. 아래 흐름을 한 번 훑고, 전날에는 신분증 원본과 센터 안내를 다시 확인하세요.</p></section>
+      <section className="border-l-4 border-indigo-500 pl-4"><Badge tone="indigo">신분증 · 입실 · 진행</Badge><h1 className="mt-3 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">시험 당일은 시간표처럼 보고 준비하세요.</h1><p className="mt-3 text-sm leading-7 text-zinc-600 dark:text-zinc-300">입실 시간과 규정 신분증은 답변 실력만큼 중요합니다. 아래 흐름을 한 번 훑고, 전날에는 신분증 원본과 센터 안내를 다시 확인하세요.</p></section>
 
       <Card className="overflow-hidden p-0">
         <div className="border-b border-zinc-200 bg-zinc-50 px-5 py-4 dark:border-zinc-800 dark:bg-zinc-950"><div className="flex items-center gap-2"><Clock3 className="h-5 w-5 text-indigo-600 dark:text-indigo-300" /><h2 className="text-lg font-bold text-zinc-950 dark:text-white">입실 통제와 시험 시간</h2></div><p className="mt-1 text-sm text-zinc-600 dark:text-zinc-300">예시가 10:00 시험인 경우입니다. 센터 안내를 최종 기준으로 확인하세요.</p></div>

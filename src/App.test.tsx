@@ -57,6 +57,30 @@ describe("OOM", () => {
     expect(screen.getAllByRole("button", { name: "다음 단계: STEP 5" })).toHaveLength(2);
   });
 
+  it("shows the STEP 4 training header on the self-introduction page", async () => {
+    saveTrainingSelection({ courseId: "course-1", levelId: "advanced" });
+    render(
+      <MemoryRouter initialEntries={["/training/scripts/self-introduction/"]}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText("훈련 진행 60%")).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "다음 단계: STEP 5" })).toHaveLength(2);
+  });
+
+  it("ends the six-step header flow on practice without an AI settings action", async () => {
+    saveTrainingSelection({ courseId: "course-1", levelId: "advanced" });
+    render(
+      <MemoryRouter initialEntries={["/practice/"]}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText("훈련 진행 100%")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "다음 단계: AI 설정" })).not.toBeInTheDocument();
+  });
+
   it("treats the mobile menu as a modal, closes with Escape, and restores trigger focus", async () => {
     const user = userEvent.setup();
     render(<MemoryRouter initialEntries={["/training/"]}><App /></MemoryRouter>);

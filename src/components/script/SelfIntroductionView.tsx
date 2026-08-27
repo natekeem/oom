@@ -24,7 +24,7 @@ export function SelfIntroductionView({ onNavigate, onToast }: SelfIntroductionVi
             <h1 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
               첫 목소리와 호흡을 가볍게 맞춰 보세요.
             </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+            <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
               메인 평가 문항이 아닌 짧은 워밍업입니다. 현재 Level 예시에서 내 상황에 맞는 단어만 바꾸며 15–30초 정도 편안하게 말해 보세요.
             </p>
           </div>

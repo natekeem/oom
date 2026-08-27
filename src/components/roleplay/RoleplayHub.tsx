@@ -68,7 +68,7 @@ export function RoleplayHub({ onNavigate }: { onNavigate: (view: ViewId) => void
             <h1 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
               문제를 설명하고, 대안을 요청하고, 정중하게 마무리합니다.
             </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">
+            <p className="mt-2 text-sm leading-7 text-zinc-600 dark:text-zinc-300">
               롤플레이는 긴 문장을 통째로 외우는 문제가 아닙니다. 상황 → 문제 → 질문 → 대안의
               순서를 익히면 어떤 돌발 상황에서도 동일한 6단계 공식을 활용할 수 있습니다.
             </p>

@@ -226,7 +226,7 @@ function SurveySheetContent({
         <h1 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
           실제 형식으로 보고, OOM 추천 조합을 그대로 기억합니다.
         </h1>
-        <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+        <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
           서베이를 많이 선택하기 위한 단계가 아니라, 뒤에서 같은 스토리를 반복 활용할 수 있도록 말할 범위를 고정하는 단계입니다.
           현재 <strong>{resolved.course.title}</strong> 코스 추천 조합을 확인하고 연습하세요.
         </p>

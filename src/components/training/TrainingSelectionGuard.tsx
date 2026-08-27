@@ -32,7 +32,7 @@ export function TrainingSelectionGuard({
           <h1 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
             먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.
           </h1>
-          <p className="mt-2 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">
+          <p className="mt-2 text-sm leading-7 text-zinc-600 dark:text-zinc-300">
             {stepName} 단계는 목표 구간(난이도/답변 밀도)과 학습 코스(서베이·스토리라인) 설정이 필요합니다.
             STEP 1에서 구간과 코스를 선택하시면 맞춤 콘텐츠로 바로 훈련을 시작할 수 있습니다.
           </p>

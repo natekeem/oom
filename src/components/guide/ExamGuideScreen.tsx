@@ -92,7 +92,7 @@ export function ExamGuideScreen({
         <h1 className="mt-3 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
           시험장에서 화면이 낯설지 않도록 미리 익혀보세요.
         </h1>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">
+        <p className="mt-3 text-sm leading-7 text-zinc-600 dark:text-zinc-300">
           실제 OPIc 시험은 컴퓨터 화면에서 가상 인터뷰어의 질문을 듣고 마이크로 답변을 녹음하는 방식으로 진행됩니다.
           아래는 OOM 실전 훈련 화면을 기반으로 한 시험 조작 인터페이스 도식입니다.
         </p>

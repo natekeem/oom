@@ -36,7 +36,7 @@ export function ScriptHub({ onNavigate }: { onNavigate: (view: ViewId) => void }
               <h1 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
                 질문을 통째로 외우지 말고, 핵심 장면을 연습하세요.
               </h1>
-              <p className="mt-2 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">
+              <p className="mt-2 text-sm leading-7 text-zinc-600 dark:text-zinc-300">
                 {resolved.course.title} ({resolved.level.displayName})의 4개 핵심 스토리를 연습하고,
                 질문에 따라 유연하게 변형합니다. 선택지가 늘어나는 것이지 외워야 할 양이 두 배가 되는
                 것은 아닙니다.

@@ -74,7 +74,8 @@ const nextViewById: Partial<Record<ViewId, { view: ViewId; label: string }>> = {
   home: { view: "training-hub", label: "훈련 허브" },
   "training-setup": { view: "survey", label: "STEP 2" },
   survey: { view: "difficulty", label: "STEP 3" },
-  difficulty: { view: "script-outdoor", label: "STEP 4" },
+  difficulty: { view: "script-hub", label: "STEP 4" },
+  "script-self-introduction": { view: "roleplay-hub", label: "STEP 5" },
   "script-outdoor": { view: "roleplay-hub", label: "STEP 5" },
   "script-indoor": { view: "roleplay-hub", label: "STEP 5" },
   "script-sports": { view: "roleplay-hub", label: "STEP 5" },
@@ -85,7 +86,6 @@ const nextViewById: Partial<Record<ViewId, { view: ViewId; label: string }>> = {
   "roleplay-indoor": { view: "practice", label: "STEP 6" },
   "roleplay-sports": { view: "practice", label: "STEP 6" },
   "roleplay-home": { view: "practice", label: "STEP 6" },
-  practice: { view: "ai-settings", label: "AI 설정" },
 };
 
 function loadSettings(): LlmSettings {
@@ -404,6 +404,7 @@ export default function App() {
     "survey",
     "difficulty",
     "script-hub",
+    "script-self-introduction",
     "script-outdoor",
     "script-indoor",
     "script-sports",

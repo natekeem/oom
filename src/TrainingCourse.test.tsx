@@ -563,13 +563,19 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
   /* 25. Next-step button labels follow 6 STEPs */
   it('25. Next-step navigation buttons sequentially guide STEP 1 through STEP 6', async () => {
     saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
+    const user = userEvent.setup();
     render(
       <MemoryRouter initialEntries={['/training/difficulty']}>
         <App />
       </MemoryRouter>
     );
 
-    expect(await screen.findAllByRole('button', { name: '다음 단계: STEP 4' })).toHaveLength(2);
+    const nextButtons = await screen.findAllByRole('button', { name: '다음 단계: STEP 4' });
+    expect(nextButtons).toHaveLength(2);
+    await user.click(nextButtons[0]);
+    expect(
+      await screen.findByRole('heading', { name: '질문을 통째로 외우지 말고, 핵심 장면을 연습하세요.' })
+    ).toBeInTheDocument();
   });
 
   /* 26. STEP 2 Background Survey Sheet pagination and mode toggle */

@@ -76,7 +76,7 @@ export function TrainingSetupView({
         <h1 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
           목표 구간과 학습 코스를 먼저 설정합니다.
         </h1>
-        <p className="mt-2 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">
+        <p className="mt-2 text-sm leading-7 text-zinc-600 dark:text-zinc-300">
           목표 등급에 따라 서베이 추천 조합과 스크립트 발화량, 롤플레이 및 실전 연습 질문이 자동으로 구성됩니다.
           훈련 도중 언제든지 설정을 변경할 수 있습니다.
         </p>

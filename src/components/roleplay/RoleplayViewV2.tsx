@@ -120,7 +120,7 @@ function RoleplayViewV2Content({
         <h1 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
           {scenario.group} 상황을 6단계 공식으로 해결하세요.
         </h1>
-        <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+        <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
           {resolved.course.title} ({resolved.level.displayName}) 코스에 배정된 롤플레이 시나리오입니다.
           상황을 설명하고, 대안을 요청하고, 정중하게 마무리하는 구조를 훈련합니다.
         </p>

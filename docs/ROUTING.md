@@ -61,7 +61,7 @@ The candidate guide and training hub are independent top-level branches. STEP 1-
 - `training-hub` (shows 6 STEP overview title and roadmap status)
 - `training-setup` (STEP 1, 0%)
 - `survey` (STEP 2, 20%), `difficulty` (STEP 3, 40%)
-- `script-hub` and `script-*` (STEP 4, 60%)
+- `script-hub`, `script-self-introduction`, and `script-*` (STEP 4, 60%)
 - `roleplay-hub`, `roleplay-formula`, and `roleplay-*` (STEP 5, 80%)
 - `practice` (STEP 6, 100%)
 
@@ -86,6 +86,7 @@ Public route targets use the canonical `https://opic-on-me.com/path/` form. Inte
 | `survey` | Training / STEP 2 | `BackgroundSurveySheet` | Yes, 20% | Course-specific recommendation and rehearsal |
 | `difficulty` | Training / STEP 3 | `DifficultyGuide` | Yes, 40% | Level difficulty presets (5-5, 4-4, 3-3) |
 | `script-hub` | Training / STEP 4 | `ScriptHub` | Yes, 60% | Explains canonical storyline structure |
+| `script-self-introduction` | Training / STEP 4 child | `SelfIntroductionView` | Yes, 60% | Course-neutral, Level-aware speaking warm-up |
 | `script-outdoor` | Training / STEP 4 child | `ScriptDashboardV2` | Yes, 60% | Generic slot 0 storyline (e.g. outdoor/travel) |
 | `script-indoor` | Training / STEP 4 child | `ScriptDashboardV2` | Yes, 60% | Generic slot 1 storyline (e.g. indoor/rest) |
 | `script-sports` | Training / STEP 4 child | `ScriptDashboardV2` | Yes, 60% | Generic slot 2 storyline (e.g. sports/hobby) |
@@ -111,10 +112,10 @@ Public route targets use the canonical `https://opic-on-me.com/path/` form. Inte
 `nextViewById` in `App.tsx` controls the training header's next-step button. Its active flow is:
 
 ```text
-survey -> difficulty -> script-outdoor -> roleplay-hub
+survey -> difficulty -> script-hub
 ```
 
-The group-specific script routes point to `roleplay-hub`. `roleplay-hub`, its compatibility formula route, and scenario routes point to `practice`; `practice` points to `ai-settings`. `training-hub` and `script-hub` intentionally have no forced next step because the user must choose or configure a branch there.
+The self-introduction and group-specific script routes point to `roleplay-hub`. `roleplay-hub`, its compatibility formula route, and scenario routes point to `practice`. `practice` is the end of the six-step flow and intentionally has no next-step action. `training-hub` and `script-hub` intentionally have no forced next step because the user must choose or configure a branch there.
 
 ## Synchronization Rules
 

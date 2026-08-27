@@ -15,7 +15,7 @@ export function ExamGuideFaq({ onSectionChange }: ExamGuideFaqProps) {
       <section className="border-l-4 border-indigo-500 pl-4">
         <Badge tone="indigo">OPIc Q&A</Badge>
         <h1 className="mt-3 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">시험 전에 헷갈리는 질문만 빠르게 확인하세요.</h1>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-zinc-600 dark:text-zinc-300">
+        <p className="mt-3 text-sm leading-7 text-zinc-600 dark:text-zinc-300">
           교재 속 핵심 문답은 표현을 다듬어 옮기고, 공식 안내와 수험생들이 자주 묻는 내용을 더했습니다. 규정이 바뀔 수 있는 항목은 응시 직전 공식 페이지에서 다시 확인하세요.
         </p>
       </section>

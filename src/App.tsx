@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { AppShell } from "./components/layout/AppShell";
 import { SIDEBAR_EXPANDED_STORAGE_KEY } from "./components/layout/ExpandableSidebar";
@@ -27,7 +27,9 @@ const ScriptDashboardV2 = lazy(() => import("./components/script/ScriptDashboard
 const SelfIntroductionView = lazy(() => import("./components/script/SelfIntroductionView").then((module) => ({ default: module.SelfIntroductionView })));
 const RoleplayHub = lazy(() => import("./components/roleplay/RoleplayHub").then((module) => ({ default: module.RoleplayHub })));
 const RoleplayViewV2 = lazy(() => import("./components/roleplay/RoleplayViewV2").then((module) => ({ default: module.RoleplayViewV2 })));
+const PracticeHubView = lazy(() => import("./components/practice/PracticeView").then((module) => ({ default: module.PracticeHubView })));
 const PracticeView = lazy(() => import("./components/practice/PracticeView").then((module) => ({ default: module.PracticeView })));
+const FullMockPracticeRoute = lazy(() => import("./components/practice/FullMockPracticeView").then((module) => ({ default: module.FullMockPracticeRoute })));
 const AiSettingsView = lazy(() => import("./components/ai/AiSettingsView").then((module) => ({ default: module.AiSettingsView })));
 const MagazineList = lazy(() => import("./components/magazine/MagazineList").then((module) => ({ default: module.MagazineList })));
 const MagazineDetail = lazy(() => import("./components/magazine/MagazineDetail").then((module) => ({ default: module.MagazineDetail })));
@@ -75,7 +77,7 @@ const nextViewById: Partial<Record<ViewId, { view: ViewId; label: string }>> = {
   "training-setup": { view: "survey", label: "STEP 2" },
   survey: { view: "difficulty", label: "STEP 3" },
   difficulty: { view: "script-hub", label: "STEP 4" },
-  "script-self-introduction": { view: "roleplay-hub", label: "STEP 5" },
+  "script-self-introduction": { view: "script-outdoor", label: "첫 스토리" },
   "script-outdoor": { view: "roleplay-hub", label: "STEP 5" },
   "script-indoor": { view: "roleplay-hub", label: "STEP 5" },
   "script-sports": { view: "roleplay-hub", label: "STEP 5" },
@@ -130,14 +132,24 @@ export default function App() {
   );
   const [mobileOpen, setMobileOpen] = useState(false);
   const [toast, setToast] = useState<ToastMessage | null>(null);
+  const navigationGuardRef = useRef<(() => boolean) | null>(null);
 
   const activeView = viewIdForPath(location.pathname);
   const isLanding = location.pathname === "/";
   const isMagazineDetail = /^\/magazine\/[^/]+\/?$/.test(location.pathname);
   const adExcluded =
-    ["practice", "ai-settings", "about", "privacy", "contact", "terms", "editorial-policy", "image-credits"].includes(
+    ["practice", "practice-quick", "practice-mock", "ai-settings", "about", "privacy", "contact", "terms", "editorial-policy", "image-credits"].includes(
       activeView
     ) || (activeView === "magazine-list" && !isMagazineDetail);
+
+  const onNavigate = useCallback((view: ViewId) => {
+    if (navigationGuardRef.current && !navigationGuardRef.current()) return;
+    navigate(viewPathForId[view]);
+  }, [navigate]);
+
+  const setNavigationGuard = useCallback((guard: (() => boolean) | null) => {
+    navigationGuardRef.current = guard;
+  }, []);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
@@ -197,8 +209,6 @@ export default function App() {
       </Suspense>
     );
   }
-
-  const onNavigate = (view: ViewId) => navigate(viewPathForId[view]);
 
   const renderScriptSlot = (slotIndex: 0 | 1 | 2 | 3) => (
     <ScriptDashboardV2
@@ -336,6 +346,18 @@ export default function App() {
       <Route
         path="/practice"
         element={
+          <PracticeHubView onNavigate={onNavigate} />
+        }
+      />
+      <Route
+        path="/practice/"
+        element={
+          <PracticeHubView onNavigate={onNavigate} />
+        }
+      />
+      <Route
+        path="/practice/quick"
+        element={
           <PracticeView
             onNavigate={onNavigate}
             onToast={showToast}
@@ -345,10 +367,34 @@ export default function App() {
         }
       />
       <Route
-        path="/practice/"
+        path="/practice/quick/"
         element={
           <PracticeView
             onNavigate={onNavigate}
+            onToast={showToast}
+            settings={settings}
+            sttSettings={sttSettings}
+          />
+        }
+      />
+      <Route
+        path="/practice/mock"
+        element={
+          <FullMockPracticeRoute
+            onNavigate={onNavigate}
+            onSetNavigationGuard={setNavigationGuard}
+            onToast={showToast}
+            settings={settings}
+            sttSettings={sttSettings}
+          />
+        }
+      />
+      <Route
+        path="/practice/mock/"
+        element={
+          <FullMockPracticeRoute
+            onNavigate={onNavigate}
+            onSetNavigationGuard={setNavigationGuard}
             onToast={showToast}
             settings={settings}
             sttSettings={sttSettings}
@@ -416,6 +462,8 @@ export default function App() {
     "roleplay-sports",
     "roleplay-home",
     "practice",
+    "practice-quick",
+    "practice-mock",
   ].includes(activeView);
 
   const nextStep = nextViewById[activeView];

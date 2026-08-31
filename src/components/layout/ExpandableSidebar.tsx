@@ -50,6 +50,11 @@ const roleplaySlotIds: ViewId[] = [
   "roleplay-home",
 ];
 
+const practiceItems: Item[] = [
+  { id: "practice-quick", label: "빠른 연습" },
+  { id: "practice-mock", label: "실전 모의고사" },
+];
+
 const sidebarQuotes = [
   "서베이 한 장면을 정해서 90초 동안 말해 보세요.",
   "오늘은 하나의 경험을 중심으로 자연스럽게 연결해 보세요.",
@@ -209,6 +214,7 @@ export function ExpandableSidebar({
     activeView === "roleplay-hub" ||
     activeView === "roleplay-formula" ||
     roleplayItems.some((item) => item.id === activeView);
+  const practiceActive = activeView === "practice" || practiceItems.some((item) => item.id === activeView);
   const trainingActive =
     activeView === "training-hub" ||
     activeView === "training-setup" ||
@@ -216,7 +222,7 @@ export function ExpandableSidebar({
     activeView === "difficulty" ||
     scriptActive ||
     roleplayActive ||
-    activeView === "practice";
+    practiceActive;
 
   const activeAncestors = new Set<string>();
   if (scriptActive) {
@@ -224,6 +230,9 @@ export function ExpandableSidebar({
     activeAncestors.add("training");
   } else if (roleplayActive) {
     activeAncestors.add("roleplay");
+    activeAncestors.add("training");
+  } else if (practiceActive) {
+    activeAncestors.add("practice");
     activeAncestors.add("training");
   } else if (guideActive) {
     activeAncestors.add("guide");
@@ -235,7 +244,7 @@ export function ExpandableSidebar({
     if (mobileOpen) {
       const next = new Set<string>();
       next.add(section);
-      if (section === "script" || section === "roleplay") next.add("training");
+      if (section === "script" || section === "roleplay" || section === "practice") next.add("training");
       return next;
     }
 
@@ -245,21 +254,31 @@ export function ExpandableSidebar({
       next.delete("training");
       next.delete("script");
       next.delete("roleplay");
+      next.delete("practice");
     } else if (section === "training") {
       next.add("training");
       next.delete("guide");
       if (!forceKeepDescendants) {
         next.delete("script");
         next.delete("roleplay");
+        next.delete("practice");
       }
     } else if (section === "script") {
       next.add("script");
       next.delete("roleplay");
+      next.delete("practice");
       next.add("training");
       next.delete("guide");
     } else if (section === "roleplay") {
       next.add("roleplay");
       next.delete("script");
+      next.delete("practice");
+      next.add("training");
+      next.delete("guide");
+    } else if (section === "practice") {
+      next.add("practice");
+      next.delete("script");
+      next.delete("roleplay");
       next.add("training");
       next.delete("guide");
     }
@@ -277,12 +296,14 @@ export function ExpandableSidebar({
         let routeTarget = "";
         if (activeAncestors.has("script")) routeTarget = "script";
         else if (activeAncestors.has("roleplay")) routeTarget = "roleplay";
+        else if (activeAncestors.has("practice")) routeTarget = "practice";
         else if (activeAncestors.has("guide")) routeTarget = "guide";
         else if (activeAncestors.has("training")) routeTarget = "training";
 
         let restoredTarget = "";
         if (parsed.has("script")) restoredTarget = "script";
         else if (parsed.has("roleplay")) restoredTarget = "roleplay";
+        else if (parsed.has("practice")) restoredTarget = "practice";
         else if (parsed.has("guide")) restoredTarget = "guide";
         else if (parsed.has("training")) restoredTarget = "training";
 
@@ -291,6 +312,7 @@ export function ExpandableSidebar({
         if (target) {
           if (target === "script") { next.add("script"); next.add("training"); }
           else if (target === "roleplay") { next.add("roleplay"); next.add("training"); }
+          else if (target === "practice") { next.add("practice"); next.add("training"); }
           else if (target === "guide") { next.add("guide"); }
           else if (target === "training") { next.add("training"); }
         }
@@ -319,6 +341,7 @@ export function ExpandableSidebar({
         let targetSection = "";
         if (activeAncestors.has("script")) targetSection = "script";
         else if (activeAncestors.has("roleplay")) targetSection = "roleplay";
+        else if (activeAncestors.has("practice")) targetSection = "practice";
         else if (activeAncestors.has("guide")) targetSection = "guide";
         else if (activeAncestors.has("training")) targetSection = "training";
 
@@ -349,6 +372,7 @@ export function ExpandableSidebar({
   const trainingOpen = isSectionOpen("training");
   const scriptOpen = isSectionOpen("script");
   const roleplayOpen = isSectionOpen("roleplay");
+  const practiceOpen = isSectionOpen("practice");
 
   const handleToggle = (section: string) => {
     setExpanded((prev) => {
@@ -356,7 +380,7 @@ export function ExpandableSidebar({
         const next = new Set<string>();
         if (!prev.has(section)) {
           next.add(section);
-          if (section === "script" || section === "roleplay") next.add("training");
+          if (section === "script" || section === "roleplay" || section === "practice") next.add("training");
         }
         return next;
       }
@@ -367,6 +391,7 @@ export function ExpandableSidebar({
         if (section === "training") {
           next.delete("script");
           next.delete("roleplay");
+          next.delete("practice");
         }
         return next;
       } else {
@@ -563,15 +588,30 @@ export function ExpandableSidebar({
               />
             ))}
           </CollapsibleSection>
-          <NavigationButton
-            active={activeView === "practice"}
+          <CollapsibleSection
+            active={practiceActive}
             depth={1}
             label="STEP 6. 실전 연습"
-            onClick={() => {
-              setExpanded((prev) => expandSmartly(prev, "training"));
+            onNavigate={() => {
+              setExpanded((prev) => expandSmartly(prev, "practice"));
               navigate("practice");
             }}
-          />
+            onToggle={() => handleToggle("practice")}
+            open={practiceOpen}
+          >
+            {practiceItems.map((item) => (
+              <NavigationButton
+                active={activeView === item.id}
+                depth={2}
+                key={item.id}
+                label={item.label}
+                onClick={() => {
+                  setExpanded((prev) => expandSmartly(prev, "practice"));
+                  navigate(item.id);
+                }}
+              />
+            ))}
+          </CollapsibleSection>
         </CollapsibleSection>
         <NavigationButton
           active={activeView === "magazine-list"}

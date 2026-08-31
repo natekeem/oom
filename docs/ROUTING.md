@@ -41,6 +41,8 @@ OPIc training hub
 │  ├─ group 2 scenario
 │  └─ group 3 scenario
 └─ STEP 6. practice
+   ├─ quick practice
+   └─ full mock
 OOM magazine
 Footer legal pages
 ├─ about
@@ -63,7 +65,7 @@ The candidate guide and training hub are independent top-level branches. STEP 1-
 - `survey` (STEP 2, 20%), `difficulty` (STEP 3, 40%)
 - `script-hub`, `script-self-introduction`, and `script-*` (STEP 4, 60%)
 - `roleplay-hub`, `roleplay-formula`, and `roleplay-*` (STEP 5, 80%)
-- `practice` (STEP 6, 100%)
+- `practice`, `practice-quick`, and `practice-mock` (STEP 6, 100%)
 
 The header dynamically shows the current course group title and progress percentage (0% -> 20% -> 40% -> 60% -> 80% -> 100%).
 Home, all `exam-*` views, `magazine-list` (including article detail URLs), footer legal pages, and `ai-settings` do not render the sticky training header. Their mobile experience uses compact floating controls instead.
@@ -97,7 +99,9 @@ Public route targets use the canonical `https://opic-on-me.com/path/` form. Inte
 | `roleplay-indoor` | Training / STEP 5 child | `RoleplayViewV2` | Yes, 80% | Generic slot 1 scenario (e.g. cafe/indoor) |
 | `roleplay-sports` | Training / STEP 5 child | `RoleplayViewV2` | Yes, 80% | Generic slot 2 scenario (e.g. sports/fitness) |
 | `roleplay-home` | Compatibility route, hidden from current sidebar | `RoleplayViewV2` | Yes, 80% | Legacy slot 3 URL; current three-scenario manifests fall back safely to slot 0 |
-| `practice` | Training / STEP 6 | `PracticeView` | Yes, 100% | Random prompt by Course × Level, timer, recording, feedback |
+| `practice` | Training / STEP 6 parent | `PracticeHubView` | Yes, 100% | `/practice/` route-only Hub; no exam runtime mounted |
+| `practice-quick` | Training / STEP 6 child | `PracticeView` | Yes, 100% | `/practice/quick/`; Quick warm-up, one-question review/retry |
+| `practice-mock` | Training / STEP 6 child | `FullMockPracticeView` | Yes, 100% | `/practice/mock/`; Survey-first Full Mock with in-memory session state |
 | `magazine-list` | Top-level magazine | `MagazineList` / `MagazineDetail` | No | `/magazine/` lists static articles; `/magazine/:id/` renders the selected article |
 | `ai-settings` | Top-level utility | `AiSettingsView` | No | LLM runtime configuration |
 | `about` | App sidebar and footer information page | `HomeView` | No | `/about/` keeps the shared AppShell width and presents a compact editorial metrics rail, four-step OOM Method, AI Coach closing, and training/guide CTAs in one desktop-view composition |
@@ -115,7 +119,7 @@ Public route targets use the canonical `https://opic-on-me.com/path/` form. Inte
 survey -> difficulty -> script-hub
 ```
 
-The self-introduction and group-specific script routes point to `roleplay-hub`. `roleplay-hub`, its compatibility formula route, and scenario routes point to `practice`. `practice` is the end of the six-step flow and intentionally has no next-step action. `training-hub` and `script-hub` intentionally have no forced next step because the user must choose or configure a branch there.
+The self-introduction route points to the first generic storyline slot so its Next action does not skip STEP 4. Group-specific script routes point to `roleplay-hub`. `roleplay-hub`, its compatibility formula route, and scenario routes point to the STEP 6 Hub at `practice`. STEP 6 is the end of the six-step flow and intentionally has no next-step action. Its Quick and Mock child URLs are sidebar leaves, share the selection guard and 100% progress, and are emitted as separate static canonical routes. `training-hub` and `script-hub` intentionally have no forced next step because the user must choose or configure a branch there.
 
 ## Synchronization Rules
 

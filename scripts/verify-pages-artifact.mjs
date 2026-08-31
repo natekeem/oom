@@ -39,6 +39,9 @@ const requiredRouteFiles = [
   "exam-guide/index.html",
   "privacy/index.html",
   "about/index.html",
+  "practice/index.html",
+  "practice/quick/index.html",
+  "practice/mock/index.html",
   "contact/index.html",
   "terms/index.html",
   "editorial-policy/index.html",
@@ -124,6 +127,8 @@ for (const routeFile of generatedIndexFiles) {
 
 const adExcludedRoutes = [
   "practice/index.html",
+  "practice/quick/index.html",
+  "practice/mock/index.html",
   "ai-settings/index.html",
   "magazine/index.html",
   "about/index.html",

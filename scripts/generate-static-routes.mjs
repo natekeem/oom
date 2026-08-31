@@ -242,11 +242,31 @@ const baseRoutes = [
   {
     path: "/practice/",
     title: "OPIc 실전 연습 | 오픽온미",
-    description: "시험 화면 스타일로 질문을 듣고 답변을 녹음한 뒤, STT와 AI 맞춤 피드백으로 복기하며 같은 질문에 재도전합니다.",
-    heading: "STEP 6. 실전 연습",
+    description: "빠른 한 문제 연습과 전체 모의고사 중 원하는 방식으로 OPIc 말하기를 연습합니다.",
+    heading: "OPIc 실전 연습",
     content: [
-      "시험 화면 스타일로 질문을 듣고 답변한 뒤, 녹음을 다시 듣고 optional STT로 transcript를 확인·수정한 다음, AI 피드백과 같은 질문 재도전으로 복기합니다.",
-      "OOM의 목표 시간 표시는 발화량을 훈련하기 위한 학습 프리셋이며, 실제 OPIc 시험의 문항별 제한시간이 아닙니다."
+      "빠른 한 문제 연습과 전체 모의고사 중 원하는 방식으로 연습합니다.",
+      "STEP 6 허브에서 짧은 피드백 반복과 끝까지 이어지는 모의 시험 흐름을 목적에 맞게 선택합니다."
+    ],
+  },
+  {
+    path: "/practice/quick/",
+    title: "OPIc 빠른 연습 | 오픽온미",
+    description: "한 문항을 듣고 답변한 뒤 녹음, STT, AI 피드백으로 바로 복기합니다.",
+    heading: "OPIc 빠른 연습",
+    content: [
+      "한 문항을 듣고 답변한 뒤 녹음, STT, AI 피드백으로 바로 복기합니다.",
+      "자기소개 워밍업 뒤 질문을 최대 2회 듣고, 같은 질문을 다시 말하는 짧은 교정 루프를 반복합니다."
+    ],
+  },
+  {
+    path: "/practice/mock/",
+    title: "OPIc 실전 모의고사 | 오픽온미",
+    description: "Background Survey, Self Assessment, 자기소개 워밍업, 1st Session, 난이도 재조정, 2nd Session 흐름을 연습합니다.",
+    heading: "OPIc 실전 모의고사",
+    content: [
+      "Background Survey, Self Assessment, 자기소개 워밍업, 1st Session, 난이도 재조정, 2nd Session 흐름을 연습합니다.",
+      "현재 Course의 설문과 질문 풀을 사용하는 OOM training simulation이며 실제 출제 알고리즘이나 공식 시험 화면을 재현하지 않습니다."
     ],
   },
   {
@@ -293,7 +313,9 @@ const pageGuides = {
   "/roleplay/indoor/": { purpose: "현재 선택한 코스의 실제 상황을 사용하여 문제 설명 → 정보 질문 → 대안 제시 흐름을 연습합니다.", how: "코스별 롤플레이 시나리오에서 문제를 파악하고 6단계 공식에 맞춰 해결책을 요청합니다.", benefit: "실제 서비스 상황에서 침착하게 대안을 요청하고 마무리하는 능력을 기릅니다.", checklist: ["문제 상황을 파악했다", "가능한 대안을 제시했다", "녹음으로 답변 흐름을 점검했다"], links: [["/roleplay/", "롤플레이 허브"], ["/practice/", "실전 연습"]] },
   "/roleplay/sports/": { purpose: "현재 선택한 코스의 실제 상황을 사용하여 문제 설명 → 정보 질문 → 대안 제시 흐름을 연습합니다.", how: "코스별 롤플레이 시나리오에서 문제를 파악하고 6단계 공식에 맞춰 해결책을 요청합니다.", benefit: "실제 서비스 상황에서 침착하게 대안을 요청하고 마무리하는 능력을 기릅니다.", checklist: ["문제 상황을 파악했다", "가능한 대안을 제시했다", "녹음으로 답변 흐름을 점검했다"], links: [["/roleplay/", "롤플레이 허브"], ["/practice/", "실전 연습"]] },
   "/roleplay/home/": { purpose: "현재 선택한 코스의 실제 상황을 사용하여 문제 설명 → 정보 질문 → 대안 제시 흐름을 연습합니다.", how: "코스별 롤플레이 시나리오에서 문제를 파악하고 6단계 공식에 맞춰 해결책을 요청합니다.", benefit: "실제 서비스 상황에서 침착하게 대안을 요청하고 마무리하는 능력을 기릅니다.", checklist: ["문제 상황을 파악했다", "가능한 대안을 제시했다", "녹음으로 답변 흐름을 점검했다"], links: [["/roleplay/", "롤플레이 허브"], ["/practice/", "실전 연습"]] },
-  "/practice/": { purpose: "실전 연습 페이지는 시험 화면 콘솔, 레벨별 목표 시간, 녹음, optional STT 전사, AI 피드백, 재도전으로 구성된 2단계 말하기 훈련 공간입니다.", how: "질문을 뽑은 뒤 Play 버튼으로 질문을 듣고(최대 2회), '답변 시작'을 눌러 녹음합니다. 녹음 완료 후 내 녹음을 듣고, STT transcript를 확인·수정한 뒤 KEEP/FIX/RETRY 요약을 먼저 확인하고 같은 질문을 다시 말합니다.", benefit: "시험장과 유사한 조작 환경에서 발화하고, 가장 먼저 고칠 한 가지를 다음 시도에 바로 적용할 수 있습니다. 필요할 때만 상세 진단을 펼칩니다.", checklist: ["질문을 듣고 핵심 시제와 명사를 잡았다", "OOM 연습 목표 시간에 맞춰 녹음했다", "transcript를 확인·수정했다", "KEEP/FIX/RETRY를 반영해 다시 말했다"], mistakes: ["녹음 후 모든 문법을 한 번에 고치려 한다", "STT 미설정 시 직접 입력이 가능한데 포기한다"], links: [["/training/scripts/", "스크립트 훈련"], ["/roleplay/formula/", "롤플레이 공식"], ["/exam-guide/screen/", "시험 화면 가이드"]] },
+  "/practice/": { purpose: "STEP 6 허브는 빠른 연습과 실전 모의고사를 서로 독립된 URL로 안내하는 실전 말하기 훈련 입구입니다.", how: "한 문제를 바로 고쳐 말하려면 빠른 연습을, Background Survey부터 두 Session과 전체 복기까지 이어가려면 실전 모의고사를 선택합니다.", benefit: "현재 목표에 맞는 연습 방식을 바로 찾고 사이드바의 두 하위 메뉴로 언제든지 이동할 수 있습니다.", checklist: ["오늘 필요한 연습 길이를 정했다", "빠른 연습과 모의고사의 복기 시점을 구분했다", "현재 Course와 Level 설정을 확인했다"], mistakes: ["두 방식을 같은 화면의 임시 모드로 오해한다", "긴 모의고사 중 문항별 피드백을 기대한다"], links: [["/practice/quick/", "빠른 연습"], ["/practice/mock/", "실전 모의고사"], ["/training/setup/", "Course와 Level 설정"]] },
+  "/practice/quick/": { purpose: "빠른 연습은 자기소개 워밍업 뒤 한 문항을 듣고 녹음하여 즉시 복기하는 짧은 STEP 6 훈련입니다.", how: "질문을 최대 2회 듣고 답변을 녹음합니다. 녹음 뒤 optional STT transcript를 확인·수정하고 AI의 KEEP, FIX, RETRY를 적용해 같은 질문을 다시 말합니다.", benefit: "약 2~5분 안에 한 가지 개선점을 다음 발화에 바로 적용할 수 있습니다.", checklist: ["질문의 핵심 시제와 명사를 들었다", "답변을 녹음하거나 타이머로 발화했다", "transcript를 확인했다", "한 가지 수정점을 적용해 다시 말했다"], mistakes: ["한 번에 모든 표현을 고치려 한다", "질문 청취 2회 제한을 반복 재생으로 우회한다"], links: [["/practice/", "실전 연습 허브"], ["/practice/mock/", "실전 모의고사"], ["/ai-settings/", "AI와 STT 설정"]] },
+  "/practice/mock/": { purpose: "실전 모의고사는 현재 Course의 배경 설문과 질문 풀로 준비 단계부터 두 Session, 전체 복기까지 이어가는 STEP 6 훈련입니다.", how: "Background Survey를 선택하고 OOM Self Assessment 프리셋을 고른 뒤 시험 준비를 확인합니다. 자기소개 Warm-up 후 1st Session, 난이도 재조정, 2nd Session을 진행하고 종료 뒤 선택한 답변만 STT와 AI로 복기합니다.", benefit: "시험 중 피드백을 끊고 40분 타이머 안에서 질문 청취와 연속 발화 리듬을 연습할 수 있습니다.", checklist: ["현재 Course의 설문 설정을 확인했다", "저장값과 별개인 초기 Mock 난이도를 골랐다", "시험 중 힌트 없이 답했다", "종료 뒤 필요한 답변을 선택해 복기했다"], mistakes: ["OOM 구성을 공식 출제 알고리즘으로 오해한다", "시험 중 transcript나 AI 피드백을 찾는다"], links: [["/practice/", "실전 연습 허브"], ["/practice/quick/", "빠른 연습"], ["/training/survey/", "추천 서베이 익히기"]] },
 };
 
 function loadTypeScriptExport(relativePath, exportName) {
@@ -325,7 +347,7 @@ function sectionsFromGuide(guide) {
 const enrichedBaseRoutes = baseRoutes.map((route) => ({
   ...route,
   sections: route.sections ?? sectionsFromGuide(pageGuides[route.path]),
-  adExcluded: route.noindex || ["/ai-settings/", "/practice/", "/magazine/"].includes(route.path),
+  adExcluded: route.noindex || ["/ai-settings/", "/practice/", "/practice/quick/", "/practice/mock/", "/magazine/"].includes(route.path),
 }));
 
 const magazineRoutes = loadTypeScriptExport("src/data/magazine.ts", "magazineArticles").map((article) => ({

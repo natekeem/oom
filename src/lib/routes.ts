@@ -26,6 +26,8 @@ export const viewPathForId: Record<ViewId, string> = {
   "roleplay-sports": "/roleplay/sports/",
   "roleplay-home": "/roleplay/home/",
   practice: "/practice/",
+  "practice-quick": "/practice/quick/",
+  "practice-mock": "/practice/mock/",
   "ai-settings": "/ai-settings/",
   "magazine-list": "/magazine/",
   about: "/about/",
@@ -62,6 +64,8 @@ export function viewIdForPath(path: string): ViewId {
   if (normalized === "/roleplay/indoor") return "roleplay-indoor";
   if (normalized === "/roleplay/sports") return "roleplay-sports";
   if (normalized === "/roleplay/home") return "roleplay-home";
+  if (normalized === "/practice/quick") return "practice-quick";
+  if (normalized === "/practice/mock") return "practice-mock";
   if (normalized === "/practice") return "practice";
   if (normalized === "/ai-settings") return "ai-settings";
   if (normalized === "/magazine" || normalized.startsWith("/magazine/")) return "magazine-list";

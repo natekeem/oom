@@ -44,8 +44,10 @@ OOM (오픽온미, OPIc On Me)은 OPIc speaking practice를 위한 Vite + React 
 - STEP 4 keeps one macro order at every Level: OPEN, SCENE, CLOSE. These are learning sections, not raw paragraph indexes. ANSWER, SCENE/ACTION/DETAILS, RESULT/FEELING, and optional EXPANSION remain micro functions.
 - STEP 4 keeps the existing three tabs and shared variant selection. Foundation must never fall back to an Advanced paragraph.
 - STEP 5 treats six named functions as a flexible menu. Problem/purpose, request/question, and next action are CORE; the rest are OPTIONAL. Roleplay count is independent of storyline count.
-- STEP 6 keeps exam and review phases separate. Exam is audio-first, non-seekable, and capped at listen `0/2` through `2/2`. Review owns recording replay, optional STT, editable transcript, AI feedback, and same-question retry.
-- Do not promise an OPIc score or grade. A transcript cannot support pronunciation grading; do not present text-only feedback as pronunciation assessment.
+- STEP 6 is one parent training area with a hub at `/practice/`, Quick Practice at `/practice/quick/`, and Full Mock at `/practice/mock/`; all three remain STEP 6 at 100% progress. Do not collapse these child routes back into route-local mode state without an explicit product decision.
+- Quick Practice keeps the one-question warm-up → exam → review/STT/AI → retry loop. Full Mock begins Background Survey → Self Assessment → Pre-Test → warm-up → Session 1 → difficulty adjustment → Session 2 → whole-session review. Both exam surfaces are audio-first, non-seekable, and capped at listen `0/2` through `2/2`.
+- During Full Mock, do not call or show STT, AI, transcript, hints, question text, or per-question target time between questions. Its 40-minute main timer starts after warm-up, and mid-test adjustment changes only the internal Session 2 prompt Level; it never mutates `TrainingSelection` or localStorage.
+- Full Mock may show an explicitly non-official OOM diagnostic score and estimated grade range only after completion. The calculation must disclose that it uses completion, target-duration fit, recording coverage, and optional STT/AI review evidence; it must never be framed as an official OPIc result or guarantee. A transcript cannot support pronunciation grading, so do not present text-only feedback as pronunciation or acoustic fluency assessment.
 - Keep Course-neutral SEO and crawler-visible static route body. Do not hardcode one current Course into general route metadata.
 
 ## TTS Rules
@@ -84,7 +86,7 @@ The full authoring sequence and current structural expectations are in `docs/CON
 - Self Introduction is not STEP 7. It is a Course-neutral Level-aware single child menu under STEP 4, and a one-time warm-up before the first STEP 6 practice question. Do not add a progress slot or change the six-step order.
 - STEP 4 canonical storyline, three tabs, variant continuity, OPEN/SCENE/CLOSE
 - STEP 5 CORE/OPTIONAL model and Course-owned scenarios
-- STEP 6 exam/review boundary, EVA, listen 0/2, Recorder, optional STT, editable transcript, AI fallback
+- STEP 6 parent/child routes, Quick regression contract, Full Mock orientation and exam state machines, exam/review/report boundary, EVA, listen 0/2, Recorder, post-exam optional STT, editable transcript, AI fallback, and downloadable local HTML diagnostic report
 - independent landing shell at `/` and shared AppShell behavior elsewhere
 - light/dark theme, responsive navigation, keyboard focus, accessible names, loading/error states
 - static-first TTS, four locked voices, generated audio/peaks/manifest, Kokoro and Web Speech fallbacks

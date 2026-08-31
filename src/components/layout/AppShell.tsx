@@ -36,6 +36,8 @@ const progressMap: Partial<Record<ViewId, number>> = {
   "roleplay-sports": 80,
   "roleplay-home": 80,
   practice: 100,
+  "practice-quick": 100,
+  "practice-mock": 100,
 };
 
 const mobileTrainingLabels: Partial<Record<ViewId, string>> = {
@@ -56,6 +58,8 @@ const mobileTrainingLabels: Partial<Record<ViewId, string>> = {
   "roleplay-sports": "STEP 5 · 시나리오",
   "roleplay-home": "STEP 5 · 시나리오",
   practice: "STEP 6 · 실전 연습",
+  "practice-quick": "STEP 6 · 빠른 연습",
+  "practice-mock": "STEP 6 · 실전 모의고사",
 };
 
 export function AppShell({

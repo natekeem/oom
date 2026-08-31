@@ -20,6 +20,7 @@ import {
   getSelfIntroduction,
   SELF_INTRODUCTION_PROMPT,
 } from "../../data/training/selfIntroduction";
+import { PracticeModeSelector } from "./PracticeModeSelector";
 
 type PracticeViewProps = {
   settings: LlmSettings;
@@ -603,7 +604,7 @@ function PracticeViewContent({
       <div>
         <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
           <span className="text-xs font-bold uppercase tracking-wider">
-            STEP 6. 실전 연습
+            STEP 6 · 빠른 연습
           </span>
         </div>
         <h1 className="mt-1.5 text-2xl font-bold text-zinc-950 dark:text-white sm:text-3xl">
@@ -734,6 +735,18 @@ export function PracticeView({
           resolved={resolved}
           settings={settings}
           sttSettings={sttSettings}
+        />
+      )}
+    </TrainingSelectionGuard>
+  );
+}
+
+export function PracticeHubView({ onNavigate }: { onNavigate?: (view: ViewId) => void }) {
+  return (
+    <TrainingSelectionGuard onNavigate={onNavigate} stepName="STEP 6. 실전 연습">
+      {() => (
+        <PracticeModeSelector
+          onSelect={(mode) => onNavigate?.(mode === "quick" ? "practice-quick" : "practice-mock")}
         />
       )}
     </TrainingSelectionGuard>

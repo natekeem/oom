@@ -26,6 +26,8 @@ export type ViewId =
   | "roleplay-sports"
   | "roleplay-home"
   | "practice"
+  | "practice-quick"
+  | "practice-mock"
   | "ai-settings"
   | "magazine-list"
   | "about"
@@ -61,6 +63,8 @@ export const viewTitles: Record<ViewId, string> = {
   "roleplay-sports": "STEP 5. 그룹 3 롤플레이",
   "roleplay-home": "STEP 5. 그룹 4 롤플레이",
   practice: "STEP 6. 실전 연습",
+  "practice-quick": "STEP 6. 빠른 연습",
+  "practice-mock": "STEP 6. 실전 모의고사",
   "ai-settings": "AI 피드백 / 설정",
   "magazine-list": "오픽 매거진",
   about: "오픽온미란?",

@@ -66,7 +66,7 @@ describe("OOM", () => {
     );
 
     expect(await screen.findByText("훈련 진행 60%")).toBeInTheDocument();
-    expect(screen.getAllByRole("button", { name: "다음 단계: STEP 5" })).toHaveLength(2);
+    expect(screen.getAllByRole("button", { name: "다음 단계: 첫 스토리" })).toHaveLength(2);
   });
 
   it("ends the six-step header flow on practice without an AI settings action", async () => {
@@ -79,6 +79,71 @@ describe("OOM", () => {
 
     expect(await screen.findByText("훈련 진행 100%")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "다음 단계: AI 설정" })).not.toBeInTheDocument();
+  });
+
+  it("routes the STEP 6 hub, Quick child, and Mock child independently", async () => {
+    saveTrainingSelection({ courseId: "course-1", levelId: "advanced" });
+
+    const hub = render(
+      <MemoryRouter initialEntries={["/practice/"]}>
+        <App />
+      </MemoryRouter>
+    );
+    expect(await screen.findByRole("heading", { name: "배운 내용을 실제 말하기로 연결해보세요." })).toBeInTheDocument();
+    expect(screen.queryByText("OOM OPIc Practice Console")).not.toBeInTheDocument();
+    hub.unmount();
+
+    const quick = render(
+      <MemoryRouter initialEntries={["/practice/quick/"]}>
+        <App />
+      </MemoryRouter>
+    );
+    expect(await screen.findByText("WARM-UP · 자기소개")).toBeInTheDocument();
+    expect(screen.getByText("훈련 진행 100%")).toBeInTheDocument();
+    expect(screen.getAllByText("STEP 6 · 빠른 연습").length).toBeGreaterThan(0);
+    quick.unmount();
+
+    render(
+      <MemoryRouter initialEntries={["/practice/mock/"]}>
+        <App />
+      </MemoryRouter>
+    );
+    expect(await screen.findByRole("heading", { name: /모의고사에서 사용할 배경 설문/ })).toBeInTheDocument();
+    expect(screen.queryByText("WARM-UP · 자기소개")).not.toBeInTheDocument();
+    expect(screen.getByText("훈련 진행 100%")).toBeInTheDocument();
+    expect(screen.getAllByText("STEP 6 · 실전 모의고사").length).toBeGreaterThan(0);
+  });
+
+  it("keeps STEP 6 expanded with two leaf children on desktop and mobile", async () => {
+    saveTrainingSelection({ courseId: "course-1", levelId: "advanced" });
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={["/practice/mock/"]}>
+        <App />
+      </MemoryRouter>
+    );
+    await screen.findByRole("heading", { name: /모의고사에서 사용할 배경 설문/ });
+
+    const desktopNav = screen.getByRole("navigation", { name: "OOM 메뉴" });
+    expect(within(desktopNav).getByRole("button", { name: "STEP 6. 실전 연습 하위 메뉴 접기" })).toHaveAttribute("aria-expanded", "true");
+    expect(within(desktopNav).getByRole("button", { name: "실전 모의고사" })).toHaveAttribute("aria-current", "page");
+    expect(within(desktopNav).getByRole("button", { name: "빠른 연습" })).not.toHaveAttribute("aria-expanded");
+    expect(within(desktopNav).queryByRole("button", { name: /빠른 연습 하위 메뉴/ })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "메뉴 열기" }));
+    const mobile = screen.getByRole("dialog", { name: "모바일 메뉴" });
+    expect(within(mobile).getByRole("button", { name: "빠른 연습" })).toBeInTheDocument();
+    expect(within(mobile).getByRole("button", { name: "실전 모의고사" })).toHaveAttribute("aria-current", "page");
+  });
+
+  it.each(["/practice/quick/", "/practice/mock/"])("guards direct STEP 6 child access without a selection: %s", async (path) => {
+    localStorage.removeItem("oom-training-selection-v1");
+    render(
+      <MemoryRouter initialEntries={[path]}>
+        <App />
+      </MemoryRouter>
+    );
+    expect(await screen.findByText("먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.")).toBeInTheDocument();
   });
 
   it("treats the mobile menu as a modal, closes with Escape, and restores trigger focus", async () => {

@@ -65,11 +65,11 @@ The sidebar reads the resolved storyline/roleplay `group` labels, so a Course ch
 | 3 | `/training/difficulty/` | `DifficultyGuide` | selected Level preset plus non-mutating difficulty simulation and voice preferences | 40% |
 | 4 | `/training/scripts/` | `SelfIntroductionView`, `ScriptHub`, `ScriptDashboardV2`, `ScriptTrainingTabs` | Course-neutral self-introduction child guide, canonical story, prompt variation, answer blueprint | 60% |
 | 5 | `/roleplay/` | `RoleplayHub`, `RoleplayViewV2` | CORE/OPTIONAL function menu and Course scenarios | 80% |
-| 6 | `/practice/` | `PracticeView` | one-time self-introduction warm-up, audio-first question, recording, review, retry | 100% |
+| 6 | `/practice/`, `/practice/quick/`, `/practice/mock/` | `PracticeHubView`, `PracticeView`, `FullMockPracticeView` | Routed Hub, Quick one-question practice, and Full Mock orientation/exam flow | 100% |
 
 The training hub is a neutral six-step overview. It does not silently select a Course or Level. The sticky title/progress header is a training-only AppShell affordance; landing, about, guide, magazine, legal, and settings routes do not show it.
 
-Self Introduction is the first single child menu under STEP 4. It does not add a seventh step or a progress slot. The same Level-aware, Course-neutral data is reused once as a warm-up before the first STEP 6 practice question; warm-up audio and recording do not enter the review, STT, or AI feedback phase.
+Self Introduction is the first single child menu under STEP 4. It does not add a seventh step or a progress slot. The same Level-aware, Course-neutral data is reused once as a warm-up before either STEP 6 mode; warm-up audio and recording do not enter the review, STT, or AI feedback phase.
 
 ## STEP 4 Mental Model
 
@@ -107,26 +107,36 @@ Situation detail, extra information questions, alternatives, and closing are OPT
 
 ## STEP 6 Mental Model
 
-STEP 6 has two explicit phases.
+STEP 6 is a parent area with two equal child routes. The hub does not mount Recorder, TTS, STT, or a Mock plan.
 
 ```text
-Exam
-question pre-resolved without consuming a listen
-→ Play consumes one of 2 listens
-→ non-seekable waveform, 1.00×
-→ recording + Level-aware timer
+Quick Practice
+/practice/quick/
+→ one-time warm-up
+→ one pre-resolved audio-first question, 0/2 listens, 1.00×
+→ recording + Level-aware coaching timer
+→ local replay / optional STT / editable transcript / AI feedback
+→ same-question retry or random next question
 
-Review
-local recording replay
-→ optional STT
-→ editable/confirmed transcript
-→ KEEP / FIX / RETRY feedback
-→ same-question retry or next question
+Full Mock
+/practice/mock/
+→ Background Survey from the current Course preset
+→ OOM Self Assessment preset stored only in Mock memory
+→ Pre-Test setup
+→ one-time warm-up outside the main timer
+→ Session 1: 7 selected-Level general questions
+→ user difficulty adjustment (saved selection unchanged)
+→ Session 2: Level-dependent 5/7/8 general + roleplay mix
+→ completion summary and whole-session answer list
+→ manual STT / editable transcript / AI for one selected answer at a time
+→ non-official OOM diagnostic score / estimated range / local HTML Report
 ```
 
-Recorder failure must not silently start an audio recording state. A timer-only path may remain available with clear UI. STT and LLM failure do not invalidate the local recording or prevent manual transcript review.
+Full Mock is an OOM training heuristic informed by the publicly described high-level exam flow; it does not claim official question composition or order. The current Course stays fixed. Mock Survey selection uses the explicit storyline `surveyOptionIds` mapping to prioritize eligible questions, and the Mock Self Assessment Level becomes Session 1's source without mutating `TrainingSelection` or localStorage. The plan is seeded once at start. Its main timer is 40 minutes with no added per-question limit. During the exam, question text, storyline hints, target seconds, STT, AI, transcript, and retry controls stay hidden. Each question resets to 0/2 listening and waits for the user to move forward after recording finalization.
 
-AI feedback is coaching, not official scoring. Transcript-only analysis must not claim pronunciation accuracy, fluency acoustics, or an OPIc grade.
+Recorder failure must not silently start an audio recording state. A timer-only path remains available with clear UI in both modes. STT and LLM failure do not invalidate the local recording or prevent manual transcript review.
+
+AI feedback is coaching, not official scoring. After Full Mock completion, OOM may calculate a transparent training diagnostic score and estimated range from completion rate, target-duration fit, recording coverage, and optional STT/AI review coverage. The UI and downloaded HTML must label this as non-official and non-guaranteed. Transcript-only analysis must not claim pronunciation accuracy or acoustic fluency.
 
 ## Regression Contracts
 

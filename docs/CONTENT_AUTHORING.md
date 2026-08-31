@@ -120,6 +120,10 @@ In `questions.ts`, current structural tests require at least 12 questions for ea
 
 Question pools must be isolated by Course and Level. Avoid using one Course as a silent fallback for another.
 
+Each Course × Level should provide enough unique general questions for STEP 6 Full Mock planning. Full Mock readiness requires a valid Course survey preset, storyline `surveyOptionIds`, questions with matching `storylineId`, and an adequate roleplay pool. The current readiness target is at least 12 questions with storyline IDs that support balanced selection. Roleplay count may vary; the planner caps its target at the available unique records and must degrade safely for sparse future data without pushing undefined prompts. Mock composition reuses these existing prompt strings and must not introduce separate spoken copies.
+
+The current data model provides an explicit Survey → storyline mapping, so Mock selection prioritizes questions through `surveyOptionIds` and `storylineId`. Do not replace this with title or prompt keyword matching. A future Course may add a richer explicit mapping, but until then the same-Course pool is the only allowed fallback when selected topics cannot fill the required session count.
+
 ### 8. Assemble and resolve
 
 In `index.ts`, assemble all eight data owners into one `CourseBundle`. Then use `resolveTrainingContext(newCourseId, levelId)` in a focused test or dev check for each Level.

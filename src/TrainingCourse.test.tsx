@@ -733,13 +733,13 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
     saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
     const user = userEvent.setup();
     render(
-      <MemoryRouter initialEntries={['/practice']}>
+      <MemoryRouter initialEntries={['/practice/quick/']}>
         <App />
       </MemoryRouter>
     );
 
     // Pass the warmup first
-    await user.click(screen.getByRole('button', { name: /워밍업 시작/ }));
+    await user.click(await screen.findByRole('button', { name: /워밍업 시작/ }));
     await user.click(await screen.findByRole('button', { name: /타이머만 시작/ }));
     await user.click(await screen.findByRole('button', { name: /워밍업 종료/ }));
     await screen.findByRole('button', { name: '랜덤 질문 뽑기' }, { timeout: 2500 });
@@ -923,11 +923,13 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
   });
 
   // ── 44. Static /practice/ description mentions STT flow ──
-  it('44. Static /practice/ route description and content reflect STT flow', () => {
+  it('44. Static STEP 6 routes separate Hub, Quick STT, and Survey-first Mock content', () => {
     const script = readFileSync(join(process.cwd(), 'scripts', 'generate-static-routes.mjs'), 'utf8');
 
-    // New STT-flow content should be present for /practice/
-    expect(script).toContain('optional STT 전사');
+    expect(script).toContain('path: "/practice/quick/"');
+    expect(script).toContain('optional STT transcript');
+    expect(script).toContain('path: "/practice/mock/"');
+    expect(script).toContain('Background Survey, Self Assessment');
     // Old stale text should be gone
     expect(script).not.toContain('녹음과 텍스트 답변으로 다시 점검합니다');
   });
@@ -1022,7 +1024,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
     saveTrainingSelection({ courseId: 'course-1', levelId: 'advanced' });
     const user = userEvent.setup();
     render(
-      <MemoryRouter initialEntries={['/practice']}>
+      <MemoryRouter initialEntries={['/practice/quick/']}>
         <App />
       </MemoryRouter>
     );

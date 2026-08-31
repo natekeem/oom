@@ -1,4 +1,4 @@
-import { ArrowRight, CircleHelp, Layers3 } from "lucide-react";
+import { ArrowRight, CircleHelp, Layers3, Mic2 } from "lucide-react";
 import type { ViewId } from "../layout/Sidebar";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
@@ -55,6 +55,21 @@ export function ScriptHub({ onNavigate }: { onNavigate: (view: ViewId) => void }
                   </p>
                 </div>
               </div>
+            </Card>
+
+            <Card className="flex flex-col gap-4 border-zinc-200 p-4 dark:border-zinc-800 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex min-w-0 gap-3">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300">
+                  <Mic2 className="h-4 w-4" />
+                </span>
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.14em] text-indigo-600 dark:text-indigo-400">WARM-UP · 자기소개</p>
+                  <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-300">본격적인 스토리 연습 전에 20~30초 자기소개를 확인하세요.</p>
+                </div>
+              </div>
+              <Button className="shrink-0" onClick={() => onNavigate("script-self-introduction")} size="sm" variant="secondary">
+                자기소개 보기 <ArrowRight className="h-4 w-4" />
+              </Button>
             </Card>
 
             <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

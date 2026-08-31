@@ -56,6 +56,7 @@ function AnnotationBadge({
 }
 
 type ExamScreenShellProps = {
+  experience?: "quick" | "mock";
   mode?: "question" | "warmup";
   courseLabel: string;
   levelLabel: string;
@@ -70,6 +71,11 @@ type ExamScreenShellProps = {
   state: ExamSessionState;
   elapsedLabel: string;
   targetRangeLabel: string;
+  questionProgressLabel?: string;
+  globalTimeLabel?: string;
+  showQuestionTextToggle?: boolean;
+  showQuestionMetadata?: boolean;
+  showTargetRange?: boolean;
   showQuestionText: boolean;
   showStoryHint?: boolean;
   avatarSrc?: string;
@@ -96,6 +102,7 @@ type ExamScreenShellProps = {
  * and /exam-guide/screen/ annotated demo.
  */
 export function ExamScreenShell({
+  experience = "quick",
   mode = "question",
   courseLabel,
   levelLabel,
@@ -110,6 +117,11 @@ export function ExamScreenShell({
   state,
   elapsedLabel,
   targetRangeLabel,
+  questionProgressLabel,
+  globalTimeLabel,
+  showQuestionTextToggle = true,
+  showQuestionMetadata = true,
+  showTargetRange = true,
   showQuestionText,
   showStoryHint = false,
   avatarSrc,
@@ -136,6 +148,7 @@ export function ExamScreenShell({
   const listenActionLabel = warmup ? "워밍업 안내 듣기" : "질문 듣기";
   const startActionLabel = warmup ? "워밍업 시작" : "답변 시작";
   const stopActionLabel = warmup ? "워밍업 종료" : "답변 종료";
+  const mock = experience === "mock";
 
   return (
     <section
@@ -147,31 +160,39 @@ export function ExamScreenShell({
         <div className="flex items-center gap-2.5">
           <span className="h-2 w-2 rounded-full bg-indigo-500" />
           <span className="text-xs font-bold tracking-wider text-zinc-200 sm:text-sm">
-            OOM OPIc Practice Console
+            {mock ? "OOM Full Mock Console" : "OOM OPIc Practice Console"}
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-300">
           <span className="font-semibold text-indigo-400">
-            {warmup ? "WARM-UP · 자기소개" : `${courseLabel} 랜덤 질문`}
+            {warmup ? "WARM-UP · 자기소개" : mock ? questionProgressLabel : `${courseLabel} 랜덤 질문`}
           </span>
           <span className="text-zinc-600">|</span>
-          <span>{levelLabel}</span>
+          <span>{mock && globalTimeLabel ? `남은 시간 ${globalTimeLabel}` : levelLabel}</span>
           <span className="sr-only">{levelLabel} 레벨에 맞는 질문 풀</span>
           <span className="text-zinc-600">|</span>
           <span className="rounded bg-zinc-800 px-2 py-0.5 font-mono text-[11px] text-zinc-200">
-            {warmup ? "WARM-UP" : "Practice Question"}
+            {warmup ? "WARM-UP" : mock ? "FULL MOCK" : "Practice Question"}
           </span>
         </div>
       </header>
 
       {/* Main Console Grid */}
       <div
-        className="grid gap-5 p-4 sm:p-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.85fr)]"
+        className={`grid gap-5 p-4 sm:p-6 ${
+          mock ? "" : "xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.85fr)]"
+        }`}
         data-testid="exam-console-grid"
       >
         {/* Left Column: Interviewer & Question Listening */}
         <div className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-[minmax(200px,0.85fr)_minmax(240px,1.15fr)]">
+          <div
+            className={`grid gap-4 ${
+              mock
+                ? "xl:grid-cols-[minmax(340px,1fr)_minmax(440px,1.35fr)]"
+                : "sm:grid-cols-[minmax(200px,0.85fr)_minmax(240px,1.15fr)]"
+            }`}
+          >
             {/* 1. Interviewer Panel */}
             <div className="relative">
               <ExamInterviewer
@@ -259,8 +280,8 @@ export function ExamScreenShell({
             </div>
           </div>
 
-          {/* Question Text Box (Audio-First: hidden by default, accessible via sr-only, single toggle in header) */}
-          <div className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-4">
+          {/* One canonical prompt remains accessible. Mock keeps it visually hidden. */}
+          {showQuestionTextToggle ? <div className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-4">
             <div className="flex items-center justify-between text-xs text-zinc-400">
               <span className="font-semibold uppercase tracking-wider">
                 {warmup ? "WARM-UP PROMPT" : "Question Prompt"}
@@ -305,7 +326,9 @@ export function ExamScreenShell({
                   : "질문 텍스트는 실제 시험처럼 숨겨져 있습니다. 음성에 집중해 보세요."}
               </div>
             ) : null}
-          </div>
+          </div> : (
+            <p className="sr-only">{questionPrompt ?? "현재 선택된 질문이 없습니다."}</p>
+          )}
 
           {/* 4 & 6. Recording & Time Status Bar */}
           <div className="relative rounded-lg border border-zinc-800 bg-zinc-900/90 p-4 sm:p-5">
@@ -347,20 +370,22 @@ export function ExamScreenShell({
                 </div>
               </div>
 
-              {/* Target Range Display */}
-              <div className="rounded-md border border-zinc-800 bg-zinc-950/60 px-3.5 py-2 text-right">
+              {/* Quick target range or Mock global main-test timer */}
+              {showTargetRange || globalTimeLabel ? <div className="rounded-md border border-zinc-800 bg-zinc-950/60 px-3.5 py-2 text-right">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
-                  {warmup ? "첫 발화 워밍업" : "OOM 연습 목표"}
+                  {globalTimeLabel && !warmup ? "남은 본시험 시간" : warmup ? "첫 발화 워밍업" : "OOM 연습 목표"}
                 </p>
                 <p className="mt-0.5 text-base font-extrabold text-indigo-300 sm:text-lg">
-                  {targetRangeLabel}
+                  {globalTimeLabel && !warmup ? globalTimeLabel : targetRangeLabel}
                 </p>
                 <p className="mt-0.5 text-[10px] text-zinc-500">
-                  {warmup
+                  {globalTimeLabel && !warmup
+                    ? "문항별 답변시간은 별도로 제한하지 않습니다."
+                    : warmup
                     ? "평가용 문항이 아닌 OOM 발화 준비 시간입니다."
                     : "실제 OPIc의 문항별 제한시간이 아닙니다."}
                 </p>
-              </div>
+              </div> : null}
 
               {/* Action Button */}
               <div className="relative flex items-center gap-2">
@@ -403,7 +428,9 @@ export function ExamScreenShell({
                 <p className="mt-0.5">
                   {warmup
                     ? "마이크 없이 타이머만 시작해 20~30초 동안 첫 목소리와 호흡을 가볍게 맞출 수 있습니다."
-                    : "마이크 없이 타이머만 시작하여 발화 시간을 재고, 답변 후 transcript를 직접 입력할 수 있습니다."}
+                    : mock
+                      ? "마이크 없이 타이머만 사용해 모의고사를 계속할 수 있습니다."
+                      : "마이크 없이 타이머만 시작하여 발화 시간을 재고, 답변 후 transcript를 직접 입력할 수 있습니다."}
                 </p>
                 <div className="mt-2.5 flex flex-wrap gap-2">
                   {onStartTimerOnly ? (
@@ -420,8 +447,8 @@ export function ExamScreenShell({
           </div>
         </div>
 
-        {/* Right Column: Question Info, Storyline Hint & Navigation */}
-        <aside
+        {/* Quick practice and the annotated guide retain the contextual side panel. */}
+        {!mock ? <aside
           className={`relative flex flex-col justify-between rounded-lg border bg-zinc-900/90 p-5 text-white transition-all duration-300 ${
             questionChanged
               ? "border-indigo-400 ring-2 ring-indigo-400/60 shadow-lg shadow-indigo-500/20"
@@ -456,7 +483,7 @@ export function ExamScreenShell({
               ) : null}
             </div>
 
-            {questionGroup ? (
+            {showQuestionMetadata && questionGroup ? (
               <div className="flex flex-wrap gap-2">
                 <Badge tone="indigo">{questionGroup}</Badge>
                 {questionTypeLabel ? (
@@ -479,7 +506,11 @@ export function ExamScreenShell({
                   : questionPrompt
                   ? warmup
                     ? "첫 목소리를 가볍게 시작해보세요."
-                    : "질문을 듣고 핵심 단어를 떠올린 뒤 답변하세요."
+                    : mock
+                      ? state === "complete"
+                        ? "답변이 저장되었습니다. 다음 문항으로 이동하세요."
+                        : "질문을 듣고 답변을 녹음하세요."
+                      : "질문을 듣고 핵심 단어를 떠올린 뒤 답변하세요."
                   : "랜덤 질문을 뽑아 연습을 시작하세요."}
               </p>
             </div>
@@ -516,7 +547,7 @@ export function ExamScreenShell({
           </div>
 
           {/* Guide Link CTA */}
-          {onNavigateToGuide ? (
+          {onNavigateToGuide && !mock ? (
             <div className="mt-6 border-t border-zinc-800 pt-4">
               <button
                 className="text-left text-xs text-zinc-400 transition hover:text-indigo-300"
@@ -531,7 +562,7 @@ export function ExamScreenShell({
               </button>
             </div>
           ) : null}
-        </aside>
+        </aside> : null}
       </div>
     </section>
   );

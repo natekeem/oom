@@ -13,6 +13,8 @@ import { Card } from "../ui/Card";
 import type { SttUiStatus } from "./sttUiStatus";
 
 export type PracticeReviewPanelProps = {
+  layout?: "standard" | "mock";
+  allowRetry?: boolean;
   answer: string;
   audioUrl?: string | null;
   durationSeconds?: number;
@@ -50,6 +52,8 @@ function getCoachingSummary(feedback: string) {
  * ③ AI 맞춤 피드백 (structured evaluation + same question retry)
  */
 export function PracticeReviewPanel({
+  layout = "standard",
+  allowRetry = true,
   answer,
   audioUrl,
   durationSeconds,
@@ -68,9 +72,10 @@ export function PracticeReviewPanel({
   const sttConfigured = sttStatus !== "unconfigured";
   const wordCount = answer.trim().split(/\s+/).filter(Boolean).length;
   const coachingSummary = feedback ? getCoachingSummary(feedback) : [];
+  const mockLayout = layout === "mock";
 
   return (
-    <section aria-label="답변 복기 영역" className="space-y-4" id="answer-review">
+    <section aria-label="답변 복기 영역" className={`${mockLayout ? "h-full space-y-3" : "space-y-4"}`} id="answer-review">
       <div>
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-indigo-600 dark:text-indigo-400">
           Phase B · 답변 복기
@@ -80,9 +85,9 @@ export function PracticeReviewPanel({
         </h2>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[0.85fr_1.25fr_1.1fr] xl:items-start">
+      <div className={`grid gap-4 ${mockLayout ? "lg:grid-cols-2 lg:items-stretch" : "xl:grid-cols-[0.85fr_1.25fr_1.1fr] xl:items-start"}`}>
         {/* ① 내 녹음 */}
-        <Card className="p-5">
+        <Card className={mockLayout ? "h-full p-4" : "p-5"}>
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 font-extrabold text-zinc-900 dark:text-white">
               <Headphones className="h-4 w-4 text-indigo-500" />
@@ -122,7 +127,7 @@ export function PracticeReviewPanel({
         </Card>
 
         {/* ② 음성 받아쓰기 (STT) */}
-        <Card className="border-indigo-200/80 p-5 dark:border-indigo-900/60">
+        <Card className={`border-indigo-200/80 dark:border-indigo-900/60 ${mockLayout ? "h-full p-4" : "p-5"}`}>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-sm font-extrabold text-zinc-900 dark:text-white">
               ② 음성 받아쓰기 (STT)
@@ -218,7 +223,7 @@ export function PracticeReviewPanel({
 
             <textarea
               aria-label="내 답변 Transcript 입력 및 수정"
-              className="mt-2 min-h-36 w-full rounded-md border border-zinc-300 bg-white p-3 text-xs leading-6 text-zinc-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 disabled:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:disabled:bg-zinc-900"
+              className={`mt-2 w-full rounded-md border border-zinc-300 bg-white p-3 text-xs leading-6 text-zinc-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 disabled:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:disabled:bg-zinc-900 ${mockLayout ? "min-h-28" : "min-h-36"}`}
               disabled={sttStatus === "transcribing"}
               id="practice-transcript-input"
               onChange={(event) => onAnswerChange(event.target.value)}
@@ -233,7 +238,7 @@ export function PracticeReviewPanel({
         </Card>
 
         {/* ③ AI 맞춤 피드백 */}
-        <Card className="flex flex-col justify-between p-5">
+        <Card className={`flex flex-col justify-between ${mockLayout ? "lg:col-span-2 p-4" : "p-5"}`}>
           <div className="space-y-3">
             <div className="flex items-center gap-2 font-extrabold text-zinc-900 dark:text-white">
               <Bot className="h-4 w-4 text-indigo-500" />
@@ -277,16 +282,18 @@ export function PracticeReviewPanel({
             ) : null}
           </div>
 
-          <div className="mt-4 border-t border-zinc-100 pt-3 dark:border-zinc-800">
-            <Button
-              className="w-full"
-              onClick={onRetryAttempt}
-              variant="secondary"
-            >
-              <RotateCcw className="h-3.5 w-3.5" />
-              {feedback ? "피드백 반영하여 다시 말하기" : "같은 문제 다시 말하기"}
-            </Button>
-          </div>
+          {allowRetry ? (
+            <div className="mt-4 border-t border-zinc-100 pt-3 dark:border-zinc-800">
+              <Button
+                className="w-full"
+                onClick={onRetryAttempt}
+                variant="secondary"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                {feedback ? "피드백 반영하여 다시 말하기" : "같은 문제 다시 말하기"}
+              </Button>
+            </div>
+          ) : null}
         </Card>
       </div>
     </section>

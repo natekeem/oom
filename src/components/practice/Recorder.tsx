@@ -22,11 +22,12 @@ export type RecorderProps = {
   onToast: (title: string, description?: string, tone?: "success" | "error" | "info") => void;
   onRecordingReady?: (recording: RecordingResult) => void;
   onRecordingStateChange?: (isRecording: boolean) => void;
+  notifyOnSave?: boolean;
   resetKey?: number;
 };
 
 export const Recorder = forwardRef<RecorderHandle, RecorderProps>(function Recorder(
-  { mode = "ui", onToast, onRecordingReady, onRecordingStateChange, resetKey },
+  { mode = "ui", notifyOnSave = true, onToast, onRecordingReady, onRecordingStateChange, resetKey },
   ref
 ) {
   const [isRecording, setIsRecording] = useState(false);
@@ -101,7 +102,9 @@ export const Recorder = forwardRef<RecorderHandle, RecorderProps>(function Recor
         setAudioUrl(URL.createObjectURL(blob));
         stopAudioTracks(streamRef.current);
         streamRef.current = null;
-        onToast("녹음이 저장되었습니다.", "오디오는 이 브라우저 메모리에만 유지됩니다.", "success");
+        if (notifyOnSave) {
+          onToast("녹음이 저장되었습니다.", "오디오는 이 브라우저 메모리에만 유지됩니다.", "success");
+        }
         onRecordingReady?.({
           blob,
           mimeType,

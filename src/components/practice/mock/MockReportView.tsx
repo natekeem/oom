@@ -1,9 +1,10 @@
-import { ArrowLeft, Download, RefreshCw, ShieldCheck } from "lucide-react";
+import { Download, RefreshCw, ShieldCheck } from "lucide-react";
 import { Badge } from "../../ui/Badge";
 import { Button } from "../../ui/Button";
 import { Card } from "../../ui/Card";
 import type { MockAttempt } from "./mockSessionTypes";
-import { downloadMockReportHtml, type MockDiagnosticReport } from "./mockReport";
+import { MockPostExamNav, type MockPostExamView } from "./MockPostExamNav";
+import { downloadMockReportHtml, type MockTrainingReport } from "./mockReport";
 
 function formatDuration(seconds: number) {
   const minutes = Math.floor(seconds / 60);
@@ -13,45 +14,43 @@ function formatDuration(seconds: number) {
 export function MockReportView({
   attempts,
   report,
-  onBack,
+  onNavigate,
   onRestart,
 }: {
   attempts: MockAttempt[];
-  report: MockDiagnosticReport;
-  onBack: () => void;
+  report: MockTrainingReport;
+  onNavigate: (view: MockPostExamView) => void;
   onRestart: () => void;
 }) {
   const metrics = [
     ["완료율", `${report.completionRate}%`],
-    ["목표 시간 적합", `${report.timingRate}%`],
-    ["녹음", `${report.recordingRate}%`],
-    ["STT", `${report.transcriptRate}%`],
-    ["AI 피드백", `${report.feedbackRate}%`],
+    ["목표 발화시간 적합률", `${report.timingRate}%`],
+    ["녹음 기록률", `${report.recordingRate}%`],
+    ["STT 복기율", `${report.transcriptRate}%`],
+    ["AI 피드백 복기율", `${report.feedbackRate}%`],
+    ["총 답변 시간", formatDuration(report.totalAnswerSeconds)],
+    ["평균 답변 시간", formatDuration(report.averageAnswerSeconds)],
   ];
 
   return (
     <div className="space-y-5" data-mock-phase="report">
+      <MockPostExamNav active="report" onChange={onNavigate} />
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Button onClick={onBack} variant="secondary"><ArrowLeft className="h-4 w-4" /> 전체 답변 복기</Button>
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-indigo-600 dark:text-indigo-400">훈련 기록 지표</p>
+          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-300">이번 모의고사에서 남긴 답변과 복기 진행률을 확인하세요.</p>
+        </div>
         <Button onClick={() => downloadMockReportHtml(report, attempts)}><Download className="h-4 w-4" /> HTML 내려받기</Button>
       </div>
 
       <Card className="overflow-hidden border-indigo-200 p-0 dark:border-indigo-900">
         <div className="bg-gradient-to-br from-indigo-50 via-white to-emerald-50 p-6 dark:from-indigo-950/70 dark:via-zinc-950 dark:to-emerald-950/40 sm:p-8">
-          <Badge tone="indigo">OOM 비공식 종합 진단</Badge>
-          <h1 className="mt-4 text-2xl font-black text-zinc-950 dark:text-white sm:text-3xl">실전 모의고사 예상 점수·진단 Report</h1>
-          <div className="mt-6 flex flex-wrap items-end gap-6">
-            <div>
-              <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400">OOM 훈련 진단 점수</p>
-              <p className="mt-1 text-5xl font-black text-indigo-700 dark:text-indigo-300">{report.diagnosticScore}<span className="text-lg text-zinc-400"> / 100</span></p>
-            </div>
-            <div>
-              <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400">예상 등급 범위</p>
-              <p className="mt-1 text-2xl font-black text-zinc-950 dark:text-white">{report.estimatedRange}</p>
-              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{report.evidenceLabel}</p>
-            </div>
-          </div>
-          <div className="mt-7 grid gap-2 sm:grid-cols-3 xl:grid-cols-5">
+          <Badge tone="indigo">OOM 훈련 리포트</Badge>
+          <h1 className="mt-4 text-2xl font-black text-zinc-950 dark:text-white sm:text-3xl">OOM 모의고사 훈련 리포트</h1>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+            시험 결과를 예측하는 점수가 아니라, 완료·발화시간·녹음·STT·AI 복기 여부를 정리한 훈련 행동 기록입니다.
+          </p>
+          <div className="mt-7 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {metrics.map(([label, value]) => (
               <div className="rounded-lg border border-white/80 bg-white/80 p-3 dark:border-zinc-800 dark:bg-zinc-900/80" key={label}>
                 <p className="text-[11px] font-semibold text-zinc-500">{label}</p>
@@ -80,7 +79,7 @@ export function MockReportView({
       <Card className="p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-base font-black text-zinc-950 dark:text-white">전체 문항 진단 근거</h2>
+            <h2 className="text-base font-black text-zinc-950 dark:text-white">전체 문항 훈련 기록</h2>
             <p className="mt-1 text-xs text-zinc-500">본시험 {formatDuration(report.totalTestSeconds)} · 답변 합계 {formatDuration(report.totalAnswerSeconds)} · 평균 {formatDuration(report.averageAnswerSeconds)}</p>
           </div>
           <Button onClick={onRestart} size="sm" variant="secondary"><RefreshCw className="h-4 w-4" /> 새 모의고사</Button>

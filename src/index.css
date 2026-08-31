@@ -100,6 +100,10 @@
     .oom-main-scroll {
       scrollbar-gutter: stable;
     }
+
+    .oom-content-shell:has([data-mock-workbench="review"]) {
+      min-height: 0;
+    }
   }
   
   .oom-main-scroll::-webkit-scrollbar {

@@ -738,12 +738,6 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
       </MemoryRouter>
     );
 
-    // Pass the warmup first
-    await user.click(await screen.findByRole('button', { name: /워밍업 시작/ }));
-    await user.click(await screen.findByRole('button', { name: /타이머만 시작/ }));
-    await user.click(await screen.findByRole('button', { name: /워밍업 종료/ }));
-    await screen.findByRole('button', { name: '랜덤 질문 뽑기' }, { timeout: 2500 });
-
     expect(await screen.findByText(/Everyday & Getaway 랜덤 질문/)).toBeInTheDocument();
     expect(screen.getByText(/1구간 \(AL\) 레벨에 맞는 질문 풀/)).toBeInTheDocument();
 
@@ -1028,12 +1022,6 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
         <App />
       </MemoryRouter>
     );
-
-    // Pass the warmup first
-    await user.click(await screen.findByRole('button', { name: /워밍업 시작/ }));
-    await user.click(await screen.findByRole('button', { name: /타이머만 시작/ }));
-    await user.click(await screen.findByRole('button', { name: /워밍업 종료/ }));
-    await screen.findByRole('button', { name: '랜덤 질문 뽑기' }, { timeout: 2500 });
 
     // Draw question
     const drawBtn = await screen.findByRole('button', { name: /랜덤 질문 뽑기/ });

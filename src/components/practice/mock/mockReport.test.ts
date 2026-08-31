@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { MockAttempt, MockSessionPlan } from "./mockSessionTypes";
-import { buildMockReportHtml, createMockDiagnosticReport } from "./mockReport";
+import { buildMockReportHtml, createMockTrainingReport } from "./mockReport";
 
 const question = {
   mockId: "practice:intermediate:q1:0",
@@ -54,23 +54,28 @@ const attempts: MockAttempt[] = [
   },
 ];
 
-describe("mock diagnostic report", () => {
-  it("creates a transparent OOM score and never upgrades beyond the tested Level", () => {
-    const report = createMockDiagnosticReport({ attempts, plan, totalQuestions: 2, totalTestSeconds: 600 });
+describe("mock training report", () => {
+  it("reports transparent process metrics without estimating a score or grade", () => {
+    const report = createMockTrainingReport({ attempts, totalQuestions: 2, totalTestSeconds: 600 });
 
-    expect(report.diagnosticScore).toBe(100);
-    expect(report.estimatedRange).toBe("IM3 ~ IH");
     expect(report.completionRate).toBe(100);
+    expect(report.timingRate).toBe(100);
+    expect(report.recordingRate).toBe(100);
     expect(report.transcriptRate).toBe(100);
-    expect(report.disclaimer).toMatch(/비공식|보장하지 않으며/);
+    expect(report.feedbackRate).toBe(100);
+    expect(report).not.toHaveProperty("diagnosticScore");
+    expect(report).not.toHaveProperty("estimatedRange");
+    expect(report.disclaimer).toMatch(/점수나 등급을 예측하지 않으며/);
   });
 
   it("builds a standalone downloadable HTML report and escapes question text", () => {
-    const report = createMockDiagnosticReport({ attempts, plan, totalQuestions: 2, totalTestSeconds: 600 });
+    const report = createMockTrainingReport({ attempts, totalQuestions: 2, totalTestSeconds: 600 });
     const html = buildMockReportHtml(report, attempts);
 
     expect(html).toContain("<!doctype html>");
-    expect(html).toContain("OOM 실전 모의고사 종합 진단 Report");
+    expect(html).toContain("OOM 모의고사 훈련 리포트");
+    expect(html).toContain("목표 발화시간 적합률");
+    expect(html).not.toMatch(/IM1|IM2|IM3|IH|AL|예상 등급|예상 점수|\/100/);
     expect(html).toContain("&lt;script&gt;Tell me about your favorite park.&lt;/script&gt;");
     expect(html).not.toContain("<script>Tell me about your favorite park.</script>");
   });

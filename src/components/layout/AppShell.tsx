@@ -138,7 +138,7 @@ export function AppShell({
         ref={mainRef}
       >
         {showTrainingHeader ? (
-          <header className="sticky top-0 z-20 border-b border-zinc-200 bg-zinc-100/90 px-4 py-3 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90 sm:px-6 lg:px-9">
+          <header className="sticky top-0 z-20 shrink-0 border-b border-zinc-200 bg-zinc-100/90 px-4 py-3 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90 sm:px-6 lg:px-9">
             <div className="mx-auto flex max-w-7xl items-center gap-3">
               <Button
                 aria-controls="oom-mobile-navigation"
@@ -212,10 +212,10 @@ export function AppShell({
         ) : (
           mobileControls
         )}
-        <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-9 lg:py-9">
+        <div className="oom-content-shell mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-9 lg:py-9">
           {children}
         </div>
-        <footer className="border-t border-zinc-200 bg-zinc-50 px-4 py-5 text-xs text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400 sm:px-6 lg:px-9">
+        <footer className="shrink-0 border-t border-zinc-200 bg-zinc-50 px-4 py-5 text-xs text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400 sm:px-6 lg:px-9">
           <div className="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p>© 2026 오픽온미</p>
             <nav aria-label="서비스 정보" className="flex flex-wrap gap-x-4 gap-y-2">

@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
+import { OomWavePlayer } from "../audio/OomWavePlayer";
 import type { SttUiStatus } from "./sttUiStatus";
 
 export type PracticeReviewPanelProps = {
@@ -75,7 +76,12 @@ export function PracticeReviewPanel({
   const mockLayout = layout === "mock";
 
   return (
-    <section aria-label="답변 복기 영역" className={`${mockLayout ? "h-full space-y-3" : "space-y-4"}`} id="answer-review">
+    <section
+      aria-label="답변 복기 영역"
+      className={mockLayout ? "space-y-3" : "space-y-4"}
+      data-review-layout={layout}
+      id="answer-review"
+    >
       <div>
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-indigo-600 dark:text-indigo-400">
           Phase B · 답변 복기
@@ -105,11 +111,15 @@ export function PracticeReviewPanel({
           </p>
 
           {audioUrl ? (
-            <div className="my-4">
-              <audio className="w-full" controls src={audioUrl}>
-                <track kind="captions" />
-                브라우저가 오디오 재생을 지원하지 않습니다.
-              </audio>
+            <div className="my-4 rounded-lg border border-zinc-100 bg-zinc-50/70 p-3 dark:border-zinc-800 dark:bg-zinc-950/60">
+              <OomWavePlayer
+                actionLabel="내 녹음"
+                audioUrl={audioUrl}
+                controls
+                playbackRate={1}
+                statusText="답변 녹음 · 구간을 눌러 다시 들을 수 있습니다."
+                variant="script"
+              />
             </div>
           ) : (
             <div className="my-4 rounded-md border border-dashed border-zinc-200 bg-zinc-50 p-4 text-center text-xs text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900">
@@ -142,14 +152,18 @@ export function PracticeReviewPanel({
 
           {/* STT Status Banners */}
           {sttStatus === "unconfigured" ? (
-            <div className="mt-3 rounded-md border border-amber-200 bg-amber-50/80 p-3.5 text-amber-950 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-100">
-              <p className="text-xs font-bold">STT가 아직 설정되지 않았습니다.</p>
-              <p className="mt-1 text-xs leading-5 text-amber-900/90 dark:text-amber-200/90">
-                AI 설정에서 Whisper/STT Endpoint를 설정하면 녹음한 답변을 자동으로 텍스트로 변환할 수 있습니다.
-              </p>
+            <div className={`mt-3 rounded-md border border-amber-200 bg-amber-50/80 text-amber-950 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-100 ${mockLayout ? "flex flex-wrap items-center justify-between gap-2 p-2.5" : "p-3.5"}`}>
+              <div>
+                <p className="text-xs font-bold">{mockLayout ? "STT 미설정" : "STT가 아직 설정되지 않았습니다."}</p>
+                <p className={`${mockLayout ? "mt-0.5" : "mt-1"} text-xs leading-5 text-amber-900/90 dark:text-amber-200/90`}>
+                  {mockLayout
+                    ? "AI 설정에서 Endpoint를 연결하면 사용할 수 있습니다."
+                    : "AI 설정에서 Whisper/STT Endpoint를 설정하면 녹음한 답변을 자동으로 텍스트로 변환할 수 있습니다."}
+                </p>
+              </div>
               {onNavigateToSettings ? (
                 <Button
-                  className="mt-2.5"
+                  className={mockLayout ? "shrink-0" : "mt-2.5"}
                   onClick={onNavigateToSettings}
                   size="sm"
                   variant="secondary"

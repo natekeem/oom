@@ -16,10 +16,6 @@ import { TrainingSelectionGuard } from "../training/TrainingSelectionGuard";
 import type { ViewId } from "../layout/Sidebar";
 import type { ResolvedTrainingContext } from "../../training/types";
 import { OomWavePlayer, type OomWavePlayerHandle } from "../audio/OomWavePlayer";
-import {
-  getSelfIntroduction,
-  SELF_INTRODUCTION_PROMPT,
-} from "../../data/training/selfIntroduction";
 import { PracticeModeSelector } from "./PracticeModeSelector";
 
 type PracticeViewProps = {
@@ -36,8 +32,6 @@ type PracticeItem = {
   prompt: string;
   storylineId?: string;
 };
-
-type PracticeStage = "warmup" | "question";
 
 const questionTypeLabels: Record<string, string> = {
   description: "장소·대상 묘사",
@@ -84,8 +78,6 @@ function PracticeViewContent({
     return availableQuestions.length > 0 ? availableQuestions[0] : null;
   });
 
-  const [practiceStage, setPracticeStage] = useState<PracticeStage>("warmup");
-  const [warmupListenCount, setWarmupListenCount] = useState(0);
   const [listenCount, setListenCount] = useState(0);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [questionAudioSource, setQuestionAudioSource] = useState<TtsMediaPlaybackSource | null>(null);
@@ -115,15 +107,9 @@ function PracticeViewContent({
   const sttAbortRef = useRef<AbortController | null>(null);
   const attemptIdRef = useRef(0);
   const timerIntervalRef = useRef<number | null>(null);
-  const warmupTransitionTimerRef = useRef<number | null>(null);
 
-  const warmup = practiceStage === "warmup";
-  const selfIntroduction = getSelfIntroduction(resolved.level.id);
-  const activePrompt = warmup ? SELF_INTRODUCTION_PROMPT : question?.prompt;
-  const activeListenCount = warmup ? warmupListenCount : listenCount;
-  const targetRangeLabel = warmup
-    ? selfIntroduction.durationLabel.replace(/^약\s*/, "")
-    : `${resolved.level.targetSeconds[0]}–${resolved.level.targetSeconds[1]}초`;
+  const activePrompt = question?.prompt;
+  const targetRangeLabel = `${resolved.level.targetSeconds[0]}–${resolved.level.targetSeconds[1]}초`;
   const levelLabel = `${resolved.level.displayName} (${resolved.level.targetLabel})`;
   const { preferences } = useTtsPreferences();
 
@@ -137,9 +123,9 @@ function PracticeViewContent({
       .then((staticSource) => {
         if (requestId !== listenRequestRef.current || !staticSource) return;
         setQuestionAudioSource(staticSource);
-        setQuestionTtsStatus(warmup ? "정적 워밍업 안내 준비 완료" : "정적 질문 음성 준비 완료");
+        setQuestionTtsStatus("정적 질문 음성 준비 완료");
       });
-  }, [activePrompt, preferences.examVoice, warmup]);
+  }, [activePrompt, preferences.examVoice]);
 
   const activeQuestionAudioSource =
     questionAudioSource?.voice === preferences.examVoice ? questionAudioSource : null;
@@ -151,9 +137,6 @@ function PracticeViewContent({
       listenRequestRef.current += 1;
       sttAbortRef.current?.abort();
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
-      if (warmupTransitionTimerRef.current) {
-        window.clearTimeout(warmupTransitionTimerRef.current);
-      }
       if (audioUrl) URL.revokeObjectURL(audioUrl);
     };
   }, [audioUrl]);
@@ -236,7 +219,6 @@ function PracticeViewContent({
   };
 
   const describeTtsStatus = (status: TtsRuntimeStatus) => {
-    const subject = warmup ? "워밍업 안내" : "질문";
     if (status.phase === "loading-model") {
       const progress = typeof status.progress === "number" ? ` · ${Math.round(status.progress)}%` : "";
       return `음성 모델 준비 중 · 최초 1회${progress}`;
@@ -248,10 +230,10 @@ function PracticeViewContent({
           : typeof status.progress === "number"
             ? ` · ${Math.round(status.progress)}%`
             : "";
-      return `${subject} 음성 생성 중${progress}`;
+      return `질문 음성 생성 중${progress}`;
     }
     if (status.phase === "fallback") return "시스템 음성으로 재생 중";
-    return `${subject} 음성 준비 완료`;
+    return "질문 음성 준비 완료";
   };
 
   const prepareQuestionPlayback = async (requestId: number, skipStatic = false) => {
@@ -274,8 +256,8 @@ function PracticeViewContent({
         setQuestionPlayRequest(requestId);
         setQuestionTtsStatus(
           source.kind === "static"
-            ? warmup ? "정적 워밍업 안내 재생 중" : "정적 질문 음성 재생 중"
-            : warmup ? "Kokoro 워밍업 안내 재생 중" : "Kokoro 질문 음성 재생 중",
+            ? "정적 질문 음성 재생 중"
+            : "Kokoro 질문 음성 재생 중",
         );
         return;
       }
@@ -285,7 +267,7 @@ function PracticeViewContent({
         onEnd: () => {
           if (requestId === listenRequestRef.current) {
             setIsSpeaking(false);
-            setQuestionTtsStatus(warmup ? "워밍업 안내 재생 완료" : "질문 음성 재생 완료");
+            setQuestionTtsStatus("질문 음성 재생 완료");
           }
         },
         onError: () => {
@@ -297,7 +279,7 @@ function PracticeViewContent({
       });
     } catch (error) {
       setIsSpeaking(false);
-      setQuestionTtsStatus(warmup ? "워밍업 안내를 재생할 수 없습니다." : "질문 음성을 재생할 수 없습니다.");
+      setQuestionTtsStatus("질문 음성을 재생할 수 없습니다.");
       onToast(
         "음성 읽기(TTS)를 지원하지 않는 브라우저입니다.",
         error instanceof Error
@@ -309,23 +291,19 @@ function PracticeViewContent({
   };
 
   const handleListen = async () => {
-    if (!activePrompt || sessionState === "recording" || activeListenCount >= 2) return;
+    if (!activePrompt || sessionState === "recording" || listenCount >= 2) return;
 
     listenRequestRef.current += 1;
     const requestId = listenRequestRef.current;
-    if (warmup) {
-      setWarmupListenCount((count) => count + 1);
-    } else {
-      setListenCount((count) => count + 1);
-    }
+    setListenCount((count) => count + 1);
     setIsSpeaking(true);
     stopSpeech();
 
     if (activeQuestionAudioSource) {
       setQuestionTtsStatus(
         activeQuestionAudioSource.kind === "static"
-          ? warmup ? "정적 워밍업 안내 재생 중" : "정적 질문 음성 재생 중"
-          : warmup ? "Kokoro 워밍업 안내 재생 중" : "Kokoro 질문 음성 재생 중",
+          ? "정적 질문 음성 재생 중"
+          : "Kokoro 질문 음성 재생 중",
       );
       setQuestionPlayRequest(requestId);
       return;
@@ -369,41 +347,7 @@ function PracticeViewContent({
     setSessionState("recording");
   };
 
-  const completeWarmup = () => {
-    stopSpeech();
-    listenRequestRef.current += 1;
-    questionPlayerRef.current?.stop();
-    setIsSpeaking(false);
-    setQuestionTtsStatus("");
-    setMicFailed(false);
-    setSessionState("complete");
-
-    if (warmupTransitionTimerRef.current) {
-      window.clearTimeout(warmupTransitionTimerRef.current);
-    }
-    warmupTransitionTimerRef.current = window.setTimeout(() => {
-      setPracticeStage("question");
-      setQuestionAudioSource(null);
-      setQuestionTtsStatus("");
-      setQuestionPlayRequest(0);
-      setShowQuestionText(false);
-      setShowStoryHint(false);
-      setSessionState("ready");
-      setElapsedSeconds(0);
-      setMicFailed(false);
-      setAttemptKey((key) => key + 1);
-      warmupTransitionTimerRef.current = null;
-    }, 900);
-  };
-
   const stopAnswer = () => {
-    if (warmup) {
-      if (recorderRef.current?.isRecording()) {
-        recorderRef.current.stop({ discard: true });
-      }
-      completeWarmup();
-      return;
-    }
     if (recorderRef.current?.isRecording()) {
       recorderRef.current.stop();
     }
@@ -411,7 +355,6 @@ function PracticeViewContent({
   };
 
   const handleRecordingReady = async (recording: RecordingResult) => {
-    if (practiceStage !== "question") return;
     setRecordingResult(recording);
     if (audioUrl) URL.revokeObjectURL(audioUrl);
     const newUrl = URL.createObjectURL(recording.blob);
@@ -426,7 +369,6 @@ function PracticeViewContent({
   };
 
   const performTranscribe = async (blob: Blob, mimeType: string) => {
-    if (practiceStage !== "question") return;
     if (!sttSettings?.endpoint?.trim()) {
       onToast("STT 설정이 필요합니다.", "AI 설정에서 STT Endpoint를 먼저 저장해 주세요.", "info");
       return;
@@ -499,7 +441,6 @@ function PracticeViewContent({
   };
 
   const getFeedback = async () => {
-    if (practiceStage !== "question") return;
     if (!answer.trim()) {
       onToast("답변 텍스트가 비어 있습니다.", "음성을 녹음하거나 텍스트를 입력해 주세요.", "info");
       return;
@@ -591,15 +532,14 @@ function PracticeViewContent({
   });
 
   const showReviewPanel =
-    practiceStage === "question" &&
-    (sessionState === "complete" ||
+    sessionState === "complete" ||
       Boolean(recordingResult) ||
       Boolean(audioUrl) ||
       Boolean(answer.trim()) ||
-      Boolean(feedback));
+      Boolean(feedback);
 
   return (
-    <div className="space-y-8" data-practice-stage={practiceStage}>
+    <div className="space-y-8" data-practice-stage="question">
       {/* Page Header */}
       <div>
         <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
@@ -612,6 +552,9 @@ function PracticeViewContent({
         </h1>
         <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
           실제 OPIc 시험 화면처럼 가상 인터뷰어의 질문을 최대 2회 듣고 답변을 녹음한 뒤, 내 발화를 다시 듣고 STT와 AI 맞춤 피드백으로 개선점을 점검합니다.
+        </p>
+        <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+          자기소개는 STEP 4에서 별도로 연습할 수 있어요.
         </p>
       </div>
 
@@ -641,20 +584,20 @@ function PracticeViewContent({
                 return;
               }
               setIsSpeaking(false);
-              setQuestionTtsStatus(warmup ? "워밍업 안내를 재생할 수 없습니다." : "질문 음성을 재생할 수 없습니다.");
-              onToast(warmup ? "워밍업 안내 재생 실패" : "질문 음성 재생 실패", error.message, "error");
+              setQuestionTtsStatus("질문 음성을 재생할 수 없습니다.");
+              onToast("질문 음성 재생 실패", error.message, "error");
             }}
             onFinish={() => {
               setIsSpeaking(false);
-              setQuestionTtsStatus(warmup ? "워밍업 안내 재생 완료" : "질문 음성 재생 완료");
+              setQuestionTtsStatus("질문 음성 재생 완료");
             }}
             onPlaybackChange={(playing) => {
               setIsSpeaking(playing);
               if (playing) {
                 setQuestionTtsStatus(
                   activeQuestionAudioSource.kind === "static"
-                    ? warmup ? "정적 워밍업 안내 재생 중" : "정적 질문 음성 재생 중"
-                    : warmup ? "Kokoro 워밍업 안내 재생 중" : "Kokoro 질문 음성 재생 중",
+                    ? "정적 질문 음성 재생 중"
+                    : "Kokoro 질문 음성 재생 중",
                 );
               }
             }}
@@ -666,15 +609,14 @@ function PracticeViewContent({
           />
         ) : undefined}
         courseLabel={resolved.course.title}
-        completionMessage={warmup ? "워밍업 완료 · 첫 연습 문항을 준비합니다." : undefined}
         elapsedLabel={formatTime(elapsedSeconds)}
         isSpeaking={isSpeaking}
         levelLabel={levelLabel}
-        listenCount={activeListenCount}
+        listenCount={listenCount}
         maxListenCount={2}
         micFailed={micFailed}
-        mode={practiceStage}
-        onDrawQuestion={warmup ? undefined : drawQuestion}
+        mode="question"
+        onDrawQuestion={drawQuestion}
         onListen={handleListen}
         onNavigateToGuide={onNavigate ? () => onNavigate("exam-screen") : undefined}
         onStartAnswer={startAnswer}
@@ -683,11 +625,11 @@ function PracticeViewContent({
         onToggleQuestionText={() => setShowQuestionText((s) => !s)}
         onToggleStoryHint={() => setShowStoryHint((s) => !s)}
         questionChanged={questionChanged}
-        questionGroup={warmup ? "WARM-UP" : question?.group}
+        questionGroup={question?.group}
         questionPrompt={activePrompt}
-        questionTypeLabel={warmup ? "자기소개" : question ? questionTypeLabels[question.type] ?? question.type : undefined}
-        recommendedStoryScene={warmup ? undefined : courseRecommended?.core.anchorScene}
-        recommendedStoryTitle={warmup ? undefined : courseRecommended?.title}
+        questionTypeLabel={question ? questionTypeLabels[question.type] ?? question.type : undefined}
+        recommendedStoryScene={courseRecommended?.core.anchorScene}
+        recommendedStoryTitle={courseRecommended?.title}
         showQuestionText={showQuestionText}
         showStoryHint={showStoryHint}
         state={sessionState}

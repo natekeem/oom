@@ -26,12 +26,12 @@ OOM은 OPIc 영어 말하기를 Course × Level 구조로 연습하는 브라우
 - STEP 4의 `OPEN → SCENE → CLOSE`, 질문 변형, KEEP / CHANGE / DROP
 - STEP 5의 CORE 기능과 OPTIONAL 기능을 고르는 6-function menu
 - STEP 6 빠른 연습과 실전 모의고사, 질문 청취 0/2 제한, MediaRecorder 녹음, 다시 듣기
-- 실전 모의고사의 Background Survey → Self Assessment → 시험 준비 → Warm-up → 1st Session → 난이도 재조정 → 2nd Session → 전체 답변 복기 → 종합 진단 Report
+- 실전 모의고사의 Background Survey → Self Assessment → 시험 준비 → 자기소개 워밍업 → 1st Session → 난이도 재조정 → 2nd Session → 결과 요약 / 답변 복기 / 훈련 리포트
 - optional STT 전사, editable transcript, 사용자 설정 LLM 기반 KEEP / FIX / RETRY 피드백
 - Heart / Bella / Sarah / Sky 음성과 WaveSurfer waveform
 - 고정 콘텐츠는 WebM/Opus 정적 음원을 먼저 쓰는 static-first TTS
 
-STEP 6의 빠른 연습은 자기소개 워밍업 뒤 한 문제를 녹음하고 즉시 STT·AI로 복기합니다. 실전 모의고사는 현재 Course의 설문을 확인하고 Mock 전용 Self Assessment Level을 고른 뒤 최대 40분 동안 두 Session을 이어갑니다. Survey와 Mock Level은 현재 세션 메모리에만 있으며 저장된 `TrainingSelection`을 바꾸지 않습니다. 시험 중에는 STT·AI·transcript·힌트를 호출하거나 표시하지 않습니다. 종료 후 Report는 완료율, 목표 발화 시간 적합도, 녹음, 선택적으로 수행한 STT·AI 복기 근거를 OOM 훈련 지수와 예상 범위로 요약하며, 공식 점수나 등급을 보장하지 않습니다. Report는 서버 전송 없이 standalone HTML로 내려받을 수 있습니다.
+STEP 6의 빠른 연습은 자기소개 워밍업 없이 한 문제를 바로 듣고 녹음한 뒤 STT·AI로 복기합니다. 실전 모의고사는 현재 Course의 설문을 확인하고 Mock 전용 Self Assessment Level을 고른 뒤, 문항 수와 40분 타이머에 포함되지 않는 20~30초 자기소개 워밍업을 거쳐 두 Session을 이어갑니다. Survey와 Mock Level은 현재 세션 메모리에만 있으며 저장된 `TrainingSelection`을 바꾸지 않습니다. 시험 중에는 STT·AI·transcript·힌트를 호출하거나 표시하지 않습니다. 종료 후에는 결과 요약, 답변 복기, 훈련 리포트를 같은 세션에서 오가며 확인합니다. 훈련 리포트는 완료율, 목표 발화 시간 적합도, 녹음과 답변 시간, 선택적으로 수행한 STT·AI 복기 범위만 보여 주며 점수나 예상 OPIc 등급을 산출하지 않습니다. 리포트는 서버 전송 없이 standalone HTML로 내려받을 수 있습니다.
 
 ## Tech stack
 

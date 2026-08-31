@@ -1,4 +1,3 @@
-import { ArrowRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SELF_INTRODUCTION_PROMPT, getSelfIntroduction } from "../../data/training/selfIntroduction";
 import { callInternalLlm } from "../../lib/llm";
@@ -15,7 +14,6 @@ import type { ResolvedTrainingContext } from "../../training/types";
 import type { LlmSettings, SttSettings } from "../../types";
 import { OomWavePlayer, type OomWavePlayerHandle } from "../audio/OomWavePlayer";
 import type { ViewId } from "../layout/Sidebar";
-import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
 import { TrainingSelectionGuard } from "../training/TrainingSelectionGuard";
 import { ExamScreenShell, type ExamSessionState } from "./ExamScreenShell";
@@ -23,6 +21,7 @@ import { PracticeReviewPanel } from "./PracticeReviewPanel";
 import { Recorder, type RecorderHandle, type RecordingResult } from "./Recorder";
 import { deriveSttUiStatus } from "./sttUiStatus";
 import { MockAdjustmentScreen } from "./mock/MockAdjustmentScreen";
+import type { MockPostExamView } from "./mock/MockPostExamNav";
 import { MockReportView } from "./mock/MockReportView";
 import { MockResultView } from "./mock/MockResultView";
 import { MockPreTestScreen, MockSelfAssessmentScreen, MockSurveyScreen } from "./mock/MockOrientationScreens";
@@ -41,7 +40,7 @@ import type {
   MockSurveySelection,
 } from "./mock/mockSessionTypes";
 import { createInitialMockSurveySelection } from "./mock/mockSurvey";
-import { createMockDiagnosticReport } from "./mock/mockReport";
+import { createMockTrainingReport } from "./mock/mockReport";
 
 const MOCK_DURATION_SECONDS = 40 * 60;
 
@@ -61,7 +60,7 @@ function phaseSession(phase: MockPhase): 1 | 2 | null {
 }
 
 function describeTtsStatus(status: TtsRuntimeStatus, warmup: boolean) {
-  const subject = warmup ? "워밍업 안내" : "질문";
+  const subject = warmup ? "자기소개 안내" : "질문";
   if (status.phase === "loading-model") {
     const progress = typeof status.progress === "number" ? ` · ${Math.round(status.progress)}%` : "";
     return `음성 모델 준비 중 · 최초 1회${progress}`;
@@ -106,6 +105,7 @@ export function FullMockPracticeView({
   const [questionTtsStatus, setQuestionTtsStatus] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [selectedAudioUrl, setSelectedAudioUrl] = useState<string | null>(null);
+  const [selectedReviewAttemptId, setSelectedReviewAttemptId] = useState<string | undefined>();
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
 
@@ -138,9 +138,7 @@ export function FullMockPracticeView({
   const activeLevel = TRAINING_LEVELS.find((level) => level.id === activeLevelId) ?? resolved.level;
   const selfIntroduction = getSelfIntroduction(mockInitialLevelId);
   const activeListenCount = warmup ? warmupListenCount : listenCount;
-  const selectedAttempt = phase.phase === "review"
-    ? attempts.find((attempt) => attempt.id === phase.selectedAttemptId)
-    : undefined;
+  const selectedAttempt = attempts.find((attempt) => attempt.id === selectedReviewAttemptId);
   const activeMockPhase = ["warmup", "session-1", "adjustment", "session-2"].includes(phase.phase);
 
   useEffect(() => {
@@ -181,7 +179,7 @@ export function FullMockPracticeView({
       .then((source) => {
         if (requestId !== listenRequestRef.current || !source) return;
         setQuestionAudioSource(source);
-        setQuestionTtsStatus(warmup ? "정적 워밍업 안내 준비 완료" : "정적 질문 음성 준비 완료");
+        setQuestionTtsStatus(warmup ? "정적 자기소개 안내 준비 완료" : "정적 질문 음성 준비 완료");
       });
   }, [activePrompt, preferences.examVoice, warmup]);
 
@@ -272,7 +270,11 @@ export function FullMockPracticeView({
       if (source.kind === "audio" || source.kind === "static") {
         setQuestionAudioSource(source);
         setQuestionPlayRequest(requestId);
-        setQuestionTtsStatus(source.kind === "static" ? "정적 질문 음성 재생 중" : "Kokoro 질문 음성 재생 중");
+        setQuestionTtsStatus(
+          source.kind === "static"
+            ? warmup ? "정적 자기소개 안내 재생 중" : "정적 질문 음성 재생 중"
+            : warmup ? "Kokoro 자기소개 안내 재생 중" : "Kokoro 질문 음성 재생 중",
+        );
         return;
       }
       setQuestionTtsStatus("시스템 음성으로 재생 중");
@@ -280,7 +282,7 @@ export function FullMockPracticeView({
         onEnd: () => {
           if (requestId === listenRequestRef.current) {
             setIsSpeaking(false);
-            setQuestionTtsStatus(warmup ? "워밍업 안내 재생 완료" : "질문 음성 재생 완료");
+            setQuestionTtsStatus(warmup ? "자기소개 안내 재생 완료" : "질문 음성 재생 완료");
           }
         },
         onError: () => {
@@ -306,7 +308,11 @@ export function FullMockPracticeView({
     setIsSpeaking(true);
     stopSpeech();
     if (activeQuestionAudioSource) {
-      setQuestionTtsStatus(activeQuestionAudioSource.kind === "static" ? "정적 질문 음성 재생 중" : "Kokoro 질문 음성 재생 중");
+      setQuestionTtsStatus(
+        activeQuestionAudioSource.kind === "static"
+          ? warmup ? "정적 자기소개 안내 재생 중" : "정적 질문 음성 재생 중"
+          : warmup ? "Kokoro 자기소개 안내 재생 중" : "Kokoro 질문 음성 재생 중",
+      );
       setQuestionPlayRequest(requestId);
       return;
     }
@@ -442,6 +448,7 @@ export function FullMockPracticeView({
       setPlan(initial);
       setPlannerError("");
       setAttempts([]);
+      setSelectedReviewAttemptId(undefined);
       setWarmupListenCount(0);
       setRemainingSeconds(MOCK_DURATION_SECONDS);
       setHasResponded(false);
@@ -490,6 +497,7 @@ export function FullMockPracticeView({
     sttAbortRef.current?.abort();
     questionPlayerRef.current?.stop();
     setAttempts([]);
+    setSelectedReviewAttemptId(undefined);
     setPlan(null);
     setPlannerError("");
     setSurveySelection(createInitialMockSurveySelection(resolved));
@@ -512,7 +520,25 @@ export function FullMockPracticeView({
     sttAbortRef.current?.abort();
     setIsTranscribing(false);
     setIsFeedbackLoading(false);
-    setPhase({ phase: "review", selectedAttemptId: attemptId });
+    const nextAttemptId = attemptId ?? selectedReviewAttemptId ?? attempts[0]?.id;
+    setSelectedReviewAttemptId(nextAttemptId);
+    setPhase({ phase: "review", selectedAttemptId: nextAttemptId });
+  };
+
+  const navigatePostExam = (view: MockPostExamView) => {
+    reviewRequestRef.current += 1;
+    sttAbortRef.current?.abort();
+    setIsTranscribing(false);
+    setIsFeedbackLoading(false);
+    if (view === "summary") {
+      setPhase({ phase: "complete" });
+      return;
+    }
+    if (view === "review") {
+      selectReviewAttempt();
+      return;
+    }
+    setPhase({ phase: "report", returnAttemptId: selectedReviewAttemptId });
   };
 
   const performTranscribe = async () => {
@@ -635,11 +661,11 @@ export function FullMockPracticeView({
   }
 
   if (phase.phase === "report" && plan) {
-    const report = createMockDiagnosticReport({ attempts, plan, totalQuestions, totalTestSeconds });
+    const report = createMockTrainingReport({ attempts, totalQuestions, totalTestSeconds });
     return (
       <MockReportView
         attempts={attempts}
-        onBack={() => setPhase({ phase: "review", selectedAttemptId: phase.returnAttemptId ?? attempts[0]?.id })}
+        onNavigate={navigatePostExam}
         onRestart={restartMock}
         report={report}
       />
@@ -656,10 +682,9 @@ export function FullMockPracticeView({
     return (
       <MockResultView
         attempts={attempts}
+        onNavigate={navigatePostExam}
         onRestart={restartMock}
         onReview={selectReviewAttempt}
-        onStartReview={() => selectReviewAttempt(attempts[0]?.id)}
-        onViewReport={() => setPhase({ phase: "report", returnAttemptId: selectedAttempt?.id })}
         reviewing={phase.phase === "review"}
         selectedAttemptId={selectedAttempt?.id}
         totalQuestions={totalQuestions}
@@ -692,8 +717,11 @@ export function FullMockPracticeView({
   }
 
   const progressLabel = warmup
-    ? "WARM-UP · 자기소개"
+    ? "SELF INTRODUCTION · 자기소개 워밍업"
     : `SESSION ${session} · 문항 ${sessionIndex + 1} / ${sessionQuestions.length}`;
+  const advanceLabel = sessionIndex + 1 >= sessionQuestions.length
+    ? session === 1 ? "난이도 재조정" : "시험 결과 보기"
+    : "다음 문항";
 
   return (
     <div
@@ -702,14 +730,16 @@ export function FullMockPracticeView({
       data-mock-phase={phase.phase}
       data-question-source-level={activeQuestion?.sourceLevelId}
     >
-      <div className="flex flex-wrap items-center justify-end gap-3">
-        <p aria-label={`남은 본시험 시간 ${formatTime(remainingSeconds)}`} className="font-mono text-sm font-black text-zinc-800 dark:text-zinc-100">
-          {warmup ? "본시험 타이머 · 워밍업 후 시작" : `남은 시간 ${formatTime(remainingSeconds)}`}
-        </p>
-      </div>
-
-      <Recorder mode="engine" onRecordingReady={handleRecordingReady} onToast={onToast} ref={recorderRef} resetKey={attemptKey} />
+      <Recorder
+        mode="engine"
+        notifyOnSave={false}
+        onRecordingReady={handleRecordingReady}
+        onToast={onToast}
+        ref={recorderRef}
+        resetKey={attemptKey}
+      />
       <ExamScreenShell
+        advanceLabel={!warmup && questionState === "complete" ? advanceLabel : undefined}
         audioPlayer={activeQuestionAudioSource ? (
           <OomWavePlayer
             audioUrl={activeQuestionAudioSource.kind === "static" ? activeQuestionAudioSource.url : undefined}
@@ -730,7 +760,7 @@ export function FullMockPracticeView({
             }}
             onFinish={() => {
               setIsSpeaking(false);
-              setQuestionTtsStatus(warmup ? "워밍업 안내 재생 완료" : "질문 음성 재생 완료");
+              setQuestionTtsStatus(warmup ? "자기소개 안내 재생 완료" : "질문 음성 재생 완료");
             }}
             onPlaybackChange={(playing) => setIsSpeaking(playing)}
             precomputedDuration={activeQuestionAudioSource.kind === "static" ? activeQuestionAudioSource.duration : undefined}
@@ -741,6 +771,7 @@ export function FullMockPracticeView({
           />
         ) : undefined}
         courseLabel={resolved.course.title}
+        completionMessage={!warmup && questionState === "complete" ? "중간 복기 없이 다음 문항으로 이어집니다." : undefined}
         elapsedLabel={formatTime(elapsedSeconds)}
         experience="mock"
         globalTimeLabel={warmup ? undefined : formatTime(remainingSeconds)}
@@ -750,6 +781,7 @@ export function FullMockPracticeView({
         maxListenCount={2}
         micFailed={micFailed}
         mode={warmup ? "warmup" : "question"}
+        onAdvance={!warmup && questionState === "complete" ? goNext : undefined}
         onListen={handleListen}
         onStartAnswer={startAnswer}
         onStartTimerOnly={startTimerOnly}
@@ -765,21 +797,6 @@ export function FullMockPracticeView({
         targetRangeLabel={warmup ? selfIntroduction.durationLabel.replace(/^약\s*/, "") : ""}
         ttsStatus={questionTtsStatus || undefined}
       />
-
-      {!warmup && questionState === "complete" ? (
-        <Card className="flex flex-col items-start justify-between gap-4 border-emerald-200 p-4 dark:border-emerald-900 sm:flex-row sm:items-center">
-          <div>
-            <p className="text-sm font-black text-emerald-800 dark:text-emerald-200">답변이 저장되었습니다.</p>
-            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">중간 복기 없이 다음 문항으로 이어집니다.</p>
-          </div>
-          <Button onClick={goNext}>
-            {sessionIndex + 1 >= sessionQuestions.length
-              ? session === 1 ? "난이도 재조정" : "시험 결과 보기"
-              : "다음 문항"}
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        </Card>
-      ) : null}
     </div>
   );
 }

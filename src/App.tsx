@@ -491,7 +491,13 @@ export default function App() {
         <AnimatePresence mode="wait">
           <motion.div
             animate={{ opacity: 1, y: 0 }}
-            className={isStepView ? "step-page" : undefined}
+            className={
+              isStepView
+                ? activeView === "practice-mock"
+                  ? "step-page lg:h-full lg:min-h-0"
+                  : "step-page"
+                : undefined
+            }
             exit={{ opacity: 0, y: -6 }}
             initial={{ opacity: 0, y: 8 }}
             key={location.pathname}

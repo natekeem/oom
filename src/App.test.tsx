@@ -98,7 +98,8 @@ describe("OOM", () => {
         <App />
       </MemoryRouter>
     );
-    expect(await screen.findByText("WARM-UP · 자기소개")).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "질문 듣기" })).toBeInTheDocument();
+    expect(screen.queryByText(/WARM-UP|자기소개 워밍업/)).not.toBeInTheDocument();
     expect(screen.getByText("훈련 진행 100%")).toBeInTheDocument();
     expect(screen.getAllByText("STEP 6 · 빠른 연습").length).toBeGreaterThan(0);
     quick.unmount();

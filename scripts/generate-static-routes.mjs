@@ -256,7 +256,7 @@ const baseRoutes = [
     heading: "OPIc 빠른 연습",
     content: [
       "한 문항을 듣고 답변한 뒤 녹음, STT, AI 피드백으로 바로 복기합니다.",
-      "자기소개 워밍업 뒤 질문을 최대 2회 듣고, 같은 질문을 다시 말하는 짧은 교정 루프를 반복합니다."
+      "자기소개 워밍업 없이 질문을 최대 2회 듣고, 같은 질문을 다시 말하는 짧은 교정 루프를 반복합니다."
     ],
   },
   {
@@ -314,7 +314,7 @@ const pageGuides = {
   "/roleplay/sports/": { purpose: "현재 선택한 코스의 실제 상황을 사용하여 문제 설명 → 정보 질문 → 대안 제시 흐름을 연습합니다.", how: "코스별 롤플레이 시나리오에서 문제를 파악하고 6단계 공식에 맞춰 해결책을 요청합니다.", benefit: "실제 서비스 상황에서 침착하게 대안을 요청하고 마무리하는 능력을 기릅니다.", checklist: ["문제 상황을 파악했다", "가능한 대안을 제시했다", "녹음으로 답변 흐름을 점검했다"], links: [["/roleplay/", "롤플레이 허브"], ["/practice/", "실전 연습"]] },
   "/roleplay/home/": { purpose: "현재 선택한 코스의 실제 상황을 사용하여 문제 설명 → 정보 질문 → 대안 제시 흐름을 연습합니다.", how: "코스별 롤플레이 시나리오에서 문제를 파악하고 6단계 공식에 맞춰 해결책을 요청합니다.", benefit: "실제 서비스 상황에서 침착하게 대안을 요청하고 마무리하는 능력을 기릅니다.", checklist: ["문제 상황을 파악했다", "가능한 대안을 제시했다", "녹음으로 답변 흐름을 점검했다"], links: [["/roleplay/", "롤플레이 허브"], ["/practice/", "실전 연습"]] },
   "/practice/": { purpose: "STEP 6 허브는 빠른 연습과 실전 모의고사를 서로 독립된 URL로 안내하는 실전 말하기 훈련 입구입니다.", how: "한 문제를 바로 고쳐 말하려면 빠른 연습을, Background Survey부터 두 Session과 전체 복기까지 이어가려면 실전 모의고사를 선택합니다.", benefit: "현재 목표에 맞는 연습 방식을 바로 찾고 사이드바의 두 하위 메뉴로 언제든지 이동할 수 있습니다.", checklist: ["오늘 필요한 연습 길이를 정했다", "빠른 연습과 모의고사의 복기 시점을 구분했다", "현재 Course와 Level 설정을 확인했다"], mistakes: ["두 방식을 같은 화면의 임시 모드로 오해한다", "긴 모의고사 중 문항별 피드백을 기대한다"], links: [["/practice/quick/", "빠른 연습"], ["/practice/mock/", "실전 모의고사"], ["/training/setup/", "Course와 Level 설정"]] },
-  "/practice/quick/": { purpose: "빠른 연습은 자기소개 워밍업 뒤 한 문항을 듣고 녹음하여 즉시 복기하는 짧은 STEP 6 훈련입니다.", how: "질문을 최대 2회 듣고 답변을 녹음합니다. 녹음 뒤 optional STT transcript를 확인·수정하고 AI의 KEEP, FIX, RETRY를 적용해 같은 질문을 다시 말합니다.", benefit: "약 2~5분 안에 한 가지 개선점을 다음 발화에 바로 적용할 수 있습니다.", checklist: ["질문의 핵심 시제와 명사를 들었다", "답변을 녹음하거나 타이머로 발화했다", "transcript를 확인했다", "한 가지 수정점을 적용해 다시 말했다"], mistakes: ["한 번에 모든 표현을 고치려 한다", "질문 청취 2회 제한을 반복 재생으로 우회한다"], links: [["/practice/", "실전 연습 허브"], ["/practice/mock/", "실전 모의고사"], ["/ai-settings/", "AI와 STT 설정"]] },
+  "/practice/quick/": { purpose: "빠른 연습은 자기소개 워밍업 없이 한 문항을 바로 듣고 녹음하여 즉시 복기하는 짧은 STEP 6 훈련입니다.", how: "질문을 최대 2회 듣고 답변을 녹음합니다. 녹음 뒤 optional STT transcript를 확인·수정하고 AI의 KEEP, FIX, RETRY를 적용해 같은 질문을 다시 말합니다.", benefit: "약 2~5분 안에 한 가지 개선점을 다음 발화에 바로 적용할 수 있습니다.", checklist: ["질문의 핵심 시제와 명사를 들었다", "답변을 녹음하거나 타이머로 발화했다", "transcript를 확인했다", "한 가지 수정점을 적용해 다시 말했다"], mistakes: ["한 번에 모든 표현을 고치려 한다", "질문 청취 2회 제한을 반복 재생으로 우회한다"], links: [["/practice/", "실전 연습 허브"], ["/practice/mock/", "실전 모의고사"], ["/ai-settings/", "AI와 STT 설정"]] },
   "/practice/mock/": { purpose: "실전 모의고사는 현재 Course의 배경 설문과 질문 풀로 준비 단계부터 두 Session, 전체 복기까지 이어가는 STEP 6 훈련입니다.", how: "Background Survey를 선택하고 OOM Self Assessment 프리셋을 고른 뒤 시험 준비를 확인합니다. 자기소개 Warm-up 후 1st Session, 난이도 재조정, 2nd Session을 진행하고 종료 뒤 선택한 답변만 STT와 AI로 복기합니다.", benefit: "시험 중 피드백을 끊고 40분 타이머 안에서 질문 청취와 연속 발화 리듬을 연습할 수 있습니다.", checklist: ["현재 Course의 설문 설정을 확인했다", "저장값과 별개인 초기 Mock 난이도를 골랐다", "시험 중 힌트 없이 답했다", "종료 뒤 필요한 답변을 선택해 복기했다"], mistakes: ["OOM 구성을 공식 출제 알고리즘으로 오해한다", "시험 중 transcript나 AI 피드백을 찾는다"], links: [["/practice/", "실전 연습 허브"], ["/practice/quick/", "빠른 연습"], ["/training/survey/", "추천 서베이 익히기"]] },
 };
 

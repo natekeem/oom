@@ -7,10 +7,7 @@ import { PracticeView } from "./components/practice/PracticeView";
 import { RoleplayViewV2 } from "./components/roleplay/RoleplayViewV2";
 import { ScriptDetail } from "./components/script/ScriptDetail";
 import { SelfIntroductionView } from "./components/script/SelfIntroductionView";
-import {
-  getSelfIntroduction,
-  SELF_INTRODUCTION_PROMPT,
-} from "./data/training/selfIntroduction";
+import { getSelfIntroduction } from "./data/training/selfIntroduction";
 import { resolveTrainingContext } from "./training/courseRegistry";
 import { TrainingSelectionProvider } from "./training/TrainingSelectionContext";
 import {
@@ -95,13 +92,6 @@ beforeEach(() => {
     },
   );
 });
-
-async function completePracticeWarmup(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole("button", { name: "워밍업 시작" }));
-  await user.click(await screen.findByRole("button", { name: "타이머만 시작" }));
-  await user.click(screen.getByRole("button", { name: "워밍업 종료" }));
-  await screen.findByRole("button", { name: "랜덤 질문 뽑기" }, { timeout: 2500 });
-}
 
 describe("STEP 3 voice settings", () => {
   it("exposes exactly four voices per use, persists independent choices, and leaves TrainingSelection untouched", async () => {
@@ -437,7 +427,7 @@ describe("voice preference consumers", () => {
     await waitFor(() => expect(reservedShell).toHaveAttribute("data-state", "fallback"));
   });
 
-  it("uses examVoice while isolating warm-up 0/2 from Question 1 0/2", async () => {
+  it("uses examVoice and starts Quick directly at Question 1 with 0/2", async () => {
     const user = userEvent.setup();
     writeTtsPreferences({ examVoice: "af_sarah", scriptVoice: "af_bella" });
 
@@ -447,8 +437,9 @@ describe("voice preference consumers", () => {
       </TrainingSelectionProvider>,
     );
 
-    const listen = screen.getByRole("button", { name: "워밍업 안내 듣기" });
+    const listen = screen.getByRole("button", { name: "질문 듣기" });
     expect(screen.getByText(/0 \/ 2/)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /자기소개 안내|워밍업/ })).not.toBeInTheDocument();
 
     await user.click(listen);
     await waitFor(() => expect(listen).not.toBeDisabled());
@@ -457,21 +448,11 @@ describe("voice preference consumers", () => {
     expect(screen.getByText(/2 \/ 2/)).toBeInTheDocument();
     expect(listen).toBeDisabled();
     expect(ttsMocks.preparePlayback).toHaveBeenCalledTimes(2);
-
-    await completePracticeWarmup(user);
-    const questionListen = screen.getByRole("button", { name: "질문 듣기" });
-    expect(screen.getByText(/0 \/ 2/)).toBeInTheDocument();
-    await user.click(questionListen);
-    await waitFor(() => expect(questionListen).not.toBeDisabled());
-    await user.click(questionListen);
-    expect(screen.getByText(/2 \/ 2/)).toBeInTheDocument();
-    expect(questionListen).toBeDisabled();
-    expect(ttsMocks.preparePlayback).toHaveBeenCalledTimes(4);
     for (const [input] of ttsMocks.preparePlayback.mock.calls) {
       expect(input).toEqual(expect.objectContaining({ voice: "af_sarah", speed: 1 }));
     }
     expect(ttsMocks.preparePlayback.mock.calls[0][0]).toEqual(
-      expect.objectContaining({ text: SELF_INTRODUCTION_PROMPT }),
+      expect.objectContaining({ text: resolveTrainingContext("course-1", "advanced").questions[0].prompt }),
     );
   });
 
@@ -501,21 +482,12 @@ describe("voice preference consumers", () => {
     expect(player).toHaveAttribute("data-seek-enabled", "false");
     expect(screen.getByText(/0 \/ 2/)).toBeInTheDocument();
 
-    const listen = screen.getByRole("button", { name: "워밍업 안내 듣기" });
+    const listen = screen.getByRole("button", { name: "질문 듣기" });
     await user.click(listen);
     act(() => uiWaveMocks.handlers.finish?.());
     await user.click(listen);
     expect(screen.getByText(/2 \/ 2/)).toBeInTheDocument();
     expect(listen).toBeDisabled();
-
-    await completePracticeWarmup(user);
-    expect(screen.getByText(/0 \/ 2/)).toBeInTheDocument();
-    const questionListen = screen.getByRole("button", { name: "질문 듣기" });
-    await user.click(questionListen);
-    act(() => uiWaveMocks.handlers.finish?.());
-    await user.click(questionListen);
-    expect(screen.getByText(/2 \/ 2/)).toBeInTheDocument();
-    expect(questionListen).toBeDisabled();
     expect(ttsMocks.preparePlayback).not.toHaveBeenCalled();
   });
 });

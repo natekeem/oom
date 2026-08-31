@@ -100,7 +100,7 @@ Public route targets use the canonical `https://opic-on-me.com/path/` form. Inte
 | `roleplay-sports` | Training / STEP 5 child | `RoleplayViewV2` | Yes, 80% | Generic slot 2 scenario (e.g. sports/fitness) |
 | `roleplay-home` | Compatibility route, hidden from current sidebar | `RoleplayViewV2` | Yes, 80% | Legacy slot 3 URL; current three-scenario manifests fall back safely to slot 0 |
 | `practice` | Training / STEP 6 parent | `PracticeHubView` | Yes, 100% | `/practice/` route-only Hub; no exam runtime mounted |
-| `practice-quick` | Training / STEP 6 child | `PracticeView` | Yes, 100% | `/practice/quick/`; Quick warm-up, one-question review/retry |
+| `practice-quick` | Training / STEP 6 child | `PracticeView` | Yes, 100% | `/practice/quick/`; direct one-question exam and review/retry |
 | `practice-mock` | Training / STEP 6 child | `FullMockPracticeView` | Yes, 100% | `/practice/mock/`; Survey-first Full Mock with in-memory session state |
 | `magazine-list` | Top-level magazine | `MagazineList` / `MagazineDetail` | No | `/magazine/` lists static articles; `/magazine/:id/` renders the selected article |
 | `ai-settings` | Top-level utility | `AiSettingsView` | No | LLM runtime configuration |

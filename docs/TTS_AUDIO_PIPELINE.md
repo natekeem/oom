@@ -45,7 +45,7 @@ text + selected voice
 - **STEP 3:** resolves the exam and script preview phrases for their selected voices and shows seekable waveform players.
 - **STEP 4:** resolves canonical Level script audio and the self-introduction example, shows a real waveform before Play when static coverage exists, and permits seeking/replay.
 - **STEP 5:** resolves each Level-specific roleplay answer example with the script voice.
-- **STEP 6:** Quick and Full Mock pre-resolve only the current existing question, roleplay prompt, or one-time self-introduction warm-up without consuming a listen. Playback is non-seekable, fixed at 1.00×, and consumes at most two listens per question. Full Mock does not add spoken transition text or preload every planned audio asset.
+- **STEP 6:** Quick pre-resolves only its current question or roleplay prompt; Full Mock additionally pre-resolves its one-time self-introduction warm-up. Resolution does not consume a listen. Playback is non-seekable, fixed at 1.00×, and consumes at most two listens per question. Full Mock does not add spoken transition text or preload every planned audio asset.
 
 All synthesis assets are produced at `1.00×`. STEP 4 and STEP 5 speed changes only WaveSurfer `playbackRate` with pitch preservation. Playback rate is excluded from static and runtime cache identity.
 

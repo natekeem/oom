@@ -1,4 +1,5 @@
 import {
+  CheckCircle2,
   Dices,
   Eye,
   EyeOff,
@@ -95,6 +96,8 @@ type ExamScreenShellProps = {
   audioPlayer?: ReactNode;
   ttsStatus?: string;
   completionMessage?: string;
+  advanceLabel?: string;
+  onAdvance?: () => void;
 };
 
 /**
@@ -141,13 +144,15 @@ export function ExamScreenShell({
   audioPlayer,
   ttsStatus,
   completionMessage,
+  advanceLabel,
+  onAdvance,
 }: ExamScreenShellProps) {
   const recording = state === "recording";
   const canListen = !recording && !isSpeaking && listenCount < maxListenCount && Boolean(questionPrompt);
   const warmup = mode === "warmup";
-  const listenActionLabel = warmup ? "워밍업 안내 듣기" : "질문 듣기";
-  const startActionLabel = warmup ? "워밍업 시작" : "답변 시작";
-  const stopActionLabel = warmup ? "워밍업 종료" : "답변 종료";
+  const listenActionLabel = warmup ? "자기소개 안내 듣기" : "질문 듣기";
+  const startActionLabel = warmup ? "자기소개 워밍업 시작" : "답변 시작";
+  const stopActionLabel = warmup ? "자기소개 워밍업 종료" : "답변 종료";
   const mock = experience === "mock";
 
   return (
@@ -157,24 +162,54 @@ export function ExamScreenShell({
     >
       {/* Top Console Bar */}
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 bg-zinc-900/90 px-4 py-3 sm:px-6">
-        <div className="flex items-center gap-2.5">
-          <span className="h-2 w-2 rounded-full bg-indigo-500" />
-          <span className="text-xs font-bold tracking-wider text-zinc-200 sm:text-sm">
-            {mock ? "OOM Full Mock Console" : "OOM OPIc Practice Console"}
-          </span>
-        </div>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-300">
-          <span className="font-semibold text-indigo-400">
-            {warmup ? "WARM-UP · 자기소개" : mock ? questionProgressLabel : `${courseLabel} 랜덤 질문`}
-          </span>
-          <span className="text-zinc-600">|</span>
-          <span>{mock && globalTimeLabel ? `남은 시간 ${globalTimeLabel}` : levelLabel}</span>
-          <span className="sr-only">{levelLabel} 레벨에 맞는 질문 풀</span>
-          <span className="text-zinc-600">|</span>
-          <span className="rounded bg-zinc-800 px-2 py-0.5 font-mono text-[11px] text-zinc-200">
-            {warmup ? "WARM-UP" : mock ? "FULL MOCK" : "Practice Question"}
-          </span>
-        </div>
+        {mock ? (
+          <>
+            <div className="flex items-center gap-2.5">
+              <span className="h-2 w-2 rounded-full bg-indigo-500" />
+              <span className="text-xs font-black uppercase tracking-[0.16em] text-zinc-100 sm:text-sm">
+                OOM Full Mock
+              </span>
+            </div>
+            <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-x-5 gap-y-1 text-right">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.12em] text-indigo-300">
+                  {warmup ? "SELF INTRODUCTION" : questionProgressLabel}
+                </p>
+                {warmup ? (
+                  <p className="mt-0.5 text-[11px] font-semibold text-zinc-300">자기소개 워밍업</p>
+                ) : null}
+              </div>
+              {warmup ? (
+                <p className="text-[11px] font-semibold text-zinc-400">40분 타이머는 본 문항부터 시작</p>
+              ) : globalTimeLabel ? (
+                <div aria-label={`남은 본시험 시간 ${globalTimeLabel}`}>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500">남은 시간</p>
+                  <p className="font-mono text-lg font-black leading-none text-zinc-50 sm:text-xl">{globalTimeLabel}</p>
+                </div>
+              ) : null}
+              <span className="sr-only">{levelLabel} 레벨에 맞는 질문 풀</span>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center gap-2.5">
+              <span className="h-2 w-2 rounded-full bg-indigo-500" />
+              <span className="text-xs font-bold tracking-wider text-zinc-200 sm:text-sm">
+                OOM OPIc Practice Console
+              </span>
+            </div>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-300">
+              <span className="font-semibold text-indigo-400">{`${courseLabel} 랜덤 질문`}</span>
+              <span className="text-zinc-600">|</span>
+              <span>{levelLabel}</span>
+              <span className="sr-only">{levelLabel} 레벨에 맞는 질문 풀</span>
+              <span className="text-zinc-600">|</span>
+              <span className="rounded bg-zinc-800 px-2 py-0.5 font-mono text-[11px] text-zinc-200">
+                Practice Question
+              </span>
+            </div>
+          </>
+        )}
       </header>
 
       {/* Main Console Grid */}
@@ -228,7 +263,7 @@ export function ExamScreenShell({
               </div>
 
               {/* Play Button Area */}
-              <div className="my-4 grid place-items-center text-center">
+              <div className="flex flex-1 flex-col items-center justify-center py-5 text-center">
                 <div className="relative">
                   {isDemo ? (
                     <AnnotationBadge
@@ -262,21 +297,22 @@ export function ExamScreenShell({
                 </div>
                 <p className="mt-3 text-xs font-medium text-zinc-300">
                   {ttsStatus ?? (isSpeaking
-                    ? warmup ? "워밍업 안내를 재생하고 있습니다..." : "질문 음성을 재생하고 있습니다..."
+                    ? warmup ? "자기소개 안내를 재생하고 있습니다..." : "질문 음성을 재생하고 있습니다..."
                     : listenCount >= maxListenCount
                     ? "청취 횟수(최대 2회)가 완료되었습니다."
-                    : warmup ? "안내를 듣고 편안하게 첫 목소리를 내보세요." : "버튼을 눌러 질문을 청취하세요.")}
+                    : warmup ? "안내를 듣고 20~30초 자기소개를 준비하세요." : "버튼을 눌러 질문을 청취하세요.")}
                 </p>
                 <p className="mt-1 text-[11px] text-zinc-500">
                   {warmup
-                    ? "워밍업 안내는 실전 문항과 별도로 최대 2회 들을 수 있습니다."
+                    ? "자기소개 안내는 본시험 문항과 별도로 최대 2회 들을 수 있습니다."
                     : "실제 시험에서는 질문을 최대 2회까지 들을 수 있습니다."}
                 </p>
-                {audioPlayer ? <div className="mt-3 w-full min-w-0">{audioPlayer}</div> : null}
               </div>
-
-              {/* Spacing alignment */}
-              <div className="border-t border-zinc-800/40" />
+              {audioPlayer ? (
+                <div className="mt-5 w-full min-w-0 border-t border-zinc-800 pt-4">
+                  {audioPlayer}
+                </div>
+              ) : null}
             </div>
           </div>
 
@@ -341,6 +377,66 @@ export function ExamScreenShell({
               />
             ) : null}
 
+            {mock ? (
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div
+                    className={`grid h-10 w-10 shrink-0 place-items-center rounded-full border ${
+                      state === "complete"
+                        ? "border-emerald-500/50 bg-emerald-500/15 text-emerald-300"
+                        : recording
+                          ? "border-red-500/50 bg-red-500/20 text-red-400"
+                          : "border-zinc-700 bg-zinc-800 text-zinc-400"
+                    }`}
+                  >
+                    {state === "complete" ? (
+                      <CheckCircle2 className="h-5 w-5" />
+                    ) : (
+                      <Mic className={`h-5 w-5 ${recording ? "animate-pulse" : ""}`} />
+                    )}
+                  </div>
+                  <div>
+                    <p className={`text-xs font-black ${state === "complete" ? "text-emerald-300" : "text-zinc-200"}`}>
+                      {state === "complete" ? "✓ 답변이 저장되었습니다." : recording ? "● 녹음 중" : "● 마이크 준비"}
+                    </p>
+                    {state === "complete" && completionMessage ? (
+                      <p className="mt-0.5 text-[11px] text-zinc-400">{completionMessage}</p>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-5 sm:ml-auto sm:justify-end">
+                  <div className="text-right">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500">답변 시간</p>
+                    <p className="mt-0.5 font-mono text-xl font-black text-zinc-50">{elapsedLabel}</p>
+                  </div>
+                  {recording ? (
+                    <Button
+                      aria-label={stopActionLabel}
+                      className="bg-red-600 text-white hover:bg-red-500"
+                      onClick={onStopAnswer}
+                    >
+                      <Square className="h-4 w-4" />
+                      {stopActionLabel}
+                    </Button>
+                  ) : state === "complete" && onAdvance ? (
+                    <Button aria-label={advanceLabel ?? "다음 문항"} onClick={onAdvance}>
+                      {advanceLabel ?? "다음 문항"}
+                    </Button>
+                  ) : (
+                    <Button
+                      aria-label={startActionLabel}
+                      className="bg-indigo-600 text-white hover:bg-indigo-500"
+                      disabled={!questionPrompt || state === "complete"}
+                      onClick={onStartAnswer}
+                    >
+                      <Mic className="h-4 w-4" />
+                      {startActionLabel}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ) : (
             <div className="flex flex-wrap items-center justify-between gap-4">
               {/* Recording Indicator */}
               <div className="flex items-center gap-3">
@@ -370,20 +466,16 @@ export function ExamScreenShell({
                 </div>
               </div>
 
-              {/* Quick target range or Mock global main-test timer */}
-              {showTargetRange || globalTimeLabel ? <div className="rounded-md border border-zinc-800 bg-zinc-950/60 px-3.5 py-2 text-right">
+              {/* Quick target range */}
+              {showTargetRange ? <div className="rounded-md border border-zinc-800 bg-zinc-950/60 px-3.5 py-2 text-right">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
-                  {globalTimeLabel && !warmup ? "남은 본시험 시간" : warmup ? "첫 발화 워밍업" : "OOM 연습 목표"}
+                  OOM 연습 목표
                 </p>
                 <p className="mt-0.5 text-base font-extrabold text-indigo-300 sm:text-lg">
-                  {globalTimeLabel && !warmup ? globalTimeLabel : targetRangeLabel}
+                  {targetRangeLabel}
                 </p>
                 <p className="mt-0.5 text-[10px] text-zinc-500">
-                  {globalTimeLabel && !warmup
-                    ? "문항별 답변시간은 별도로 제한하지 않습니다."
-                    : warmup
-                    ? "평가용 문항이 아닌 OOM 발화 준비 시간입니다."
-                    : "실제 OPIc의 문항별 제한시간이 아닙니다."}
+                  실제 OPIc의 문항별 제한시간이 아닙니다.
                 </p>
               </div> : null}
 
@@ -420,6 +512,7 @@ export function ExamScreenShell({
                 )}
               </div>
             </div>
+            )}
 
             {/* Mic Failure Inline Fallback */}
             {micFailed ? (

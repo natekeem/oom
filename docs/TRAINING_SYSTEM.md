@@ -69,7 +69,7 @@ The sidebar reads the resolved storyline/roleplay `group` labels, so a Course ch
 
 The training hub is a neutral six-step overview. It does not silently select a Course or Level. The sticky title/progress header is a training-only AppShell affordance; landing, about, guide, magazine, legal, and settings routes do not show it.
 
-Self Introduction is the first single child menu under STEP 4. It does not add a seventh step or a progress slot. The same Level-aware, Course-neutral data is reused once as a warm-up before either STEP 6 mode; warm-up audio and recording do not enter the review, STT, or AI feedback phase.
+Self Introduction is the first single child menu under STEP 4. It does not add a seventh step or a progress slot. The same Level-aware, Course-neutral data is reused as a 20~30 second warm-up before Full Mock only; it is outside the question count and 40-minute timer, and its audio and recording do not enter review, STT, or AI feedback. Quick Practice starts directly with its selected question.
 
 ## STEP 4 Mental Model
 
@@ -112,7 +112,6 @@ STEP 6 is a parent area with two equal child routes. The hub does not mount Reco
 ```text
 Quick Practice
 /practice/quick/
-→ one-time warm-up
 → one pre-resolved audio-first question, 0/2 listens, 1.00×
 → recording + Level-aware coaching timer
 → local replay / optional STT / editable transcript / AI feedback
@@ -123,20 +122,20 @@ Full Mock
 → Background Survey from the current Course preset
 → OOM Self Assessment preset stored only in Mock memory
 → Pre-Test setup
-→ one-time warm-up outside the main timer
+→ 20~30 second Self Introduction warm-up outside the question count and main timer
 → Session 1: 7 selected-Level general questions
 → user difficulty adjustment (saved selection unchanged)
 → Session 2: Level-dependent 5/7/8 general + roleplay mix
-→ completion summary and whole-session answer list
+→ completion summary / whole-session answer review / training report navigation
 → manual STT / editable transcript / AI for one selected answer at a time
-→ non-official OOM diagnostic score / estimated range / local HTML Report
+→ process-only metrics and a local standalone HTML training report
 ```
 
 Full Mock is an OOM training heuristic informed by the publicly described high-level exam flow; it does not claim official question composition or order. The current Course stays fixed. Mock Survey selection uses the explicit storyline `surveyOptionIds` mapping to prioritize eligible questions, and the Mock Self Assessment Level becomes Session 1's source without mutating `TrainingSelection` or localStorage. The plan is seeded once at start. Its main timer is 40 minutes with no added per-question limit. During the exam, question text, storyline hints, target seconds, STT, AI, transcript, and retry controls stay hidden. Each question resets to 0/2 listening and waits for the user to move forward after recording finalization.
 
 Recorder failure must not silently start an audio recording state. A timer-only path remains available with clear UI in both modes. STT and LLM failure do not invalidate the local recording or prevent manual transcript review.
 
-AI feedback is coaching, not official scoring. After Full Mock completion, OOM may calculate a transparent training diagnostic score and estimated range from completion rate, target-duration fit, recording coverage, and optional STT/AI review coverage. The UI and downloaded HTML must label this as non-official and non-guaranteed. Transcript-only analysis must not claim pronunciation accuracy or acoustic fluency.
+AI feedback is coaching, not official scoring. After Full Mock completion, OOM may summarize completion rate, target-duration fit, recording coverage, answer time, and optional STT/AI review coverage as transparent training process metrics. The UI and downloaded HTML must not calculate a 0–100 diagnostic score or estimated OPIc grade range. Transcript-only analysis must not claim pronunciation accuracy or acoustic fluency.
 
 ## Regression Contracts
 

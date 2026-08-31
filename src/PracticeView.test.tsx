@@ -63,37 +63,20 @@ const dummySttSettings: SttSettings = {
   autoTranscribe: false,
 };
 
-async function passWarmup(user: ReturnType<typeof userEvent.setup>) {
-  // Start answer (will fail in jsdom and show mic error)
-  await user.click(screen.getByRole("button", { name: /워밍업 시작/ }));
-
-  // In jsdom, mic fails, so click "타이머만 시작"
-  const timerOnlyBtn = await screen.findByRole("button", { name: /타이머만 시작/ });
-  await user.click(timerOnlyBtn);
-
-  // Stop answer
-  await user.click(await screen.findByRole("button", { name: /워밍업 종료/ }));
-
-  // Wait for the short completion transition to enter Question 1.
-  await waitFor(() => {
-    expect(screen.queryByRole("button", { name: /워밍업/ })).not.toBeInTheDocument();
-  }, { timeout: 2500 });
-}
-
-function renderFullMock(onNavigate = vi.fn()) {
+function renderFullMock(onNavigate = vi.fn(), onToast = vi.fn()) {
   const resolved = resolveTrainingContext("course-1", "advanced");
   render(
     <TrainingSelectionProvider>
       <FullMockPracticeView
         onNavigate={onNavigate}
-        onToast={vi.fn()}
+        onToast={onToast}
         resolved={resolved}
         settings={dummyLlmSettings}
         sttSettings={dummySttSettings}
       />
     </TrainingSelectionProvider>,
   );
-  return { onNavigate, resolved };
+  return { onNavigate, onToast, resolved };
 }
 
 async function advanceMockToWarmup(user: ReturnType<typeof userEvent.setup>) {
@@ -103,8 +86,7 @@ async function advanceMockToWarmup(user: ReturnType<typeof userEvent.setup>) {
 }
 
 describe("PracticeView & ExamScreenShell", () => {
-  it("starts with an isolated warm-up, skips STT/AI, and enters Question 1 at 0/2", async () => {
-    const user = userEvent.setup();
+  it("starts Quick Practice directly at Question 1 without consuming self-introduction TTS", () => {
     render(
       <TrainingSelectionProvider>
         <PracticeView
@@ -115,17 +97,11 @@ describe("PracticeView & ExamScreenShell", () => {
       </TrainingSelectionProvider>,
     );
 
-    expect(screen.getByText("WARM-UP · 자기소개")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "워밍업 안내 듣기" })).toBeInTheDocument();
-    expect(screen.getByText(/0 \/ 2/)).toBeInTheDocument();
-    expect(screen.queryByText(/방금 말한 내용을 듣고/)).not.toBeInTheDocument();
-
-    await user.click(screen.getByRole("button", { name: "워밍업 안내 듣기" }));
-    expect(screen.getByText(/1 \/ 2/)).toBeInTheDocument();
-    await passWarmup(user);
-
+    expect(screen.queryByText(/WARM-UP|자기소개 워밍업/)).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /자기소개 안내/ })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "질문 듣기" })).toBeInTheDocument();
     expect(screen.getByText(/0 \/ 2/)).toBeInTheDocument();
+    expect(screen.queryByText(/방금 말한 내용을 듣고/)).not.toBeInTheDocument();
     expect(practiceApiMocks.transcribeAudio).not.toHaveBeenCalled();
     expect(practiceApiMocks.callInternalLlm).not.toHaveBeenCalled();
   });
@@ -142,8 +118,6 @@ describe("PracticeView & ExamScreenShell", () => {
         />
       </TrainingSelectionProvider>
     );
-
-    await passWarmup(user);
 
     // Header & Shell rendered
     expect(screen.getByText("STEP 6 · 빠른 연습")).toBeInTheDocument();
@@ -180,8 +154,6 @@ describe("PracticeView & ExamScreenShell", () => {
       </TrainingSelectionProvider>
     );
 
-    await passWarmup(user);
-
     await user.click(screen.getByRole("button", { name: /답변 시작/ }));
     const timerOnly = screen.queryByRole("button", { name: /타이머만 시작/ });
     if (timerOnly) await user.click(timerOnly);
@@ -208,8 +180,6 @@ describe("PracticeView & ExamScreenShell", () => {
         />
       </TrainingSelectionProvider>
     );
-
-    await passWarmup(user);
 
     const playBtn = screen.getByRole("button", { name: "질문 듣기" });
     expect(screen.getByText(/0 \/ 2/)).toBeInTheDocument();
@@ -239,8 +209,6 @@ describe("PracticeView & ExamScreenShell", () => {
         />
       </TrainingSelectionProvider>
     );
-
-    await passWarmup(user);
 
     // Click Start Answer
     const startBtn = screen.getByRole("button", { name: /답변 시작/ });
@@ -281,8 +249,6 @@ describe("PracticeView & ExamScreenShell", () => {
       </TrainingSelectionProvider>
     );
 
-    await passWarmup(user);
-
     const drawBtn = screen.getByRole("button", { name: /랜덤 질문 뽑기/ });
     await user.click(drawBtn);
 
@@ -312,8 +278,6 @@ describe("PracticeView & ExamScreenShell", () => {
       </TrainingSelectionProvider>
     );
 
-    await passWarmup(user);
-
     // Listen once
     const playBtn = screen.getByRole("button", { name: "질문 듣기" });
     await user.click(playBtn);
@@ -337,7 +301,7 @@ describe("PracticeView & ExamScreenShell", () => {
     expect(onToast).toHaveBeenCalledWith("재도전 준비 완료", expect.any(String), "info");
   });
 
-  it("records the warm-up but discards it before entering Question 1", async () => {
+  it("keeps Full Mock self-introduction as a discarded warm-up outside review", async () => {
     const trackStop = vi.fn();
     const stream = { getTracks: () => [{ stop: trackStop }] } as unknown as MediaStream;
 
@@ -366,19 +330,14 @@ describe("PracticeView & ExamScreenShell", () => {
 
     const onToast = vi.fn();
     const user = userEvent.setup();
-    render(
-      <TrainingSelectionProvider>
-        <PracticeView
-          onToast={onToast}
-          settings={dummyLlmSettings}
-          sttSettings={{ ...dummySttSettings, autoTranscribe: true }}
-        />
-      </TrainingSelectionProvider>,
-    );
+    renderFullMock(vi.fn(), onToast);
+    await advanceMockToWarmup(user);
 
-    await user.click(screen.getByRole("button", { name: "워밍업 시작" }));
-    await user.click(await screen.findByRole("button", { name: "워밍업 종료" }));
-    await screen.findByRole("button", { name: "랜덤 질문 뽑기" }, { timeout: 2500 });
+    expect(screen.getByText("SELF INTRODUCTION")).toBeInTheDocument();
+    expect(screen.getByText("자기소개 워밍업")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "자기소개 워밍업 시작" }));
+    await user.click(await screen.findByRole("button", { name: "자기소개 워밍업 종료" }));
+    await screen.findByText(/SESSION 1 · 문항 1 \/ 7/);
 
     expect(trackStop).toHaveBeenCalled();
     expect(onToast).not.toHaveBeenCalledWith(
@@ -486,8 +445,9 @@ describe("PracticeView & ExamScreenShell", () => {
     const user = userEvent.setup();
     renderFullMock();
     await advanceMockToWarmup(user);
-    expect(screen.getByText(/본시험 타이머 · 워밍업 후 시작/)).toBeInTheDocument();
-    expect(screen.getByText(/WARM-UP · 자기소개/)).toBeInTheDocument();
+    expect(screen.getByText(/40분 타이머는 본 문항부터 시작/)).toBeInTheDocument();
+    expect(screen.getByText("SELF INTRODUCTION")).toBeInTheDocument();
+    expect(screen.getByText("자기소개 워밍업")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /워밍업 시작/ }));
     const timerOnly = screen.queryByRole("button", { name: /타이머만 시작/ });
@@ -506,7 +466,7 @@ describe("PracticeView & ExamScreenShell", () => {
 
   it("resets 0/2 per Mock question and reaches adjustment after seven saved answers without STT or AI", async () => {
     const user = userEvent.setup();
-    renderFullMock();
+    const { onToast } = renderFullMock();
     await advanceMockToWarmup(user);
     await user.click(screen.getByRole("button", { name: /워밍업 시작/ }));
     const warmupTimerOnly = screen.queryByRole("button", { name: /타이머만 시작/ });
@@ -522,6 +482,7 @@ describe("PracticeView & ExamScreenShell", () => {
       const timerOnly = screen.queryByRole("button", { name: /타이머만 시작/ });
       if (timerOnly) await user.click(timerOnly);
       await user.click(screen.getByRole("button", { name: /답변 종료/ }));
+      expect(await screen.findByText("✓ 답변이 저장되었습니다.")).toBeInTheDocument();
       const nextLabel = questionIndex === 6 ? /난이도 재조정/ : /다음 문항/;
       await user.click(await screen.findByRole("button", { name: nextLabel }));
     }
@@ -532,6 +493,11 @@ describe("PracticeView & ExamScreenShell", () => {
     expect(screen.getByRole("button", { name: /조금 어렵게/ })).toBeInTheDocument();
     expect(practiceApiMocks.transcribeAudio).not.toHaveBeenCalled();
     expect(practiceApiMocks.callInternalLlm).not.toHaveBeenCalled();
+    expect(onToast).not.toHaveBeenCalledWith(
+      expect.stringMatching(/저장/),
+      expect.anything(),
+      "success",
+    );
   });
 
   it("finishes a 15-question advanced Mock before allowing one selected answer to call STT and AI", async () => {
@@ -580,19 +546,30 @@ describe("PracticeView & ExamScreenShell", () => {
     expect(practiceApiMocks.transcribeAudio).not.toHaveBeenCalled();
     expect(practiceApiMocks.callInternalLlm).not.toHaveBeenCalled();
 
-    await user.click(screen.getByRole("button", { name: /종합 예상 점수·진단 Report/ }));
-    expect(await screen.findByRole("heading", { name: /실전 모의고사 예상 점수·진단 Report/ })).toBeInTheDocument();
-    expect(screen.getByText(/OOM 훈련 진단 점수/)).toBeInTheDocument();
-    expect(screen.getByText(/공식 OPIc 점수나 등급을 보장하지 않으며/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "답변 복기 시작" })).toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: "모의고사 결과 화면" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "훈련 리포트 보기" }));
+    expect(await screen.findByRole("heading", { name: "OOM 모의고사 훈련 리포트" })).toBeInTheDocument();
+    expect(screen.getByText(/훈련 행동 기록/)).toBeInTheDocument();
+    expect(screen.queryByText(/예상 등급|예상 점수|\/ 100/)).not.toBeInTheDocument();
+    expect(screen.getByText(/공식 OPIc 점수나 등급을 예측하지 않으며/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /HTML 내려받기/ })).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: /전체 답변 복기/ }));
+    await user.click(screen.getByRole("button", { name: "답변 복기" }));
     expect(screen.queryByText(/녹음 있음.*듣기 \/ 복기/)).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /같은 문제 다시 말하기/ })).not.toBeInTheDocument();
+    expect(document.querySelectorAll('audio[data-testid="mock-row-preview-audio"]')).toHaveLength(1);
+    expect(document.querySelector('audio[controls]')).not.toBeInTheDocument();
+    expect(screen.getByTestId("oom-wave-player-script")).toHaveAttribute("data-source", "static");
     await user.click(screen.getByRole("button", { name: /음성을 텍스트로 변환/ }));
     expect(practiceApiMocks.transcribeAudio).toHaveBeenCalledTimes(1);
     await screen.findByDisplayValue("I answered the selected mock question clearly.");
     await user.click(screen.getByRole("button", { name: "AI 피드백 받기" }));
     expect(practiceApiMocks.callInternalLlm).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getByRole("button", { name: "결과 요약" }));
+    expect(await screen.findByRole("heading", { name: "실전 모의고사를 완료했습니다." })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "답변 복기" }));
+    expect(await screen.findByDisplayValue("I answered the selected mock question clearly.")).toBeInTheDocument();
   });
 });

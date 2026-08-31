@@ -220,8 +220,16 @@ export function MockPreTestScreen({
           </div>
         </div>
         <div className="mt-5 rounded-lg border border-indigo-100 bg-indigo-50/70 p-4 dark:border-indigo-900 dark:bg-indigo-950/30">
-          <p className="text-sm font-black text-indigo-950 dark:text-indigo-100">진행</p>
-          <p className="mt-2 text-sm leading-6 text-indigo-900 dark:text-indigo-200">자기소개 Warm-up → 1st Session 약 7문항 → 난이도 재조정 → 2nd Session → 전체 복기</p>
+          <p className="text-sm font-black text-indigo-950 dark:text-indigo-100">자기소개 워밍업</p>
+          <p className="mt-2 text-sm leading-6 text-indigo-900 dark:text-indigo-200">
+            본 문항 전에 20~30초 자기소개로 마이크와 첫 목소리를 확인합니다.
+          </p>
+          <p className="mt-1 text-xs leading-5 text-indigo-800 dark:text-indigo-300">
+            이 단계는 본시험 문항 수와 40분 타이머에 포함되지 않습니다.
+          </p>
+          <p className="mt-3 border-t border-indigo-100 pt-3 text-xs leading-5 text-indigo-800 dark:border-indigo-900 dark:text-indigo-300">
+            자기소개 워밍업 → 1st Session 약 7문항 → 난이도 재조정 → 2nd Session → 결과 요약·답변 복기·훈련 리포트
+          </p>
           <p className="mt-1 text-xs leading-5 text-indigo-800 dark:text-indigo-300">시험 중에는 힌트, STT, AI 피드백, transcript를 보여주지 않습니다.</p>
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">

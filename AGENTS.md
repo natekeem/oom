@@ -57,6 +57,7 @@ OOM (오픽온미, OPIc On Me)은 OPIc speaking practice를 위한 Vite + React 
 - A static miss or media failure continues to lazy Kokoro browser runtime; final fallback is system Web Speech.
 - Kokoro synthesis assets are always generated at `1.00×`. STEP 4 speed changes WaveSurfer `playbackRate`; playback rate is not part of synthesis/cache identity.
 - STEP 6 remains `1.00×` and its listen cap must not be bypassed by a seekable player.
+- Any fixed text that Quick Practice or Full Mock can speak must be included in the static playable inventory. Full Mock spoken inputs include `SELF_INTRODUCTION_PROMPT`, practice `question.prompt`, and `roleplay.prompt`.
 - `public/generated-tts/audio/**` and `public/generated-tts/tts-manifest.json` are generator-owned, versioned runtime assets. Do not hand-edit them.
 - `artifacts/tts-inventory.json` is generated but is also a direct input to static generation/validation. Keep it tracked and current.
 - Do not regenerate every asset casually. The generator rescans existing hash/voice targets and creates only missing or invalid targets.

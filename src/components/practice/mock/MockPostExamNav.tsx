@@ -1,5 +1,6 @@
 import { BarChart3, FileText, Headphones } from "lucide-react";
 import { cn } from "../../../lib/utils";
+import { Card } from "../../ui/Card";
 
 export type MockPostExamView = "summary" | "review" | "report";
 
@@ -17,27 +18,30 @@ export function MockPostExamNav({
   onChange: (view: MockPostExamView) => void;
 }) {
   return (
-    <nav
-      aria-label="모의고사 결과 화면"
-      className="flex w-full gap-1 overflow-x-auto rounded-lg border border-zinc-200 bg-white p-1 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
-    >
-      {items.map(({ id, label, icon: Icon }) => (
-        <button
-          aria-current={active === id ? "page" : undefined}
-          className={cn(
-            "inline-flex h-10 min-w-max flex-1 items-center justify-center gap-2 rounded-md px-3 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
-            active === id
-              ? "bg-indigo-600 text-white shadow-sm dark:bg-indigo-500"
-              : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white",
-          )}
-          key={id}
-          onClick={() => onChange(id)}
-          type="button"
-        >
-          <Icon className="h-4 w-4" />
-          {label}
-        </button>
-      ))}
-    </nav>
+    <Card className="p-1.5" data-step-accent="none">
+      <div aria-label="모의고사 결과 보기" className="grid grid-cols-3 gap-1" role="tablist">
+        {items.map(({ id, label, icon: Icon }) => {
+          const selected = active === id;
+          return (
+            <button
+              aria-selected={selected}
+              className={cn(
+                "flex min-h-10 items-center justify-center gap-1.5 rounded-md px-2 py-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 sm:gap-2 sm:text-sm",
+                selected
+                  ? "bg-indigo-600 text-white shadow-sm"
+                  : "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white",
+              )}
+              key={id}
+              onClick={() => onChange(id)}
+              role="tab"
+              type="button"
+            >
+              <Icon className="h-4 w-4 shrink-0" />
+              <span>{label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </Card>
   );
 }

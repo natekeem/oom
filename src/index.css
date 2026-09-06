@@ -39,12 +39,12 @@
     @apply w-full rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm text-zinc-900 outline-none transition-colors placeholder:text-zinc-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-indigo-500 dark:focus:ring-indigo-950;
   }
 
-  .step-page > div > :first-child:not([data-page-intro]) {
+  .step-page > div > :first-child:not([data-page-intro]):not([data-step-accent="none"]) {
     border-left: 3px solid rgb(99 102 241);
     padding: 0.25rem 0 0.25rem 1rem;
   }
 
-  .dark .step-page > div > :first-child:not([data-page-intro]) {
+  .dark .step-page > div > :first-child:not([data-page-intro]):not([data-step-accent="none"]) {
     border-color: rgb(129 140 248);
   }
 }

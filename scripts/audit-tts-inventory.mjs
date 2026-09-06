@@ -528,7 +528,9 @@ export async function buildAudit() {
               sourceType: "roleplay",
               category: "step5-roleplay",
               staticClass: "static",
-              currentTtsConsumer: false,
+              // STEP 5 does not speak the prompt, but STEP 6 Full Mock uses the
+              // same fixed roleplay.prompt as an exam TTS input in Session 2.
+              currentTtsConsumer: true,
               courseId: course.id,
               levelId: level.id,
               roleplayId: roleplay.id,

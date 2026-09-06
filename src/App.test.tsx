@@ -91,6 +91,7 @@ describe("OOM", () => {
     );
     expect(await screen.findByRole("heading", { name: "배운 내용을 실제 말하기로 연결해보세요." })).toBeInTheDocument();
     expect(screen.queryByText("OOM OPIc Practice Console")).not.toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: "서비스 정보" })).toBeInTheDocument();
     hub.unmount();
 
     const quick = render(
@@ -102,6 +103,7 @@ describe("OOM", () => {
     expect(screen.queryByText(/WARM-UP|자기소개 워밍업/)).not.toBeInTheDocument();
     expect(screen.getByText("훈련 진행 100%")).toBeInTheDocument();
     expect(screen.getAllByText("STEP 6 · 빠른 연습").length).toBeGreaterThan(0);
+    expect(screen.getByRole("navigation", { name: "서비스 정보" })).toBeInTheDocument();
     quick.unmount();
 
     render(
@@ -111,8 +113,9 @@ describe("OOM", () => {
     );
     expect(await screen.findByRole("heading", { name: /모의고사에서 사용할 배경 설문/ })).toBeInTheDocument();
     expect(screen.queryByText("WARM-UP · 자기소개")).not.toBeInTheDocument();
-    expect(screen.getByText("훈련 진행 100%")).toBeInTheDocument();
+    expect(screen.queryByText("훈련 진행 100%")).not.toBeInTheDocument();
     expect(screen.getAllByText("STEP 6 · 실전 모의고사").length).toBeGreaterThan(0);
+    expect(screen.queryByRole("navigation", { name: "서비스 정보" })).not.toBeInTheDocument();
   });
 
   it("keeps STEP 6 expanded with two leaf children on desktop and mobile", async () => {

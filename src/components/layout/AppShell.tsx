@@ -82,6 +82,8 @@ export function AppShell({
 
   const isOverview = activeView === "training-hub";
   const progress = progressMap[activeView];
+  const suppressTrainingProgress = activeView === "practice-mock";
+  const showProgress = !isOverview && !suppressTrainingProgress && typeof progress === "number";
   const themeLabel = darkMode ? "라이트 모드로 전환" : "다크 모드로 전환";
 
   useEffect(() => {
@@ -157,7 +159,7 @@ export function AppShell({
                   <span className="sm:hidden">{mobileTrainingLabels[activeView] ?? getViewTitle(activeView, resolved)}</span>
                   <span className="hidden sm:inline">{getViewTitle(activeView, resolved)}</span>
                 </p>
-                {!isOverview && typeof progress === "number" ? (
+                {showProgress ? (
                   <div className="mt-2 h-1 overflow-hidden rounded bg-zinc-200 dark:bg-zinc-800">
                     <div
                       className="h-full rounded bg-indigo-600 transition-all duration-500"
@@ -166,7 +168,7 @@ export function AppShell({
                   </div>
                 ) : null}
               </div>
-              {!isOverview && typeof progress === "number" ? (
+              {showProgress ? (
                 <span className="hidden text-xs font-medium text-zinc-500 lg:block">
                   훈련 진행 {progress}%
                 </span>
@@ -215,10 +217,11 @@ export function AppShell({
         <div className="oom-content-shell mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-9 lg:py-9">
           {children}
         </div>
-        <footer className="shrink-0 border-t border-zinc-200 bg-zinc-50 px-4 py-5 text-xs text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400 sm:px-6 lg:px-9">
-          <div className="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p>© 2026 오픽온미</p>
-            <nav aria-label="서비스 정보" className="flex flex-wrap gap-x-4 gap-y-2">
+        {activeView !== "practice-mock" ? (
+          <footer className="shrink-0 border-t border-zinc-200 bg-zinc-50 px-4 py-5 text-xs text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400 sm:px-6 lg:px-9">
+            <div className="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p>© 2026 오픽온미</p>
+              <nav aria-label="서비스 정보" className="flex flex-wrap gap-x-4 gap-y-2">
               <a
                 className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white"
                 href="/"
@@ -279,9 +282,10 @@ export function AppShell({
               >
                 문의
               </a>
-            </nav>
-          </div>
-        </footer>
+              </nav>
+            </div>
+          </footer>
+        ) : null}
       </main>
     </div>
   );

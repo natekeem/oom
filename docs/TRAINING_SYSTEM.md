@@ -125,7 +125,7 @@ Full Mock
 → 20~30 second Self Introduction warm-up outside the question count and main timer
 → Session 1: 7 selected-Level general questions
 → user difficulty adjustment (saved selection unchanged)
-→ Session 2: Level-dependent 5/7/8 general + roleplay mix
+→ Session 2: Level-dependent 5/7/8 general + roleplay mix, including fixed roleplay prompt audio
 → completion summary / whole-session answer review / training report navigation
 → manual STT / editable transcript / AI for one selected answer at a time
 → process-only metrics and a local standalone HTML training report
@@ -134,6 +134,8 @@ Full Mock
 Full Mock is an OOM training heuristic informed by the publicly described high-level exam flow; it does not claim official question composition or order. The current Course stays fixed. Mock Survey selection uses the explicit storyline `surveyOptionIds` mapping to prioritize eligible questions, and the Mock Self Assessment Level becomes Session 1's source without mutating `TrainingSelection` or localStorage. The plan is seeded once at start. Its main timer is 40 minutes with no added per-question limit. During the exam, question text, storyline hints, target seconds, STT, AI, transcript, and retry controls stay hidden. Each question resets to 0/2 listening and waits for the user to move forward after recording finalization.
 
 Recorder failure must not silently start an audio recording state. A timer-only path remains available with clear UI in both modes. STT and LLM failure do not invalidate the local recording or prevent manual transcript review.
+
+Every fixed Full Mock spoken input belongs to the static playable inventory: `SELF_INTRODUCTION_PROMPT`, practice `question.prompt`, and roleplay `roleplay.prompt`. A new Course or Roleplay must add all four locked-voice targets through the normal TTS audit and incremental generation workflow.
 
 AI feedback is coaching, not official scoring. After Full Mock completion, OOM may summarize completion rate, target-duration fit, recording coverage, answer time, and optional STT/AI review coverage as transparent training process metrics. The UI and downloaded HTML must not calculate a 0–100 diagnostic score or estimated OPIc grade range. Transcript-only analysis must not claim pronunciation accuracy or acoustic fluency.
 

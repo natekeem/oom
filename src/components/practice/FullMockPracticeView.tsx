@@ -4,6 +4,7 @@ import { callInternalLlm } from "../../lib/llm";
 import { stopSpeech } from "../../lib/speech";
 import { transcribeAudio } from "../../lib/stt";
 import { EXAM_TTS_RATE } from "../../lib/tts/ratePreferences";
+import { normalizeTtsText, sha256TtsText } from "../../lib/tts/cacheKey";
 import { getTtsManager } from "../../lib/tts/TtsManager";
 import type { TtsMediaPlaybackSource, TtsRuntimeStatus } from "../../lib/tts/types";
 import { useTtsPreferences } from "../../lib/tts/useTtsPreferences";
@@ -138,6 +139,10 @@ export function FullMockPracticeView({
   const activeLevel = TRAINING_LEVELS.find((level) => level.id === activeLevelId) ?? resolved.level;
   const selfIntroduction = getSelfIntroduction(mockInitialLevelId);
   const activeListenCount = warmup ? warmupListenCount : listenCount;
+  const activePromptKind = warmup ? "self-introduction" : activeQuestion?.kind;
+  const activePromptCourseId = activeQuestion?.courseId ?? resolved.course.id;
+  const activePromptLevelId = activeQuestion?.sourceLevelId ?? mockInitialLevelId;
+  const activePromptSourceId = warmup ? "self-introduction" : activeQuestion?.sourceId;
   const selectedAttempt = attempts.find((attempt) => attempt.id === selectedReviewAttemptId);
   const activeMockPhase = ["warmup", "session-1", "adjustment", "session-2"].includes(phase.phase);
 
@@ -176,12 +181,32 @@ export function FullMockPracticeView({
     if (!activePrompt) return;
     void getTtsManager()
       .resolveStaticPlayback({ text: activePrompt, voice: preferences.examVoice, speed: EXAM_TTS_RATE })
-      .then((source) => {
-        if (requestId !== listenRequestRef.current || !source) return;
+      .then(async (source) => {
+        if (requestId !== listenRequestRef.current) return;
+        if (!source) {
+          if (import.meta.env.DEV && import.meta.env.MODE !== "test") {
+            console.warn("[OOM TTS STATIC MISS]", {
+              kind: activePromptKind,
+              courseId: activePromptCourseId,
+              sourceLevelId: activePromptLevelId,
+              sourceId: activePromptSourceId,
+              textHash: await sha256TtsText(normalizeTtsText(activePrompt)),
+            });
+          }
+          return;
+        }
         setQuestionAudioSource(source);
         setQuestionTtsStatus(warmup ? "정적 자기소개 안내 준비 완료" : "정적 질문 음성 준비 완료");
       });
-  }, [activePrompt, preferences.examVoice, warmup]);
+  }, [
+    activePrompt,
+    activePromptCourseId,
+    activePromptKind,
+    activePromptLevelId,
+    activePromptSourceId,
+    preferences.examVoice,
+    warmup,
+  ]);
 
   useEffect(() => {
     if (questionState !== "recording") return;
@@ -653,9 +678,11 @@ export function FullMockPracticeView({
 
   if (phase.phase === "adjustment") {
     return (
-      <div className="space-y-4">
-        <MockAdjustmentScreen onSelect={selectAdjustment} remainingTime={formatTime(remainingSeconds)} />
-        {plannerError ? <p role="alert" className="text-center text-sm text-red-600 dark:text-red-300">{plannerError}</p> : null}
+      <div className="flex min-h-full w-full items-center py-2 sm:py-4" data-step-accent="none">
+        <div className="w-full space-y-4" data-step-accent="none">
+          <MockAdjustmentScreen onSelect={selectAdjustment} remainingTime={formatTime(remainingSeconds)} />
+          {plannerError ? <p role="alert" className="text-center text-sm text-red-600 dark:text-red-300">{plannerError}</p> : null}
+        </div>
       </div>
     );
   }

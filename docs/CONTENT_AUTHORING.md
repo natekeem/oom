@@ -122,6 +122,8 @@ Question pools must be isolated by Course and Level. Avoid using one Course as a
 
 Each Course × Level should provide enough unique general questions for STEP 6 Full Mock planning. Full Mock readiness requires a valid Course survey preset, storyline `surveyOptionIds`, questions with matching `storylineId`, and an adequate roleplay pool. The current readiness target is at least 12 questions with storyline IDs that support balanced selection. Roleplay count may vary; the planner caps its target at the available unique records and must degrade safely for sparse future data without pushing undefined prompts. Mock composition reuses these existing prompt strings and must not introduce separate spoken copies.
 
+Because Full Mock Session 2 can speak a fixed `roleplay.prompt` directly, every new or changed Roleplay prompt must appear in the playable TTS inventory and have Heart, Bella, Sarah, and Sky static coverage. Treat the prompt and its Level-specific answer examples as separate TTS inputs.
+
 The current data model provides an explicit Survey → storyline mapping, so Mock selection prioritizes questions through `surveyOptionIds` and `storylineId`. Do not replace this with title or prompt keyword matching. A future Course may add a richer explicit mapping, but until then the same-Course pool is the only allowed fallback when selected topics cannot fill the required session count.
 
 ### 8. Assemble and resolve

@@ -547,7 +547,7 @@ describe("PracticeView & ExamScreenShell", () => {
     expect(practiceApiMocks.callInternalLlm).not.toHaveBeenCalled();
 
     expect(screen.getByRole("button", { name: "답변 복기 시작" })).toBeInTheDocument();
-    expect(screen.getByRole("navigation", { name: "모의고사 결과 화면" })).toBeInTheDocument();
+    expect(screen.getByRole("tablist", { name: "모의고사 결과 보기" })).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "훈련 리포트 보기" }));
     expect(await screen.findByRole("heading", { name: "OOM 모의고사 훈련 리포트" })).toBeInTheDocument();
     expect(screen.getByText(/훈련 행동 기록/)).toBeInTheDocument();
@@ -555,7 +555,7 @@ describe("PracticeView & ExamScreenShell", () => {
     expect(screen.getByText(/공식 OPIc 점수나 등급을 예측하지 않으며/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /HTML 내려받기/ })).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "답변 복기" }));
+    await user.click(screen.getByRole("tab", { name: "답변 복기" }));
     expect(screen.queryByText(/녹음 있음.*듣기 \/ 복기/)).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /같은 문제 다시 말하기/ })).not.toBeInTheDocument();
     expect(document.querySelectorAll('audio[data-testid="mock-row-preview-audio"]')).toHaveLength(1);
@@ -567,9 +567,9 @@ describe("PracticeView & ExamScreenShell", () => {
     await user.click(screen.getByRole("button", { name: "AI 피드백 받기" }));
     expect(practiceApiMocks.callInternalLlm).toHaveBeenCalledTimes(1);
 
-    await user.click(screen.getByRole("button", { name: "결과 요약" }));
+    await user.click(screen.getByRole("tab", { name: "결과 요약" }));
     expect(await screen.findByRole("heading", { name: "실전 모의고사를 완료했습니다." })).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "답변 복기" }));
+    await user.click(screen.getByRole("tab", { name: "답변 복기" }));
     expect(await screen.findByDisplayValue("I answered the selected mock question clearly.")).toBeInTheDocument();
   });
 });

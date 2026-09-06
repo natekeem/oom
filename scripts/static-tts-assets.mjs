@@ -21,8 +21,8 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 export const STATIC_TTS_PROFILE = "kokoro-82m-natural-1.0-v1";
 export const STATIC_TTS_NORMALIZATION = "unicode-nfc-trim-whitespace-v1";
 export const STATIC_TTS_PEAK_COUNT = 256;
-export const STATIC_TTS_EXPECTED_TEXTS = 177;
-export const STATIC_TTS_EXPECTED_TARGETS = 708;
+export const STATIC_TTS_EXPECTED_TEXTS = 186;
+export const STATIC_TTS_EXPECTED_TARGETS = 744;
 export const STATIC_TTS_MIN_BYTES = 1_024;
 export const STATIC_TTS_MIN_DURATION_SECONDS = 0.3;
 export const STATIC_TTS_INVENTORY_PATH = join(root, "artifacts", "tts-inventory.json");
@@ -43,6 +43,7 @@ export const STATIC_TTS_VOICES = [
 
 const playableCategories = new Set([
   "step4-canonical",
+  "step5-roleplay",
   "step5-roleplay-example",
   "step6-question",
   "voice-preview",
@@ -113,6 +114,7 @@ export async function loadPlayableInventory() {
   const categoryCounts = {
     "voice-preview": entries.filter((entry) => entry.categories.includes("voice-preview")).length,
     "step4-canonical": entries.filter((entry) => entry.categories.includes("step4-canonical")).length,
+    "step5-roleplay": entries.filter((entry) => entry.categories.includes("step5-roleplay")).length,
     "step5-roleplay-example": entries.filter((entry) =>
       entry.categories.includes("step5-roleplay-example"),
     ).length,
@@ -122,6 +124,7 @@ export async function loadPlayableInventory() {
   const expectedCategoryCounts = {
     "voice-preview": 2,
     "step4-canonical": 36,
+    "step5-roleplay": 9,
     "step5-roleplay-example": 27,
     "step6-question": 108,
     "other-static": 4,

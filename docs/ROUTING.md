@@ -65,7 +65,8 @@ The candidate guide and training hub are independent top-level branches. STEP 1-
 - `survey` (STEP 2, 20%), `difficulty` (STEP 3, 40%)
 - `script-hub`, `script-self-introduction`, and `script-*` (STEP 4, 60%)
 - `roleplay-hub`, `roleplay-formula`, and `roleplay-*` (STEP 5, 80%)
-- `practice`, `practice-quick`, and `practice-mock` (STEP 6, 100%)
+- `practice` and `practice-quick` (STEP 6, 100% progress shown)
+- `practice-mock` (STEP 6 title shown; the global 100% progress indicator and service footer are suppressed so exam progress is not implied)
 
 The header dynamically shows the current course group title and progress percentage (0% -> 20% -> 40% -> 60% -> 80% -> 100%).
 Home, all `exam-*` views, `magazine-list` (including article detail URLs), footer legal pages, and `ai-settings` do not render the sticky training header. Their mobile experience uses compact floating controls instead.
@@ -101,7 +102,7 @@ Public route targets use the canonical `https://opic-on-me.com/path/` form. Inte
 | `roleplay-home` | Compatibility route, hidden from current sidebar | `RoleplayViewV2` | Yes, 80% | Legacy slot 3 URL; current three-scenario manifests fall back safely to slot 0 |
 | `practice` | Training / STEP 6 parent | `PracticeHubView` | Yes, 100% | `/practice/` route-only Hub; no exam runtime mounted |
 | `practice-quick` | Training / STEP 6 child | `PracticeView` | Yes, 100% | `/practice/quick/`; direct one-question exam and review/retry |
-| `practice-mock` | Training / STEP 6 child | `FullMockPracticeView` | Yes, 100% | `/practice/mock/`; Survey-first Full Mock with in-memory session state |
+| `practice-mock` | Training / STEP 6 child | `FullMockPracticeView` | Title only | `/practice/mock/`; Survey-first Full Mock with in-memory session state; global progress and footer suppressed |
 | `magazine-list` | Top-level magazine | `MagazineList` / `MagazineDetail` | No | `/magazine/` lists static articles; `/magazine/:id/` renders the selected article |
 | `ai-settings` | Top-level utility | `AiSettingsView` | No | LLM runtime configuration |
 | `about` | App sidebar and footer information page | `HomeView` | No | `/about/` keeps the shared AppShell width and presents a compact editorial metrics rail, four-step OOM Method, AI Coach closing, and training/guide CTAs in one desktop-view composition |

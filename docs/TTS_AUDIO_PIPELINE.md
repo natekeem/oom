@@ -45,7 +45,7 @@ text + selected voice
 - **STEP 3:** resolves the exam and script preview phrases for their selected voices and shows seekable waveform players.
 - **STEP 4:** resolves canonical Level script audio and the self-introduction example, shows a real waveform before Play when static coverage exists, and permits seeking/replay.
 - **STEP 5:** resolves each Level-specific roleplay answer example with the script voice.
-- **STEP 6:** Quick pre-resolves only its current question or roleplay prompt; Full Mock additionally pre-resolves its one-time self-introduction warm-up. Resolution does not consume a listen. Playback is non-seekable, fixed at 1.00×, and consumes at most two listens per question. Full Mock does not add spoken transition text or preload every planned audio asset.
+- **STEP 6:** Quick pre-resolves only its current question or roleplay prompt; Full Mock additionally pre-resolves its one-time self-introduction warm-up and speaks fixed `roleplay.prompt` inputs when Session 2 includes roleplay. Resolution does not consume a listen. Playback is non-seekable, fixed at 1.00×, and consumes at most two listens per question. Full Mock does not add spoken transition text or preload every planned audio asset.
 
 All synthesis assets are produced at `1.00×`. STEP 4 and STEP 5 speed changes only WaveSurfer `playbackRate` with pitch preservation. Playback rate is excluded from static and runtime cache identity.
 
@@ -60,7 +60,7 @@ All synthesis assets are produced at `1.00×`. STEP 4 and STEP 5 speed changes o
 | `public/generated-tts/tts-manifest.json` | production-complete runtime manifest, tracked |
 | `public/generated-tts/tts-manifest.staging.json` | resumable/dev status output, ignored, never read by runtime |
 
-The current production snapshot contains 177 unique playable texts × 4 locked voices = 708 audio targets, including the shared self-introduction prompt and three Level examples. These numbers are a generated snapshot, not an architectural constant. When content grows, update the audit and intentionally update the expected coverage contract in `scripts/static-tts-assets.mjs` only after reviewing the new inventory.
+The current production snapshot contains 186 unique playable texts × 4 locked voices = 744 audio targets, including the shared self-introduction prompt, three Level examples, and nine globally unique Roleplay prompts used by Full Mock. These numbers are a generated snapshot, not an architectural constant. When content grows, update the audit and intentionally update the expected coverage contract in `scripts/static-tts-assets.mjs` only after reviewing the new inventory.
 
 Do not hand-edit audio, peaks, inventory, or manifest metadata. Audio and peaks must move together. The production manifest is promoted only after exact expected coverage is valid.
 

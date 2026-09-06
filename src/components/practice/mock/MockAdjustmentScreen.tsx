@@ -12,7 +12,7 @@ const adjustmentOptions: Array<{
     id: "easier",
     icon: ArrowDown,
     title: "조금 쉽게",
-    description: "2nd Session을 조금 더 편한 난이도로 이어갑니다.",
+    description: "두 번째 세션을 조금 더 편한 난이도로 이어갑니다.",
   },
   {
     id: "similar",
@@ -36,7 +36,7 @@ export function MockAdjustmentScreen({
   onSelect: (adjustment: MockAdjustment) => void;
 }) {
   return (
-    <Card className="mx-auto w-full max-w-4xl border-indigo-200 p-6 dark:border-indigo-900 sm:p-8">
+    <Card className="mx-auto w-full max-w-4xl p-7 sm:p-9">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs font-black uppercase tracking-[0.16em] text-indigo-600 dark:text-indigo-400">
           1st Session 완료
@@ -47,7 +47,7 @@ export function MockAdjustmentScreen({
       </div>
       <h1 className="mt-4 text-2xl font-black text-zinc-950 dark:text-white sm:text-3xl">지금까지 질문 난이도는 어땠나요?</h1>
       <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-        답변 분석이나 점수 추정이 아닌 사용자의 체감 선택입니다. 선택하면 2nd Session 구성이 한 번 고정됩니다.
+        지금까지 답하기 편했던 정도를 기준으로 선택하세요. 선택한 난이도로 두 번째 세션의 질문 구성이 고정됩니다.
       </p>
       <div className="mt-7 grid gap-3" data-testid="mock-adjustment-options">
         {adjustmentOptions.map(({ id, icon: Icon, title, description }) => (
@@ -68,7 +68,7 @@ export function MockAdjustmentScreen({
         ))}
       </div>
       <p className="mt-6 border-t border-zinc-100 pt-4 text-xs leading-5 text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
-        이 선택은 이번 OOM 모의 연습의 2nd Session prompt source에만 적용되며, STEP 1에서 저장한 Course × Level 설정은 바뀌지 않습니다.
+        이 선택은 이번 모의고사의 두 번째 세션에만 반영되며, 저장된 코스·난이도 설정은 바뀌지 않습니다.
       </p>
     </Card>
   );

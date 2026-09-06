@@ -25,10 +25,15 @@ function pcmWav(samples, sampleRate = 24_000) {
 }
 
 describe("static TTS asset helpers", () => {
-  it("includes all 27 current roleplay examples in the 177-text playable inventory", async () => {
+  it("includes 9 unique roleplay prompts and all 27 roleplay examples in the playable inventory", async () => {
     const inventory = await loadPlayableInventory();
-    expect(inventory.entries).toHaveLength(177);
-    expect(inventory.targets).toHaveLength(708);
+    expect(inventory.entries).toHaveLength(186);
+    expect(inventory.targets).toHaveLength(744);
+    expect(
+      inventory.entries.filter((entry) =>
+        entry.categories.includes("step5-roleplay"),
+      ),
+    ).toHaveLength(9);
     expect(
       inventory.entries.filter((entry) =>
         entry.categories.includes("step5-roleplay-example"),

@@ -14,6 +14,12 @@ export type ProfileRow = {
 export type Database = {
   public: {
     Tables: {
+    learning_activity_events: {
+      Row: import("../features/activity/activityRepository").ActivityEvent;
+      Insert: import("../features/activity/activityRepository").StudyUnit & { id: string; user_id: string };
+      Update: never;
+      Relationships: [];
+    };
     profiles: {
       Row: ProfileRow;
       Insert: { id: string; display_name?: string | null; avatar_url?: string | null };

@@ -95,3 +95,11 @@ TTS 콘텐츠를 추가하거나 수정했다면 [Content Authoring](docs/CONTEN
 `.github/workflows/pages.yml`이 `main` 또는 `feature/adsense` push에서 lint, generated docs check, tests, build, Pages artifact 검증 후 `dist/`를 배포합니다. Vite `base`는 `/`이고 canonical origin은 `https://opic-on-me.com`입니다. 정적 TTS audio, peaks, production manifest는 `public/generated-tts/`에서 build artifact로 복사됩니다.
 
 자세한 배포 구조와 project-subpath 주의사항은 [Deployment](docs/DEPLOYMENT.md)를 참고하세요.
+
+## Phase 2.8 학습 허브와 요금제
+
+마이페이지는 목표 설정, 서베이 준비, 만능 스크립트, 롤플레이, 실전 연습 바로가기를 제공합니다. 연습 세션은 기존 learning_sessions / learning_attempts에, 명시적 학습 완료는 learning_activity_events에 별도로 보관합니다. 계정 설정은 learning_preferences가 소유합니다.
+
+STEP 2는 추천 조합을 정확히 채점했을 때, STEP 4·5는 상세 하단의 학습 완료를 눌렀을 때만 활동을 기록합니다. 방문·스크롤·음성 재생·체크박스 변경은 기록하지 않습니다. 비로그인 학습은 계속 사용할 수 있습니다.
+
+공개 /pricing/ 페이지는 현재 무료 기능과 준비 중인 PRO 계획을 안내합니다. 관리형 AI, 결제, 실제 구독 및 광고 제거 권한은 구현하지 않았습니다. 새 활동 테이블 배포 순서는 docs/SUPABASE_SETUP.md를 따릅니다.

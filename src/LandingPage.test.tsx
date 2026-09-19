@@ -160,7 +160,7 @@ describe("landing correction contracts", () => {
     expect(pageSource).toContain("landing-practice-heading-lockup");
     expect(pageSource).not.toContain("landing-practice-trace");
     expect(pageSource).toContain("landing-final-stage");
-    expect(pageSource).toContain('<footer className="landing-tail">');
+    expect(pageSource).toContain('<div className="landing-tail" aria-hidden="true" />');
     expect(timelineSource).not.toContain('xPercent: 260');
     expect(timelineSource).toContain('scene === "hero"');
     expect(timelineSource).toContain('Math.max(0, -closestRect.top) / heroTravel');

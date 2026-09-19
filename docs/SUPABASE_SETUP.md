@@ -71,8 +71,20 @@ These checks require your configured project; unit tests mock the SDK and do not
 
 ## Future boundary
 
-The profile plan is a display field, not billing truth. Future server-owned subscriptions/payment state will authorize entitlements. Learning history, mock-test persistence, managed AI feedback, Kakao login, FREE/PRO entitlement, payments, and ad-free PRO behavior are not implemented. No extra tables, uploads, Edge Functions, or AI keys are added.
+The profile plan is a display field, not billing truth. Future server-owned subscriptions/payment state will authorize entitlements. Practice sessions/attempts, learning preferences and explicit study activities are implemented. Managed AI feedback, Kakao login, FREE/PRO entitlement, payments and ad-free PRO behavior are not implemented. No audio/transcript uploads, Edge Functions or AI keys are added.
 
 Current advanced-user STT/LLM remains browser → user-configured endpoint. Future managed mode will be browser → Supabase Edge Function → authentication/usage/plan validation → AI provider → persistence.
 
 References: [Google OAuth](https://supabase.com/docs/guides/auth/social-login/auth-google), [PKCE](https://supabase.com/docs/guides/auth/sessions/pkce-flow), [user profiles](https://supabase.com/docs/guides/auth/managing-user-data), [column privileges](https://supabase.com/docs/guides/database/postgres/column-level-security), [redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls).
+
+## Phase 2.8 owner rollout: meaningful study activities
+
+1. Apply supabase/migrations/20260919214100_create_learning_activity_events.sql in the intended project's SQL Editor. This CLI-generated migration is independent of the later-dated history/preferences migrations. For a linked project already past this timestamp, explicitly apply this missing migration using your deployment workflow; do not reset the database.
+2. Run supabase/tests/learning_activity_events.sql in SQL Editor. It uses BEGIN / ROLLBACK and two disposable fixture IDs to test own insert/select, cross-user denial, anonymous denial, invalid type, append-only grants, duplicate ID rejection, repeat study and Auth deletion cascade.
+3. Deploy the validated frontend. No new environment variables are needed.
+4. With a real authenticated account, submit the exact STEP 2 recommended survey via grading and click 학습 완료 in STEP 4 and STEP 5 detail pages. Check recent study activities in My Page. Repeated clicks in the same visit must not duplicate events; reopening and studying again can create another event.
+5. Switch accounts and sign out: previous activity must disappear. Check that existing preferences, Quick/Mock session history and anonymous training still work. A missing table or failed request must not block learning.
+
+The new table grants authenticated SELECT and INSERT only, with auth.uid() = user_id policies, RLS, cascade deletion and an owner/time index. Timestamp writes, UPDATE and DELETE are not granted to ordinary clients. Content identifiers only are stored. A stable client UUID is reused on retry; distinct study visits may create distinct UUIDs. This is not a preference record or a practice attempt.
+
+Local frontend tests mock the repository. Real OAuth and deployed database verification still require the configured target project. Follow Supabase's RLS grant/policy guidance: https://supabase.com/docs/guides/database/postgres/row-level-security .

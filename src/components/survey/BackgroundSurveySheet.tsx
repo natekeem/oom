@@ -1,4 +1,6 @@
 import { Check, ClipboardCheck, LockKeyhole, RotateCcw, Sparkles, Trophy } from "lucide-react";
+import { useStudyCompletion } from "../../features/activity/useStudyCompletion";
+import { CompletionStatus } from "../../features/activity/StudyCompletion";
 import { useMemo, useState } from "react";
 import {
   backgroundSurveySections,
@@ -114,10 +116,13 @@ function SurveySheetContent({
     });
   };
 
+  const completion = useStudyCompletion({ activity_type: "survey_completed", course_id: resolved.course.id, level_id: resolved.level.id, content_id: resolved.survey.id });
+
   const grade = () => {
     const expected = new Set(currentRecommendedIds);
     const missing = currentRecommendedIds.filter((id) => !selected.has(id));
     const extra = selectedIds.filter((id) => !expected.has(id));
+    if (missing.length === 0 && extra.length === 0) void completion.complete();
     setResult({ correctCount: currentRecommendedIds.length - missing.length, extra, missing });
   };
 
@@ -365,6 +370,8 @@ function SurveySheetContent({
           </div>
         ) : null}
       </Card>
+
+      {mode === "practice" ? <div className="space-y-1"><p className="text-xs text-zinc-500 dark:text-zinc-400">추천 조합을 정확히 채점하면 서베이 학습 완료가 기록됩니다.</p><CompletionStatus status={completion.status} /></div> : null}
 
       {/* Course-aware Storyline Grouping Section */}
       <section className="space-y-3 pt-2">

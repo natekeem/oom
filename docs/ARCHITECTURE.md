@@ -2,7 +2,7 @@
 
 ## System Overview
 
-OOM is a browser-only Vite + React application deployed as static files. There is no OOM application server or repository-owned secret. Optional external Supabase Auth (Google) and PostgreSQL tables (`profiles`, `learning_sessions`, `learning_attempts`) provide identity and learning history; the public product remains usable without login or Supabase configuration.
+OOM is a browser-only Vite + React application deployed as static files. There is no OOM application server or repository-owned secret. Optional external Supabase Auth (Google) and PostgreSQL tables (`profiles`, `learning_sessions`, `learning_attempts`, `learning_preferences`, `learning_activity_events`) provide identity and learning history; the public product remains usable without login or Supabase configuration.
 
 ```text
 Browser
@@ -27,7 +27,7 @@ Browser
 
 Static host / Supabase
 └─ `dist/` from Vite + generated route HTML + generated TTS assets
-└─ Supabase Auth + PostgreSQL (profiles, learning_sessions, learning_attempts, learning_preferences)
+└─ Supabase Auth + PostgreSQL (profiles, learning_sessions, learning_attempts, learning_preferences, learning_activity_events)
 ```
 
 ## Frontend Ownership
@@ -62,9 +62,9 @@ The registry discovers `/src/data/training/courses/*/index.ts` eagerly with `imp
 
 STEP 6 is a routed product area: `/practice/` mounts only the hub, `/practice/quick/` mounts the existing one-question exam → review/retry engine without a mandatory self-introduction warm-up, and `/practice/mock/` mounts the Mock engine. All three share the canonical selection guard and 100% progress contract. `FullMockPracticeView.tsx` separates orientation state (Survey → Self Assessment → Pre-Test) from exam state (Self Introduction warm-up → Session 1 → adjustment → Session 2 → complete) and keeps result summary, answer review, and training report as sibling post-exam views over the same in-memory attempts, while `mockSessionPlanner.ts` builds the fixed seeded plan independently from React. `Recorder` uses `MediaRecorder`; audio remains an in-memory Blob unless the user explicitly sends one selected post-exam answer to an STT endpoint. The editable transcript is the user-confirmed input to AI feedback. Learning sessions (`learning_sessions`, `learning_attempts`) are persisted silently to Supabase if the user is authenticated.
 
-Full Mock stores Survey selection, Mock initial Level, and 12~15 attempts only in current React memory. It does not persist Blobs or sessions. Survey eligibility follows explicit `TrainingStoryline.surveyOptionIds` → `TrainingPracticeQuestion.storylineId` relationships and never keyword matching; preferred pools fall back only within the same Course when needed to preserve session size. Its 40-minute main timer and question count exclude the 20~30 second Self Introduction warm-up, and its difficulty adjustment resolves another Level context for Session 2 prompts without changing the saved `TrainingSelection`. STT/LLM calls are prohibited during the exam and remain manual, one selected answer at a time, after completion. `mockReport.ts` derives deterministic process metrics from completion, target-duration fit, recording coverage, answer time, and available review evidence; it does not produce a 0–100 diagnostic score or estimated OPIc grade. The user can download a self-contained HTML snapshot locally without sending report data to an OOM server.
+Full Mock stores Survey selection, Mock initial Level, and 12~15 attempts only in current React memory. It does not persist Blobs; authenticated session summaries and attempts use the existing history repository. Survey eligibility follows explicit `TrainingStoryline.surveyOptionIds` → `TrainingPracticeQuestion.storylineId` relationships and never keyword matching; preferred pools fall back only within the same Course when needed to preserve session size. Its 40-minute main timer and question count exclude the 20~30 second Self Introduction warm-up, and its difficulty adjustment resolves another Level context for Session 2 prompts without changing the saved `TrainingSelection`. STT/LLM calls are prohibited during the exam and remain manual, one selected answer at a time, after completion. `mockReport.ts` derives deterministic process metrics from completion, target-duration fit, recording coverage, answer time, and available review evidence; it does not produce a 0–100 diagnostic score or estimated OPIc grade. The user can download a self-contained HTML snapshot locally without sending report data to an OOM server.
 
-`src/lib/stt.ts` and `src/lib/llm.ts` call user-configured endpoints directly from the browser. Settings are stored in localStorage. Endpoint CORS support is required. No STT/LLM key or recording is sent to or stored in Supabase in Phase 1.
+`src/lib/stt.ts` and `src/lib/llm.ts` call user-configured endpoints directly from the browser. Settings are stored in localStorage. Endpoint CORS support is required. No STT/LLM key, transcript or recording is sent to or stored in Supabase.
 
 Text transcripts can support structure, relevance, and language coaching. They do not contain sufficient acoustic evidence for pronunciation grading, and OOM must not claim otherwise.
 
@@ -96,7 +96,7 @@ The frontend remains browser code + static hosting, with optional external Supab
 - recorder audio remains local unless the user explicitly calls a configured endpoint;
 - LLM/STT credentials remain browser-local settings.
 
-Supabase currently owns authentication and profiles only. A future backend may own STT, AI feedback, dynamic-text TTS, observability, or GPU inference. That is a boundary change requiring explicit design and secret handling. It does **not** require migrating enumerable fixed-content TTS away from static-first delivery; static assets can continue to be served by an intranet static host or CDN.
+Supabase currently owns authentication, profiles, practice history, learning preferences and explicit study activity. A future backend may own STT, AI feedback, dynamic-text TTS, observability, or GPU inference. That is a boundary change requiring explicit design and secret handling. It does **not** require migrating enumerable fixed-content TTS away from static-first delivery; static assets can continue to be served by an intranet static host or CDN.
 
 ## Documentation and Generated Data
 
@@ -111,10 +111,20 @@ Do not duplicate source-owned values in view components or canonical documents w
 
 ## Phase 1 identity boundary
 
-AuthProvider wraps the router application from main.tsx. A single typed client in src/lib/supabase.ts persists sessions and automatically completes browser PKCE callbacks. Auth event callbacks are synchronous; profile reads occur separately and stale requests are discarded. TrainingSelection remains browser-owned and independent of identity.
+AuthProvider wraps the router application from main.tsx. A single typed client in src/lib/supabase.ts persists sessions and automatically completes browser PKCE callbacks. Auth event callbacks are synchronous; profile reads occur separately and stale requests are discarded. TrainingSelection is browser-owned with explicit account preference synchronization.
 
 OOM → Supabase Auth → Google → Supabase → /auth/callback/ → session → own profile. Internal return paths use a canonical route allowlist. Missing public configuration leaves auth unconfigured without preventing public rendering. My Page and callback are noindex and excluded from ads and sitemap.
 
 profiles.plan is display-only, constrained to free/pro; clients can update only display_name/avatar_url under own-row RLS. Database triggers create free profiles and maintain updated_at. Future subscriptions/payment state must become server-authoritative; no client plan checks gate current functionality.
 
-Current advanced-user mode: browser → user-configured STT/LLM endpoint. Future managed mode: browser → Supabase Edge Function → auth/usage/plan checks → Gemini/OpenAI → persistence. No managed AI, storage, billing, history, or extra providers are implemented. See [setup](SUPABASE_SETUP.md).
+Current advanced-user mode: browser → user-configured STT/LLM endpoint. Future managed mode: browser → Supabase Edge Function → auth/usage/plan checks → Gemini/OpenAI → persistence. No managed AI, audio storage, billing, subscription entitlement or extra providers are implemented. See [setup](SUPABASE_SETUP.md).
+
+## Phase 2.8 activity boundary
+
+src/features/activity/ owns learning_activity_events: UUID, owning user, activity type, Course/Level/content IDs and server timestamps. No survey values, script text, transcripts, audio, score or duration are stored. Labels resolve from the static Course registry.
+
+STEP 2 exact recommendation grading records survey_completed; STEP 4 storyline completion records universal_script_completed; STEP 5 scenario completion records roleplay_completed. These are self-reported study completions, not proof of speaking performance. Header Next remains navigation only. A ref lock prevents overlapping inserts, and the same UUID is reused after uncertain failures. Reopening content permits a new meaningful completion. Anonymous completion stays local and never auto-uploads after login.
+
+My Page separates recent study activities from practice sessions. User-keyed sections and request cleanup prevent account-switch flashes and stale responses. Activity failures do not hide profile/preferences or block training. learning_preferences remains the settings model; learning_sessions / learning_attempts remain the practice model.
+
+ServiceFooter owns shared low-weight navigation, with a landing color variant and Full Mock exclusion. PricingPage explains current FREE and planned PRO without activating payments, managed AI, subscriptions or ad-free behavior.

@@ -1,6 +1,7 @@
 import type { ViewId } from "../components/layout/Sidebar";
 
 export const viewPathForId: Record<ViewId, string> = {
+  pricing: "/pricing/",
   mypage: "/mypage/",
   "auth-callback": "/auth/callback/",
   home: "/",
@@ -43,6 +44,7 @@ export const viewPathForId: Record<ViewId, string> = {
 export function viewIdForPath(path: string): ViewId {
   const normalized = path.replace(/\/*$/, "");
   if (normalized === "" || normalized === "/") return "home";
+  if (normalized === "/pricing") return "pricing";
   if (normalized === "/mypage") return "mypage";
   if (normalized === "/auth/callback") return "auth-callback";
   if (normalized === "/exam-guide") return "exam-guide";

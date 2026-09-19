@@ -1,6 +1,7 @@
 import type { ResolvedTrainingContext } from "../../training/types";
 
 export type ViewId =
+  | "pricing"
   | "mypage"
   | "auth-callback"
   | "home"
@@ -40,6 +41,7 @@ export type ViewId =
   | "image-credits";
 
 export const viewTitles: Record<ViewId, string> = {
+  pricing: "요금제",
   mypage: "마이페이지",
   "auth-callback": "로그인 연결",
   home: "오픽온미 브랜드 홈",

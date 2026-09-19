@@ -1,3 +1,4 @@
+import { ServiceFooter } from "./ServiceFooter";
 import { useEffect, useRef, type ReactNode } from "react";
 import { ArrowRight, Menu, Moon, Sun } from "lucide-react";
 import { Button } from "../ui/Button";
@@ -218,73 +219,7 @@ export function AppShell({
           {children}
         </div>
         {activeView !== "practice-mock" ? (
-          <footer className="shrink-0 border-t border-zinc-200 bg-zinc-50 px-4 py-5 text-xs text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400 sm:px-6 lg:px-9">
-            <div className="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p>© 2026 오픽온미</p>
-              <nav aria-label="서비스 정보" className="flex flex-wrap gap-x-4 gap-y-2">
-              <a
-                className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white"
-                href="/"
-              >
-                홈
-              </a>
-              <a
-                className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white"
-                href="/exam-guide/"
-              >
-                수험 가이드
-              </a>
-              <a
-                className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white"
-                href="/training/"
-              >
-                실전 훈련
-              </a>
-              <a
-                className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white"
-                href="/magazine/"
-              >
-                매거진
-              </a>
-              <a
-                className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white"
-                href="/about/"
-              >
-                소개
-              </a>
-              <a
-                className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white"
-                href="/privacy/"
-              >
-                개인정보처리방침
-              </a>
-              <a
-                className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white"
-                href="/terms/"
-              >
-                이용약관
-              </a>
-              <a
-                className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white"
-                href="/editorial-policy/"
-              >
-                편집 원칙
-              </a>
-              <a
-                className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white"
-                href="/image-credits/"
-              >
-                이미지 출처
-              </a>
-              <a
-                className="rounded-sm hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:hover:text-white"
-                href="/contact/"
-              >
-                문의
-              </a>
-              </nav>
-            </div>
-          </footer>
+          <ServiceFooter />
         ) : null}
       </main>
     </div>

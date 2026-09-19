@@ -76,7 +76,7 @@ Home, all `exam-*` views, `magazine-list` (including article detail URLs), foote
 Public route targets use the canonical `https://opic-on-me.com/path/` form. Internal navigation must preserve the trailing slash; the root route remains `https://opic-on-me.com/`.
 | ViewId | Sidebar location | Screen owner | Header | Notes |
 | --- | --- | --- | --- | --- |
-| `home` | Brand landing, outside sidebar shell | `LandingPage` | No | Independent full-bleed product landing; no AppShell/sidebar/footer |
+| `home` | Brand landing, outside sidebar shell | `LandingPage` | No | Independent full-bleed product landing; no AppShell/sidebar; shared service footer after the final scene |
 | `exam-guide` | Candidate guide parent | `ExamGuideHub` | No | Explains the guide sections |
 | `exam-overview` | Candidate guide child | `ExamGuideOverview` | No | OPIc format and grade framework |
 | `exam-screen` | Candidate guide child | `ExamGuideScreen` | No | Annotated exam screen shell, 5-step flow, timer disclaimer |
@@ -135,3 +135,11 @@ The self-introduction route points to the first generic storyline slot so its Ne
 - /auth/callback/ → auth-callback → src/auth/AuthCallback.tsx: SDK PKCE restoration, safe internal return path or /mypage/, retry on failure.
 
 Both use AppShell without the training header or selection/authentication gates. Landing navigation and the sidebar account control expose My Page, including mobile menus. Both routes have generic generated HTML, canonical trailing slashes, noindex,follow, no ads, and no sitemap entries. They add no training step.
+
+## Phase 2.8 public plan and learning hub
+
+/pricing/ → pricing → src/components/pricing/PricingPage.tsx. Public AppShell utility page without training header or selection guard; indexable static HTML, canonical metadata and sitemap entry. It is discoverable in ServiceFooter rather than a new training/LNB item.
+
+My Page shortcuts resolve through viewPathForId: training-setup (/training/setup/), survey (/training/survey/), script-hub (/training/scripts/), roleplay-hub (/roleplay/), practice (/practice/). Selection guards remain in place.
+
+ServiceFooter now groups 학습, 서비스, 정책 · 정보 and uses the current year. Landing uses its own color variant of the same footer. Full Mock still suppresses the footer. No extra STEP is added.

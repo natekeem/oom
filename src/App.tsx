@@ -36,6 +36,7 @@ const MagazineDetail = lazy(() => import("./components/magazine/MagazineDetail")
 const HomeView = lazy(() => import("./components/home/HomeView").then((module) => ({ default: module.HomeView })));
 const LegalPageView = lazy(() => import("./components/legal/LegalPageView").then((module) => ({ default: module.LegalPageView })));
 
+const PricingPage = lazy(() => import("./components/pricing/PricingPage").then(module => ({ default: module.PricingPage })));
 const MyPage = lazy(() => import("./auth/MyPage").then((module) => ({ default: module.MyPage })));
 const AuthCallback = lazy(() => import("./auth/AuthCallback").then((module) => ({ default: module.AuthCallback })));
 
@@ -141,7 +142,7 @@ export default function App() {
   const isLanding = location.pathname === "/";
   const isMagazineDetail = /^\/magazine\/[^/]+\/?$/.test(location.pathname);
   const adExcluded =
-    ["mypage", "auth-callback", "practice", "practice-quick", "practice-mock", "ai-settings", "about", "privacy", "contact", "terms", "editorial-policy", "image-credits"].includes(
+    ["pricing", "mypage", "auth-callback", "practice", "practice-quick", "practice-mock", "ai-settings", "about", "privacy", "contact", "terms", "editorial-policy", "image-credits"].includes(
       activeView
     ) || (activeView === "magazine-list" && !isMagazineDetail);
 
@@ -436,6 +437,7 @@ export default function App() {
       <Route path="/magazine/:id/" element={<MagazineDetail />} />
       <Route path="/about" element={<HomeView />} />
       <Route path="/about/" element={<HomeView />} />
+      <Route path={viewPathForId.pricing} element={<PricingPage />} />
       <Route path="/privacy" element={<LegalPageView pageId="privacy" />} />
       <Route path="/privacy/" element={<LegalPageView pageId="privacy" />} />
       <Route path="/contact" element={<LegalPageView pageId="contact" />} />

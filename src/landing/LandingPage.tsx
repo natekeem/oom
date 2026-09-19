@@ -1,3 +1,4 @@
+import { ServiceFooter } from "../components/layout/ServiceFooter";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { LandingNav } from "./components/LandingNav";
@@ -281,11 +282,10 @@ export function LandingPage() {
               </div>
             </div>
           </div>
-          <footer className="landing-tail">
-            <div className="landing-colophon"><span>OOM · OPIc ON ME</span><span>VOICE → STORY → PRACTICE</span></div>
-          </footer>
+          <div className="landing-tail" aria-hidden="true" />
         </section>
       </main>
+      <ServiceFooter landing />
     </div>
   );
 }

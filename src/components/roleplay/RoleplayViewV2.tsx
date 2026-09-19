@@ -1,3 +1,4 @@
+import { StudyCompletion } from "../../features/activity/StudyCompletion";
 import { ArrowLeft, Bot, ChartNoAxesCombined, CircleHelp, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { TRAINING_LEVELS } from "../../training/levels";
@@ -330,6 +331,7 @@ function RoleplayViewV2Content({
           </div>
         ) : null}
       </Card>
+      <StudyCompletion unit={{ activity_type: "roleplay_completed", course_id: resolved.course.id, level_id: resolved.level.id, content_id: scenario.id }} />
     </div>
   );
 }

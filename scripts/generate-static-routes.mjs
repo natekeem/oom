@@ -10,6 +10,11 @@ const lastmod = "2026-07-27";
 const require = createRequire(import.meta.url);
 
 const baseRoutes = [
+  { path: "/pricing/", title: "요금제 · FREE와 준비 중인 PRO | 오픽온미", description: "OOM의 무료 OPIc 학습 기능과 준비 중인 PRO 계획을 확인하세요. 현재 결제나 유료 구독 기능은 없습니다.", heading: "요금제", content: ["지금 필요한 학습은 무료로 시작하세요. 더 깊은 피드백을 위한 PRO도 준비하고 있습니다."], sections: [
+    { heading: "FREE · 현재 이용 가능", paragraphs: ["현재 공개 콘텐츠와 6단계 훈련은 무료입니다. OPIc 수험 가이드, 매거진, 서베이, 만능 스크립트, 롤플레이, Quick Practice와 실전 모의고사를 이용할 수 있습니다.", "Google 로그인 후 계정별 학습 설정과 의미 있는 학습 완료 기록을 보관할 수 있습니다. 로그인 없이도 기존 학습 기능은 이용할 수 있습니다."], links: [{ href: "/training/setup/", label: "무료로 시작하기" }] },
+    { heading: "PRO · 준비 중", paragraphs: ["광고 없는 이용, AI 상세 피드백, 실전 모의고사 심층 분석, 고급 학습 통계와 개인화 학습 추천을 검토 중입니다. 모두 계획이며 현재 제공되거나 구매할 수 있는 기능이 아닙니다.", "출시 일정과 가격은 정해지지 않았으며 제공 범위는 변경될 수 있습니다. 현재 결제, 구독 활성화 및 광고 제거 기능은 없습니다."] },
+    { heading: "로그인과 AI 이용 안내", paragraphs: ["로그인하지 않아도 공개 학습과 연습은 가능합니다. 계정별 설정 동기화와 학습 기록 보관에는 로그인이 필요합니다.", "현재 고급 사용자용 STT·LLM endpoint 연결은 본인의 외부 서비스를 사용하는 방식입니다. 외부 서비스의 이용 조건과 비용은 해당 제공자를 따릅니다. OOM 관리형 AI 피드백은 아직 준비 중입니다."] }
+  ] },
   { path: "/mypage/", title: "마이페이지 | 오픽온미", description: "OOM 계정 정보를 확인합니다.", heading: "마이페이지", content: ["Google로 로그인하고 내 계정 정보를 확인하세요. 기존 공개 콘텐츠와 훈련은 로그인 없이 이용할 수 있습니다."], noindex: true },
   { path: "/auth/callback/", title: "로그인 연결 | 오픽온미", description: "OOM 로그인 연결을 확인합니다.", heading: "로그인 연결", content: ["로그인을 확인하고 있습니다. 연결이 완료되지 않으면 마이페이지에서 다시 시도해 주세요."], noindex: true },
   {
@@ -349,7 +354,7 @@ function sectionsFromGuide(guide) {
 const enrichedBaseRoutes = baseRoutes.map((route) => ({
   ...route,
   sections: route.sections ?? sectionsFromGuide(pageGuides[route.path]),
-  adExcluded: route.noindex || ["/ai-settings/", "/practice/", "/practice/quick/", "/practice/mock/", "/magazine/"].includes(route.path),
+  adExcluded: route.noindex || ["/pricing/", "/ai-settings/", "/practice/", "/practice/quick/", "/practice/mock/", "/magazine/"].includes(route.path),
 }));
 
 const magazineRoutes = loadTypeScriptExport("src/data/magazine.ts", "magazineArticles").map((article) => ({

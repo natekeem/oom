@@ -37,6 +37,7 @@ const requiredRouteFiles = [
   "magazine/opic-survey-choice-guide/index.html",
   "magazine/opic-answer-checklist/index.html",
   "exam-guide/index.html",
+  "pricing/index.html",
   "privacy/index.html",
   "about/index.html",
   "mypage/index.html",

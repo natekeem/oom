@@ -1,3 +1,4 @@
+import { StudyCompletion } from "../../features/activity/StudyCompletion";
 import { BookOpenText, Layers3 } from "lucide-react";
 import type { GoalLevel, LlmSettings, ScriptItem } from "../../types";
 import { Badge } from "../ui/Badge";
@@ -178,6 +179,7 @@ export function ScriptDashboardV2({
                 />
               </div>
             </Card>
+            <StudyCompletion unit={{ activity_type: "universal_script_completed", course_id: resolved.course.id, level_id: resolved.level.id, content_id: currentScript.id }} />
           </div>
         );
       }}

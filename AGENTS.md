@@ -143,3 +143,12 @@ Run `npm run tts:generate` only when the audit shows missing/changed assets. It 
 - **Temporary output:** test captures, staging manifests, interrupted WAV/WebM/peaks temp files, local caches, and benchmark output stay untracked.
 
 `CLAUDE.md` and `.roo/rules/oom-project.md` are short pointers back to this guide.
+
+## Phase 2.8 learning activity and plans
+
+- My Page learning shortcuts use viewPathForId and preserve direct practice plus STEP 1, 2, 4, 5 entry points.
+- src/features/activity/ owns explicit study completions in learning_activity_events, separate from practice sessions/attempts and learning_preferences.
+- Survey records only an exact recommendation submission through grading. Script/roleplay details record only the explicit completion action. Passive navigation, checkbox edits, audio playback and next-step navigation do not insert events.
+- Completion requests use a stable UUID for retry; repeated study after reopening can create a new event. Do not persist scripts, survey answers, audio or transcripts.
+- /pricing/ is public, static and indexable. PRO is planned only. No checkout, managed AI or entitlement is implemented.
+- ServiceFooter is shared by landing and AppShell; keep Full Mock suppression.

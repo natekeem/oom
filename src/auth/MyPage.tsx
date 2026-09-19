@@ -1,3 +1,6 @@
+import { LearningShortcuts } from "./LearningShortcuts";
+import { StudyActivitySection } from "../features/activity/StudyActivitySection";
+import { viewPathForId } from "../lib/routes";
 import { useState } from "react";
 import { ArrowRight, History, SlidersHorizontal, UserRound } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
@@ -93,7 +96,7 @@ function LearningHistorySection() {
     <section aria-label="학습 기록" className="space-y-4">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-bold text-zinc-950 dark:text-white">최근 학습 기록</h2>
+          <h2 className="text-lg font-bold text-zinc-950 dark:text-white">최근 연습 기록</h2>
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
             로그인 상태에서 진행한 Quick Practice 및 실전 모의고사 세션입니다.
           </p>
@@ -141,10 +144,10 @@ function LearningHistorySection() {
               </p>
             </div>
             <div className="pt-2 flex flex-wrap items-center justify-center gap-2.5">
-              <ButtonLink to="/training/setup/" variant="primary" size="sm">
+              <ButtonLink to={viewPathForId["training-setup"]} variant="primary" size="sm">
                 학습 시작하기
               </ButtonLink>
-              <ButtonLink to="/practice/" variant="secondary" size="sm">
+              <ButtonLink to={viewPathForId.practice} variant="secondary" size="sm">
                 실전 연습 바로가기
               </ButtonLink>
             </div>
@@ -202,7 +205,7 @@ export function MyPage() {
   return (
     <div className="w-full space-y-8">
       <PageIntro
-        description="내 계정 정보와 목표 구간 설정을 확인하고, 최근 실전 연습 기록을 복기할 수 있습니다."
+        description="목표를 확인하고 오늘 공부할 단계를 선택하세요. 완료한 학습과 실전 연습 기록도 한곳에서 확인할 수 있습니다."
         icon={UserRound}
         tag="MY PAGE"
         title="내 계정과 훈련 현황"
@@ -214,7 +217,7 @@ export function MyPage() {
             <p>로그인 상태를 확인하고 있어요.</p>
             <p>연결이 느리면 잠시 기다리거나 페이지를 새로고침해 주세요.</p>
             <div className="pt-2">
-              <ButtonLink to="/training/" variant="secondary">
+              <ButtonLink to={viewPathForId["training-hub"]} variant="secondary">
                 먼저 훈련 둘러보기
               </ButtonLink>
             </div>
@@ -357,7 +360,7 @@ export function MyPage() {
                   <>
                     <ButtonLink
                       size="md"
-                      to="/training/setup/"
+                      to={viewPathForId["training-setup"]}
                       variant="primary"
                     >
                       목표 설정 수정
@@ -365,7 +368,7 @@ export function MyPage() {
                     </ButtonLink>
                     <ButtonLink
                       size="md"
-                      to="/practice/"
+                      to={viewPathForId.practice}
                       variant="secondary"
                     >
                       실전 연습 바로가기
@@ -374,7 +377,7 @@ export function MyPage() {
                 ) : (
                   <ButtonLink
                     size="md"
-                    to="/training/setup/"
+                    to={viewPathForId["training-setup"]}
                     variant="primary"
                   >
                     목표 설정하기
@@ -385,7 +388,9 @@ export function MyPage() {
             </Card>
           </div>
 
-          <LearningHistorySection />
+          <LearningShortcuts />
+          <StudyActivitySection key={`activities-${auth.user.id}`} />
+          <LearningHistorySection key={`sessions-${auth.user.id}`} />
         </>
       ) : (
         <Card className="space-y-5 p-6 sm:p-8" aria-label="계정 정보">
@@ -399,7 +404,7 @@ export function MyPage() {
             <Button disabled={busy} onClick={() => void action(false)}>
               {busy ? "연결 중…" : "Google로 계속하기"}
             </Button>
-            <ButtonLink to="/training/setup/" variant="secondary">
+            <ButtonLink to={viewPathForId["training-setup"]} variant="secondary">
               로그인 없이 학습 시작
             </ButtonLink>
           </div>

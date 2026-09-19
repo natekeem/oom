@@ -9,6 +9,15 @@ import { mapProfile, safeReturnPath } from "./authHelpers";
 import type { AuthContextValue, ProfileRow } from "./authTypes";
 import { viewIdForPath, viewPathForId } from "../lib/routes";
 
+vi.mock("../features/history/useLearningHistory", () => ({
+  useLearningHistory: () => ({
+    sessions: [],
+    status: "idle",
+    isEmpty: true,
+    retry: vi.fn(),
+  }),
+}));
+
 const row: ProfileRow = { id: "a", display_name: "민지", avatar_url: "https://example.com/avatar.png", plan: "free", created_at: "2026-09-19", updated_at: "2026-09-19" };
 function setup(overrides: Partial<AuthContextValue> = {}) {
   const value: AuthContextValue = { user: null, session: null, profile: null, status: "anonymous", error: null, profileError: null, signInWithGoogle: vi.fn().mockResolvedValue(undefined), signOut: vi.fn().mockResolvedValue(undefined), refreshProfile: vi.fn().mockResolvedValue(undefined), ...overrides };

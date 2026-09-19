@@ -2,7 +2,7 @@
 
 ## System Overview
 
-OOM is a browser-only Vite + React application deployed as static files. There is no OOM application server or repository-owned secret. Optional external Supabase Auth (Google) and PostgreSQL profiles provide identity; the public product remains usable without login or Supabase configuration.
+OOM is a browser-only Vite + React application deployed as static files. There is no OOM application server or repository-owned secret. Optional external Supabase Auth (Google) and PostgreSQL tables (`profiles`, `learning_sessions`, `learning_attempts`) provide identity and learning history; the public product remains usable without login or Supabase configuration.
 
 ```text
 Browser
@@ -18,14 +18,16 @@ Browser
 ├─ Practice runtime
 │  ├─ Recorder / local audio Blob
 │  ├─ optional STT endpoint
-│  └─ optional LLM feedback endpoint
+│  ├─ optional LLM feedback endpoint
+│  └─ optional Supabase learning history
 └─ TTS
    ├─ static WebM/Opus + peaks
    ├─ Kokoro browser runtime
    └─ Web Speech fallback
 
-Static host
+Static host / Supabase
 └─ `dist/` from Vite + generated route HTML + generated TTS assets
+└─ Supabase Auth + PostgreSQL (profiles, learning_sessions, learning_attempts)
 ```
 
 ## Frontend Ownership
@@ -43,6 +45,7 @@ Static host
 | Course registry | `src/training/courseRegistry.ts` | auto-discovery and `resolveTrainingContext` |
 | Level registry | `src/training/levels.ts` | three Level display/difficulty/time definitions |
 | Course data | `src/data/training/courses/course-N/` | active survey, storyline, variant, replacement, roleplay, question data |
+| Learning history | `src/features/history/` | Supabase data-access layer for sessions/attempts |
 
 The detailed route/sidebar/header contract is in [ROUTING.md](ROUTING.md). The Course × Level and STEP behavior is in [TRAINING_SYSTEM.md](TRAINING_SYSTEM.md).
 
@@ -56,7 +59,7 @@ The registry discovers `/src/data/training/courses/*/index.ts` eagerly with `imp
 
 ### Practice, Recorder, STT, and AI
 
-STEP 6 is a routed product area: `/practice/` mounts only the hub, `/practice/quick/` mounts the existing one-question exam → review/retry engine without a mandatory self-introduction warm-up, and `/practice/mock/` mounts the Mock engine. All three share the canonical selection guard and 100% progress contract. `FullMockPracticeView.tsx` separates orientation state (Survey → Self Assessment → Pre-Test) from exam state (Self Introduction warm-up → Session 1 → adjustment → Session 2 → complete) and keeps result summary, answer review, and training report as sibling post-exam views over the same in-memory attempts, while `mockSessionPlanner.ts` builds the fixed seeded plan independently from React. `Recorder` uses `MediaRecorder`; audio remains an in-memory Blob unless the user explicitly sends one selected post-exam answer to an STT endpoint. The editable transcript is the user-confirmed input to AI feedback.
+STEP 6 is a routed product area: `/practice/` mounts only the hub, `/practice/quick/` mounts the existing one-question exam → review/retry engine without a mandatory self-introduction warm-up, and `/practice/mock/` mounts the Mock engine. All three share the canonical selection guard and 100% progress contract. `FullMockPracticeView.tsx` separates orientation state (Survey → Self Assessment → Pre-Test) from exam state (Self Introduction warm-up → Session 1 → adjustment → Session 2 → complete) and keeps result summary, answer review, and training report as sibling post-exam views over the same in-memory attempts, while `mockSessionPlanner.ts` builds the fixed seeded plan independently from React. `Recorder` uses `MediaRecorder`; audio remains an in-memory Blob unless the user explicitly sends one selected post-exam answer to an STT endpoint. The editable transcript is the user-confirmed input to AI feedback. Learning sessions (`learning_sessions`, `learning_attempts`) are persisted silently to Supabase if the user is authenticated.
 
 Full Mock stores Survey selection, Mock initial Level, and 12~15 attempts only in current React memory. It does not persist Blobs or sessions. Survey eligibility follows explicit `TrainingStoryline.surveyOptionIds` → `TrainingPracticeQuestion.storylineId` relationships and never keyword matching; preferred pools fall back only within the same Course when needed to preserve session size. Its 40-minute main timer and question count exclude the 20~30 second Self Introduction warm-up, and its difficulty adjustment resolves another Level context for Session 2 prompts without changing the saved `TrainingSelection`. STT/LLM calls are prohibited during the exam and remain manual, one selected answer at a time, after completion. `mockReport.ts` derives deterministic process metrics from completion, target-duration fit, recording coverage, answer time, and available review evidence; it does not produce a 0–100 diagnostic score or estimated OPIc grade. The user can download a self-contained HTML snapshot locally without sending report data to an OOM server.
 

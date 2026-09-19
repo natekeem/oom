@@ -17,6 +17,7 @@ import { OomWavePlayer, type OomWavePlayerHandle } from "../audio/OomWavePlayer"
 import type { ViewId } from "../layout/Sidebar";
 import { Card } from "../ui/Card";
 import { TrainingSelectionGuard } from "../training/TrainingSelectionGuard";
+import { useSessionPersistence } from "../../features/history/useSessionPersistence";
 import { ExamScreenShell, type ExamSessionState } from "./ExamScreenShell";
 import { PracticeReviewPanel } from "./PracticeReviewPanel";
 import { Recorder, type RecorderHandle, type RecordingResult } from "./Recorder";
@@ -128,6 +129,9 @@ export function FullMockPracticeView({
   const sttAbortRef = useRef<AbortController | null>(null);
   const reviewRequestRef = useRef(0);
   const { preferences } = useTtsPreferences();
+
+  // Phase 2: learning history persistence
+  const persistence = useSessionPersistence("mock_test");
 
   const session = phaseSession(phase);
   const sessionQuestions = session === 1 ? plan?.session1 ?? [] : session === 2 ? plan?.session2 ?? [] : [];
@@ -278,6 +282,18 @@ export function FullMockPracticeView({
     };
   }, []);
 
+  useEffect(() => {
+    const p = persistence;
+    return () => { p.completeSession(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (phase.phase === "complete") {
+      persistence.completeSession();
+    }
+  }, [phase.phase, persistence]);
+
   const activeQuestionAudioSource =
     questionAudioSource?.voice === preferences.examVoice ? questionAudioSource : null;
 
@@ -389,6 +405,12 @@ export function FullMockPracticeView({
     if (!pending || attemptedQuestionIdRef.current === pending.question.mockId) return;
     attemptedQuestionIdRef.current = pending.question.mockId;
     const durationSeconds = recording?.durationSeconds ?? elapsedSeconds;
+
+    // Phase 2: persist attempt
+    const session1Length = plan?.session1.length ?? 0;
+    const order = (pending.session === 1 ? 0 : session1Length) + pending.sessionIndex + 1;
+    persistence.recordAttempt(pending.question.sourceId, order, durationSeconds);
+
     const attempt: MockAttempt = {
       id: `${plan?.seed ?? "mock"}:${pending.question.mockId}`,
       question: pending.question,
@@ -403,7 +425,7 @@ export function FullMockPracticeView({
     };
     pendingAttemptRef.current = null;
     setAttempts((current) => [...current.filter((item) => item.id !== attempt.id), attempt]);
-  }, [activeQuestion, elapsedSeconds, listenCount, plan?.seed, session, sessionIndex]);
+  }, [activeQuestion, elapsedSeconds, listenCount, plan?.seed, plan?.session1, persistence, session, sessionIndex]);
 
   const handleRecordingReady = (recording: RecordingResult) => {
     if (warmup) return;
@@ -418,6 +440,10 @@ export function FullMockPracticeView({
       setPhase({ phase: "pre-test" });
       return;
     }
+
+    // Phase 2: Create session
+    void persistence.startSession(plan.selectedLevelId, plan.session1.length);
+
     resetQuestionRuntime();
     mainStartedAtRef.current = Date.now();
     setRemainingSeconds(MOCK_DURATION_SECONDS);
@@ -506,6 +532,10 @@ export function FullMockPracticeView({
       const completed = completeMockPlanAfterAdjustment(plan, adjustment, secondResolved);
       if (completed.session2.length === 0) throw new Error("2nd Session에 사용할 문항이 없습니다.");
       setPlan(completed);
+      
+      // Phase 2: Update question count
+      persistence.updateSessionQuestionCount(completed.session1.length + completed.session2.length);
+
       resetQuestionRuntime();
       setPhase({ phase: "session-2", index: 0 });
     } catch (error) {
@@ -532,6 +562,7 @@ export function FullMockPracticeView({
     setHasResponded(false);
     timerExpiredRef.current = false;
     mainStartedAtRef.current = null;
+    persistence.reset();
     resetQuestionRuntime();
     setPhase({ phase: "survey" });
   };

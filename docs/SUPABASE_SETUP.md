@@ -1,4 +1,4 @@
-# Supabase authentication setup (Phase 1)
+# Supabase configuration setup
 
 The frontend remains a static GitHub Pages build. Supabase is optional external Auth/PostgreSQL infrastructure. Without configuration, public content and all existing training work; My Page explains that login needs configuration.
 
@@ -7,10 +7,11 @@ The frontend remains a static GitHub Pages build. Supabase is optional external 
 1. Create/select the intended Supabase project. Copy **Project URL** and the **Publishable key** (`sb_publishable_…`) from Connect / Settings → API Keys. These are public browser configuration, not secrets.
 2. Copy `.env.example` to ignored `.env.local` and fill `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. Restart Vite. Use Node 22+ (CI uses 24).
 3. Apply `supabase/migrations/20260919000000_create_profiles.sql` once using the project's SQL Editor, or your existing Supabase migration deployment workflow. Review the project target first. The migration also creates profiles for existing Auth users. A trigger failure can block signup, so test signup before enabling production login.
-4. In Authentication → Sign In / Providers → Google, copy the exact Supabase **callback URL** shown there for the Google dashboard. Do not invent the project hostname.
-5. Enable Google after adding its Client ID and Client Secret as described below.
-6. In Authentication → URL Configuration set Site URL to `https://opic-on-me.com`.
-7. Allow these redirect URLs:
+4. Apply `supabase/migrations/20260920000000_create_learning_history.sql` to create `learning_sessions` and `learning_attempts` for Phase 2 history persistence.
+5. In Authentication → Sign In / Providers → Google, copy the exact Supabase **callback URL** shown there for the Google dashboard. Do not invent the project hostname.
+6. Enable Google after adding its Client ID and Client Secret as described below.
+7. In Authentication → URL Configuration set Site URL to `https://opic-on-me.com`.
+8. Allow these redirect URLs:
    - `https://opic-on-me.com/auth/callback/`
    - `http://localhost:5173/auth/callback/`
    - `https://opic-on-me.com/auth/callback/?returnTo=*`
@@ -50,14 +51,15 @@ The existing Pages workflow passes these to the build. Re-run deployment after s
 
 ## Database protection and release checks
 
-`profiles` references Auth user IDs with cascade deletion. Signup always creates `plan = free` regardless of metadata. RLS permits only authenticated own-row SELECT/UPDATE. Table privileges are revoked first; UPDATE is granted only for `display_name` and `avatar_url`, so REST updates cannot change `plan`, ID, or timestamps. No browser INSERT/DELETE or anonymous SELECT grants exist. The trigger controls updated_at. Profile metadata is display-only and never determines authorization.
+- `profiles` references Auth user IDs with cascade deletion. Signup always creates `plan = free` regardless of metadata. RLS permits only authenticated own-row SELECT/UPDATE. Table privileges are revoked first; UPDATE is granted only for `display_name` and `avatar_url`, so REST updates cannot change `plan`, ID, or timestamps. No browser INSERT/DELETE or anonymous SELECT grants exist.
+- `learning_sessions` and `learning_attempts` are insert/select only by the owning authenticated user. A composite foreign key prevents inserting attempts into another user's session even if RLS somehow fails.
 
 After applying the migration, use two disposable test accounts and verify:
 
-- Each signup creates exactly one free profile, even with no name/avatar metadata.
+- Each signup creates exactly one free profile.
 - Account A can select/update its safe fields; it cannot select or modify B's profile.
-- A direct client `update({ plan: 'pro' })` fails with permission denied, including when combined with a safe field.
-- Anonymous reads and authenticated profile inserts/deletes fail.
+- Account A can record sessions and attempts, but cannot see or inject into Account B's sessions.
+- Anonymous reads and writes fail.
 - Deleting a test Auth user in the dashboard removes its profile.
 - Google login returns to OOM, reload preserves the session, logout removes the local session, and callback cancellation gives a retry action.
 - Direct production requests to both utility routes return generated HTML with noindex and no ads. Public/training routes still work signed out.

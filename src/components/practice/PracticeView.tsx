@@ -8,6 +8,7 @@ import type { TtsMediaPlaybackSource, TtsRuntimeStatus } from "../../lib/tts/typ
 import { useTtsPreferences } from "../../lib/tts/useTtsPreferences";
 import { formatTime } from "../../lib/utils";
 import type { LlmSettings, SttSettings } from "../../types";
+import { useSessionPersistence } from "../../features/history/useSessionPersistence";
 import { Recorder, type RecorderHandle, type RecordingResult } from "./Recorder";
 import { ExamScreenShell, type ExamSessionState } from "./ExamScreenShell";
 import { PracticeReviewPanel } from "./PracticeReviewPanel";
@@ -107,6 +108,10 @@ function PracticeViewContent({
   const sttAbortRef = useRef<AbortController | null>(null);
   const attemptIdRef = useRef(0);
   const timerIntervalRef = useRef<number | null>(null);
+  const questionOrderRef = useRef(0);
+
+  // Phase 2: learning history persistence (fire-and-forget, no-op for anonymous)
+  const persistence = useSessionPersistence("quick_practice");
 
   const activePrompt = question?.prompt;
   const targetRangeLabel = `${resolved.level.targetSeconds[0]}–${resolved.level.targetSeconds[1]}초`;
@@ -140,6 +145,13 @@ function PracticeViewContent({
       if (audioUrl) URL.revokeObjectURL(audioUrl);
     };
   }, [audioUrl]);
+
+  // Phase 2: complete learning session on unmount
+  useEffect(() => {
+    const p = persistence;
+    return () => { p.completeSession(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Elapsed timer tick when recording
   useEffect(() => {
@@ -360,6 +372,16 @@ function PracticeViewContent({
     const newUrl = URL.createObjectURL(recording.blob);
     setAudioUrl(newUrl);
     setSessionState("complete");
+
+    // Phase 2: persist learning attempt (fire-and-forget)
+    if (question) {
+      const order = ++questionOrderRef.current;
+      // Lazily create session on first completed question
+      if (!persistence.getSessionId()) {
+        await persistence.startSession(resolved.level.id);
+      }
+      persistence.recordAttempt(question.id, order, recording.durationSeconds);
+    }
 
     if (!sttSettings?.endpoint?.trim() || !sttSettings.autoTranscribe) {
       return;

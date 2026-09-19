@@ -8,12 +8,12 @@
 
 import { supabase } from "../../lib/supabase";
 import type {
-  LearningAttemptRow,
   LearningMode,
   LearningSession,
   LearningSessionRow,
   LearningSessionStatus,
 } from "./historyTypes";
+import type { Database } from "../../auth/authTypes";
 import { mapSession } from "./historyTypes";
 
 // ---------------------------------------------------------------------------
@@ -28,7 +28,7 @@ export async function createSession(
 ): Promise<LearningSession | null> {
   if (!supabase) return null;
   try {
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from("learning_sessions")
       .insert({
         user_id: userId,
@@ -60,13 +60,13 @@ export async function updateSession(
 ): Promise<boolean> {
   if (!supabase) return false;
   try {
-    const patch: Record<string, unknown> = {};
+    const patch: Database["public"]["Tables"]["learning_sessions"]["Update"] = {};
     if (updates.status !== undefined) patch.status = updates.status;
     if (updates.questionCount !== undefined) patch.question_count = updates.questionCount;
     if (updates.answeredCount !== undefined) patch.answered_count = updates.answeredCount;
     if (updates.completedAt !== undefined) patch.completed_at = updates.completedAt;
 
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from("learning_sessions")
       .update(patch)
       .eq("id", sessionId);
@@ -106,7 +106,7 @@ export async function createAttempt(
 ): Promise<string | null> {
   if (!supabase) return null;
   try {
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from("learning_attempts")
       .insert({
         session_id: sessionId,

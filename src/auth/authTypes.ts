@@ -11,7 +11,8 @@ export type ProfileRow = {
   updated_at: string;
 };
 export type Database = {
-  public: { Tables: {
+  public: {
+    Tables: {
     profiles: {
       Row: ProfileRow;
       Insert: { id: string; display_name?: string | null; avatar_url?: string | null };
@@ -62,7 +63,20 @@ export type Database = {
       };
       Relationships: [];
     };
-  } };
+  };
+  Views: {
+    [_ in never]: never;
+  };
+  Functions: {
+    [_ in never]: never;
+  };
+  Enums: {
+    [_ in never]: never;
+  };
+  CompositeTypes: {
+    [_ in never]: never;
+  };
+};
 };
 export interface Profile {
   id: string;

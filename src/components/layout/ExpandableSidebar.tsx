@@ -1,3 +1,4 @@
+import { AuthNavigationLabel } from "../../auth/AuthNavigation";
 import {
   ChevronDown,
   Moon,
@@ -629,6 +630,7 @@ export function ExpandableSidebar({
         />
       </nav>
       <div className="mt-auto space-y-2">
+        <button type="button" onClick={() => navigate("mypage")} className="flex h-10 w-full items-center rounded-md px-3 text-sm font-medium text-indigo-600 hover:bg-indigo-50 focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-indigo-300 dark:hover:bg-zinc-800" aria-current={activeView === "mypage" ? "page" : undefined}><AuthNavigationLabel /></button>
         <button
           aria-label={darkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
           className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs font-semibold text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"

@@ -128,3 +128,10 @@ The self-introduction route points to the first generic storyline slot so its Ne
 - The sidebar expander dynamically displays group titles for the currently selected Course context.
 - A group page remains reachable through both its sidebar item and its hub card.
 - `roleplay-formula` shows only the formula and scenario-group cards. Detailed questions and sample answers belong in the selected `roleplay-*` route.
+
+## Account utility routes
+
+- /mypage/ → mypage → src/auth/MyPage.tsx: anonymous Google login or real account/profile information.
+- /auth/callback/ → auth-callback → src/auth/AuthCallback.tsx: SDK PKCE restoration, safe internal return path or /mypage/, retry on failure.
+
+Both use AppShell without the training header or selection/authentication gates. Landing navigation and the sidebar account control expose My Page, including mobile menus. Both routes have generic generated HTML, canonical trailing slashes, noindex,follow, no ads, and no sitemap entries. They add no training step.

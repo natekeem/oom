@@ -2,7 +2,7 @@
 
 ## System Overview
 
-OOM is a browser-only Vite + React application deployed as static files. There is no application server, database, authentication service, or repository-owned secret.
+OOM is a browser-only Vite + React application deployed as static files. There is no OOM application server or repository-owned secret. Optional external Supabase Auth (Google) and PostgreSQL profiles provide identity; the public product remains usable without login or Supabase configuration.
 
 ```text
 Browser
@@ -60,7 +60,7 @@ STEP 6 is a routed product area: `/practice/` mounts only the hub, `/practice/qu
 
 Full Mock stores Survey selection, Mock initial Level, and 12~15 attempts only in current React memory. It does not persist Blobs or sessions. Survey eligibility follows explicit `TrainingStoryline.surveyOptionIds` → `TrainingPracticeQuestion.storylineId` relationships and never keyword matching; preferred pools fall back only within the same Course when needed to preserve session size. Its 40-minute main timer and question count exclude the 20~30 second Self Introduction warm-up, and its difficulty adjustment resolves another Level context for Session 2 prompts without changing the saved `TrainingSelection`. STT/LLM calls are prohibited during the exam and remain manual, one selected answer at a time, after completion. `mockReport.ts` derives deterministic process metrics from completion, target-duration fit, recording coverage, answer time, and available review evidence; it does not produce a 0–100 diagnostic score or estimated OPIc grade. The user can download a self-contained HTML snapshot locally without sending report data to an OOM server.
 
-`src/lib/stt.ts` and `src/lib/llm.ts` call user-configured endpoints directly from the browser. Settings are stored in localStorage. Endpoint CORS support is required. No key or recording is stored by an OOM backend because no OOM backend exists.
+`src/lib/stt.ts` and `src/lib/llm.ts` call user-configured endpoints directly from the browser. Settings are stored in localStorage. Endpoint CORS support is required. No STT/LLM key or recording is sent to or stored in Supabase in Phase 1.
 
 Text transcripts can support structure, relevance, and language coaching. They do not contain sufficient acoustic evidence for pronunciation grading, and OOM must not claim otherwise.
 
@@ -86,13 +86,13 @@ Vite copies `public/` into `dist/`, including `CNAME`, robots, ads, 404 fallback
 
 ## Current and Future Service Boundary
 
-Current production is entirely browser frontend + static hosting:
+The frontend remains browser code + static hosting, with optional external Supabase identity:
 
 - fixed training content and fixed TTS stay deployable as static assets;
 - recorder audio remains local unless the user explicitly calls a configured endpoint;
 - LLM/STT credentials remain browser-local settings.
 
-A future intranet/backend may own authentication, STT, AI feedback, dynamic-text TTS, observability, or GPU inference. That is a boundary change requiring explicit design and secret handling. It does **not** require migrating enumerable fixed-content TTS away from static-first delivery; static assets can continue to be served by an intranet static host or CDN.
+Supabase currently owns authentication and profiles only. A future backend may own STT, AI feedback, dynamic-text TTS, observability, or GPU inference. That is a boundary change requiring explicit design and secret handling. It does **not** require migrating enumerable fixed-content TTS away from static-first delivery; static assets can continue to be served by an intranet static host or CDN.
 
 ## Documentation and Generated Data
 
@@ -104,3 +104,13 @@ A future intranet/backend may own authentication, STT, AI feedback, dynamic-text
 - Non-canonical implementation inputs: `reference/**`.
 
 Do not duplicate source-owned values in view components or canonical documents when a direct link to the registry/data owner is sufficient.
+
+## Phase 1 identity boundary
+
+AuthProvider wraps the router application from main.tsx. A single typed client in src/lib/supabase.ts persists sessions and automatically completes browser PKCE callbacks. Auth event callbacks are synchronous; profile reads occur separately and stale requests are discarded. TrainingSelection remains browser-owned and independent of identity.
+
+OOM → Supabase Auth → Google → Supabase → /auth/callback/ → session → own profile. Internal return paths use a canonical route allowlist. Missing public configuration leaves auth unconfigured without preventing public rendering. My Page and callback are noindex and excluded from ads and sitemap.
+
+profiles.plan is display-only, constrained to free/pro; clients can update only display_name/avatar_url under own-row RLS. Database triggers create free profiles and maintain updated_at. Future subscriptions/payment state must become server-authoritative; no client plan checks gate current functionality.
+
+Current advanced-user mode: browser → user-configured STT/LLM endpoint. Future managed mode: browser → Supabase Edge Function → auth/usage/plan checks → Gemini/OpenAI → persistence. No managed AI, storage, billing, history, or extra providers are implemented. See [setup](SUPABASE_SETUP.md).

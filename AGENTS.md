@@ -2,7 +2,7 @@
 
 ## Project Identity
 
-OOM (오픽온미, OPIc On Me)은 OPIc speaking practice를 위한 Vite + React + TypeScript 정적 웹앱이다. 현재 backend, database, authentication server는 없다. 녹음·TTS·설정은 browser가 소유하고, LLM/STT는 사용자가 설정한 endpoint를 browser에서 직접 호출한다.
+OOM (오픽온미, OPIc On Me)은 OPIc speaking practice를 위한 Vite + React + TypeScript 정적 웹앱이다. 프런트엔드는 정적 배포를 유지하며, 선택적으로 Supabase Auth(Google)와 RLS로 보호된 profiles 데이터베이스를 사용한다. 로그인 없이 기존 공개 콘텐츠와 훈련을 이용할 수 있다. 인증 경계는 src/auth/ 및 src/lib/supabase.ts, 운영 절차는 docs/SUPABASE_SETUP.md가 소유한다. 녹음·TTS·설정은 browser가 소유하고, LLM/STT는 사용자가 설정한 endpoint를 browser에서 직접 호출한다.
 
 기능 변경 전에는 이 문서를 기준으로 scope를 정한다. `reference/**`나 과거 audit 문서를 current product architecture로 사용하지 않는다.
 

@@ -1,6 +1,8 @@
 import type { ResolvedTrainingContext } from "../../training/types";
 
 export type ViewId =
+  | "mypage"
+  | "auth-callback"
   | "home"
   | "exam-guide"
   | "exam-overview"
@@ -38,6 +40,8 @@ export type ViewId =
   | "image-credits";
 
 export const viewTitles: Record<ViewId, string> = {
+  mypage: "마이페이지",
+  "auth-callback": "로그인 연결",
   home: "오픽온미 브랜드 홈",
   "exam-guide": "OPIc 수험 가이드",
   "exam-overview": "OPIc 수험 가이드 · 소개 · 등급",

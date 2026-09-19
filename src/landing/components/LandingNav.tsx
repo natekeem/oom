@@ -1,3 +1,4 @@
+import { AuthNavigationLabel } from "../../auth/AuthNavigation";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { OomBrandMark } from "../../components/brand/OomBrandMark";
@@ -61,6 +62,7 @@ export function LandingNav() {
         {links.map((link) => (
           <Link key={link.href} to={link.href}>{link.label}</Link>
         ))}
+        <Link to="/mypage/"><AuthNavigationLabel /></Link>
         <Link className="landing-nav-cta" data-magnetic to="/training/">훈련 시작</Link>
       </nav>
 
@@ -89,6 +91,7 @@ export function LandingNav() {
                 <span>{String(index + 1).padStart(2, "0")}</span>{link.label}
               </Link>
             ))}
+            <Link to="/mypage/" onClick={() => setOpen(false)}><AuthNavigationLabel /></Link>
           </nav>
           <Link className="landing-mobile-cta" onClick={() => setOpen(false)} to="/training/">실전 훈련 둘러보기</Link>
         </div>

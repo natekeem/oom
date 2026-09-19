@@ -36,6 +36,9 @@ const MagazineDetail = lazy(() => import("./components/magazine/MagazineDetail")
 const HomeView = lazy(() => import("./components/home/HomeView").then((module) => ({ default: module.HomeView })));
 const LegalPageView = lazy(() => import("./components/legal/LegalPageView").then((module) => ({ default: module.LegalPageView })));
 
+const MyPage = lazy(() => import("./auth/MyPage").then((module) => ({ default: module.MyPage })));
+const AuthCallback = lazy(() => import("./auth/AuthCallback").then((module) => ({ default: module.AuthCallback })));
+
 const SETTINGS_KEY = "oom-llm-settings";
 const STT_SETTINGS_KEY = "oom-stt-settings";
 const THEME_KEY = "oom-theme";
@@ -138,7 +141,7 @@ export default function App() {
   const isLanding = location.pathname === "/";
   const isMagazineDetail = /^\/magazine\/[^/]+\/?$/.test(location.pathname);
   const adExcluded =
-    ["practice", "practice-quick", "practice-mock", "ai-settings", "about", "privacy", "contact", "terms", "editorial-policy", "image-credits"].includes(
+    ["mypage", "auth-callback", "practice", "practice-quick", "practice-mock", "ai-settings", "about", "privacy", "contact", "terms", "editorial-policy", "image-credits"].includes(
       activeView
     ) || (activeView === "magazine-list" && !isMagazineDetail);
 
@@ -234,6 +237,8 @@ export default function App() {
 
   const screen = (
     <Routes>
+      <Route path="/mypage/" element={<MyPage />} />
+      <Route path="/auth/callback/" element={<AuthCallback />} />
       <Route path="/exam-guide" element={<ExamGuideHub onNavigate={onNavigate} />} />
       <Route path="/exam-guide/" element={<ExamGuideHub onNavigate={onNavigate} />} />
       <Route

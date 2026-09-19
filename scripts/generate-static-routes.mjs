@@ -10,6 +10,8 @@ const lastmod = "2026-07-27";
 const require = createRequire(import.meta.url);
 
 const baseRoutes = [
+  { path: "/mypage/", title: "마이페이지 | 오픽온미", description: "OOM 계정 정보를 확인합니다.", heading: "마이페이지", content: ["Google로 로그인하고 내 계정 정보를 확인하세요. 기존 공개 콘텐츠와 훈련은 로그인 없이 이용할 수 있습니다."], noindex: true },
+  { path: "/auth/callback/", title: "로그인 연결 | 오픽온미", description: "OOM 로그인 연결을 확인합니다.", heading: "로그인 연결", content: ["로그인을 확인하고 있습니다. 연결이 완료되지 않으면 마이페이지에서 다시 시도해 주세요."], noindex: true },
   {
     path: "/",
     title: "오픽온미 | 외울 건 줄이고 실전은 더 많이",

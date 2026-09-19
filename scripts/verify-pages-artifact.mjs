@@ -39,6 +39,8 @@ const requiredRouteFiles = [
   "exam-guide/index.html",
   "privacy/index.html",
   "about/index.html",
+  "mypage/index.html",
+  "auth/callback/index.html",
   "practice/index.html",
   "practice/quick/index.html",
   "practice/mock/index.html",
@@ -71,7 +73,7 @@ for (const sitemapUrl of sitemapUrls) {
   if (parsedUrl.pathname !== "/" && !parsedUrl.pathname.endsWith("/")) {
     throw new Error(`Sitemap URL is missing its trailing slash: ${sitemapUrl}`);
   }
-  if (parsedUrl.pathname === "/ai-settings/") {
+  if (["/ai-settings/", "/mypage/", "/auth/callback/"].includes(parsedUrl.pathname)) {
     throw new Error("The noindex AI settings route must not appear in the sitemap.");
   }
 
@@ -126,6 +128,8 @@ for (const routeFile of generatedIndexFiles) {
 }
 
 const adExcludedRoutes = [
+  "mypage/index.html",
+  "auth/callback/index.html",
   "practice/index.html",
   "practice/quick/index.html",
   "practice/mock/index.html",
@@ -178,3 +182,10 @@ for (const [path, routeHtml] of routeHtmlFiles) {
   }
 }
 console.log(`Verified GitHub Pages artifact with ${assetPaths.length} bundled asset reference(s), ${sitemapUrls.length} canonical sitemap route(s), ${generatedIndexFiles.length} generated index file(s), ${requiredRootFiles.length} root static file(s), and ${requiredRouteFiles.length} representative static route file(s).`);
+
+for (const path of ["mypage", "auth/callback"]) {
+  const html = await readFile(join(distDirectory, path, "index.html"), "utf8");
+  if (!html.includes('name="robots" content="noindex,follow"')) throw new Error(path + " must be noindex");
+  if (!html.includes('<link rel="canonical" href="' + canonicalOrigin + '/' + path + '/" />')) throw new Error(path + " canonical missing");
+  if (!html.includes("<h1")) throw new Error(path + " generic content missing");
+}

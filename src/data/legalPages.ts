@@ -63,12 +63,12 @@ export const legalPages: Record<LegalPageId, LegalPage> = {
     eyebrow: "개인정보처리방침",
     title: "개인정보처리방침",
     description: "오픽온미의 개인정보 처리, 쿠키, Google 광고 쿠키, 제3자 광고 및 문의 방법을 안내합니다.",
-    updatedAt: "2026-07-27",
+    updatedAt: "2026-09-19",
     sections: [
       {
         heading: "수집하는 정보",
         paragraphs: [
-          "오픽온미는 회원가입이나 자체 서버 로그인을 제공하지 않습니다. 사용자가 입력한 내부 LLM 설정은 현재 브라우저의 localStorage에만 저장되며, 오픽온미 서버로 전송되지 않습니다.",
+          "오픽온미는 선택적으로 Google 로그인과 Supabase 계정 서비스를 제공합니다. 로그인 시 계정 식별자, 이메일, 표시 이름, 프로필 이미지와 가입 정보를 인증 및 계정 표시에 사용하며 Supabase Auth와 프로필 데이터베이스에 보관합니다. 로그인을 유지하기 위한 세션 정보는 현재 브라우저에 저장됩니다. 학습 기록과 녹음은 이 계정 서비스에 저장하지 않습니다. 계정 정보 삭제는 아래 문의 이메일로 요청할 수 있습니다. 사용자가 입력한 내부 LLM 설정은 현재 브라우저의 localStorage에만 저장되며, 오픽온미 서버로 전송되지 않습니다.",
           "서비스 이용 과정에서 브라우저, 기기, 접속 시간, 방문 페이지 같은 일반적인 서비스 이용 기록이 정적 호스팅, 분석 도구 또는 광고 도구를 통해 처리될 수 있습니다.",
         ],
       },
@@ -86,7 +86,7 @@ export const legalPages: Record<LegalPageId, LegalPage> = {
       },
       {
         heading: "문의 및 시행일",
-        paragraphs: ["개인정보 관련 문의는 86seongmin.kim@gmail.com 으로 보내 주세요.", "이 개인정보처리방침의 시행일은 2026년 6월 29일이며, 연락처와 광고 노출 범위는 2026년 7월 27일 갱신했습니다."],
+        paragraphs: ["개인정보 관련 문의는 86seongmin.kim@gmail.com 으로 보내 주세요.", "이 개인정보처리방침의 시행일은 2026년 6월 29일이며, Google 로그인과 Supabase 계정 처리 안내는 2026년 9월 19일 갱신했습니다."],
       },
       {
         heading: "브라우저 localStorage",

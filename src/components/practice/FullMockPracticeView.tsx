@@ -282,11 +282,7 @@ export function FullMockPracticeView({
     };
   }, []);
 
-  useEffect(() => {
-    const p = persistence;
-    return () => { p.completeSession(); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
 
   useEffect(() => {
     if (phase.phase === "complete") {

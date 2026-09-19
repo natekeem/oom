@@ -146,12 +146,7 @@ function PracticeViewContent({
     };
   }, [audioUrl]);
 
-  // Phase 2: complete learning session on unmount
-  useEffect(() => {
-    const p = persistence;
-    return () => { p.completeSession(); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
 
   // Elapsed timer tick when recording
   useEffect(() => {

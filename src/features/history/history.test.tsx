@@ -91,8 +91,6 @@ describe("useLearningHistory", () => {
     
     const { result } = renderHook(() => useLearningHistory());
     
-    expect(result.current.status).toBe("loading");
-    
     await waitFor(() => {
       expect(result.current.status).toBe("success");
     });

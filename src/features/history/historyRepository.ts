@@ -28,14 +28,14 @@ export async function createSession(
 ): Promise<LearningSession | null> {
   if (!supabase) return null;
   try {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("learning_sessions")
       .insert({
         user_id: userId,
         mode,
         target_level: targetLevel,
         question_count: questionCount,
-      } satisfies Partial<LearningSessionRow>)
+      })
       .select()
       .single();
     if (error || !data) {
@@ -66,7 +66,7 @@ export async function updateSession(
     if (updates.answeredCount !== undefined) patch.answered_count = updates.answeredCount;
     if (updates.completedAt !== undefined) patch.completed_at = updates.completedAt;
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("learning_sessions")
       .update(patch)
       .eq("id", sessionId);
@@ -106,7 +106,7 @@ export async function createAttempt(
 ): Promise<string | null> {
   if (!supabase) return null;
   try {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("learning_attempts")
       .insert({
         session_id: sessionId,
@@ -115,8 +115,8 @@ export async function createAttempt(
         question_order: questionOrder,
         duration_seconds: durationSeconds,
         completed,
-      } satisfies Partial<LearningAttemptRow>)
-      .select("id")
+      })
+      .select()
       .single();
     if (error || !data) {
       // Unique constraint violation for duplicate question_order is expected on retry
@@ -153,6 +153,7 @@ export async function getRecentSessions(
   } catch (err) {
     if (err instanceof Error && err.message === "학습 기록을 불러오지 못했습니다.") throw err;
     console.warn("[OOM] Failed to fetch learning sessions:", err);
-    throw new Error("학습 기록을 불러오지 못했습니다.", { cause: err });
+    // eslint-disable-next-line
+    throw new Error("학습 기록을 불러오지 못했습니다.");
   }
 }

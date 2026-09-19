@@ -64,6 +64,20 @@ describe("account UI", () => {
     fireEvent.click(screen.getByRole("button", { name: "로그아웃" }));
     expect(await screen.findByRole("alert")).toHaveTextContent("로그아웃하지 못했습니다");
   });
+  it("renders goal setting card and primary CTA routing to /training/setup/", () => {
+    setup({ status: "authenticated", user: { id: "a", email: "a@example.com", created_at: row.created_at } as User, profile: mapProfile(row) });
+    expect(screen.getByText("내 학습 설정")).toBeInTheDocument();
+    const primaryCta = screen.getAllByRole("link", { name: /시작하기/ })[0];
+    expect(primaryCta).toHaveAttribute("href", "/training/setup/");
+    const practiceCta = screen.getAllByRole("link", { name: "실전 연습 바로가기" })[0];
+    expect(practiceCta).toHaveAttribute("href", "/practice/");
+  });
+  it("renders empty history state with intentional copy and CTA to /training/setup/", () => {
+    setup({ status: "authenticated", user: { id: "a", email: "a@example.com", created_at: row.created_at } as User, profile: mapProfile(row) });
+    expect(screen.getByText("아직 저장된 학습 기록이 없어요.")).toBeInTheDocument();
+    const emptyStateStartCta = screen.getAllByRole("link", { name: "학습 시작하기" })[0];
+    expect(emptyStateStartCta).toHaveAttribute("href", "/training/setup/");
+  });
 });
 describe("auth boundary helpers", () => {
   it.each(["https://evil.com/", "//evil.com/", "/\\evil.com", "/%2fevil.com", "/auth/callback/", "/missing/", "/training/?next=//evil.com", " /training/", null])("rejects unsafe return path %s", (value) => {

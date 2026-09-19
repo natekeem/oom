@@ -4,6 +4,7 @@ import {
   BookOpenText,
   CirclePlay,
   House,
+  UserRound,
 } from "lucide-react";
 
 export const topLevelNavigation = {
@@ -26,5 +27,9 @@ export const topLevelNavigation = {
   aiSettings: {
     icon: Bot,
     label: "AI 피드백 / 설정",
+  },
+  mypage: {
+    icon: UserRound,
+    label: "마이페이지",
   },
 } as const;

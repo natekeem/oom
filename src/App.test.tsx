@@ -192,4 +192,23 @@ describe("OOM", () => {
       screen.getByRole("button", { name: "OPIc 수험 가이드 하위 메뉴 펼치기" })
     ).toHaveAttribute("aria-expanded", "false");
   });
+
+  it("renders My Page in the sidebar with active state and in the mobile menu", async () => {
+    saveTrainingSelection({ courseId: "course-1", levelId: "advanced" });
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={["/mypage/"]}>
+        <App />
+      </MemoryRouter>
+    );
+
+    const myPageButtons = screen.getAllByRole("button", { name: "로그인" });
+    expect(myPageButtons.length).toBeGreaterThan(0);
+    expect(myPageButtons[0]).toHaveAttribute("aria-current", "page");
+
+    await user.click(screen.getByRole("button", { name: "메뉴 열기" }));
+    const dialog = screen.getByRole("dialog", { name: "모바일 메뉴" });
+    const mobileMyPage = within(dialog).getByRole("button", { name: "로그인" });
+    expect(mobileMyPage).toHaveAttribute("aria-current", "page");
+  });
 });

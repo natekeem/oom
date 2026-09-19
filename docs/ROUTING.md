@@ -131,7 +131,7 @@ The self-introduction route points to the first generic storyline slot so its Ne
 
 ## Account utility routes
 
-- /mypage/ → mypage → src/auth/MyPage.tsx: anonymous Google login or real account/profile information.
+- /mypage/ → mypage → src/auth/MyPage.tsx: anonymous Google login or real account/profile information, active learning target settings, and recent learning history.
 - /auth/callback/ → auth-callback → src/auth/AuthCallback.tsx: SDK PKCE restoration, safe internal return path or /mypage/, retry on failure.
 
 Both use AppShell without the training header or selection/authentication gates. Landing navigation and the sidebar account control expose My Page, including mobile menus. Both routes have generic generated HTML, canonical trailing slashes, noindex,follow, no ads, and no sitemap entries. They add no training step.

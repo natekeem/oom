@@ -41,7 +41,7 @@ STEP 6의 빠른 연습은 자기소개 워밍업 없이 한 문제를 바로 �
 - Vitest + Testing Library
 - GitHub Pages 또는 일반 정적 호스팅
 
-프런트엔드는 GitHub Pages 정적 배포를 유지하며 Supabase를 외부 인증·프로필 서비스로 사용합니다. Google 로그인과 마이페이지는 선택 사항이며 로그인 없이 기존 훈련이 가능합니다. 학습 기록·녹음 서버 저장은 아직 없습니다. 설정은 [Supabase Setup](docs/SUPABASE_SETUP.md)을 참고하세요. LLM/STT 설정과 API key는 앱 설정 화면을 통해 현재 브라우저 `localStorage`에만 저장되며 소스에 포함하지 않습니다. STT 설정 key는 `oom-stt-settings`입니다.
+프런트엔드는 GitHub Pages 정적 배포를 유지하며 Supabase를 외부 인증·프로필 서비스로 사용합니다. Google 로그인과 마이페이지를 통해 계정 정보, 목표 설정 상태, 최근 학습 기록을 관리할 수 있으며, 로그인 없이도 기존 훈련과 공개 콘텐츠를 자유롭게 이용할 수 있습니다. 설정은 [Supabase Setup](docs/SUPABASE_SETUP.md)을 참고하세요. LLM/STT 설정과 API key는 앱 설정 화면을 통해 현재 브라우저 `localStorage`에만 저장되며 소스에 포함하지 않습니다. STT 설정 key는 `oom-stt-settings`입니다.
 
 ## Local development
 

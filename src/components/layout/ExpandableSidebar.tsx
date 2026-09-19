@@ -73,14 +73,15 @@ function NavigationButton({
 }: {
   active: boolean;
   icon?: LucideIcon;
-  label: string;
+  label: ReactNode;
   depth?: 0 | 1 | 2;
   onClick: () => void;
 }) {
+  const titleAttr = typeof label === "string" ? label : undefined;
   return (
     <button
       aria-current={active ? "page" : undefined}
-      title={label}
+      title={titleAttr}
       className={cn(
         "flex items-center text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
         // Layout and Heights
@@ -629,15 +630,21 @@ export function ExpandableSidebar({
           onClick={() => navigate("ai-settings")}
         />
       </nav>
-      <div className="mt-auto space-y-2">
-        <button type="button" onClick={() => navigate("mypage")} className="flex h-10 w-full items-center rounded-md px-3 text-sm font-medium text-indigo-600 hover:bg-indigo-50 focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-indigo-300 dark:hover:bg-zinc-800" aria-current={activeView === "mypage" ? "page" : undefined}><AuthNavigationLabel /></button>
+      <div className="mt-auto space-y-2 border-t border-zinc-200/80 pt-3 dark:border-zinc-800/80">
+        <NavigationButton
+          active={activeView === "mypage"}
+          depth={0}
+          icon={topLevelNavigation.mypage.icon}
+          label={<AuthNavigationLabel />}
+          onClick={() => navigate("mypage")}
+        />
         <button
           aria-label={darkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
-          className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs font-semibold text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          className="flex h-8 w-full items-center gap-2 rounded-md px-3 text-left text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
           onClick={onToggleDarkMode}
           type="button"
         >
-          {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          {darkMode ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
           {darkMode ? "라이트 모드" : "다크 모드"}
         </button>
         <div className="rounded-md border border-indigo-100 bg-indigo-50 p-3 dark:border-indigo-900 dark:bg-indigo-950">

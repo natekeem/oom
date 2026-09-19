@@ -170,7 +170,7 @@ function LearningHistorySection() {
 
 export function MyPage() {
   const auth = useAuth();
-  const { selection } = useTrainingSelection();
+  const { selection, isAccountSynced, isLoadingPreferences } = useTrainingSelection();
   const [params] = useSearchParams();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -300,7 +300,7 @@ export function MyPage() {
             </Card>
 
             {/* Goal / Training setup card */}
-            <Card className="flex flex-col justify-between p-6 lg:col-span-7">
+            <Card className="flex flex-col justify-between p-6 lg:col-span-7" aria-label="내 학습 설정">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
@@ -309,14 +309,20 @@ export function MyPage() {
                       내 학습 설정
                     </span>
                   </div>
-                  {selection && activeSavedLevel ? (
+                  {isLoadingPreferences ? (
+                    <Badge tone="default">확인 중</Badge>
+                  ) : isAccountSynced && selection && activeSavedLevel ? (
                     <Badge tone="emerald">설정 완료</Badge>
                   ) : (
                     <Badge tone="amber">설정 필요</Badge>
                   )}
                 </div>
 
-                {selection && activeSavedLevel && activeSavedCourse ? (
+                {isLoadingPreferences ? (
+                  <p role="status" className="text-xs text-zinc-400">
+                    학습 설정을 불러오고 있어요.
+                  </p>
+                ) : isAccountSynced && selection && activeSavedLevel && activeSavedCourse ? (
                   <div className="space-y-2">
                     <div className="flex flex-wrap items-baseline gap-2">
                       <h3 className="text-lg font-bold text-zinc-950 dark:text-white">
@@ -331,7 +337,7 @@ export function MyPage() {
                       {formatTrainingPreset(activeSavedLevel)} · 권장 난이도 <strong>{activeSavedLevel.difficulty.label}</strong>
                     </p>
                     <p className="pt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-                      현재 목표 구간과 코스에 맞춰 6단계 로드맵과 실전 연습 문항이 준비되어 있습니다.
+                      계정에 동기화된 목표 구간과 코스에 맞춰 6단계 로드맵과 실전 연습 문항이 준비되어 있습니다.
                     </p>
                   </div>
                 ) : (
@@ -340,28 +346,41 @@ export function MyPage() {
                       목표 구간과 학습 코스를 설정하세요
                     </h3>
                     <p className="text-xs leading-5 text-zinc-600 dark:text-zinc-400">
-                      목표 등급(AL / IH / IM)과 코스를 선택하면 추천 서베이, 스크립트 발화량, 롤플레이 및 실전 연습 질문이 자동으로 구성됩니다.
+                      아직 계정에 저장된 학습 설정이 없어요. 목표를 설정하면 여러 기기에서 같은 설정을 사용할 수 있어요.
                     </p>
                   </div>
                 )}
               </div>
 
               <div className="mt-6 flex flex-wrap items-center gap-2.5 border-t border-zinc-100 pt-4 dark:border-zinc-800">
-                <ButtonLink
-                  size="md"
-                  to="/training/setup/"
-                  variant="primary"
-                >
-                  {selection ? "학습 시작하기" : "목표 설정하고 시작하기"}
-                  <ArrowRight className="h-4 w-4" />
-                </ButtonLink>
-                <ButtonLink
-                  size="md"
-                  to="/practice/"
-                  variant="secondary"
-                >
-                  실전 연습 바로가기
-                </ButtonLink>
+                {isAccountSynced && selection ? (
+                  <>
+                    <ButtonLink
+                      size="md"
+                      to="/training/setup/"
+                      variant="primary"
+                    >
+                      목표 설정 수정
+                      <ArrowRight className="h-4 w-4" />
+                    </ButtonLink>
+                    <ButtonLink
+                      size="md"
+                      to="/practice/"
+                      variant="secondary"
+                    >
+                      실전 연습 바로가기
+                    </ButtonLink>
+                  </>
+                ) : (
+                  <ButtonLink
+                    size="md"
+                    to="/training/setup/"
+                    variant="primary"
+                  >
+                    목표 설정하기
+                    <ArrowRight className="h-4 w-4" />
+                  </ButtonLink>
+                )}
               </div>
             </Card>
           </div>

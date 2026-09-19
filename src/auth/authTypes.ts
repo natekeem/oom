@@ -1,5 +1,6 @@
 import type { Session, User } from "@supabase/supabase-js";
 import type { LearningSessionRow, LearningAttemptRow } from "../features/history/historyTypes";
+import type { LearningPreferencesRow } from "../features/preferences/preferenceTypes";
 
 export type UserPlan = "free" | "pro";
 export type ProfileRow = {
@@ -60,6 +61,22 @@ export type Database = {
         duration_seconds?: number | null;
         completed?: boolean;
         answered_at?: string;
+      };
+      Relationships: [];
+    };
+    learning_preferences: {
+      Row: LearningPreferencesRow;
+      Insert: {
+        user_id: string;
+        target_level?: string | null;
+        course_id?: string | null;
+        created_at?: string;
+        updated_at?: string;
+      };
+      Update: {
+        target_level?: string | null;
+        course_id?: string | null;
+        updated_at?: string;
       };
       Relationships: [];
     };

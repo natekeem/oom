@@ -27,7 +27,7 @@ Browser
 
 Static host / Supabase
 └─ `dist/` from Vite + generated route HTML + generated TTS assets
-└─ Supabase Auth + PostgreSQL (profiles, learning_sessions, learning_attempts)
+└─ Supabase Auth + PostgreSQL (profiles, learning_sessions, learning_attempts, learning_preferences)
 ```
 
 ## Frontend Ownership
@@ -41,11 +41,12 @@ Static host / Supabase
 | Navigation | `src/components/layout/ExpandableSidebar.tsx` | guide/training hierarchy and Course-aware STEP 4/5 labels |
 | View contract | `src/components/layout/Sidebar.tsx` | `ViewId` and page-title resolution |
 | Independent landing | `src/landing/LandingPage.tsx` | full-bleed `/` route without AppShell or training state runtime |
-| Training selection | `src/training/TrainingSelectionContext.tsx`, `src/training/storage.ts` | browser-persisted Course × Level selection |
+| Training selection | `src/training/TrainingSelectionContext.tsx`, `src/training/storage.ts` | browser-persisted Course × Level selection with account synchronization |
 | Course registry | `src/training/courseRegistry.ts` | auto-discovery and `resolveTrainingContext` |
 | Level registry | `src/training/levels.ts` | three Level display/difficulty/time definitions |
 | Course data | `src/data/training/courses/course-N/` | active survey, storyline, variant, replacement, roleplay, question data |
 | Learning history | `src/features/history/` | Supabase data-access layer for sessions/attempts |
+| Learning preferences | `src/features/preferences/` | Supabase data-access layer for account-level target level/course preferences |
 
 The detailed route/sidebar/header contract is in [ROUTING.md](ROUTING.md). The Course × Level and STEP behavior is in [TRAINING_SYSTEM.md](TRAINING_SYSTEM.md).
 
@@ -53,7 +54,7 @@ The detailed route/sidebar/header contract is in [ROUTING.md](ROUTING.md). The C
 
 ### Training
 
-`TrainingSelectionProvider` is mounted around AppShell routes. STEP 1 writes a selection to `oom-training-selection-v1`. STEP 2~6 use `TrainingSelectionGuard`; they never invent a default Course or Level. `resolveTrainingContext(courseId, levelId)` combines one Course bundle with one Level definition and exposes Level-active storylines, roleplays, and questions.
+`TrainingSelectionProvider` is mounted around AppShell routes. For anonymous users, selections persist in `oom-training-selection-v1` in localStorage. For authenticated users, existing account preferences in Supabase `learning_preferences` are authoritatively restored on login, while new/updated selections persist to Supabase (`target_level`, `course_id`) and locally. Anonymous local state is never silently uploaded on login until the user explicitly saves preferences. Logout isolates accounts by clearing in-memory preferences. STEP 1 writes a selection. STEP 2~6 use `TrainingSelectionGuard`; they never invent a default Course or Level. `resolveTrainingContext(courseId, levelId)` combines one Course bundle with one Level definition and exposes Level-active storylines, roleplays, and questions.
 
 The registry discovers `/src/data/training/courses/*/index.ts` eagerly with `import.meta.glob`. Adding a Course bundle does not require a registry edit, although the current four STEP 4 slot routes and three visible STEP 5 scenario routes impose content-shape checks documented in [CONTENT_AUTHORING.md](CONTENT_AUTHORING.md).
 

@@ -8,10 +8,11 @@ The frontend remains a static GitHub Pages build. Supabase is optional external 
 2. Copy `.env.example` to ignored `.env.local` and fill `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. Restart Vite. Use Node 22+ (CI uses 24).
 3. Apply `supabase/migrations/20260919000000_create_profiles.sql` once using the project's SQL Editor, or your existing Supabase migration deployment workflow. Review the project target first. The migration also creates profiles for existing Auth users. A trigger failure can block signup, so test signup before enabling production login.
 4. Apply `supabase/migrations/20260920000000_create_learning_history.sql` to create `learning_sessions` and `learning_attempts` for Phase 2 history persistence.
-5. In Authentication → Sign In / Providers → Google, copy the exact Supabase **callback URL** shown there for the Google dashboard. Do not invent the project hostname.
-6. Enable Google after adding its Client ID and Client Secret as described below.
-7. In Authentication → URL Configuration set Site URL to `https://opic-on-me.com`.
-8. Allow these redirect URLs:
+5. Apply `supabase/migrations/20260921000000_create_learning_preferences.sql` to create `learning_preferences` for Phase 2.7 account-level learning preferences persistence.
+6. In Authentication → Sign In / Providers → Google, copy the exact Supabase **callback URL** shown there for the Google dashboard. Do not invent the project hostname.
+7. Enable Google after adding its Client ID and Client Secret as described below.
+8. In Authentication → URL Configuration set Site URL to `https://opic-on-me.com`.
+9. Allow these redirect URLs:
    - `https://opic-on-me.com/auth/callback/`
    - `http://localhost:5173/auth/callback/`
    - `https://opic-on-me.com/auth/callback/?returnTo=*`
@@ -53,18 +54,20 @@ The existing Pages workflow passes these to the build. Re-run deployment after s
 
 - `profiles` references Auth user IDs with cascade deletion. Signup always creates `plan = free` regardless of metadata. RLS permits only authenticated own-row SELECT/UPDATE. Table privileges are revoked first; UPDATE is granted only for `display_name` and `avatar_url`, so REST updates cannot change `plan`, ID, or timestamps. No browser INSERT/DELETE or anonymous SELECT grants exist.
 - `learning_sessions` and `learning_attempts` are insert/select only by the owning authenticated user. A composite foreign key prevents inserting attempts into another user's session even if RLS somehow fails.
+- `learning_preferences` stores account-level target level and course preferences (`user_id` PK referencing `auth.users(id)` cascade delete). RLS permits only authenticated own-row SELECT/INSERT/UPDATE/DELETE. Check constraint enforces `target_level in ('advanced', 'intermediate', 'foundation')`. Anonymous access is blocked.
 
 After applying the migration, use two disposable test accounts and verify:
 
 - Each signup creates exactly one free profile.
 - Account A can select/update its safe fields; it cannot select or modify B's profile.
 - Account A can record sessions and attempts, but cannot see or inject into Account B's sessions.
+- Account A can save and update learning preferences, but cannot view or modify Account B's preferences.
 - Anonymous reads and writes fail.
-- Deleting a test Auth user in the dashboard removes its profile.
+- Deleting a test Auth user in the dashboard removes its profile and preferences.
 - Google login returns to OOM, reload preserves the session, logout removes the local session, and callback cancellation gives a retry action.
 - Direct production requests to both utility routes return generated HTML with noindex and no ads. Public/training routes still work signed out.
 
-These checks require your configured project; unit tests mock the SDK and do not certify a deployed database or real Google OAuth. Run `supabase/tests/profiles.sql` in SQL Editor after migration for transactional RLS/privilege checks; it rolls back its fixture users.
+These checks require your configured project; unit tests mock the SDK and do not certify a deployed database or real Google OAuth. Run `supabase/tests/profiles.sql` and `supabase/tests/learning_preferences.sql` in SQL Editor after migration for transactional RLS/privilege checks; both roll back their fixture users.
 
 ## Future boundary
 

@@ -8,6 +8,7 @@ import { AuthNavigationLabel } from "./AuthNavigation";
 import { mapProfile, safeReturnPath } from "./authHelpers";
 import type { AuthContextValue, ProfileRow } from "./authTypes";
 import { viewIdForPath, viewPathForId } from "../lib/routes";
+import * as TrainingContext from "../training/TrainingSelectionContext";
 
 vi.mock("../features/history/useLearningHistory", () => ({
   useLearningHistory: () => ({
@@ -64,13 +65,26 @@ describe("account UI", () => {
     fireEvent.click(screen.getByRole("button", { name: "로그아웃" }));
     expect(await screen.findByRole("alert")).toHaveTextContent("로그아웃하지 못했습니다");
   });
-  it("renders goal setting card and primary CTA routing to /training/setup/", () => {
+  it("renders empty account settings prompt when preferences are not synced", () => {
     setup({ status: "authenticated", user: { id: "a", email: "a@example.com", created_at: row.created_at } as User, profile: mapProfile(row) });
     expect(screen.getByText("내 학습 설정")).toBeInTheDocument();
-    const primaryCta = screen.getAllByRole("link", { name: /시작하기/ })[0];
-    expect(primaryCta).toHaveAttribute("href", "/training/setup/");
-    const practiceCta = screen.getAllByRole("link", { name: "실전 연습 바로가기" })[0];
-    expect(practiceCta).toHaveAttribute("href", "/practice/");
+    expect(screen.getByText("설정 필요")).toBeInTheDocument();
+    expect(screen.getByText("아직 계정에 저장된 학습 설정이 없어요. 목표를 설정하면 여러 기기에서 같은 설정을 사용할 수 있어요.")).toBeInTheDocument();
+    const setGoalLink = screen.getByRole("link", { name: "목표 설정하기" });
+    expect(setGoalLink).toHaveAttribute("href", "/training/setup/");
+  });
+  it("renders account-synced preferences card when preferences are synced", () => {
+    vi.spyOn(TrainingContext, "useTrainingSelection").mockReturnValue({
+      selection: { levelId: "advanced", courseId: "course-1", selectedAt: "2026-09-20" },
+      select: vi.fn(),
+      clear: vi.fn(),
+      isAccountSynced: true,
+      isLoadingPreferences: false,
+    });
+    setup({ status: "authenticated", user: { id: "a", email: "a@example.com", created_at: row.created_at } as User, profile: mapProfile(row) });
+    expect(screen.getByText("설정 완료")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "목표 설정 수정" })).toHaveAttribute("href", "/training/setup/");
+    expect(screen.getAllByRole("link", { name: "실전 연습 바로가기" })[0]).toHaveAttribute("href", "/practice/");
   });
   it("renders empty history state with intentional copy and CTA to /training/setup/", () => {
     setup({ status: "authenticated", user: { id: "a", email: "a@example.com", created_at: row.created_at } as User, profile: mapProfile(row) });

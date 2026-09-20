@@ -15,7 +15,7 @@ const faq = [
 ];
 
 export function PricingPage() {
-  return <div className="mx-auto max-w-5xl space-y-10">
+  return <div className="w-full space-y-10">
     <PageIntro icon={Layers3} tag="PLANS" title="요금제" description="지금 필요한 학습은 무료로 시작하세요. 더 깊은 피드백을 위한 PRO도 준비하고 있습니다." />
     <div className="grid gap-5 md:grid-cols-2">
       <Card className="flex flex-col border-indigo-300 p-6 dark:border-indigo-700 sm:p-8">

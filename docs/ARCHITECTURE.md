@@ -37,8 +37,10 @@ Static host / Supabase
 | Entry | `src/main.tsx` | mounts React and `BrowserRouter` |
 | Application routes | `src/App.tsx` | route elements, lazy screen loading, global settings, theme, navigation coordination |
 | Route mapping | `src/lib/routes.ts` | `ViewId` ↔ canonical trailing-slash path |
-| Shared shell | `src/components/layout/AppShell.tsx` | responsive frame, training-only sticky header, progress, next-step action |
-| Navigation | `src/components/layout/ExpandableSidebar.tsx` | guide/training hierarchy and Course-aware STEP 4/5 labels |
+| Shared shell | `src/components/layout/AppShell.tsx` | responsive frame, viewport-height sticky sidebar layout, training-only sticky header, progress, next-step action |
+| Layout config & container | `src/components/layout/layoutConfig.ts`, `src/components/layout/PageContainer.tsx` | semantic PageWidth (`narrow`, `default`, `wide`, `immersive`) and FooterVariant (`public`, `app`, `none`) |
+| Navigation | `src/components/layout/ExpandableSidebar.tsx` | guide/training hierarchy, Course-aware labels, desktop collapse/expand (`oom-sidebar-collapsed-v1`), independent nav scrolling, pinned bottom utilities |
+| Service footer | `src/components/layout/ServiceFooter.tsx` | rich public footer, compact app footer (`nav[aria-label="서비스 정보"]`), natural flex flow placement (`mt-auto`) |
 | View contract | `src/components/layout/Sidebar.tsx` | `ViewId` and page-title resolution |
 | Independent landing | `src/landing/LandingPage.tsx` | full-bleed `/` route without AppShell or training state runtime |
 | Training selection | `src/training/TrainingSelectionContext.tsx`, `src/training/storage.ts` | browser-persisted Course × Level selection with account synchronization |
@@ -128,3 +130,12 @@ STEP 2 exact recommendation grading records survey_completed; STEP 4 storyline c
 My Page separates recent study activities from practice sessions. User-keyed sections and request cleanup prevent account-switch flashes and stale responses. Activity failures do not hide profile/preferences or block training. learning_preferences remains the settings model; learning_sessions / learning_attempts remain the practice model.
 
 ServiceFooter owns shared low-weight navigation, with a landing color variant and Full Mock exclusion. PricingPage explains current FREE and planned PRO without activating payments, managed AI, subscriptions or ad-free behavior.
+
+## Phase 2.9 Layout System & Shell Architecture
+
+AppShell defines a flex layout with viewport-height sticky desktop sidebar (`min-h-[100dvh]`):
+- Desktop LNB: `sticky top-0 h-[100dvh] flex flex-col shrink-0` with independent navigation scrolling (`flex-1 min-h-0 overflow-y-auto`) and pinned bottom utilities (My Page, dark mode, 오늘의 한 문장, collapse toggle).
+- Desktop collapse/expand: expanded 240px (`lg:w-60`), collapsed 68px (`lg:w-[68px]`), persisted in localStorage under `oom-sidebar-collapsed-v1`. Collapsed mode presents recognizable brand icon, icon-only top-level nav buttons with accessible tooltips and active state, and compact bottom utilities. Mobile drawer navigation is unaffected (remains modal dialog `w-72 max-w-[85vw]`).
+- PageContainer semantic widths: `narrow` (`max-w-4xl`), `default` (`max-w-7xl`), `wide` (`max-w-[1440px]`), `immersive` (`w-full max-w-none`). Eliminates arbitrary per-page max-width and padding combinations.
+- Footer behavior: MainColumn is `min-h-[100dvh] flex flex-col`, `<main>` is `flex-1 min-w-0 flex flex-col`, and ServiceFooter is `mt-auto shrink-0`. Short pages sit naturally at the viewport bottom, while long pages push the footer below content without sticky or fixed hacks.
+- Footer variants: `public` (rich 3-column IA with sitemap groups), `app` (compact copyright + legal navigation with `aria-label="서비스 정보"`), `none` (immersive mode suppression on `/practice/mock/`).

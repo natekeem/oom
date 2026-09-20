@@ -1,11 +1,15 @@
 import { ServiceFooter } from "./ServiceFooter";
 import { useEffect, useRef, type ReactNode } from "react";
 import { ArrowRight, Menu, Moon, Sun } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import { Button } from "../ui/Button";
 import { type ViewId, getViewTitle } from "./Sidebar";
 import { ExpandableSidebar } from "./ExpandableSidebar";
+import { PageContainer } from "./PageContainer";
+import { getRouteLayoutMeta } from "./layoutConfig";
 import { useTrainingSelection } from "../../training/TrainingSelectionContext";
 import { resolveTrainingContext } from "../../training/courseRegistry";
+import { cn } from "../../lib/utils";
 
 type AppShellProps = {
   activeView: ViewId;
@@ -75,11 +79,14 @@ export function AppShell({
   onCloseMobileMenu,
   showTrainingHeader,
 }: AppShellProps) {
+  const location = useLocation();
   const mobileMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
   const mainRef = useRef<HTMLElement | null>(null);
   const wasMobileOpenRef = useRef(false);
   const { selection } = useTrainingSelection();
   const resolved = selection ? resolveTrainingContext(selection.courseId, selection.levelId) : null;
+
+  const { width, footer } = getRouteLayoutMeta(activeView, location.pathname);
 
   const isOverview = activeView === "training-hub";
   const progress = progressMap[activeView];
@@ -127,7 +134,7 @@ export function AppShell({
   );
 
   return (
-    <div className="min-h-screen bg-zinc-100 text-zinc-950 dark:bg-zinc-950 dark:text-zinc-100 lg:flex lg:h-screen lg:overflow-hidden">
+    <div className="min-h-[100dvh] bg-zinc-100 text-zinc-950 dark:bg-zinc-950 dark:text-zinc-100 lg:flex">
       <ExpandableSidebar
         activeView={activeView}
         darkMode={darkMode}
@@ -136,13 +143,18 @@ export function AppShell({
         onNavigate={onNavigate}
         onToggleDarkMode={onToggleDarkMode}
       />
-      <main
-        className="oom-main-scroll flex min-h-screen min-w-0 flex-1 flex-col lg:h-screen lg:min-h-0 lg:overflow-y-auto"
-        ref={mainRef}
+      <div
+        className="flex min-h-[100dvh] min-w-0 flex-1 flex-col"
+        data-main-column
       >
         {showTrainingHeader ? (
           <header className="sticky top-0 z-20 shrink-0 border-b border-zinc-200 bg-zinc-100/90 px-4 py-3 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90 sm:px-6 lg:px-9">
-            <div className="mx-auto flex max-w-7xl items-center gap-3">
+            <div
+              className={cn(
+                "mx-auto flex items-center gap-3",
+                width === "wide" ? "max-w-[1440px]" : "max-w-7xl"
+              )}
+            >
               <Button
                 aria-controls="oom-mobile-navigation"
                 aria-expanded={mobileOpen}
@@ -157,7 +169,9 @@ export function AppShell({
               </Button>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold text-zinc-900 dark:text-white">
-                  <span className="sm:hidden">{mobileTrainingLabels[activeView] ?? getViewTitle(activeView, resolved)}</span>
+                  <span className="sm:hidden">
+                    {mobileTrainingLabels[activeView] ?? getViewTitle(activeView, resolved)}
+                  </span>
                   <span className="hidden sm:inline">{getViewTitle(activeView, resolved)}</span>
                 </p>
                 {showProgress ? (
@@ -187,7 +201,8 @@ export function AppShell({
                     size="sm"
                     variant="secondary"
                   >
-                    <span>{nextStep.label.match(/STEP\s*\d+/i)?.[0] ?? "다음"}</span><ArrowRight className="h-4 w-4" />
+                    <span>{nextStep.label.match(/STEP\s*\d+/i)?.[0] ?? "다음"}</span>
+                    <ArrowRight className="h-4 w-4" />
                   </Button>
                   <Button
                     aria-label={`다음 단계: ${nextStep.label}`}
@@ -215,13 +230,18 @@ export function AppShell({
         ) : (
           mobileControls
         )}
-        <div className="oom-content-shell mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-9 lg:py-9">
-          {children}
-        </div>
-        {activeView !== "practice-mock" ? (
-          <ServiceFooter />
+        <main
+          className="oom-main-scroll flex flex-1 min-w-0 flex-col"
+          ref={mainRef}
+        >
+          <PageContainer width={width}>
+            {children}
+          </PageContainer>
+        </main>
+        {footer !== "none" ? (
+          <ServiceFooter variant={footer} />
         ) : null}
-      </main>
+      </div>
     </div>
   );
 }

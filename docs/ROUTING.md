@@ -143,3 +143,18 @@ Both use AppShell without the training header or selection/authentication gates.
 My Page shortcuts resolve through viewPathForId: training-setup (/training/setup/), survey (/training/survey/), script-hub (/training/scripts/), roleplay-hub (/roleplay/), practice (/practice/). Selection guards remain in place.
 
 ServiceFooter now groups 학습, 서비스, 정책 · 정보 and uses the current year. Landing uses its own color variant of the same footer. Full Mock still suppresses the footer. No extra STEP is added.
+
+## Phase 2.9 Layout & Presentation Metadata
+
+`src/components/layout/layoutConfig.ts` centrally declares presentation metadata for every view:
+- `PageWidth`: `'narrow' | 'default' | 'wide' | 'immersive'`
+  - `narrow` (`max-w-4xl`): Legal pages (`/privacy/`, `/terms/`, `/contact/`, `/editorial-policy/`, `/image-credits/`), Magazine article detail (`/magazine/:id/`), Auth callback (`/auth/callback/`).
+  - `default` (`max-w-7xl`): Home, About, Candidate Guides (`/exam-guide/**`), Magazine index, Pricing, My Page, AI settings.
+  - `wide` (`max-w-[1440px]`): Training Hub and STEP 1~6 (`/training/**`, `/roleplay/**`, `/practice/`, `/practice/quick/`).
+  - `immersive` (`w-full max-w-none`): Full Mock Practice (`/practice/mock/`).
+- `FooterVariant`: `'public' | 'app' | 'none'`
+  - `public`: Rich 3-column footer on public content routes (Home, Guides, Magazine, Pricing, About, Legal).
+  - `app`: Compact copyright and legal navigation on internal app/training routes (My Page, AI settings, Training steps).
+  - `none`: Suppressed footer on `/practice/mock/`.
+
+Desktop sidebar collapse/expand state is stored in localStorage under `oom-sidebar-collapsed-v1`. Mobile drawer navigation remains modal and unaffected by desktop collapse state.

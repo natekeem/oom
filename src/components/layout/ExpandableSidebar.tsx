@@ -2,8 +2,11 @@ import { AuthNavigationLabel } from "../../auth/AuthNavigation";
 import {
   ChevronDown,
   Moon,
+  PanelLeftClose,
+  PanelLeftOpen,
   Sparkles,
   Sun,
+  UserRound,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -27,6 +30,7 @@ type ExpandableSidebarProps = {
 type Item = { id: ViewId; label: string; icon?: LucideIcon };
 
 export const SIDEBAR_EXPANDED_STORAGE_KEY = "oom.sidebar.expanded";
+export const SIDEBAR_COLLAPSED_STORAGE_KEY = "oom-sidebar-collapsed-v1";
 
 const guideItems: Item[] = [
   { id: "exam-overview", label: "소개 · 등급" },
@@ -84,11 +88,11 @@ function NavigationButton({
       title={titleAttr}
       className={cn(
         "flex items-center text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
-        // Layout and Heights
-        depth === 0 ? "h-9 w-full rounded-md px-3 text-sm" : 
-        depth === 1 ? "h-[32px] ml-2 w-[calc(100%-0.5rem)] rounded-md pl-4 pr-3 text-sm" : 
-                      "h-[30px] ml-4 w-[calc(100%-1rem)] rounded-md pl-6 pr-3 text-xs",
-        // Colors
+        depth === 0
+          ? "h-9 w-full rounded-md px-3 text-sm"
+          : depth === 1
+          ? "ml-2 h-[32px] w-[calc(100%-0.5rem)] rounded-md pl-4 pr-3 text-sm"
+          : "ml-4 h-[30px] w-[calc(100%-1rem)] rounded-md pl-6 pr-3 text-xs",
         active
           ? depth > 0
             ? "bg-indigo-50/80 font-semibold text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-200"
@@ -99,8 +103,22 @@ function NavigationButton({
       type="button"
     >
       {depth === 0 && Icon && <Icon className="mr-2 h-[18px] w-[18px] shrink-0" />}
-      {depth === 1 && <div className={cn("mr-2 h-1 w-1 shrink-0 rounded-full", active ? "bg-indigo-600 dark:bg-indigo-400" : "bg-zinc-400 dark:bg-zinc-600")} />}
-      {depth === 2 && <div className={cn("mr-[7px] h-[3px] w-[3px] shrink-0 rounded-full", active ? "bg-indigo-600 dark:bg-indigo-400" : "bg-zinc-400 dark:bg-zinc-600")} />}
+      {depth === 1 && (
+        <div
+          className={cn(
+            "mr-2 h-1 w-1 shrink-0 rounded-full",
+            active ? "bg-indigo-600 dark:bg-indigo-400" : "bg-zinc-400 dark:bg-zinc-600"
+          )}
+        />
+      )}
+      {depth === 2 && (
+        <div
+          className={cn(
+            "mr-[7px] h-[3px] w-[3px] shrink-0 rounded-full",
+            active ? "bg-indigo-600 dark:bg-indigo-400" : "bg-zinc-400 dark:bg-zinc-600"
+          )}
+        />
+      )}
       <span className="min-w-0 flex-1 truncate">{label}</span>
     </button>
   );
@@ -126,7 +144,7 @@ function CollapsibleSection({
   open: boolean;
 }) {
   return (
-    <div className="space-y-0.5 w-full">
+    <div className="w-full space-y-0.5">
       <div
         className={cn(
           "flex items-center rounded-md transition-colors",
@@ -186,6 +204,26 @@ export function ExpandableSidebar({
   const mobileDialogRef = useRef<HTMLElement | null>(null);
   const { selection } = useTrainingSelection();
   const resolved = selection ? resolveTrainingContext(selection.courseId, selection.levelId) : null;
+
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
+    try {
+      return window.localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY) === "true";
+    } catch {
+      return false;
+    }
+  });
+
+  const handleToggleCollapse = () => {
+    setIsCollapsed((prev) => {
+      const next = !prev;
+      try {
+        window.localStorage.setItem(SIDEBAR_COLLAPSED_STORAGE_KEY, String(next));
+      } catch {
+        // Ignore localStorage errors
+      }
+      return next;
+    });
+  };
 
   const scriptItems: Item[] = [
     { id: "script-self-introduction", label: "워밍업 · 자기소개" },
@@ -293,7 +331,7 @@ export function ExpandableSidebar({
       if (stored) {
         const parsed = new Set<string>(JSON.parse(stored));
         const next = new Set<string>();
-        
+
         const hasRoute = activeAncestors.size > 0;
         let routeTarget = "";
         if (activeAncestors.has("script")) routeTarget = "script";
@@ -310,15 +348,24 @@ export function ExpandableSidebar({
         else if (parsed.has("training")) restoredTarget = "training";
 
         const target = hasRoute ? routeTarget : restoredTarget;
-        
+
         if (target) {
-          if (target === "script") { next.add("script"); next.add("training"); }
-          else if (target === "roleplay") { next.add("roleplay"); next.add("training"); }
-          else if (target === "practice") { next.add("practice"); next.add("training"); }
-          else if (target === "guide") { next.add("guide"); }
-          else if (target === "training") { next.add("training"); }
+          if (target === "script") {
+            next.add("script");
+            next.add("training");
+          } else if (target === "roleplay") {
+            next.add("roleplay");
+            next.add("training");
+          } else if (target === "practice") {
+            next.add("practice");
+            next.add("training");
+          } else if (target === "guide") {
+            next.add("guide");
+          } else if (target === "training") {
+            next.add("training");
+          }
         }
-        
+
         for (const a of activeAncestors) next.add(a);
         return next;
       }
@@ -338,7 +385,7 @@ export function ExpandableSidebar({
     setExpanded((prev) => {
       let next = new Set(prev);
       let changed = false;
-      
+
       if (activeAncestors.size > 0) {
         let targetSection = "";
         if (activeAncestors.has("script")) targetSection = "script";
@@ -348,7 +395,7 @@ export function ExpandableSidebar({
         else if (activeAncestors.has("training")) targetSection = "training";
 
         if (targetSection && !next.has(targetSection)) {
-          next = expandSmartly(next, targetSection, true); 
+          next = expandSmartly(next, targetSection, true);
         }
       }
 
@@ -358,7 +405,7 @@ export function ExpandableSidebar({
           changed = true;
         }
       }
-      
+
       if (prev.size !== next.size) changed = true;
       else {
         for (const item of prev) if (!next.has(item)) changed = true;
@@ -441,9 +488,397 @@ export function ExpandableSidebar({
     }
   };
 
-  const content = (
+  // ---------------------------------------------------------------------------
+  // Expanded Nav List (for desktop expanded and mobile drawer)
+  // ---------------------------------------------------------------------------
+  const expandedNav = (
+    <nav aria-label="OOM 메뉴" className="space-y-0.5">
+      <NavigationButton
+        active={activeView === "about"}
+        depth={0}
+        icon={topLevelNavigation.about.icon}
+        label={topLevelNavigation.about.label}
+        onClick={() => navigate("about")}
+      />
+
+      <CollapsibleSection
+        active={guideActive}
+        depth={0}
+        icon={topLevelNavigation.examGuide.icon}
+        label={topLevelNavigation.examGuide.label}
+        onNavigate={() => {
+          setExpanded((prev) => expandSmartly(prev, "guide"));
+          navigate("exam-guide");
+        }}
+        onToggle={() => handleToggle("guide")}
+        open={guideOpen}
+      >
+        {guideItems.map((item) => (
+          <NavigationButton
+            active={activeView === item.id}
+            depth={1}
+            key={item.id}
+            label={item.label}
+            onClick={() => {
+              setExpanded((prev) => expandSmartly(prev, "guide"));
+              navigate(item.id);
+            }}
+          />
+        ))}
+      </CollapsibleSection>
+
+      <CollapsibleSection
+        active={trainingActive}
+        depth={0}
+        icon={topLevelNavigation.training.icon}
+        label={topLevelNavigation.training.label}
+        onNavigate={() => {
+          setExpanded((prev) => expandSmartly(prev, "training"));
+          navigate("training-hub");
+        }}
+        onToggle={() => handleToggle("training")}
+        open={trainingOpen}
+      >
+        <NavigationButton
+          active={activeView === "training-setup"}
+          depth={1}
+          label="STEP 1. 목표 설정"
+          onClick={() => {
+            setExpanded((prev) => expandSmartly(prev, "training"));
+            navigate("training-setup");
+          }}
+        />
+        <NavigationButton
+          active={activeView === "survey"}
+          depth={1}
+          label="STEP 2. 추천 서베이 익히기"
+          onClick={() => {
+            setExpanded((prev) => expandSmartly(prev, "training"));
+            navigate("survey");
+          }}
+        />
+        <NavigationButton
+          active={activeView === "difficulty"}
+          depth={1}
+          label="STEP 3. 난이도 설정"
+          onClick={() => {
+            setExpanded((prev) => expandSmartly(prev, "training"));
+            navigate("difficulty");
+          }}
+        />
+        <CollapsibleSection
+          active={scriptActive}
+          depth={1}
+          label="STEP 4. 만능 스크립트"
+          onNavigate={() => {
+            setExpanded((prev) => expandSmartly(prev, "script"));
+            navigate("script-hub");
+          }}
+          onToggle={() => handleToggle("script")}
+          open={scriptOpen}
+        >
+          {scriptItems.map((item) => (
+            <NavigationButton
+              active={activeView === item.id}
+              depth={2}
+              key={item.id}
+              label={item.label}
+              onClick={() => {
+                setExpanded((prev) => expandSmartly(prev, "script"));
+                navigate(item.id);
+              }}
+            />
+          ))}
+        </CollapsibleSection>
+        <CollapsibleSection
+          active={roleplayActive}
+          depth={1}
+          label="STEP 5. 롤플레이 공식"
+          onNavigate={() => {
+            setExpanded((prev) => expandSmartly(prev, "roleplay"));
+            navigate("roleplay-hub");
+          }}
+          onToggle={() => handleToggle("roleplay")}
+          open={roleplayOpen}
+        >
+          {roleplayItems.map((item) => (
+            <NavigationButton
+              active={activeView === item.id}
+              depth={2}
+              key={item.id}
+              label={item.label}
+              onClick={() => {
+                setExpanded((prev) => expandSmartly(prev, "roleplay"));
+                navigate(item.id);
+              }}
+            />
+          ))}
+        </CollapsibleSection>
+        <CollapsibleSection
+          active={practiceActive}
+          depth={1}
+          label="STEP 6. 실전 연습"
+          onNavigate={() => {
+            setExpanded((prev) => expandSmartly(prev, "practice"));
+            navigate("practice");
+          }}
+          onToggle={() => handleToggle("practice")}
+          open={practiceOpen}
+        >
+          {practiceItems.map((item) => (
+            <NavigationButton
+              active={activeView === item.id}
+              depth={2}
+              key={item.id}
+              label={item.label}
+              onClick={() => {
+                setExpanded((prev) => expandSmartly(prev, "practice"));
+                navigate(item.id);
+              }}
+            />
+          ))}
+        </CollapsibleSection>
+      </CollapsibleSection>
+
+      <NavigationButton
+        active={activeView === "magazine-list"}
+        depth={0}
+        icon={topLevelNavigation.magazine.icon}
+        label={topLevelNavigation.magazine.label}
+        onClick={() => navigate("magazine-list")}
+      />
+      <NavigationButton
+        active={activeView === "ai-settings"}
+        depth={0}
+        icon={topLevelNavigation.aiSettings.icon}
+        label={topLevelNavigation.aiSettings.label}
+        onClick={() => navigate("ai-settings")}
+      />
+    </nav>
+  );
+
+  // ---------------------------------------------------------------------------
+  // Collapsed Nav List (icon-only for desktop collapsed)
+  // ---------------------------------------------------------------------------
+  const collapsedNav = (
+    <nav aria-label="OOM 메뉴" className="space-y-1 py-1">
+      <button
+        aria-current={activeView === "about" ? "page" : undefined}
+        aria-label={topLevelNavigation.about.label}
+        title={topLevelNavigation.about.label}
+        className={cn(
+          "grid h-10 w-10 mx-auto place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+          activeView === "about"
+            ? "bg-indigo-600 text-white shadow-sm"
+            : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+        )}
+        onClick={() => navigate("about")}
+        type="button"
+      >
+        <topLevelNavigation.about.icon className="h-5 w-5 shrink-0" />
+      </button>
+
+      <button
+        aria-current={guideActive ? "page" : undefined}
+        aria-label={topLevelNavigation.examGuide.label}
+        title={topLevelNavigation.examGuide.label}
+        className={cn(
+          "grid h-10 w-10 mx-auto place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+          guideActive
+            ? "bg-indigo-600 text-white shadow-sm"
+            : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+        )}
+        onClick={() => navigate("exam-guide")}
+        type="button"
+      >
+        <topLevelNavigation.examGuide.icon className="h-5 w-5 shrink-0" />
+      </button>
+
+      <button
+        aria-current={trainingActive ? "page" : undefined}
+        aria-label={topLevelNavigation.training.label}
+        title={topLevelNavigation.training.label}
+        className={cn(
+          "grid h-10 w-10 mx-auto place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+          trainingActive
+            ? "bg-indigo-600 text-white shadow-sm"
+            : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+        )}
+        onClick={() => navigate("training-hub")}
+        type="button"
+      >
+        <topLevelNavigation.training.icon className="h-5 w-5 shrink-0" />
+      </button>
+
+      <button
+        aria-current={activeView === "magazine-list" ? "page" : undefined}
+        aria-label={topLevelNavigation.magazine.label}
+        title={topLevelNavigation.magazine.label}
+        className={cn(
+          "grid h-10 w-10 mx-auto place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+          activeView === "magazine-list"
+            ? "bg-indigo-600 text-white shadow-sm"
+            : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+        )}
+        onClick={() => navigate("magazine-list")}
+        type="button"
+      >
+        <topLevelNavigation.magazine.icon className="h-5 w-5 shrink-0" />
+      </button>
+
+      <button
+        aria-current={activeView === "ai-settings" ? "page" : undefined}
+        aria-label={topLevelNavigation.aiSettings.label}
+        title={topLevelNavigation.aiSettings.label}
+        className={cn(
+          "grid h-10 w-10 mx-auto place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+          activeView === "ai-settings"
+            ? "bg-indigo-600 text-white shadow-sm"
+            : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+        )}
+        onClick={() => navigate("ai-settings")}
+        type="button"
+      >
+        <topLevelNavigation.aiSettings.icon className="h-5 w-5 shrink-0" />
+      </button>
+    </nav>
+  );
+
+  // ---------------------------------------------------------------------------
+  // Desktop Content (expanded vs collapsed)
+  // ---------------------------------------------------------------------------
+  const desktopContent = (
+    <div className="flex h-full flex-col justify-between p-3">
+      {/* 1. Brand Header */}
+      <div className="shrink-0 mb-4 px-1">
+        {isCollapsed ? (
+          <button
+            aria-label="오픽온미 홈으로 이동"
+            title="오픽온미 홈"
+            className="flex h-10 w-full items-center justify-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            onClick={() => navigate("home")}
+            type="button"
+          >
+            <OomBrandMark className="text-indigo-600 dark:text-indigo-300" size="md" />
+          </button>
+        ) : (
+          <div className="flex items-center justify-between px-1">
+            <button
+              aria-label="홈으로 이동"
+              className="flex items-center gap-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded"
+              onClick={() => navigate("home")}
+              type="button"
+            >
+              <OomBrandMark className="text-indigo-600 dark:text-indigo-300" size="md" />
+              <span>
+                <span className="block text-sm font-semibold text-zinc-950 dark:text-white">오픽온미</span>
+                <span className="block text-xs text-zinc-500 dark:text-zinc-400">OOM - OPIc On Me</span>
+              </span>
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* 2. Scrollable Nav Area */}
+      <div className="oom-sidebar-scroll flex-1 min-h-0 overflow-y-auto">
+        {isCollapsed ? collapsedNav : expandedNav}
+      </div>
+
+      {/* 3. Pinned Bottom Utilities */}
+      <div className="shrink-0 mt-auto space-y-2 border-t border-zinc-200/80 pt-3 dark:border-zinc-800/80">
+        {isCollapsed ? (
+          <>
+            <button
+              aria-current={activeView === "mypage" ? "page" : undefined}
+              aria-label="마이페이지"
+              title="마이페이지"
+              className={cn(
+                "grid h-9 w-9 mx-auto place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+                activeView === "mypage"
+                  ? "bg-indigo-600 text-white shadow-sm"
+                  : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+              )}
+              onClick={() => navigate("mypage")}
+              type="button"
+            >
+              <UserRound className="h-4 w-4" />
+            </button>
+            <button
+              aria-label={darkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
+              title={darkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
+              className="grid h-9 w-9 mx-auto place-items-center rounded-md text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              onClick={onToggleDarkMode}
+              type="button"
+            >
+              {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
+            <button
+              aria-label={`오늘의 한 문장: ${sidebarQuote}`}
+              title={`오늘의 한 문장: ${sidebarQuote}`}
+              className="grid h-9 w-9 mx-auto place-items-center rounded-md border border-indigo-100 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:border-indigo-900 dark:bg-indigo-950 dark:text-indigo-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              type="button"
+            >
+              <Sparkles className="h-4 w-4" />
+            </button>
+            <button
+              aria-label="사이드바 펼치기"
+              title="사이드바 펼치기"
+              className="grid h-9 w-9 mx-auto place-items-center rounded-md text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              onClick={handleToggleCollapse}
+              type="button"
+            >
+              <PanelLeftOpen className="h-4 w-4" />
+            </button>
+          </>
+        ) : (
+          <>
+            <NavigationButton
+              active={activeView === "mypage"}
+              depth={0}
+              icon={topLevelNavigation.mypage.icon}
+              label={<AuthNavigationLabel />}
+              onClick={() => navigate("mypage")}
+            />
+            <button
+              aria-label={darkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
+              className="flex h-8 w-full items-center gap-2 rounded-md px-3 text-left text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+              onClick={onToggleDarkMode}
+              type="button"
+            >
+              {darkMode ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+              {darkMode ? "라이트 모드" : "다크 모드"}
+            </button>
+            <div className="rounded-md border border-indigo-100 bg-indigo-50 p-2.5 dark:border-indigo-900 dark:bg-indigo-950">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-300">
+                <Sparkles className="h-3.5 w-3.5 shrink-0" />
+                오늘의 한 문장
+              </div>
+              <p className="mt-1 text-xs leading-4 text-indigo-700/80 dark:text-indigo-200/80">
+                {sidebarQuote}
+              </p>
+            </div>
+            <button
+              aria-label="사이드바 접기"
+              title="사이드바 접기"
+              className="flex h-8 w-full items-center gap-2 rounded-md px-3 text-left text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+              onClick={handleToggleCollapse}
+              type="button"
+            >
+              <PanelLeftClose className="h-3.5 w-3.5" />
+              <span>사이드바 접기</span>
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+
+  // ---------------------------------------------------------------------------
+  // Mobile Drawer Content (always expanded, independent of desktop collapse)
+  // ---------------------------------------------------------------------------
+  const mobileContent = (
     <div className="flex h-full flex-col bg-zinc-50 px-3 py-5 dark:bg-zinc-950">
-      <div className="mb-7 flex items-center justify-between px-2">
+      <div className="mb-6 flex items-center justify-between px-2">
         <button
           aria-label="홈으로 이동"
           className="flex items-center gap-3 text-left"
@@ -469,168 +904,11 @@ export function ExpandableSidebar({
         ) : null}
       </div>
 
-      <nav aria-label="OOM 메뉴" className="space-y-0.5">
-        <NavigationButton
-          active={activeView === "about"}
-          depth={0}
-          icon={topLevelNavigation.about.icon}
-          label={topLevelNavigation.about.label}
-          onClick={() => navigate("about")}
-        />
+      <div className="oom-sidebar-scroll flex-1 min-h-0 overflow-y-auto">
+        {expandedNav}
+      </div>
 
-        <CollapsibleSection
-          active={guideActive}
-          depth={0}
-          icon={topLevelNavigation.examGuide.icon}
-          label={topLevelNavigation.examGuide.label}
-          onNavigate={() => {
-            setExpanded((prev) => expandSmartly(prev, "guide"));
-            navigate("exam-guide");
-          }}
-          onToggle={() => handleToggle("guide")}
-          open={guideOpen}
-        >
-          {guideItems.map((item) => (
-            <NavigationButton
-              active={activeView === item.id}
-              depth={1}
-              key={item.id}
-              label={item.label}
-              onClick={() => {
-                setExpanded((prev) => expandSmartly(prev, "guide"));
-                navigate(item.id);
-              }}
-            />
-          ))}
-        </CollapsibleSection>
-        <CollapsibleSection
-          active={trainingActive}
-          depth={0}
-          icon={topLevelNavigation.training.icon}
-          label={topLevelNavigation.training.label}
-          onNavigate={() => {
-            setExpanded((prev) => expandSmartly(prev, "training"));
-            navigate("training-hub");
-          }}
-          onToggle={() => handleToggle("training")}
-          open={trainingOpen}
-        >
-          <NavigationButton
-            active={activeView === "training-setup"}
-            depth={1}
-            label="STEP 1. 목표 설정"
-            onClick={() => {
-              setExpanded((prev) => expandSmartly(prev, "training"));
-              navigate("training-setup");
-            }}
-          />
-          <NavigationButton
-            active={activeView === "survey"}
-            depth={1}
-            label="STEP 2. 추천 서베이 익히기"
-            onClick={() => {
-              setExpanded((prev) => expandSmartly(prev, "training"));
-              navigate("survey");
-            }}
-          />
-          <NavigationButton
-            active={activeView === "difficulty"}
-            depth={1}
-            label="STEP 3. 난이도 설정"
-            onClick={() => {
-              setExpanded((prev) => expandSmartly(prev, "training"));
-              navigate("difficulty");
-            }}
-          />
-          <CollapsibleSection
-            active={scriptActive}
-            depth={1}
-            label="STEP 4. 만능 스크립트"
-            onNavigate={() => {
-              setExpanded((prev) => expandSmartly(prev, "script"));
-              navigate("script-hub");
-            }}
-            onToggle={() => handleToggle("script")}
-            open={scriptOpen}
-          >
-            {scriptItems.map((item) => (
-              <NavigationButton
-                active={activeView === item.id}
-                depth={2}
-                key={item.id}
-                label={item.label}
-                onClick={() => {
-                  setExpanded((prev) => expandSmartly(prev, "script"));
-                  navigate(item.id);
-                }}
-              />
-            ))}
-          </CollapsibleSection>
-          <CollapsibleSection
-            active={roleplayActive}
-            depth={1}
-            label="STEP 5. 롤플레이 공식"
-            onNavigate={() => {
-              setExpanded((prev) => expandSmartly(prev, "roleplay"));
-              navigate("roleplay-hub");
-            }}
-            onToggle={() => handleToggle("roleplay")}
-            open={roleplayOpen}
-          >
-            {roleplayItems.map((item) => (
-              <NavigationButton
-                active={activeView === item.id}
-                depth={2}
-                key={item.id}
-                label={item.label}
-                onClick={() => {
-                  setExpanded((prev) => expandSmartly(prev, "roleplay"));
-                  navigate(item.id);
-                }}
-              />
-            ))}
-          </CollapsibleSection>
-          <CollapsibleSection
-            active={practiceActive}
-            depth={1}
-            label="STEP 6. 실전 연습"
-            onNavigate={() => {
-              setExpanded((prev) => expandSmartly(prev, "practice"));
-              navigate("practice");
-            }}
-            onToggle={() => handleToggle("practice")}
-            open={practiceOpen}
-          >
-            {practiceItems.map((item) => (
-              <NavigationButton
-                active={activeView === item.id}
-                depth={2}
-                key={item.id}
-                label={item.label}
-                onClick={() => {
-                  setExpanded((prev) => expandSmartly(prev, "practice"));
-                  navigate(item.id);
-                }}
-              />
-            ))}
-          </CollapsibleSection>
-        </CollapsibleSection>
-        <NavigationButton
-          active={activeView === "magazine-list"}
-          depth={0}
-          icon={topLevelNavigation.magazine.icon}
-          label={topLevelNavigation.magazine.label}
-          onClick={() => navigate("magazine-list")}
-        />
-        <NavigationButton
-          active={activeView === "ai-settings"}
-          depth={0}
-          icon={topLevelNavigation.aiSettings.icon}
-          label={topLevelNavigation.aiSettings.label}
-          onClick={() => navigate("ai-settings")}
-        />
-      </nav>
-      <div className="mt-auto space-y-2 border-t border-zinc-200/80 pt-3 dark:border-zinc-800/80">
+      <div className="mt-auto shrink-0 space-y-2 border-t border-zinc-200/80 pt-3 dark:border-zinc-800/80">
         <NavigationButton
           active={activeView === "mypage"}
           depth={0}
@@ -647,12 +925,12 @@ export function ExpandableSidebar({
           {darkMode ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
           {darkMode ? "라이트 모드" : "다크 모드"}
         </button>
-        <div className="rounded-md border border-indigo-100 bg-indigo-50 p-3 dark:border-indigo-900 dark:bg-indigo-950">
-          <div className="flex items-center gap-2 text-xs font-semibold text-indigo-700 dark:text-indigo-300">
-            <Sparkles className="h-4 w-4" />
+        <div className="rounded-md border border-indigo-100 bg-indigo-50 p-2.5 dark:border-indigo-900 dark:bg-indigo-950">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-300">
+            <Sparkles className="h-3.5 w-3.5" />
             오늘의 한 문장
           </div>
-          <p className="mt-1.5 text-xs leading-5 text-indigo-700/80 dark:text-indigo-200/80">
+          <p className="mt-1 text-xs leading-4 text-indigo-700/80 dark:text-indigo-200/80">
             {sidebarQuote}
           </p>
         </div>
@@ -662,8 +940,14 @@ export function ExpandableSidebar({
 
   return (
     <>
-      <aside className="oom-sidebar-scroll hidden h-screen w-64 shrink-0 overflow-y-auto border-r border-zinc-200 dark:border-zinc-800 lg:block">
-        {content}
+      <aside
+        className={cn(
+          "hidden lg:flex lg:flex-col lg:sticky lg:top-0 lg:h-[100dvh] lg:shrink-0 border-r border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 transition-[width] duration-200 ease-in-out motion-reduce:transition-none",
+          isCollapsed ? "lg:w-[68px]" : "lg:w-60"
+        )}
+        data-sidebar-collapsed={isCollapsed}
+      >
+        {desktopContent}
       </aside>
       {mobileOpen ? (
         <div className="fixed inset-0 z-40 lg:hidden">
@@ -682,7 +966,7 @@ export function ExpandableSidebar({
             ref={mobileDialogRef}
             role="dialog"
           >
-            {content}
+            {mobileContent}
           </aside>
         </div>
       ) : null}

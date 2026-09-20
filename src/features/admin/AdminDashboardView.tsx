@@ -107,73 +107,76 @@ export function AdminDashboardView() {
             {/* 1. Primary Metrics Grid */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {/* Card 1: 총 회원 */}
-              <Card className="p-4">
+              <Card className="flex flex-col justify-between p-4 min-h-[116px]">
                 <div className="flex items-center justify-between text-zinc-500 dark:text-zinc-400">
                   <span className="text-xs font-medium">총 가입 회원</span>
                   <Users className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                 </div>
-                <div className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white">
-                  {data.metrics.totalUsers.toLocaleString()}
-                  <span className="text-sm font-normal text-zinc-500 ml-1">명</span>
+                <div className="mt-2 flex items-baseline gap-1 text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
+                  <span>{data.metrics.totalUsers.toLocaleString()}</span>
+                  <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400">명</span>
                 </div>
-                <div className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
-                  학습 설정 보관: {data.metrics.usersWithPreferences}명
+                <div className="mt-3 border-t border-zinc-100 pt-2 text-xs text-zinc-500 dark:border-zinc-800/80 dark:text-zinc-400">
+                  학습 설정 보관: <strong className="font-semibold text-zinc-700 dark:text-zinc-300">{data.metrics.usersWithPreferences}</strong>명
                 </div>
               </Card>
 
               {/* Card 2: 신규 가입 */}
-              <Card className="p-4">
+              <Card className="flex flex-col justify-between p-4 min-h-[116px]">
                 <div className="flex items-center justify-between text-zinc-500 dark:text-zinc-400">
                   <span className="text-xs font-medium">신규 가입 (오늘 / 7일)</span>
                   <TrendingUp className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                 </div>
-                <div className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white">
-                  {data.metrics.newUsersToday.toLocaleString()}
-                  <span className="text-sm font-normal text-zinc-500 ml-1">명</span>
-                  <span className="mx-2 text-sm font-light text-zinc-300 dark:text-zinc-700">/</span>
+                <div className="mt-2 flex items-baseline gap-1 text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
+                  <span>{data.metrics.newUsersToday.toLocaleString()}</span>
+                  <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400">명</span>
+                  <span className="mx-1 text-xs text-zinc-300 dark:text-zinc-700">/</span>
                   <span className="text-lg font-semibold text-zinc-700 dark:text-zinc-300">
-                    {data.metrics.newUsers7d.toLocaleString()}명
+                    {data.metrics.newUsers7d.toLocaleString()}
                   </span>
+                  <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400">명</span>
                 </div>
-                <div className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+                <div className="mt-3 border-t border-zinc-100 pt-2 text-xs text-zinc-500 dark:border-zinc-800/80 dark:text-zinc-400">
                   오늘(KST 00시 이후) / 최근 7일
                 </div>
               </Card>
 
               {/* Card 3: 활성 학습자 */}
-              <Card className="p-4">
+              <Card className="flex flex-col justify-between p-4 min-h-[116px]">
                 <div className="flex items-center justify-between text-zinc-500 dark:text-zinc-400">
                   <span className="text-xs font-medium">활성 학습자 (24h / 7d)</span>
                   <UserCheck className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                 </div>
-                <div className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white">
-                  {data.metrics.activeLearners24h.toLocaleString()}
-                  <span className="text-sm font-normal text-zinc-500 ml-1">명</span>
-                  <span className="mx-2 text-sm font-light text-zinc-300 dark:text-zinc-700">/</span>
+                <div className="mt-2 flex items-baseline gap-1 text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
+                  <span>{data.metrics.activeLearners24h.toLocaleString()}</span>
+                  <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400">명</span>
+                  <span className="mx-1 text-xs text-zinc-300 dark:text-zinc-700">/</span>
                   <span className="text-lg font-semibold text-zinc-700 dark:text-zinc-300">
-                    {data.metrics.activeLearners7d.toLocaleString()}명
+                    {data.metrics.activeLearners7d.toLocaleString()}
                   </span>
+                  <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400">명</span>
                 </div>
-                <div className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+                <div className="mt-3 border-t border-zinc-100 pt-2 text-xs text-zinc-500 dark:border-zinc-800/80 dark:text-zinc-400">
                   세션 또는 학습 활동 고유 사용자
                 </div>
               </Card>
 
               {/* Card 4: 학습 세션 및 활동 */}
-              <Card className="p-4">
+              <Card className="flex flex-col justify-between p-4 min-h-[116px]">
                 <div className="flex items-center justify-between text-zinc-500 dark:text-zinc-400">
                   <span className="text-xs font-medium">학습 세션 / 활동 (7일)</span>
                   <Activity className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                 </div>
-                <div className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white">
-                  {data.metrics.learningSessions7d.toLocaleString()}
-                  <span className="text-sm font-normal text-zinc-500 ml-1">세션</span>
-                  <span className="mx-2 text-sm font-light text-zinc-300 dark:text-zinc-700">/</span>
+                <div className="mt-2 flex items-baseline gap-1 text-2xl font-bold tracking-tight text-zinc-950 dark:text-white">
+                  <span>{data.metrics.learningSessions7d.toLocaleString()}</span>
+                  <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400">세션</span>
+                  <span className="mx-1 text-xs text-zinc-300 dark:text-zinc-700">/</span>
                   <span className="text-lg font-semibold text-zinc-700 dark:text-zinc-300">
-                    {data.metrics.learningActivities7d.toLocaleString()}회
+                    {data.metrics.learningActivities7d.toLocaleString()}
                   </span>
+                  <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400">회</span>
                 </div>
-                <div className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+                <div className="mt-3 border-t border-zinc-100 pt-2 text-xs text-zinc-500 dark:border-zinc-800/80 dark:text-zinc-400">
                   오늘: {data.metrics.learningSessionsToday}세션 · {data.metrics.learningActivitiesToday}활동
                 </div>
               </Card>

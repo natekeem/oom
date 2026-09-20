@@ -2,6 +2,7 @@
 import type { SupabaseClient } from "npm:@supabase/supabase-js@2";
 
 const SENSITIVE_KEY_PATTERN = /(token|secret|password|key|auth|credential)/i;
+const READ_ONLY_ACTION_PATTERN = /^(view|read|list|get|inspect|query|fetch)/i;
 
 export function sanitizeAuditMetadata(metadata: Record<string, unknown> = {}): Record<string, unknown> {
   const sanitized: Record<string, unknown> = {};
@@ -25,6 +26,13 @@ export async function writeAdminAuditLog(
   targetId: string | null = null,
   metadata: Record<string, unknown> = {}
 ): Promise<void> {
+  // Enforce invariant: audit logs are strictly reserved for state-mutating actions.
+  // Never record read-only/view access in audit logs.
+  if (READ_ONLY_ACTION_PATTERN.test(action)) {
+    console.warn(`[OOM Audit Rejected] Read-only action "${action}" cannot be logged in audit logs.`);
+    return;
+  }
+
   try {
     const cleanMeta = sanitizeAuditMetadata(metadata);
     const { error } = await adminClient.from("admin_audit_logs").insert({

@@ -13,6 +13,7 @@ export function getCorsHeaders(req: Request): HeadersInit {
     "Access-Control-Allow-Origin": allowOrigin,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Expose-Headers": "server-timing, x-response-time, x-sb-edge-region",
     "Access-Control-Max-Age": "86400",
     "Vary": "Origin",
   };
@@ -26,6 +27,19 @@ export function handleCorsPreflight(req: Request): Response | null {
     });
   }
   return null;
+}
+
+export function withTiming(res: Response, startTime: number): Response {
+  const elapsed = performance.now() - startTime;
+  const headers = new Headers(res.headers);
+  headers.set("Server-Timing", `total;dur=${elapsed.toFixed(1)}`);
+  headers.set("X-Response-Time", `${elapsed.toFixed(1)}ms`);
+
+  return new Response(res.body, {
+    status: res.status,
+    statusText: res.statusText,
+    headers,
+  });
 }
 
 export function jsonResponse(

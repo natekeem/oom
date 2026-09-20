@@ -7,7 +7,6 @@ import {
   ShieldCheck,
   Sparkles,
   Sun,
-  UserRound,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -192,6 +191,65 @@ function CollapsibleSection({
       </div>
       {open ? <div className="space-y-0.5 pb-0.5 pt-0.5">{children}</div> : null}
     </div>
+  );
+}
+
+function SidebarUtilityButton({
+  active = false,
+  collapsed = false,
+  icon: Icon,
+  label,
+  ariaLabel,
+  title,
+  onClick,
+}: {
+  active?: boolean;
+  collapsed?: boolean;
+  icon: LucideIcon;
+  label: ReactNode;
+  ariaLabel?: string;
+  title?: string;
+  onClick: () => void;
+}) {
+  const resolvedTitle = title ?? (typeof label === "string" ? label : undefined);
+
+  if (collapsed) {
+    return (
+      <button
+        aria-current={active ? "page" : undefined}
+        aria-label={ariaLabel ?? resolvedTitle}
+        title={resolvedTitle}
+        className={cn(
+          "grid h-10 w-10 mx-auto place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+          active
+            ? "bg-indigo-600 text-white shadow-sm"
+            : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+        )}
+        onClick={onClick}
+        type="button"
+      >
+        <Icon className="h-4 w-4 shrink-0" />
+      </button>
+    );
+  }
+
+  return (
+    <button
+      aria-current={active ? "page" : undefined}
+      aria-label={ariaLabel ?? (typeof label === "string" ? label : undefined)}
+      title={resolvedTitle}
+      className={cn(
+        "flex h-9 w-full items-center rounded-md px-3 text-left text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+        active
+          ? "bg-indigo-600 text-white shadow-sm"
+          : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+      )}
+      onClick={onClick}
+      type="button"
+    >
+      <Icon className="mr-2 h-4 w-4 shrink-0" />
+      <span className="min-w-0 flex-1 truncate">{label}</span>
+    </button>
   );
 }
 
@@ -799,55 +857,33 @@ export function ExpandableSidebar({
         {isCollapsed ? (
           <>
             {isAdmin && (
-              <button
-                aria-current={isAdminActive ? "page" : undefined}
-                aria-label="관리자 콘솔"
-                title="관리자 콘솔"
-                className={cn(
-                  "grid h-10 w-10 mx-auto place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
-                  isAdminActive
-                    ? "bg-indigo-600 text-white shadow-sm"
-                    : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
-                )}
+              <SidebarUtilityButton
+                active={isAdminActive}
+                collapsed
+                icon={ShieldCheck}
+                label="관리자 콘솔"
                 onClick={() => navigate("admin-dashboard")}
-                type="button"
-              >
-                <ShieldCheck className="h-4 w-4" />
-              </button>
+              />
             )}
-            <button
-              aria-current={activeView === "mypage" ? "page" : undefined}
-              aria-label="마이페이지"
-              title="마이페이지"
-              className={cn(
-                "grid h-10 w-10 mx-auto place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
-                activeView === "mypage"
-                  ? "bg-indigo-600 text-white shadow-sm"
-                  : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
-              )}
+            <SidebarUtilityButton
+              active={activeView === "mypage"}
+              collapsed
+              icon={topLevelNavigation.mypage.icon}
+              label="마이페이지"
               onClick={() => navigate("mypage")}
-              type="button"
-            >
-              <UserRound className="h-4 w-4" />
-            </button>
-            <button
-              aria-label={darkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
-              title={darkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
-              className="grid h-10 w-10 mx-auto place-items-center rounded-md text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            />
+            <SidebarUtilityButton
+              collapsed
+              icon={darkMode ? Sun : Moon}
+              label={darkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
               onClick={onToggleDarkMode}
-              type="button"
-            >
-              {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </button>
-            <button
-              aria-label="사이드바 펼치기"
-              title="사이드바 펼치기"
-              className="grid h-10 w-10 mx-auto place-items-center rounded-md text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            />
+            <SidebarUtilityButton
+              collapsed
+              icon={PanelLeftOpen}
+              label="사이드바 펼치기"
               onClick={handleToggleCollapse}
-              type="button"
-            >
-              <PanelLeftOpen className="h-4 w-4" />
-            </button>
+            />
             <div className="relative" data-sidebar-quote>
               <button
                 aria-label={`오늘의 한 문장: ${sidebarQuote}`}
@@ -874,46 +910,36 @@ export function ExpandableSidebar({
         ) : (
           <>
             {isAdmin && (
-              <NavigationButton
+              <SidebarUtilityButton
                 active={isAdminActive}
-                depth={0}
                 icon={ShieldCheck}
                 label="관리자 콘솔"
                 onClick={() => navigate("admin-dashboard")}
               />
             )}
-            <NavigationButton
+            <SidebarUtilityButton
               active={activeView === "mypage"}
-              depth={0}
               icon={topLevelNavigation.mypage.icon}
               label={<AuthNavigationLabel />}
               onClick={() => navigate("mypage")}
             />
-            <button
-              aria-label={darkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
-              className="flex h-10 w-full items-center gap-2 rounded-md px-3 text-left text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+            <SidebarUtilityButton
+              icon={darkMode ? Sun : Moon}
+              label={darkMode ? "라이트 모드" : "다크 모드"}
+              ariaLabel={darkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
               onClick={onToggleDarkMode}
-              type="button"
-            >
-              {darkMode ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
-              {darkMode ? "라이트 모드" : "다크 모드"}
-            </button>
-            <button
-              aria-label="사이드바 접기"
-              title="사이드바 접기"
-              className="flex h-10 w-full items-center gap-2 rounded-md px-3 text-left text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+            />
+            <SidebarUtilityButton
+              icon={PanelLeftClose}
+              label="사이드바 접기"
               onClick={handleToggleCollapse}
-              type="button"
-            >
-              <PanelLeftClose className="h-3.5 w-3.5" />
-              <span>사이드바 접기</span>
-            </button>
-            <div data-sidebar-quote className="rounded-md bg-zinc-100/70 px-3 py-2 dark:bg-zinc-900/60">
+            />
+            <div data-sidebar-quote className="rounded-md bg-zinc-100/70 px-3 py-2.5 dark:bg-zinc-900/60">
               <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">
                 <Sparkles className="h-3.5 w-3.5 shrink-0" />
                 오늘의 한 문장
               </div>
-              <p className="mt-1 text-xs leading-4 text-zinc-600 dark:text-zinc-400">
+              <p className="mt-1 text-xs leading-5 text-zinc-600 dark:text-zinc-400">
                 {sidebarQuote}
               </p>
             </div>
@@ -958,38 +984,33 @@ export function ExpandableSidebar({
         {expandedNav}
       </div>
 
-      <div className="mt-auto shrink-0 space-y-2 border-t border-zinc-200/80 pt-3 dark:border-zinc-800/80">
+      <div className="mt-auto shrink-0 space-y-1 border-t border-zinc-200/80 pt-3 dark:border-zinc-800/80">
         {isAdmin && (
-          <NavigationButton
+          <SidebarUtilityButton
             active={isAdminActive}
-            depth={0}
             icon={ShieldCheck}
             label="관리자 콘솔"
             onClick={() => navigate("admin-dashboard")}
           />
         )}
-        <NavigationButton
+        <SidebarUtilityButton
           active={activeView === "mypage"}
-          depth={0}
           icon={topLevelNavigation.mypage.icon}
           label={<AuthNavigationLabel />}
           onClick={() => navigate("mypage")}
         />
-        <button
-          aria-label={darkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
-          className="flex h-8 w-full items-center gap-2 rounded-md px-3 text-left text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+        <SidebarUtilityButton
+          icon={darkMode ? Sun : Moon}
+          label={darkMode ? "라이트 모드" : "다크 모드"}
+          ariaLabel={darkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
           onClick={onToggleDarkMode}
-          type="button"
-        >
-          {darkMode ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
-          {darkMode ? "라이트 모드" : "다크 모드"}
-        </button>
-        <div className="rounded-md border border-indigo-100 bg-indigo-50 p-2.5 dark:border-indigo-900 dark:bg-indigo-950">
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-300">
-            <Sparkles className="h-3.5 w-3.5" />
+        />
+        <div data-sidebar-quote className="rounded-md bg-zinc-100/70 px-3 py-2.5 dark:bg-zinc-900/60">
+          <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">
+            <Sparkles className="h-3.5 w-3.5 shrink-0" />
             오늘의 한 문장
           </div>
-          <p className="mt-1 text-xs leading-4 text-indigo-700/80 dark:text-indigo-200/80">
+          <p className="mt-1 text-xs leading-5 text-zinc-600 dark:text-zinc-400">
             {sidebarQuote}
           </p>
         </div>

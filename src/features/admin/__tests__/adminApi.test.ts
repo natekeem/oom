@@ -9,6 +9,7 @@ import {
   fetchAdminOverview,
   fetchAdminUserDetail,
   fetchAdminUsers,
+  invalidateAdminMeCache,
 } from "../adminApi";
 
 vi.mock("../../../lib/supabase", () => ({
@@ -24,6 +25,7 @@ describe("adminApi client module", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    invalidateAdminMeCache();
     import.meta.env.VITE_SUPABASE_URL = "https://mock.supabase.co";
   });
 
@@ -80,6 +82,52 @@ describe("adminApi client module", () => {
         }),
       })
     );
+  });
+
+  it("reuses cached /me result for same user and bypasses cache when forced or invalidated", async () => {
+    vi.mocked(supabase!.auth.getSession).mockResolvedValue({
+      data: {
+        session: {
+          access_token: "mock-admin-token",
+          user: { id: "user-cache-1" },
+        } as unknown as Session,
+      },
+      error: null,
+    });
+
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () =>
+        Promise.resolve({
+          userId: "user-cache-1",
+          role: "admin",
+          displayName: "Cached Admin",
+          avatarUrl: null,
+        }),
+    });
+    globalThis.fetch = mockFetch;
+
+    // First call: makes network request
+    const first = await fetchAdminMe();
+    expect(first.displayName).toBe("Cached Admin");
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+
+    // Second call: returns cached result without network request
+    const second = await fetchAdminMe();
+    expect(second.displayName).toBe("Cached Admin");
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+
+    // Force refresh: triggers network request
+    const third = await fetchAdminMe(true);
+    expect(third.displayName).toBe("Cached Admin");
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+
+    // Invalidation: triggers network request
+    invalidateAdminMeCache();
+    const fourth = await fetchAdminMe();
+    expect(fourth.displayName).toBe("Cached Admin");
+    expect(mockFetch).toHaveBeenCalledTimes(3);
   });
 
   it("handles 403 FORBIDDEN error response from Edge Function", async () => {

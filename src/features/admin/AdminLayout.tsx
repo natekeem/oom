@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { PageIntro } from "../../components/ui/PageIntro";
 import { cn } from "../../lib/utils";
 import { useAdminAccess } from "./useAdminAccess";
 
@@ -45,33 +46,25 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <div className="space-y-6">
-      {/* 1. Header Bar */}
-      <div className="flex flex-col gap-3 rounded-lg border border-zinc-200/80 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/60 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="grid h-10 w-10 place-items-center rounded-lg bg-indigo-600 text-white shadow-sm dark:bg-indigo-500">
-            <ShieldCheck className="h-5 w-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold tracking-tight text-zinc-950 dark:text-white">
-                관리자 콘솔
-              </h1>
-              <span
-                className={cn(
-                  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold",
-                  currentRoleMeta.className
-                )}
-              >
-                {currentRoleMeta.label}
-              </span>
-            </div>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              OOM 서비스 운영 · 지표 모니터링 · 사용자 관리
-            </p>
-          </div>
-        </div>
+      {/* 1. Common OOM Page Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <PageIntro
+          className="flex-1"
+          description="OOM 서비스 운영 · 지표 모니터링 · 사용자 관리"
+          icon={ShieldCheck}
+          tag="ADMIN CONSOLE"
+          title="관리자 콘솔"
+        />
 
-        <div className="flex items-center gap-3 self-end sm:self-auto">
+        <div className="flex flex-wrap items-center gap-2.5 pb-1 sm:self-end">
+          <span
+            className={cn(
+              "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold",
+              currentRoleMeta.className
+            )}
+          >
+            {currentRoleMeta.label}
+          </span>
           {adminUser && (
             <span className="text-xs text-zinc-600 dark:text-zinc-400">
               접속 계정:{" "}

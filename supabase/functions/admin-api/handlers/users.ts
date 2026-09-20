@@ -103,53 +103,105 @@ export async function handleListUsers(req: Request, adminClient: SupabaseClient)
   const profiles = profileRows ?? [];
   const total = count ?? 0;
   const totalPages = Math.ceil(total / pageSize) || 1;
+  const profileIds = profiles.map((p) => p.id);
 
-  // Enhance each profile with auth and activity stats in parallel
-  const enhancedUsers: AdminUserListItem[] = await Promise.all(
-    profiles.map(async (p) => {
-      let email: string | null = null;
-      let lastSignInAt: string | null = null;
+  if (profileIds.length === 0) {
+    return jsonResponse(req, {
+      users: [],
+      total,
+      page,
+      pageSize,
+      totalPages,
+    });
+  }
 
-      try {
-        const { data: authUser } = await adminClient.auth.admin.getUserById(p.id);
-        email = authUser.user?.email ?? null;
-        lastSignInAt = authUser.user?.last_sign_in_at ?? null;
-      } catch {
-        // Suppress individual auth fetch failures
-      }
+  // 1. Batch fetch preferences, sessions, activities, and auth records in parallel
+  const [prefsRes, sessionsRes, activitiesRes, authUsersRes] = await Promise.all([
+    adminClient.from("learning_preferences").select("user_id").in("user_id", profileIds),
+    adminClient.from("learning_sessions").select("user_id, started_at").in("user_id", profileIds),
+    adminClient.from("learning_activity_events").select("user_id, occurred_at").in("user_id", profileIds),
+    Promise.all(
+      profileIds.map((id) =>
+        adminClient.auth.admin.getUserById(id).catch(() => ({ data: { user: null } }))
+      )
+    ),
+  ]);
 
-      const [prefRes, sessRes, actRes, lastSessRes, lastActRes] = await Promise.all([
-        adminClient.from("learning_preferences").select("user_id").eq("user_id", p.id).maybeSingle(),
-        adminClient.from("learning_sessions").select("id", { count: "exact", head: true }).eq("user_id", p.id),
-        adminClient.from("learning_activity_events").select("id", { count: "exact", head: true }).eq("user_id", p.id),
-        adminClient.from("learning_sessions").select("started_at").eq("user_id", p.id).order("started_at", { ascending: false }).limit(1).maybeSingle(),
-        adminClient.from("learning_activity_events").select("occurred_at").eq("user_id", p.id).order("occurred_at", { ascending: false }).limit(1).maybeSingle(),
-      ]);
+  // 2. Build in-memory lookup maps to eliminate N+1 latency
+  const prefSet = new Set<string>();
+  (prefsRes.data ?? []).forEach((row) => {
+    if (row.user_id) prefSet.add(row.user_id);
+  });
 
-      const lastSessAt = lastSessRes.data?.started_at ?? null;
-      const lastActAt = lastActRes.data?.occurred_at ?? null;
-      let lastLearningAt: string | null = null;
-      if (lastSessAt && lastActAt) {
-        lastLearningAt = new Date(lastSessAt) > new Date(lastActAt) ? lastSessAt : lastActAt;
-      } else {
-        lastLearningAt = lastSessAt || lastActAt;
-      }
+  const sessionStatsMap: Record<string, { count: number; lastStartedAt: string | null }> = {};
+  (sessionsRes.data ?? []).forEach((s) => {
+    if (!s.user_id) return;
+    if (!sessionStatsMap[s.user_id]) {
+      sessionStatsMap[s.user_id] = { count: 0, lastStartedAt: null };
+    }
+    sessionStatsMap[s.user_id].count += 1;
+    if (
+      !sessionStatsMap[s.user_id].lastStartedAt ||
+      new Date(s.started_at) > new Date(sessionStatsMap[s.user_id].lastStartedAt!)
+    ) {
+      sessionStatsMap[s.user_id].lastStartedAt = s.started_at;
+    }
+  });
 
-      return {
-        id: p.id,
-        email,
-        displayName: p.display_name,
-        avatarUrl: p.avatar_url,
-        joinedAt: p.created_at,
-        lastSignInAt,
-        planDisplay: p.plan === "pro" ? "PRO (표시용)" : "FREE",
-        hasLearningPreferences: Boolean(prefRes.data),
-        learningSessionCount: sessRes.count ?? 0,
-        learningActivityCount: actRes.count ?? 0,
-        lastLearningAt,
-      };
-    })
-  );
+  const activityStatsMap: Record<string, { count: number; lastOccurredAt: string | null }> = {};
+  (activitiesRes.data ?? []).forEach((a) => {
+    if (!a.user_id) return;
+    if (!activityStatsMap[a.user_id]) {
+      activityStatsMap[a.user_id] = { count: 0, lastOccurredAt: null };
+    }
+    activityStatsMap[a.user_id].count += 1;
+    if (
+      !activityStatsMap[a.user_id].lastOccurredAt ||
+      new Date(a.occurred_at) > new Date(activityStatsMap[a.user_id].lastOccurredAt!)
+    ) {
+      activityStatsMap[a.user_id].lastOccurredAt = a.occurred_at;
+    }
+  });
+
+  const authUserMap: Record<string, { email: string | null; lastSignInAt: string | null }> = {};
+  authUsersRes.forEach((res, idx) => {
+    const id = profileIds[idx];
+    const u = res?.data?.user;
+    authUserMap[id] = {
+      email: u?.email ?? null,
+      lastSignInAt: u?.last_sign_in_at ?? null,
+    };
+  });
+
+  // 3. Construct enhanced user list in-memory
+  const enhancedUsers: AdminUserListItem[] = profiles.map((p) => {
+    const authInfo = authUserMap[p.id];
+    const sessInfo = sessionStatsMap[p.id];
+    const actInfo = activityStatsMap[p.id];
+
+    const lastSessAt = sessInfo?.lastStartedAt ?? null;
+    const lastActAt = actInfo?.lastOccurredAt ?? null;
+    let lastLearningAt: string | null = null;
+    if (lastSessAt && lastActAt) {
+      lastLearningAt = new Date(lastSessAt) > new Date(lastActAt) ? lastSessAt : lastActAt;
+    } else {
+      lastLearningAt = lastSessAt || lastActAt;
+    }
+
+    return {
+      id: p.id,
+      email: authInfo?.email ?? null,
+      displayName: p.display_name,
+      avatarUrl: p.avatar_url,
+      joinedAt: p.created_at,
+      lastSignInAt: authInfo?.lastSignInAt ?? null,
+      planDisplay: p.plan === "pro" ? "PRO (표시용)" : "FREE",
+      hasLearningPreferences: prefSet.has(p.id),
+      learningSessionCount: sessInfo?.count ?? 0,
+      learningActivityCount: actInfo?.count ?? 0,
+      lastLearningAt,
+    };
+  });
 
   return jsonResponse(req, {
     users: enhancedUsers,

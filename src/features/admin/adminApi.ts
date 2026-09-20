@@ -76,11 +76,39 @@ async function requestAdminApi<T>(path: string, searchParams?: Record<string, st
     throw new AdminApiError(response.status, errorCode, errorMessage);
   }
 
+  const serverTiming = response.headers.get("Server-Timing");
+  const responseTime = response.headers.get("X-Response-Time");
+  if (import.meta.env.DEV && (serverTiming || responseTime)) {
+    console.debug(`[Admin API] ${path} timing:`, { responseTime, serverTiming });
+  }
+
   return (await response.json()) as T;
 }
 
-export async function fetchAdminMe(): Promise<AdminSelf> {
-  return requestAdminApi<AdminSelf>("/me");
+interface AdminMeCacheEntry {
+  userId: string;
+  data: AdminSelf;
+}
+
+let adminMeCache: AdminMeCacheEntry | null = null;
+
+export function invalidateAdminMeCache(): void {
+  adminMeCache = null;
+}
+
+export async function fetchAdminMe(forceRefresh = false): Promise<AdminSelf> {
+  const sessionRes = await supabase?.auth.getSession();
+  const currentUserId = sessionRes?.data?.session?.user?.id;
+
+  if (!forceRefresh && adminMeCache && currentUserId && adminMeCache.userId === currentUserId) {
+    return adminMeCache.data;
+  }
+
+  const data = await requestAdminApi<AdminSelf>("/me");
+  if (currentUserId) {
+    adminMeCache = { userId: currentUserId, data };
+  }
+  return data;
 }
 
 export async function fetchAdminOverview(): Promise<AdminOverview> {

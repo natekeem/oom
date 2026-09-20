@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { useAuth } from "../../auth/useAuth";
-import { AdminApiError, fetchAdminMe } from "./adminApi";
+import { AdminApiError, fetchAdminMe, invalidateAdminMeCache } from "./adminApi";
 import type { AdminRole, AdminSelf } from "./adminTypes";
 
 export type AdminAccessStatus =
@@ -37,10 +37,17 @@ export function AdminAccessProvider({ children }: { children: ReactNode }) {
   const [adminUser, setAdminUser] = useState<AdminSelf | null>(null);
   const [error, setError] = useState<string | null>(null);
   const requestVersion = useRef(0);
+  const lastUserIdRef = useRef<string | null>(null);
 
-  const checkAdminAccess = useCallback(async () => {
+  const checkAdminAccess = useCallback(async (forceRefresh = false) => {
     const currentVersion = ++requestVersion.current;
     setError(null);
+
+    // Invalidate cache if user switched
+    if (user?.id !== lastUserIdRef.current) {
+      invalidateAdminMeCache();
+      lastUserIdRef.current = user?.id ?? null;
+    }
 
     if (authStatus === "loading") {
       setStatus("loading");
@@ -48,6 +55,7 @@ export function AdminAccessProvider({ children }: { children: ReactNode }) {
     }
 
     if (authStatus !== "authenticated" || !user) {
+      invalidateAdminMeCache();
       setStatus("unauthenticated");
       setRole(null);
       setAdminUser(null);
@@ -57,7 +65,7 @@ export function AdminAccessProvider({ children }: { children: ReactNode }) {
     setStatus("loading");
 
     try {
-      const data = await fetchAdminMe();
+      const data = await fetchAdminMe(forceRefresh);
       if (currentVersion !== requestVersion.current) return;
 
       setRole(data.role);
@@ -112,7 +120,7 @@ export function AdminAccessProvider({ children }: { children: ReactNode }) {
         role,
         adminUser,
         error,
-        refresh: checkAdminAccess,
+        refresh: () => checkAdminAccess(true),
       }}
     >
       {children}

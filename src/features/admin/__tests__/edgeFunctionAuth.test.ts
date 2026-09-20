@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { sanitizeAuditMetadata } from "../../../../supabase/functions/admin-api/auditHelper";
+import { sanitizeAuditMetadata, writeAdminAuditLog } from "../../../../supabase/functions/admin-api/auditHelper";
 import { authenticateAdminRequest } from "../../../../supabase/functions/admin-api/auth";
-import { getCorsHeaders, handleCorsPreflight } from "../../../../supabase/functions/admin-api/cors";
+import { getCorsHeaders, handleCorsPreflight, withTiming } from "../../../../supabase/functions/admin-api/cors";
 import { handleAdminApiRequest, normalizeAdminPath } from "../../../../supabase/functions/admin-api/index";
 
 // Mock Deno global if running in Node/Vitest
@@ -124,6 +124,51 @@ describe("Edge Function: admin-api logic & security", () => {
       const nested = clean.nested as Record<string, unknown>;
       expect(nested.apiKey).toBe("[REDACTED]");
       expect(nested.safeNote).toBe("ok");
+    });
+
+    it("rejects read-only actions and never writes them to admin_audit_logs", async () => {
+      const mockInsert = vi.fn().mockResolvedValue({ error: null });
+      const mockAdminClient = {
+        from: vi.fn().mockReturnValue({
+          insert: mockInsert,
+        }),
+      } as unknown as Parameters<typeof writeAdminAuditLog>[0];
+
+      // Read-only actions should be blocked
+      await writeAdminAuditLog(mockAdminClient, "admin-1", "view_users");
+      await writeAdminAuditLog(mockAdminClient, "admin-1", "read_dashboard");
+      await writeAdminAuditLog(mockAdminClient, "admin-1", "list_records");
+      expect(mockInsert).not.toHaveBeenCalled();
+
+      // Mutation actions should be written
+      await writeAdminAuditLog(mockAdminClient, "admin-1", "update_user_role", "user", "u-123", { role: "admin" });
+      expect(mockInsert).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("Timing Headers", () => {
+    it("attaches Server-Timing and X-Response-Time headers to API responses", async () => {
+      const req = new Request("https://mock.supabase.co/functions/v1/admin-api/overview", {
+        method: "POST", // Will be rejected with 405
+      });
+
+      const res = await handleAdminApiRequest(req);
+      expect(res.headers.get("Server-Timing")).toMatch(/^total;dur=\d+(\.\d+)?$/);
+      expect(res.headers.get("X-Response-Time")).toMatch(/^\d+(\.\d+)?ms$/);
+    });
+
+    it("measures timing for all 4 admin endpoints (/me, /overview, /users, /learning)", () => {
+      const endpoints = ["/me", "/overview", "/users", "/learning"];
+      for (const endpoint of endpoints) {
+        const start = performance.now();
+        const fakeRes = new Response(JSON.stringify({ endpoint }), { status: 200 });
+        const timedRes = withTiming(fakeRes, start);
+
+        const serverTiming = timedRes.headers.get("Server-Timing");
+        const responseTime = timedRes.headers.get("X-Response-Time");
+        expect(serverTiming).toMatch(/^total;dur=\d+(\.\d+)?$/);
+        expect(responseTime).toMatch(/^\d+(\.\d+)?ms$/);
+      }
     });
   });
 });

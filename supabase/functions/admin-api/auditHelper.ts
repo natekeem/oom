@@ -1,5 +1,5 @@
 // Helper to write privileged audit logs from the Edge Function
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "npm:@supabase/supabase-js@2";
 
 const SENSITIVE_KEY_PATTERN = /(token|secret|password|key|auth|credential)/i;
 

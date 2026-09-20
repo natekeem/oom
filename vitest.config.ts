@@ -2,7 +2,21 @@ import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    {
+      name: "deno-npm-resolver",
+      enforce: "pre",
+      transform(code, id) {
+        if (id.includes("supabase") && id.includes("admin-api")) {
+          return {
+            code: code.replace(/["']npm:@supabase\/supabase-js@[^"']+["']/g, '"@supabase/supabase-js"'),
+            map: null,
+          };
+        }
+      },
+    },
+    react(),
+  ],
   test: {
     environment: "jsdom",
     fileParallelism: false,

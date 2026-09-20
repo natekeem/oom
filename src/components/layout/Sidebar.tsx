@@ -38,7 +38,11 @@ export type ViewId =
   | "contact"
   | "terms"
   | "editorial-policy"
-  | "image-credits";
+  | "image-credits"
+  | "admin-dashboard"
+  | "admin-users"
+  | "admin-learning"
+  | "admin-audit";
 
 export const viewTitles: Record<ViewId, string> = {
   pricing: "요금제",
@@ -79,6 +83,10 @@ export const viewTitles: Record<ViewId, string> = {
   terms: "이용약관",
   "editorial-policy": "편집 원칙",
   "image-credits": "이미지 출처",
+  "admin-dashboard": "관리자 콘솔 · 대시보드",
+  "admin-users": "관리자 콘솔 · 사용자 관리",
+  "admin-learning": "관리자 콘솔 · 학습 운영",
+  "admin-audit": "관리자 콘솔 · 감사 로그",
 };
 
 export function getViewTitle(viewId: ViewId, resolved?: ResolvedTrainingContext | null): string {

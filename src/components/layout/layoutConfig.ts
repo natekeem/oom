@@ -69,6 +69,16 @@ export function getRouteLayoutMeta(viewId: ViewId, pathname = ""): RouteLayoutMe
     return { width: "default", footer: "none" };
   }
 
-  // 7. Public content pages (Guides, Magazine Index, Pricing, About, Home)
+  // 7. Admin Console utility pages
+  if (
+    viewId === "admin-dashboard" ||
+    viewId === "admin-users" ||
+    viewId === "admin-learning" ||
+    viewId === "admin-audit"
+  ) {
+    return { width: "wide", footer: "none" };
+  }
+
+  // 8. Public content pages (Guides, Magazine Index, Pricing, About, Home)
   return { width: "default", footer: "public" };
 }

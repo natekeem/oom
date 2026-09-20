@@ -74,8 +74,8 @@ for (const sitemapUrl of sitemapUrls) {
   if (parsedUrl.pathname !== "/" && !parsedUrl.pathname.endsWith("/")) {
     throw new Error(`Sitemap URL is missing its trailing slash: ${sitemapUrl}`);
   }
-  if (["/ai-settings/", "/mypage/", "/auth/callback/"].includes(parsedUrl.pathname)) {
-    throw new Error("The noindex AI settings route must not appear in the sitemap.");
+  if (["/ai-settings/", "/mypage/", "/auth/callback/", "/admin/", "/admin/users/", "/admin/learning/", "/admin/audit/"].includes(parsedUrl.pathname)) {
+    throw new Error("The noindex AI settings and admin routes must not appear in the sitemap.");
   }
 
   const routeArtifact = parsedUrl.pathname === "/" ? "index.html" : `${parsedUrl.pathname.slice(1)}index.html`;
@@ -131,6 +131,10 @@ for (const routeFile of generatedIndexFiles) {
 const adExcludedRoutes = [
   "mypage/index.html",
   "auth/callback/index.html",
+  "admin/index.html",
+  "admin/users/index.html",
+  "admin/learning/index.html",
+  "admin/audit/index.html",
   "practice/index.html",
   "practice/quick/index.html",
   "practice/mock/index.html",
@@ -184,7 +188,7 @@ for (const [path, routeHtml] of routeHtmlFiles) {
 }
 console.log(`Verified GitHub Pages artifact with ${assetPaths.length} bundled asset reference(s), ${sitemapUrls.length} canonical sitemap route(s), ${generatedIndexFiles.length} generated index file(s), ${requiredRootFiles.length} root static file(s), and ${requiredRouteFiles.length} representative static route file(s).`);
 
-for (const path of ["mypage", "auth/callback"]) {
+for (const path of ["mypage", "auth/callback", "admin", "admin/users", "admin/learning", "admin/audit"]) {
   const html = await readFile(join(distDirectory, path, "index.html"), "utf8");
   if (!html.includes('name="robots" content="noindex,follow"')) throw new Error(path + " must be noindex");
   if (!html.includes('<link rel="canonical" href="' + canonicalOrigin + '/' + path + '/" />')) throw new Error(path + " canonical missing");

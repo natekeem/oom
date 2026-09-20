@@ -40,6 +40,13 @@ const PricingPage = lazy(() => import("./components/pricing/PricingPage").then(m
 const MyPage = lazy(() => import("./auth/MyPage").then((module) => ({ default: module.MyPage })));
 const AuthCallback = lazy(() => import("./auth/AuthCallback").then((module) => ({ default: module.AuthCallback })));
 
+const AdminDashboardView = lazy(() => import("./features/admin/AdminDashboardView").then((m) => ({ default: m.AdminDashboardView })));
+const AdminUsersView = lazy(() => import("./features/admin/AdminUsersView").then((m) => ({ default: m.AdminUsersView })));
+const AdminLearningView = lazy(() => import("./features/admin/AdminLearningView").then((m) => ({ default: m.AdminLearningView })));
+const AdminAuditView = lazy(() => import("./features/admin/AdminAuditView").then((m) => ({ default: m.AdminAuditView })));
+const AdminGuard = lazy(() => import("./features/admin/AdminGuard").then((m) => ({ default: m.AdminGuard })));
+import { AdminAccessProvider } from "./features/admin/useAdminAccess";
+
 const SETTINGS_KEY = "oom-llm-settings";
 const STT_SETTINGS_KEY = "oom-stt-settings";
 const THEME_KEY = "oom-theme";
@@ -142,7 +149,7 @@ export default function App() {
   const isLanding = location.pathname === "/";
   const isMagazineDetail = /^\/magazine\/[^/]+\/?$/.test(location.pathname);
   const adExcluded =
-    ["pricing", "mypage", "auth-callback", "practice", "practice-quick", "practice-mock", "ai-settings", "about", "privacy", "contact", "terms", "editorial-policy", "image-credits"].includes(
+    ["pricing", "mypage", "auth-callback", "practice", "practice-quick", "practice-mock", "ai-settings", "about", "privacy", "contact", "terms", "editorial-policy", "image-credits", "admin-dashboard", "admin-users", "admin-learning", "admin-audit"].includes(
       activeView
     ) || (activeView === "magazine-list" && !isMagazineDetail);
 
@@ -448,6 +455,14 @@ export default function App() {
       <Route path="/editorial-policy/" element={<LegalPageView pageId="editorial-policy" />} />
       <Route path="/image-credits" element={<LegalPageView pageId="image-credits" />} />
       <Route path="/image-credits/" element={<LegalPageView pageId="image-credits" />} />
+      <Route path="/admin" element={<AdminGuard><AdminDashboardView /></AdminGuard>} />
+      <Route path="/admin/" element={<AdminGuard><AdminDashboardView /></AdminGuard>} />
+      <Route path="/admin/users" element={<AdminGuard><AdminUsersView /></AdminGuard>} />
+      <Route path="/admin/users/" element={<AdminGuard><AdminUsersView /></AdminGuard>} />
+      <Route path="/admin/learning" element={<AdminGuard><AdminLearningView /></AdminGuard>} />
+      <Route path="/admin/learning/" element={<AdminGuard><AdminLearningView /></AdminGuard>} />
+      <Route path="/admin/audit" element={<AdminGuard><AdminAuditView /></AdminGuard>} />
+      <Route path="/admin/audit/" element={<AdminGuard><AdminAuditView /></AdminGuard>} />
     </Routes>
   );
 
@@ -476,47 +491,49 @@ export default function App() {
   const nextStep = nextViewById[activeView];
 
   return (
-    <TrainingSelectionProvider>
-      <AppShell
-        activeView={activeView}
-        darkMode={darkMode}
-        mobileOpen={mobileOpen}
-        nextStep={
-          nextStep
-            ? {
-                label: nextStep.label,
-                onClick: () => navigate(viewPathForId[nextStep.view]),
+    <AdminAccessProvider>
+      <TrainingSelectionProvider>
+        <AppShell
+          activeView={activeView}
+          darkMode={darkMode}
+          mobileOpen={mobileOpen}
+          nextStep={
+            nextStep
+              ? {
+                  label: nextStep.label,
+                  onClick: () => navigate(viewPathForId[nextStep.view]),
+                }
+              : undefined
+          }
+          onCloseMobileMenu={() => setMobileOpen(false)}
+          onNavigate={onNavigate}
+          onToggleDarkMode={() => setDarkMode((value) => !value)}
+          onToggleMobileMenu={() => setMobileOpen((value) => !value)}
+          showTrainingHeader={isStepView}
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              animate={{ opacity: 1, y: 0 }}
+              className={
+                isStepView
+                  ? activeView === "practice-mock"
+                    ? "step-page lg:h-full lg:min-h-0"
+                    : "step-page"
+                  : undefined
               }
-            : undefined
-        }
-        onCloseMobileMenu={() => setMobileOpen(false)}
-        onNavigate={onNavigate}
-        onToggleDarkMode={() => setDarkMode((value) => !value)}
-        onToggleMobileMenu={() => setMobileOpen((value) => !value)}
-        showTrainingHeader={isStepView}
-      >
-        <AnimatePresence mode="wait">
-          <motion.div
-            animate={{ opacity: 1, y: 0 }}
-            className={
-              isStepView
-                ? activeView === "practice-mock"
-                  ? "step-page lg:h-full lg:min-h-0"
-                  : "step-page"
-                : undefined
-            }
-            exit={{ opacity: 0, y: -6 }}
-            initial={{ opacity: 0, y: 8 }}
-            key={location.pathname}
-            transition={{ duration: 0.2 }}
-          >
-            <Suspense fallback={<div className="py-12 text-center text-sm text-zinc-500">화면을 불러오는 중...</div>}>
-              {screen}
-            </Suspense>
-          </motion.div>
-        </AnimatePresence>
-        <Toast onDismiss={() => setToast(null)} toast={toast} />
-      </AppShell>
-    </TrainingSelectionProvider>
+              exit={{ opacity: 0, y: -6 }}
+              initial={{ opacity: 0, y: 8 }}
+              key={location.pathname}
+              transition={{ duration: 0.2 }}
+            >
+              <Suspense fallback={<div className="py-12 text-center text-sm text-zinc-500">화면을 불러오는 중...</div>}>
+                {screen}
+              </Suspense>
+            </motion.div>
+          </AnimatePresence>
+          <Toast onDismiss={() => setToast(null)} toast={toast} />
+        </AppShell>
+      </TrainingSelectionProvider>
+    </AdminAccessProvider>
   );
 }

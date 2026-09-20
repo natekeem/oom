@@ -4,6 +4,7 @@ import {
   Moon,
   PanelLeftClose,
   PanelLeftOpen,
+  ShieldCheck,
   Sparkles,
   Sun,
   UserRound,
@@ -17,6 +18,7 @@ import { useTrainingSelection } from "../../training/TrainingSelectionContext";
 import { resolveTrainingContext } from "../../training/courseRegistry";
 import { OomBrandMark } from "../brand/OomBrandMark";
 import { topLevelNavigation } from "./topLevelNavigation";
+import { useAdminAccess } from "../../features/admin/useAdminAccess";
 
 type ExpandableSidebarProps = {
   activeView: ViewId;
@@ -205,6 +207,9 @@ export function ExpandableSidebar({
   const [quoteOpen, setQuoteOpen] = useState(false);
   const { selection } = useTrainingSelection();
   const resolved = selection ? resolveTrainingContext(selection.courseId, selection.levelId) : null;
+  const { status: adminStatus } = useAdminAccess();
+  const isAdmin = adminStatus === "authorized";
+  const isAdminActive = activeView.startsWith("admin-");
 
   const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
     try {
@@ -793,6 +798,23 @@ export function ExpandableSidebar({
       >
         {isCollapsed ? (
           <>
+            {isAdmin && (
+              <button
+                aria-current={isAdminActive ? "page" : undefined}
+                aria-label="관리자 콘솔"
+                title="관리자 콘솔"
+                className={cn(
+                  "grid h-10 w-10 mx-auto place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+                  isAdminActive
+                    ? "bg-indigo-600 text-white shadow-sm"
+                    : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+                )}
+                onClick={() => navigate("admin-dashboard")}
+                type="button"
+              >
+                <ShieldCheck className="h-4 w-4" />
+              </button>
+            )}
             <button
               aria-current={activeView === "mypage" ? "page" : undefined}
               aria-label="마이페이지"
@@ -851,6 +873,15 @@ export function ExpandableSidebar({
           </>
         ) : (
           <>
+            {isAdmin && (
+              <NavigationButton
+                active={isAdminActive}
+                depth={0}
+                icon={ShieldCheck}
+                label="관리자 콘솔"
+                onClick={() => navigate("admin-dashboard")}
+              />
+            )}
             <NavigationButton
               active={activeView === "mypage"}
               depth={0}
@@ -928,6 +959,15 @@ export function ExpandableSidebar({
       </div>
 
       <div className="mt-auto shrink-0 space-y-2 border-t border-zinc-200/80 pt-3 dark:border-zinc-800/80">
+        {isAdmin && (
+          <NavigationButton
+            active={isAdminActive}
+            depth={0}
+            icon={ShieldCheck}
+            label="관리자 콘솔"
+            onClick={() => navigate("admin-dashboard")}
+          />
+        )}
         <NavigationButton
           active={activeView === "mypage"}
           depth={0}

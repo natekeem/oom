@@ -152,3 +152,13 @@ Run `npm run tts:generate` only when the audit shows missing/changed assets. It 
 - Completion requests use a stable UUID for retry; repeated study after reopening can create a new event. Do not persist scripts, survey answers, audio or transcripts.
 - /pricing/ is public, static and indexable. PRO is planned only. No checkout, managed AI or entitlement is implemented.
 - ServiceFooter is shared by landing and AppShell; keep Full Mock suppression.
+
+## Phase 3.0 Admin Console and Security Rules
+
+- Server-enforced authorization: Administrator roles (`owner`, `admin`, `support`) are defined in `public.admin_users`. Client-side guards (`AdminGuard`) provide UX only; actual access is gated by the `admin-api` Supabase Edge Function using bearer token authentication.
+- Never expose `SUPABASE_SERVICE_ROLE_KEY` to the browser, client code, or repository GitHub Actions variables. The service role key is isolated to the Edge Function server environment.
+- Admin navigation: The Admin Console entry button is displayed in the sidebar bottom utility rail only when the authenticated user is confirmed as an authorized admin. Non-admin users see no admin UI controls.
+- Operational truthfulness: Operational metrics in the Admin Dashboard must reflect exact Asia/Seoul (`+09:00`) calendar day boundaries and rolling interval counts from PostgreSQL. Do not generate fake AI usage, billing revenue, or imaginary subscription metrics.
+- Display plan transparency: User plans must remain clearly labeled as "현재 표시 플랜: FREE"; do not simulate active paid entitlements.
+- Privacy & safety: Do not log or display user credentials, authentication tokens, audio recordings, or answer transcripts in admin interfaces or audit logs.
+- Admin routes (`/admin/**`): Must be generated with `noindex,follow`, excluded from advertisements (`adExcluded: true`), excluded from `sitemap.xml`, and have `footer: "none"`.

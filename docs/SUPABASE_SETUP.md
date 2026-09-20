@@ -88,3 +88,69 @@ References: [Google OAuth](https://supabase.com/docs/guides/auth/social-login/au
 The new table grants authenticated SELECT and INSERT only, with auth.uid() = user_id policies, RLS, cascade deletion and an owner/time index. Timestamp writes, UPDATE and DELETE are not granted to ordinary clients. Content identifiers only are stored. A stable client UUID is reused on retry; distinct study visits may create distinct UUIDs. This is not a preference record or a practice attempt.
 
 Local frontend tests mock the repository. Real OAuth and deployed database verification still require the configured target project. Follow Supabase's RLS grant/policy guidance: https://supabase.com/docs/guides/database/postgres/row-level-security .
+
+## Phase 3.0 owner rollout: Admin Console Foundation
+
+Phase 3.0 introduces a server-enforced administrator authorization model, an `admin-api` Edge Function gateway, and an administrative console within OOM (`/admin/**`).
+
+### 1. Database Migration
+
+1. In Supabase Dashboard → SQL Editor, apply `supabase/migrations/20260922000000_create_admin_console.sql`.
+   - Creates `public.admin_users` (`user_id` PK references `auth.users(id)` cascade delete, check constraint on `role in ('owner', 'admin', 'support')`, RLS enabled allowing users to read only their own row, table privileges revoked from public/anon).
+   - Creates `public.admin_audit_logs` (`id` PK, `admin_user_id` references `auth.users(id)` restrict delete, `action`, `target_resource`, `target_id`, `details` JSONB, `ip_address`, `created_at`, RLS enabled, all privileges revoked from browser).
+   - Creates supporting performance indexes on `admin_audit_logs`, `profiles(created_at desc)`, `learning_sessions(started_at desc)`, and `learning_activity_events(occurred_at desc)`.
+2. Run `supabase/tests/admin_console.sql` in SQL Editor to verify database security. The test runs within a transaction block (`BEGIN` ... `ROLLBACK`) and asserts:
+   - Non-admin user cannot select or insert into `admin_users`.
+   - Direct browser privileges cannot insert/update/delete `admin_users` or access `admin_audit_logs`.
+   - Admin user can select only their own role.
+   - Check constraint blocks invalid roles.
+   - Deleting an Auth user cascades to `admin_users`.
+
+### 2. Manual Owner Bootstrap
+
+Administrator privileges are strictly server-enforced. There is no auto-promotion, secret invite code, or client-side grant API. An owner must be registered manually in the Supabase Dashboard SQL Editor:
+
+```sql
+-- Replace <YOUR_AUTH_USER_UUID> with the target user's UUID from Authentication -> Users
+INSERT INTO public.admin_users (user_id, role)
+VALUES ('<YOUR_AUTH_USER_UUID>'::uuid, 'owner')
+ON CONFLICT (user_id) DO UPDATE SET role = EXCLUDED.role;
+```
+
+Available roles:
+- `owner`: Full administrative privileges, user inspection, operational metrics, audit log review.
+- `admin`: User inspection, operational metrics, learning operations review.
+- `support`: Read-only operational inspection; cannot view audit logs.
+
+### 3. Edge Function Deployment
+
+The frontend browser never connects to the database using privileged service keys. All administrative operations are dispatched through the Supabase Edge Function `admin-api`:
+
+1. Deploy the function using the Supabase CLI:
+   ```bash
+   supabase functions deploy admin-api
+   ```
+2. Supabase Edge Functions automatically inject `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` into the function environment.
+3. Verify that CORS allowed origins in `supabase/functions/admin-api/cors.ts` match your deployment environments:
+   - `https://opic-on-me.com` (Production)
+   - `http://localhost:5173` (Local Dev)
+   - `http://localhost:4173` (Vite Preview)
+
+> [!CAUTION]
+> Never expose `SUPABASE_SERVICE_ROLE_KEY` to GitHub Pages repository variables, `.env.local`, or any frontend code. The service role key belongs solely in the Edge Function server environment.
+
+### 4. Verification and Access Checks
+
+1. **Unauthorized Access:**
+   - Sign in with an account not in `admin_users`.
+   - The Admin Console icon (`ShieldCheck`) does not appear in the sidebar or mobile menu.
+   - Direct navigation to `/admin/` displays an "접근 권한이 없습니다" (403 Forbidden) warning card. The Edge Function rejects requests with HTTP 403.
+2. **Authorized Access:**
+   - Sign in with the bootstrapped `owner` account.
+   - The Admin Console button appears in the sidebar bottom utility rail.
+   - Access `/admin/` to view the Dashboard (Asia/Seoul day boundaries, real user and learning event counts).
+   - Access `/admin/users/` to search users by name/email, view profile details, and inspect operational metrics.
+   - Access `/admin/learning/` to filter practice sessions and study completions.
+   - Access `/admin/audit/` to view administrator action logs (viewed users, filtered queries).
+3. **Role Enforcement:**
+   - A user with `support` role accessing `/admin/audit/` receives a 403 response, and the UI displays an explanatory restriction notice.

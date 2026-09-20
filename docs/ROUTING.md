@@ -111,6 +111,10 @@ Public route targets use the canonical `https://opic-on-me.com/path/` form. Inte
 | `terms` | Footer legal page | `LegalPageView` | No | `/terms/` explains study-use terms and non-affiliation |
 | `editorial-policy` | Footer trust page | `LegalPageView` | No | `/editorial-policy/` identifies operator/author responsibility and explains sourcing, review, corrections, and AI-assistance rules |
 | `image-credits` | Footer trust page | `LegalPageView` | No | `/image-credits/` lists magazine cover image credits and license links |
+| `admin-dashboard` | Bottom utilities / Admin Console | `AdminDashboardView` | No | `/admin/`; Dashboard metrics with Asia/Seoul calendar day boundary; server-guarded |
+| `admin-users` | Admin Console sub-tab | `AdminUsersView` | No | `/admin/users/`; User directory and profile inspection |
+| `admin-learning` | Admin Console sub-tab | `AdminLearningView` | No | `/admin/learning/`; Learning sessions and activities operations log |
+| `admin-audit` | Admin Console sub-tab | `AdminAuditView` | No | `/admin/audit/`; Administrative action audit logs (restricted for support role) |
 
 ## Next-Step Contract
 
@@ -150,12 +154,27 @@ ServiceFooter now groups 학습, 서비스, 정책 · 정보 and uses the curren
 - `PageWidth`: `'narrow' | 'default' | 'wide' | 'immersive'`
   - `narrow` (`max-w-4xl`): Legal pages (`/privacy/`, `/terms/`, `/contact/`, `/editorial-policy/`, `/image-credits/`), Magazine article detail (`/magazine/:id/`), Auth callback (`/auth/callback/`).
   - `default` (`max-w-7xl`): Home, About, Candidate Guides (`/exam-guide/**`), Magazine index, Pricing, My Page, AI settings.
-  - `wide` (`max-w-[1440px]`): Training Hub and STEP 1~6 (`/training/**`, `/roleplay/**`, `/practice/`, `/practice/quick/`).
+  - `wide` (`max-w-[1440px]`): Training Hub and STEP 1~6 (`/training/**`, `/roleplay/**`, `/practice/`, `/practice/quick/`), Admin Console (`/admin/**`).
   - `immersive` (`w-full max-w-none`): Full Mock Practice (`/practice/mock/`).
 - `FooterVariant`: `'public' | 'none'`
   - `public`: Compact grouped footer on `/`, `/about/`, `/exam-guide/**`, `/magazine/**`, `/pricing/`, and privacy/terms/editorial/contact/image-credits pages.
-  - `none`: `/mypage/`, `/ai-settings/`, `/auth/callback/`, `/training/**`, `/roleplay/**`, `/practice/`, `/practice/quick/`, and immersive `/practice/mock/`. No conventional or micro app footer.
+  - `none`: `/mypage/`, `/ai-settings/`, `/auth/callback/`, `/training/**`, `/roleplay/**`, `/practice/`, `/practice/quick/`, immersive `/practice/mock/`, and `/admin/**`. No conventional or micro app footer.
 
 Desktop sidebar collapse/expand state is stored in localStorage under `oom-sidebar-collapsed-v1`. Mobile drawer navigation remains modal and unaffected by desktop collapse state.
 
 Desktop bottom order: account → theme → collapse/expand → 오늘의 한 문장. Public footer contents align to the route's PageContainer width; the independent landing uses its section gutter. Both shells grow short content to the viewport with normal-flow footers.
+
+## Phase 3.0 Admin Console routes
+
+- `/admin/` → `admin-dashboard` → `src/features/admin/AdminDashboardView.tsx`: Real operational metrics (Asia/Seoul timezone day boundaries, total/new users, active learners, session/activity totals, recent feed).
+- `/admin/users/` → `admin-users` → `src/features/admin/AdminUsersView.tsx`: User list with search (name/email), pagination, and detailed user modal inspection (`AdminUserDetailModal.tsx`).
+- `/admin/learning/` → `admin-learning` → `src/features/admin/AdminLearningView.tsx`: Learning operations log with range, type (sessions vs activities), and status filters.
+- `/admin/audit/` → `admin-audit` → `src/features/admin/AdminAuditView.tsx`: Administrator action audit log review (blocked for `support` role).
+
+**Layout & Presentation Rules:**
+- Integrated into the existing `AppShell` with `wide` container width (`max-w-[1440px]`).
+- The training header (STEP 1~6 progress) is not displayed.
+- The service footer is suppressed (`footer: "none"`).
+- The sidebar renders an Admin Console link (`ShieldCheck` icon) in the bottom utility area only when the authenticated user has an authorized role in `admin_users`.
+- Route-level `AdminGuard` provides UX feedback (loading spinner, sign-in CTA, 403 Forbidden card, error retry); true authorization is enforced server-side by the `admin-api` Edge Function.
+- All admin routes are generated as static HTML with `noindex,follow`, excluded from advertisements, and excluded from `sitemap.xml`.

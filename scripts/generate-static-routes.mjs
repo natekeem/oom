@@ -15,8 +15,12 @@ const baseRoutes = [
     { heading: "PRO · 준비 중", paragraphs: ["광고 없는 이용, AI 상세 피드백, 실전 모의고사 심층 분석, 고급 학습 통계와 개인화 학습 추천을 검토 중입니다. 모두 계획이며 현재 제공되거나 구매할 수 있는 기능이 아닙니다.", "출시 일정과 가격은 정해지지 않았으며 제공 범위는 변경될 수 있습니다. 현재 결제, 구독 활성화 및 광고 제거 기능은 없습니다."] },
     { heading: "로그인과 AI 이용 안내", paragraphs: ["로그인하지 않아도 공개 학습과 연습은 가능합니다. 계정별 설정 동기화와 학습 기록 보관에는 로그인이 필요합니다.", "현재 고급 사용자용 STT·LLM endpoint 연결은 본인의 외부 서비스를 사용하는 방식입니다. 외부 서비스의 이용 조건과 비용은 해당 제공자를 따릅니다. OOM 관리형 AI 피드백은 아직 준비 중입니다."] }
   ] },
-  { path: "/mypage/", title: "마이페이지 | 오픽온미", description: "OOM 계정 정보를 확인합니다.", heading: "마이페이지", content: ["Google로 로그인하고 내 계정 정보를 확인하세요. 기존 공개 콘텐츠와 훈련은 로그인 없이 이용할 수 있습니다."], noindex: true },
-  { path: "/auth/callback/", title: "로그인 연결 | 오픽온미", description: "OOM 로그인 연결을 확인합니다.", heading: "로그인 연결", content: ["로그인을 확인하고 있습니다. 연결이 완료되지 않으면 마이페이지에서 다시 시도해 주세요."], noindex: true },
+  { path: "/mypage/", title: "마이페이지 | 오픽온미", description: "OOM 계정 정보를 확인합니다.", heading: "마이페이지", content: ["Google로 로그인하고 내 계정 정보를 확인하세요. 기존 공개 콘텐츠와 훈련은 로그인 없이 이용할 수 있습니다."], noindex: true, adExcluded: true },
+  { path: "/auth/callback/", title: "로그인 연결 | 오픽온미", description: "OOM 로그인 연결을 확인합니다.", heading: "로그인 연결", content: ["로그인을 확인하고 있습니다. 연결이 완료되지 않으면 마이페이지에서 다시 시도해 주세요."], noindex: true, adExcluded: true },
+  { path: "/admin/", title: "관리자 콘솔 · 대시보드 | 오픽온미", description: "OOM 관리자 콘솔 대시보드입니다.", heading: "관리자 콘솔", content: ["오픽온미 서비스 운영 및 주요 학습 지표를 모니터링합니다. 관리자 인증 후 이용할 수 있습니다."], noindex: true, adExcluded: true },
+  { path: "/admin/users/", title: "관리자 콘솔 · 사용자 관리 | 오픽온미", description: "OOM 관리자 콘솔 사용자 관리입니다.", heading: "사용자 관리", content: ["가입 회원 현황과 계정별 학습 활동을 확인합니다. 관리자 인증 후 이용할 수 있습니다."], noindex: true, adExcluded: true },
+  { path: "/admin/learning/", title: "관리자 콘솔 · 학습 운영 | 오픽온미", description: "OOM 관리자 콘솔 학습 운영 현황입니다.", heading: "학습 운영", content: ["실전 훈련 세션 및 학습 완료 이벤트를 모니터링합니다. 관리자 인증 후 이용할 수 있습니다."], noindex: true, adExcluded: true },
+  { path: "/admin/audit/", title: "관리자 콘솔 · 감사 로그 | 오픽온미", description: "OOM 관리자 콘솔 감사 로그입니다.", heading: "감사 로그", content: ["관리자 작업 감사 로그를 안전하게 보관하고 열람합니다. 관리자 인증 후 이용할 수 있습니다."], noindex: true, adExcluded: true },
   {
     path: "/",
     title: "오픽온미 | 외울 건 줄이고 실전은 더 많이",

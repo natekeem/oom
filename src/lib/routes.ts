@@ -39,6 +39,10 @@ export const viewPathForId: Record<ViewId, string> = {
   terms: "/terms/",
   "editorial-policy": "/editorial-policy/",
   "image-credits": "/image-credits/",
+  "admin-dashboard": "/admin/",
+  "admin-users": "/admin/users/",
+  "admin-learning": "/admin/learning/",
+  "admin-audit": "/admin/audit/",
 };
 
 export function viewIdForPath(path: string): ViewId {
@@ -81,5 +85,9 @@ export function viewIdForPath(path: string): ViewId {
   if (normalized === "/terms") return "terms";
   if (normalized === "/editorial-policy") return "editorial-policy";
   if (normalized === "/image-credits") return "image-credits";
+  if (normalized === "/admin") return "admin-dashboard";
+  if (normalized === "/admin/users") return "admin-users";
+  if (normalized === "/admin/learning") return "admin-learning";
+  if (normalized === "/admin/audit") return "admin-audit";
   return "home";
 }

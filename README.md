@@ -112,3 +112,13 @@ AppShell 구조를 정규화하고 데스크톱 사이드바(LNB), 페이지 컨
 - **페이지 너비 체계**: `PageContainer`를 통해 `narrow` (~896px), `default` (~1280px), `wide` (~1440px), `immersive` (풀 너비)를 중앙 집중 적용.
 - **푸터 자연 배치**: MainColumn의 flex 구조(`min-h-[100dvh] flex flex-col`, `<main>` `flex-1`, Footer `mt-auto`)로 짧은 화면에서도 fixed/sticky 없이 뷰포트 바닥에 위치하며 긴 콘텐츠에서는 자연스럽게 뒤따릅니다.
 - **푸터 유형**: 공개·콘텐츠 페이지에만 간결한 푸터(`public`), 앱·훈련·인증 콜백·실전 모의고사는 푸터 없음(`none`). 법적·서비스 링크는 공개 페이지에서 계속 접근할 수 있습니다.
+
+## Phase 3.0 관리자 콘솔 기반
+
+서버 검증 기반의 관리자 권한 모델(`owner`, `admin`, `support`), Supabase Edge Function `admin-api`, 그리고 내부 운영 콘솔(`/admin/**`)을 구축했습니다:
+- **보안 및 권한 모델**: `public.admin_users` 테이블을 통해 관리자 역할을 관리하며 브라우저에서의 직접적인 수정이나 권한 상승을 차단합니다. 서비스 롤 키(`SUPABASE_SERVICE_ROLE_KEY`)는 오직 Edge Function에서만 사용되며 프런트엔드로 절대 노출되지 않습니다.
+- **관리자 API 게이트웨이**: Supabase Edge Function `admin-api`가 JWT 인증, CORS 오리진 검증, 권한 검사, 라우팅, 그리고 `public.admin_audit_logs` 감사 로깅을 총괄합니다.
+- **운영 대시보드 및 지표**: 대한민국 표준시(Asia/Seoul, UTC+9) 역법 자정 기준의 당일 및 최근 7일 실제 사용자 가입 수, 활성 학습자 수, 학습 세션 및 활동 완료 지표를 제공합니다. 허위 지표나 가짜 AI/구독 UI는 일절 배제되었습니다.
+- **사용자 및 학습 운영 관리**: 회원 목록 검색, 프로필 상세 모달, 학습 세션 및 활동 이력 필터링, 관리자 작업 감사 로그 검토를 지원합니다.
+- **UI 및 사이드바 통합**: 권한이 부여된 관리자에게만 사이드바 하단 유틸리티에 방패 아이콘(`ShieldCheck`)의 관리자 콘솔 진입 버튼이 표시되며, 비인가 사용자의 접근 시 403 안내 화면이 안전하게 표시됩니다.
+- 초기 관리자 등록 방법과 데이터베이스 마이그레이션 절차는 [Supabase Setup](docs/SUPABASE_SETUP.md)을 참고하세요.

@@ -49,8 +49,10 @@ Static host / Supabase
 | Course data | `src/data/training/courses/course-N/` | active survey, storyline, variant, replacement, roleplay, question data |
 | Learning history | `src/features/history/` | Supabase data-access layer for sessions/attempts |
 | Learning preferences | `src/features/preferences/` | Supabase data-access layer for account-level target level/course preferences |
+| Admin Console | `src/features/admin/` | Admin access provider, route guard, layout, dashboard, users, learning operations, and audit views |
 
 The detailed route/sidebar/header contract is in [ROUTING.md](ROUTING.md). The Course × Level and STEP behavior is in [TRAINING_SYSTEM.md](TRAINING_SYSTEM.md).
+
 
 ## Runtime Boundaries
 
@@ -147,3 +149,13 @@ The independent LandingPage also uses `min-h-[100dvh] flex flex-col` with a grow
 Desktop bottom utilities are account → theme → collapse/expand → today's sentence. The sentence is a neutral ambient block; its collapsed Sparkles button exposes the sentence through an accessible name/title and a click/keyboard disclosure (Escape or blur closes it). Sidebar widths remain 240/68px, with independent navigation scrolling and pinned utilities. Mobile keeps its separate drawer without a desktop collapse control.
 
 Optional browser layout check: with Vite running, execute `node scripts/verify-layout.mjs`. Set `OOM_LAYOUT_URL` for a non-default dev port and `PLAYWRIGHT_MODULE` to an existing external Playwright package when it is not locally installed. It checks short-content states in both real shells, public/footer-free routing, content alignment, collapsed utilities and mobile keyboard behavior at 1440×900, 1920×1080 and 390×844. It creates no public fixture route or production dependency.
+
+## Phase 3.0 Admin Console Foundation
+
+Phase 3.0 establishes a secure, server-enforced administrative gateway and console:
+
+- **Server-Enforced Authorization:** `public.admin_users` assigns roles (`owner`, `admin`, `support`) to specific authenticated user UUIDs. Table-level RLS allows admins to view only their own role row. Browser clients have no INSERT/UPDATE/DELETE grants on `admin_users`.
+- **Privileged Edge Function Gateway (`admin-api`):** Client requests go to `POST /functions/v1/admin-api` bearing the user's Supabase JWT. The Edge Function validates the bearer token, checks role membership in `public.admin_users` using the private service role client, validates the CORS origin, routes to endpoint handlers (`/me`, `/overview`, `/users`, `/users/:id`, `/learning`, `/audit`), and writes action entries to `public.admin_audit_logs`.
+- **Credential & Secret Boundary:** The `SUPABASE_SERVICE_ROLE_KEY` is strictly confined to the Supabase Edge Function environment. The frontend browser bundle and static hosting never receive the service role key.
+- **Client UX & State Management:** `AdminAccessProvider` and `useAdminAccess` verify administrative authorization on mount and auth state change, without UI flickering. The Admin Console navigation button in the sidebar bottom rail is rendered only when authorized. Direct navigation to `/admin/**` routes is protected by `AdminGuard`, which displays clear unauthenticated/unauthorized states while the server independently blocks unprivileged queries.
+- **Data Integrity & Privacy:** Operational metrics in the dashboard utilize exact Asia/Seoul (`+09:00`) calendar-day boundaries and trailing rolling windows. Sensitive user credentials, auth tokens, passwords, audio blobs, and transcript texts are strictly excluded from audit logs and administrative views. Display plans remain labeled as "현재 표시 플랜: FREE" with zero phantom AI or subscription billing logic.

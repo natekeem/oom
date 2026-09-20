@@ -38,9 +38,9 @@ Static host / Supabase
 | Application routes | `src/App.tsx` | route elements, lazy screen loading, global settings, theme, navigation coordination |
 | Route mapping | `src/lib/routes.ts` | `ViewId` ↔ canonical trailing-slash path |
 | Shared shell | `src/components/layout/AppShell.tsx` | responsive frame, viewport-height sticky sidebar layout, training-only sticky header, progress, next-step action |
-| Layout config & container | `src/components/layout/layoutConfig.ts`, `src/components/layout/PageContainer.tsx` | semantic PageWidth (`narrow`, `default`, `wide`, `immersive`) and FooterVariant (`public`, `app`, `none`) |
+| Layout config & container | `src/components/layout/layoutConfig.ts`, `src/components/layout/PageContainer.tsx` | semantic PageWidth (`narrow`, `default`, `wide`, `immersive`) and FooterVariant (`public`, `none`) |
 | Navigation | `src/components/layout/ExpandableSidebar.tsx` | guide/training hierarchy, Course-aware labels, desktop collapse/expand (`oom-sidebar-collapsed-v1`), independent nav scrolling, pinned bottom utilities |
-| Service footer | `src/components/layout/ServiceFooter.tsx` | rich public footer, compact app footer (`nav[aria-label="서비스 정보"]`), natural flex flow placement (`mt-auto`) |
+| Service footer | `src/components/layout/ServiceFooter.tsx` | compact public-only footer (`nav[aria-label="서비스 정보"]`), natural flex flow placement (`mt-auto`) |
 | View contract | `src/components/layout/Sidebar.tsx` | `ViewId` and page-title resolution |
 | Independent landing | `src/landing/LandingPage.tsx` | full-bleed `/` route without AppShell or training state runtime |
 | Training selection | `src/training/TrainingSelectionContext.tsx`, `src/training/storage.ts` | browser-persisted Course × Level selection with account synchronization |
@@ -134,8 +134,16 @@ ServiceFooter owns shared low-weight navigation, with a landing color variant an
 ## Phase 2.9 Layout System & Shell Architecture
 
 AppShell defines a flex layout with viewport-height sticky desktop sidebar (`min-h-[100dvh]`):
-- Desktop LNB: `sticky top-0 h-[100dvh] flex flex-col shrink-0` with independent navigation scrolling (`flex-1 min-h-0 overflow-y-auto`) and pinned bottom utilities (My Page, dark mode, 오늘의 한 문장, collapse toggle).
+- Desktop LNB: `sticky top-0 h-[100dvh] flex flex-col shrink-0` with independent navigation scrolling (`flex-1 min-h-0 overflow-y-auto`) and pinned bottom utilities (My Page, theme mode, collapse toggle, 오늘의 한 문장).
 - Desktop collapse/expand: expanded 240px (`lg:w-60`), collapsed 68px (`lg:w-[68px]`), persisted in localStorage under `oom-sidebar-collapsed-v1`. Collapsed mode presents recognizable brand icon, icon-only top-level nav buttons with accessible tooltips and active state, and compact bottom utilities. Mobile drawer navigation is unaffected (remains modal dialog `w-72 max-w-[85vw]`).
 - PageContainer semantic widths: `narrow` (`max-w-4xl`), `default` (`max-w-7xl`), `wide` (`max-w-[1440px]`), `immersive` (`w-full max-w-none`). Eliminates arbitrary per-page max-width and padding combinations.
 - Footer behavior: MainColumn is `min-h-[100dvh] flex flex-col`, `<main>` is `flex-1 min-w-0 flex flex-col`, and ServiceFooter is `mt-auto shrink-0`. Short pages sit naturally at the viewport bottom, while long pages push the footer below content without sticky or fixed hacks.
-- Footer variants: `public` (rich 3-column IA with sitemap groups), `app` (compact copyright + legal navigation with `aria-label="서비스 정보"`), `none` (immersive mode suppression on `/practice/mock/`).
+- Footer variants: `public` (compact grouped links with `aria-label="서비스 정보"`), `none` (all application/workspace routes, auth callback, and immersive Full Mock). No app micro-footer is retained; legal/service links remain available on public pages via the sidebar Home/About/Guide entry points.
+
+### Phase 2.9.1 composition polish
+
+The independent LandingPage also uses `min-h-[100dvh] flex flex-col` with a growing main; its footer stays in normal flow. AppShell already satisfied that contract and retains its existing height structure. Public footer frames reuse PageContainer horizontal width/gutter tokens; landing sections and footer share `--landing-gutter`. App workspaces retain normal PageContainer bottom padding without spacer elements.
+
+Desktop bottom utilities are account → theme → collapse/expand → today's sentence. The sentence is a neutral ambient block; its collapsed Sparkles button exposes the sentence through an accessible name/title and a click/keyboard disclosure (Escape or blur closes it). Sidebar widths remain 240/68px, with independent navigation scrolling and pinned utilities. Mobile keeps its separate drawer without a desktop collapse control.
+
+Optional browser layout check: with Vite running, execute `node scripts/verify-layout.mjs`. Set `OOM_LAYOUT_URL` for a non-default dev port and `PLAYWRIGHT_MODULE` to an existing external Playwright package when it is not locally installed. It checks short-content states in both real shells, public/footer-free routing, content alignment, collapsed utilities and mobile keyboard behavior at 1440×900, 1920×1080 and 390×844. It creates no public fixture route or production dependency.

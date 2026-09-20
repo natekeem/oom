@@ -85,7 +85,7 @@ export function LandingPage() {
 
   return (
     <div
-      className="landing-page"
+      className="landing-page flex min-h-[100dvh] flex-col"
       data-landing-quality={quality}
       data-canvas-ready={canvasReady ? "true" : "false"}
       data-reduced-motion={reducedMotion ? "true" : "false"}
@@ -112,7 +112,7 @@ export function LandingPage() {
       <div aria-hidden="true" className="landing-noise" />
       <div aria-hidden="true" className="landing-vignette" />
 
-      <main id="landing-main">
+      <main className="flex-1" id="landing-main">
         <section aria-labelledby="landing-hero-title" className="landing-section landing-hero" data-landing-scene="hero" data-signature-phase="hero-o-eject">
           <div className="landing-hero-copy">
             <p className="landing-eyebrow">VOICE · STORY · PRACTICE</p>

@@ -1,7 +1,7 @@
 import type { ViewId } from "./Sidebar";
 
 export type PageWidth = "narrow" | "default" | "wide" | "immersive";
-export type FooterVariant = "public" | "app" | "none";
+export type FooterVariant = "public" | "none";
 
 export type RouteLayoutMeta = {
   width: PageWidth;
@@ -37,7 +37,7 @@ export function getRouteLayoutMeta(viewId: ViewId, pathname = ""): RouteLayoutMe
 
   // 4. Auth callback (centered compact card)
   if (viewId === "auth-callback") {
-    return { width: "narrow", footer: "app" };
+    return { width: "narrow", footer: "none" };
   }
 
   // 5. Complex learning UI (STEP 1~6 and Hubs)
@@ -61,12 +61,12 @@ export function getRouteLayoutMeta(viewId: ViewId, pathname = ""): RouteLayoutMe
     viewId === "practice" ||
     viewId === "practice-quick"
   ) {
-    return { width: "wide", footer: "app" };
+    return { width: "wide", footer: "none" };
   }
 
   // 6. Internal App / Account Utility pages
   if (viewId === "mypage" || viewId === "ai-settings") {
-    return { width: "default", footer: "app" };
+    return { width: "default", footer: "none" };
   }
 
   // 7. Public content pages (Guides, Magazine Index, Pricing, About, Home)

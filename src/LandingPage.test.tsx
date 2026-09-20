@@ -76,6 +76,16 @@ describe("landing accessibility fallbacks", () => {
 });
 
 describe("landing correction contracts", () => {
+  it("keeps the independent public shell on the viewport-height flex contract", () => {
+    const { container } = render(<MemoryRouter><LandingPage /></MemoryRouter>);
+    expect(container.querySelector(".landing-page")).toHaveClass("flex", "min-h-[100dvh]", "flex-col");
+    const main = screen.getByRole("main");
+    const footer = screen.getByRole("contentinfo");
+    expect(main).toHaveClass("flex-1");
+    expect(main.nextElementSibling).toBe(footer);
+    expect(footer).toHaveClass("mt-auto", "shrink-0");
+    expect(footer).not.toHaveClass("fixed", "sticky");
+  });
   it("reuses the existing STEP 6 ExamScreenShell without runtime side effects", () => {
     const storageWrite = vi.spyOn(Storage.prototype, "setItem");
     render(<LandingPracticePreview />);

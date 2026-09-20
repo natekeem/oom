@@ -91,7 +91,7 @@ describe("OOM", () => {
     );
     expect(await screen.findByRole("heading", { name: "배운 내용을 실제 말하기로 연결해보세요." })).toBeInTheDocument();
     expect(screen.queryByText("OOM OPIc Practice Console")).not.toBeInTheDocument();
-    expect(screen.getByRole("navigation", { name: "서비스 정보" })).toBeInTheDocument();
+    expect(screen.queryByRole("contentinfo")).not.toBeInTheDocument();
     hub.unmount();
 
     const quick = render(
@@ -103,7 +103,7 @@ describe("OOM", () => {
     expect(screen.queryByText(/WARM-UP|자기소개 워밍업/)).not.toBeInTheDocument();
     expect(screen.getByText("훈련 진행 100%")).toBeInTheDocument();
     expect(screen.getAllByText("STEP 6 · 빠른 연습").length).toBeGreaterThan(0);
-    expect(screen.getByRole("navigation", { name: "서비스 정보" })).toBeInTheDocument();
+    expect(screen.queryByRole("contentinfo")).not.toBeInTheDocument();
     quick.unmount();
 
     render(

@@ -239,7 +239,7 @@ export function AppShell({
           </PageContainer>
         </main>
         {footer !== "none" ? (
-          <ServiceFooter variant={footer} />
+          <ServiceFooter variant={footer} width={width} />
         ) : null}
       </div>
     </div>

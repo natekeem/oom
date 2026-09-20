@@ -139,6 +139,6 @@ describe("learning navigation and plans", () => {
   it("exposes pricing in the shared footer", async () => {
     render(<MemoryRouter><ServiceFooter /></MemoryRouter>);
     await waitFor(() => expect(screen.getByRole("link", { name: "요금제" })).toHaveAttribute("href", "/pricing/"));
-    expect(screen.getByText(`© ${new Date().getFullYear()} 오픽온미`)).toBeInTheDocument();
+    expect(screen.getByText(`© ${new Date().getFullYear()} OOM · 오픽온미`)).toBeInTheDocument();
   });
 });

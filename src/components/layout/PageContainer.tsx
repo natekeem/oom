@@ -8,11 +8,11 @@ export type PageContainerProps = {
   width?: PageWidth;
 };
 
-const widthClasses: Record<PageWidth, string> = {
-  narrow: "max-w-4xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8",
-  default: "max-w-7xl px-4 py-6 sm:px-6 lg:px-9 lg:py-8",
-  wide: "max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8",
-  immersive: "max-w-none w-full px-3 py-4 sm:px-5 sm:py-6 lg:px-8 lg:py-6",
+export const pageFrameClasses: Record<PageWidth, string> = {
+  narrow: "max-w-4xl px-4 sm:px-6 lg:px-8",
+  default: "max-w-7xl px-4 sm:px-6 lg:px-9",
+  wide: "max-w-[1440px] px-4 sm:px-6 lg:px-8",
+  immersive: "max-w-none w-full px-3 sm:px-5 lg:px-8",
 };
 
 export function PageContainer({
@@ -24,7 +24,8 @@ export function PageContainer({
     <div
       className={cn(
         "oom-content-shell mx-auto w-full min-w-0 flex-1 flex flex-col",
-        widthClasses[width],
+        pageFrameClasses[width],
+        width === "immersive" ? "py-4 sm:py-6" : "py-6 lg:py-8",
         className
       )}
       data-page-width={width}

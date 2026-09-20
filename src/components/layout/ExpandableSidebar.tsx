@@ -97,7 +97,7 @@ function NavigationButton({
           ? depth > 0
             ? "bg-indigo-50/80 font-semibold text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-200"
             : "bg-indigo-600 font-medium text-white shadow-sm"
-          : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+          : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
       )}
       onClick={onClick}
       type="button"
@@ -202,6 +202,7 @@ export function ExpandableSidebar({
   onToggleDarkMode,
 }: ExpandableSidebarProps) {
   const mobileDialogRef = useRef<HTMLElement | null>(null);
+  const [quoteOpen, setQuoteOpen] = useState(false);
   const { selection } = useTrainingSelection();
   const resolved = selection ? resolveTrainingContext(selection.courseId, selection.levelId) : null;
 
@@ -214,6 +215,7 @@ export function ExpandableSidebar({
   });
 
   const handleToggleCollapse = () => {
+    setQuoteOpen(false);
     setIsCollapsed((prev) => {
       const next = !prev;
       try {
@@ -670,7 +672,7 @@ export function ExpandableSidebar({
           "grid h-10 w-10 mx-auto place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
           activeView === "about"
             ? "bg-indigo-600 text-white shadow-sm"
-            : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+            : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
         )}
         onClick={() => navigate("about")}
         type="button"
@@ -686,7 +688,7 @@ export function ExpandableSidebar({
           "grid h-10 w-10 mx-auto place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
           guideActive
             ? "bg-indigo-600 text-white shadow-sm"
-            : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+            : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
         )}
         onClick={() => navigate("exam-guide")}
         type="button"
@@ -702,7 +704,7 @@ export function ExpandableSidebar({
           "grid h-10 w-10 mx-auto place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
           trainingActive
             ? "bg-indigo-600 text-white shadow-sm"
-            : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+            : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
         )}
         onClick={() => navigate("training-hub")}
         type="button"
@@ -718,7 +720,7 @@ export function ExpandableSidebar({
           "grid h-10 w-10 mx-auto place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
           activeView === "magazine-list"
             ? "bg-indigo-600 text-white shadow-sm"
-            : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+            : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
         )}
         onClick={() => navigate("magazine-list")}
         type="button"
@@ -734,7 +736,7 @@ export function ExpandableSidebar({
           "grid h-10 w-10 mx-auto place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
           activeView === "ai-settings"
             ? "bg-indigo-600 text-white shadow-sm"
-            : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+            : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
         )}
         onClick={() => navigate("ai-settings")}
         type="button"
@@ -785,7 +787,10 @@ export function ExpandableSidebar({
       </div>
 
       {/* 3. Pinned Bottom Utilities */}
-      <div className="shrink-0 mt-auto space-y-2 border-t border-zinc-200/80 pt-3 dark:border-zinc-800/80">
+      <div
+        data-sidebar-utilities
+        className="shrink-0 mt-auto space-y-1 border-t border-zinc-200/80 pt-3 dark:border-zinc-800/80"
+      >
         {isCollapsed ? (
           <>
             <button
@@ -793,10 +798,10 @@ export function ExpandableSidebar({
               aria-label="마이페이지"
               title="마이페이지"
               className={cn(
-                "grid h-9 w-9 mx-auto place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+                "grid h-10 w-10 mx-auto place-items-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
                 activeView === "mypage"
                   ? "bg-indigo-600 text-white shadow-sm"
-                  : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+                  : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
               )}
               onClick={() => navigate("mypage")}
               type="button"
@@ -806,29 +811,43 @@ export function ExpandableSidebar({
             <button
               aria-label={darkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
               title={darkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
-              className="grid h-9 w-9 mx-auto place-items-center rounded-md text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              className="grid h-10 w-10 mx-auto place-items-center rounded-md text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
               onClick={onToggleDarkMode}
               type="button"
             >
               {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
             <button
-              aria-label={`오늘의 한 문장: ${sidebarQuote}`}
-              title={`오늘의 한 문장: ${sidebarQuote}`}
-              className="grid h-9 w-9 mx-auto place-items-center rounded-md border border-indigo-100 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:border-indigo-900 dark:bg-indigo-950 dark:text-indigo-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-              type="button"
-            >
-              <Sparkles className="h-4 w-4" />
-            </button>
-            <button
               aria-label="사이드바 펼치기"
               title="사이드바 펼치기"
-              className="grid h-9 w-9 mx-auto place-items-center rounded-md text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              className="grid h-10 w-10 mx-auto place-items-center rounded-md text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
               onClick={handleToggleCollapse}
               type="button"
             >
               <PanelLeftOpen className="h-4 w-4" />
             </button>
+            <div className="relative" data-sidebar-quote>
+              <button
+                aria-label={`오늘의 한 문장: ${sidebarQuote}`}
+                aria-expanded={quoteOpen}
+                aria-controls="sidebar-daily-sentence"
+                title={`오늘의 한 문장: ${sidebarQuote}`}
+                className="grid h-10 w-10 mx-auto place-items-center rounded-md text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                onClick={() => setQuoteOpen((open) => !open)}
+                onBlur={() => setQuoteOpen(false)}
+                onKeyDown={(event) => { if (event.key === "Escape") setQuoteOpen(false); }}
+                type="button"
+              >
+                <Sparkles className="h-4 w-4" />
+              </button>
+              <p
+                id="sidebar-daily-sentence"
+                hidden={!quoteOpen}
+                className="absolute bottom-0 left-full z-30 ml-3 w-56 rounded-md border border-zinc-200 bg-zinc-50 p-3 text-xs leading-5 text-zinc-700 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
+              >
+                {sidebarQuote}
+              </p>
+            </div>
           </>
         ) : (
           <>
@@ -841,32 +860,32 @@ export function ExpandableSidebar({
             />
             <button
               aria-label={darkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
-              className="flex h-8 w-full items-center gap-2 rounded-md px-3 text-left text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+              className="flex h-10 w-full items-center gap-2 rounded-md px-3 text-left text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
               onClick={onToggleDarkMode}
               type="button"
             >
               {darkMode ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
               {darkMode ? "라이트 모드" : "다크 모드"}
             </button>
-            <div className="rounded-md border border-indigo-100 bg-indigo-50 p-2.5 dark:border-indigo-900 dark:bg-indigo-950">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-300">
-                <Sparkles className="h-3.5 w-3.5 shrink-0" />
-                오늘의 한 문장
-              </div>
-              <p className="mt-1 text-xs leading-4 text-indigo-700/80 dark:text-indigo-200/80">
-                {sidebarQuote}
-              </p>
-            </div>
             <button
               aria-label="사이드바 접기"
               title="사이드바 접기"
-              className="flex h-8 w-full items-center gap-2 rounded-md px-3 text-left text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+              className="flex h-10 w-full items-center gap-2 rounded-md px-3 text-left text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
               onClick={handleToggleCollapse}
               type="button"
             >
               <PanelLeftClose className="h-3.5 w-3.5" />
               <span>사이드바 접기</span>
             </button>
+            <div data-sidebar-quote className="rounded-md bg-zinc-100/70 px-3 py-2 dark:bg-zinc-900/60">
+              <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                <Sparkles className="h-3.5 w-3.5 shrink-0" />
+                오늘의 한 문장
+              </div>
+              <p className="mt-1 text-xs leading-4 text-zinc-600 dark:text-zinc-400">
+                {sidebarQuote}
+              </p>
+            </div>
           </>
         )}
       </div>
@@ -942,7 +961,7 @@ export function ExpandableSidebar({
     <>
       <aside
         className={cn(
-          "hidden lg:flex lg:flex-col lg:sticky lg:top-0 lg:h-[100dvh] lg:shrink-0 border-r border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 transition-[width] duration-200 ease-in-out motion-reduce:transition-none",
+          "hidden lg:flex lg:flex-col lg:sticky lg:top-0 lg:z-30 lg:h-[100dvh] lg:shrink-0 border-r border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 transition-[width] duration-200 ease-in-out motion-reduce:transition-none",
           isCollapsed ? "lg:w-[68px]" : "lg:w-60"
         )}
         data-sidebar-collapsed={isCollapsed}

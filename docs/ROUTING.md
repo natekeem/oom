@@ -152,9 +152,10 @@ ServiceFooter now groups 학습, 서비스, 정책 · 정보 and uses the curren
   - `default` (`max-w-7xl`): Home, About, Candidate Guides (`/exam-guide/**`), Magazine index, Pricing, My Page, AI settings.
   - `wide` (`max-w-[1440px]`): Training Hub and STEP 1~6 (`/training/**`, `/roleplay/**`, `/practice/`, `/practice/quick/`).
   - `immersive` (`w-full max-w-none`): Full Mock Practice (`/practice/mock/`).
-- `FooterVariant`: `'public' | 'app' | 'none'`
-  - `public`: Rich 3-column footer on public content routes (Home, Guides, Magazine, Pricing, About, Legal).
-  - `app`: Compact copyright and legal navigation on internal app/training routes (My Page, AI settings, Training steps).
-  - `none`: Suppressed footer on `/practice/mock/`.
+- `FooterVariant`: `'public' | 'none'`
+  - `public`: Compact grouped footer on `/`, `/about/`, `/exam-guide/**`, `/magazine/**`, `/pricing/`, and privacy/terms/editorial/contact/image-credits pages.
+  - `none`: `/mypage/`, `/ai-settings/`, `/auth/callback/`, `/training/**`, `/roleplay/**`, `/practice/`, `/practice/quick/`, and immersive `/practice/mock/`. No conventional or micro app footer.
 
 Desktop sidebar collapse/expand state is stored in localStorage under `oom-sidebar-collapsed-v1`. Mobile drawer navigation remains modal and unaffected by desktop collapse state.
+
+Desktop bottom order: account → theme → collapse/expand → 오늘의 한 문장. Public footer contents align to the route's PageContainer width; the independent landing uses its section gutter. Both shells grow short content to the viewport with normal-flow footers.

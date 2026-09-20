@@ -11,6 +11,7 @@ import {
 import { AppShell } from "../AppShell";
 import { TrainingSelectionProvider } from "../../../training/TrainingSelectionContext";
 import { saveTrainingSelection } from "../../../training/storage";
+import { viewPathForId } from "../../../lib/routes";
 
 describe("Phase 2.9 Layout System", () => {
   beforeEach(() => {
@@ -19,6 +20,12 @@ describe("Phase 2.9 Layout System", () => {
   });
 
   describe("getRouteLayoutMeta", () => {
+    it("maps every canonical route to the public-only footer policy", () => {
+      for (const [view, path] of Object.entries(viewPathForId)) {
+        const publicRoute = path === "/" || /^\/(about|exam-guide|magazine|pricing|privacy|terms|contact|editorial-policy|image-credits)\//.test(path);
+        expect(getRouteLayoutMeta(view as keyof typeof viewPathForId, path).footer, path).toBe(publicRoute ? "public" : "none");
+      }
+    });
     it("assigns immersive width and suppresses footer for Full Mock", () => {
       const meta = getRouteLayoutMeta("practice-mock", "/practice/mock/");
       expect(meta).toEqual({ width: "immersive", footer: "none" });
@@ -51,7 +58,7 @@ describe("Phase 2.9 Layout System", () => {
       });
     });
 
-    it("assigns wide width and app footer for training and practice routes", () => {
+    it("assigns wide width and no footer for training and practice routes", () => {
       const trainingViews = [
         "training-hub",
         "training-setup",
@@ -68,18 +75,18 @@ describe("Phase 2.9 Layout System", () => {
 
       for (const view of trainingViews) {
         const meta = getRouteLayoutMeta(view, "");
-        expect(meta).toEqual({ width: "wide", footer: "app" });
+        expect(meta).toEqual({ width: "wide", footer: "none" });
       }
     });
 
-    it("assigns default width and app footer for internal utility views", () => {
+    it("assigns default width and no footer for internal utility views", () => {
       expect(getRouteLayoutMeta("mypage", "/mypage/")).toEqual({
         width: "default",
-        footer: "app",
+        footer: "none",
       });
       expect(getRouteLayoutMeta("ai-settings", "/ai-settings/")).toEqual({
         width: "default",
-        footer: "app",
+        footer: "none",
       });
     });
 
@@ -145,21 +152,14 @@ describe("Phase 2.9 Layout System", () => {
       expect(screen.getByText("OOM · 오픽온미")).toBeInTheDocument();
     });
 
-    it("renders compact single-line layout for app variant with legal nav", () => {
-      render(
-        <MemoryRouter>
-          <ServiceFooter variant="app" />
-        </MemoryRouter>
-      );
+    it("keeps all public links accessible and aligned to the page width", () => {
+      render(<MemoryRouter><ServiceFooter width="narrow" /></MemoryRouter>);
       const footer = screen.getByRole("contentinfo");
-      expect(footer).toHaveAttribute("data-footer-variant", "app");
-      expect(footer).toHaveClass("mt-auto");
-      expect(screen.queryByText("학습")).not.toBeInTheDocument();
-      expect(screen.getByRole("navigation", { name: "서비스 정보" })).toBeInTheDocument();
-      expect(screen.getByRole("link", { name: "개인정보처리방침" })).toBeInTheDocument();
-      expect(screen.getByRole("link", { name: "이용약관" })).toBeInTheDocument();
-      expect(screen.getByRole("link", { name: "문의" })).toBeInTheDocument();
-      expect(screen.getByRole("link", { name: "소개" })).toBeInTheDocument();
+      expect(footer.firstElementChild).toHaveClass("max-w-4xl", "px-4", "lg:px-8");
+      expect(footer).not.toHaveClass("fixed", "sticky");
+      for (const [name, href] of [["개인정보처리방침", "/privacy/"], ["이용약관", "/terms/"], ["문의", "/contact/"], ["이미지 출처", "/image-credits/"], ["요금제", "/pricing/"]]) {
+        expect(within(footer).getByRole("link", { name })).toHaveAttribute("href", href);
+      }
     });
 
     it("renders nothing when variant is none", () => {
@@ -173,6 +173,29 @@ describe("Phase 2.9 Layout System", () => {
   });
 
   describe("ExpandableSidebar desktop collapse / expand", () => {
+    it("orders account, theme, collapse, then sentence in both desktop modes", () => {
+      const { container } = render(<MemoryRouter><ExpandableSidebar activeView="about" darkMode={false} onNavigate={() => {}} onToggleDarkMode={() => {}} /></MemoryRouter>);
+      const utilities = container.querySelector("[data-sidebar-utilities]")!;
+      const checkOrder = (collapseLabel: string) => {
+        const children = Array.from(utilities.children);
+        expect(children).toHaveLength(4);
+        if (collapseLabel === "사이드바 접기") expect(children[0]).toHaveTextContent(/로그인|마이페이지/);
+        expect(children[1]).toHaveAttribute("aria-label", "다크 모드로 전환");
+        expect(children[2]).toHaveAttribute("aria-label", collapseLabel);
+        expect(children[3]).toHaveAttribute("data-sidebar-quote");
+      };
+      checkOrder("사이드바 접기");
+      fireEvent.click(screen.getByRole("button", { name: "사이드바 접기" }));
+      checkOrder("사이드바 펼치기");
+      expect(utilities.children[0]).toHaveAttribute("aria-label", "마이페이지");
+      const quote = screen.getByRole("button", { name: /^오늘의 한 문장:/ });
+      expect(quote).toHaveAttribute("title", quote.getAttribute("aria-label"));
+      fireEvent.click(quote);
+      expect(quote).toHaveAttribute("aria-expanded", "true");
+      expect(document.getElementById("sidebar-daily-sentence")).toBeVisible();
+      fireEvent.keyDown(quote, { key: "Escape" });
+      expect(quote).toHaveAttribute("aria-expanded", "false");
+    });
     it("defaults to expanded state and allows toggling to collapsed state", () => {
       render(
         <MemoryRouter>
@@ -289,9 +312,11 @@ describe("Phase 2.9 Layout System", () => {
       const footer = container.querySelector("footer");
       expect(footer).toHaveClass("mt-auto");
       expect(footer).toHaveAttribute("data-footer-variant", "public");
+      expect(footer).not.toHaveClass("fixed", "sticky");
+      expect(main?.nextElementSibling).toBe(footer);
     });
 
-    it("renders compact app footer on internal routes", () => {
+    it("suppresses conventional footer on internal routes", () => {
       saveTrainingSelection({ courseId: "course-1", levelId: "advanced" });
       const { container } = render(
         <MemoryRouter initialEntries={["/mypage/"]}>
@@ -313,7 +338,7 @@ describe("Phase 2.9 Layout System", () => {
       );
 
       const footer = container.querySelector("footer");
-      expect(footer).toHaveAttribute("data-footer-variant", "app");
+      expect(footer).toBeNull();
     });
 
     it("suppresses footer completely on practice-mock route", () => {

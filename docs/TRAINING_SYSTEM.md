@@ -155,3 +155,8 @@ AI feedback is coaching, not official scoring. After Full Mock completion, OOM m
 - STEP 6 recorder/STT safety and feedback boundaries.
 
 When product shape changes intentionally, update source, tests, and the relevant canonical documentation together.
+
+
+## Managed feedback in Quick Practice
+
+Quick Practice completion review offers OOM managed AI for authenticated users with a real transcript or manually entered answer. Quota and runtime availability are authoritative server data; the default migration is OFF. KEEP/FIX/RETRY and optional 1–5 text-answer signals are structured JSON, never official OPIc scoring. Custom STT/LLM stays available as a separate advanced path; Full Mock behavior is unchanged. See [MANAGED_AI.md](MANAGED_AI.md).

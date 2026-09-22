@@ -44,6 +44,7 @@ const AdminDashboardView = lazy(() => import("./features/admin/AdminDashboardVie
 const AdminUsersView = lazy(() => import("./features/admin/AdminUsersView").then((m) => ({ default: m.AdminUsersView })));
 const AdminLearningView = lazy(() => import("./features/admin/AdminLearningView").then((m) => ({ default: m.AdminLearningView })));
 const AdminAuditView = lazy(() => import("./features/admin/AdminAuditView").then((m) => ({ default: m.AdminAuditView })));
+const AdminAiView = lazy(() => import("./features/admin/AdminAiView").then((m) => ({ default: m.AdminAiView })));
 const AdminGuard = lazy(() => import("./features/admin/AdminGuard").then((m) => ({ default: m.AdminGuard })));
 import { AdminAccessProvider } from "./features/admin/useAdminAccess";
 
@@ -149,7 +150,7 @@ export default function App() {
   const isLanding = location.pathname === "/";
   const isMagazineDetail = /^\/magazine\/[^/]+\/?$/.test(location.pathname);
   const adExcluded =
-    ["pricing", "mypage", "auth-callback", "practice", "practice-quick", "practice-mock", "ai-settings", "about", "privacy", "contact", "terms", "editorial-policy", "image-credits", "admin-dashboard", "admin-users", "admin-learning", "admin-audit"].includes(
+    ["pricing", "mypage", "auth-callback", "practice", "practice-quick", "practice-mock", "ai-settings", "about", "privacy", "contact", "terms", "editorial-policy", "image-credits", "admin-dashboard", "admin-users", "admin-learning", "admin-audit", "admin-ai"].includes(
       activeView
     ) || (activeView === "magazine-list" && !isMagazineDetail);
 
@@ -463,6 +464,8 @@ export default function App() {
       <Route path="/admin/learning/" element={<AdminGuard><AdminLearningView /></AdminGuard>} />
       <Route path="/admin/audit" element={<AdminGuard><AdminAuditView /></AdminGuard>} />
       <Route path="/admin/audit/" element={<AdminGuard><AdminAuditView /></AdminGuard>} />
+      <Route path="/admin/ai" element={<AdminGuard><AdminAiView /></AdminGuard>} />
+      <Route path="/admin/ai/" element={<AdminGuard><AdminAiView /></AdminGuard>} />
     </Routes>
   );
 

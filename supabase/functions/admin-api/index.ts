@@ -5,6 +5,7 @@ import { handleLearning } from "./handlers/learning.ts";
 import { handleMe } from "./handlers/me.ts";
 import { handleOverview } from "./handlers/overview.ts";
 import { handleGetUserDetail, handleListUsers } from "./handlers/users.ts";
+import { handleAdminAi } from "./handlers/ai.ts";
 
 export function normalizeAdminPath(pathname: string): string {
   let path = pathname
@@ -27,7 +28,7 @@ export async function handleAdminApiRequest(req: Request): Promise<Response> {
   if (preflight) return preflight;
 
   // 2. Phase 3.0 supports GET requests only (except OPTIONS handled above)
-  if (req.method !== "GET") {
+  if (req.method !== "GET" && !(req.method === "PATCH" && normalizeAdminPath(new URL(req.url).pathname) === "/ai/settings")) {
     return withTiming(
       errorResponse(req, 405, "METHOD_NOT_ALLOWED", "지원하지 않는 HTTP 메서드입니다."),
       startTime
@@ -47,7 +48,12 @@ export async function handleAdminApiRequest(req: Request): Promise<Response> {
   try {
     let res: Response;
     // 4. Route dispatcher
-    if (path === "/me") {
+    if (path.startsWith("/ai/")) {
+      const origin = req.headers.get("origin");
+      if (origin && !["https://opic-on-me.com", "http://localhost:5173", "http://localhost:4173"].includes(origin)) {
+        res = errorResponse(req, 403, "FORBIDDEN", "허용되지 않은 요청입니다.");
+      } else res = await handleAdminAi(req, adminClient, adminUser, path);
+    } else if (path === "/me") {
       res = handleMe(req, adminUser);
     } else if (path === "/overview") {
       res = await handleOverview(req, adminClient);
@@ -82,4 +88,3 @@ export async function handleAdminApiRequest(req: Request): Promise<Response> {
 if (typeof Deno !== "undefined" && typeof Deno.serve === "function") {
   Deno.serve(handleAdminApiRequest);
 }
-

@@ -162,3 +162,13 @@ Run `npm run tts:generate` only when the audit shows missing/changed assets. It 
 - Display plan transparency: User plans must remain clearly labeled as "현재 표시 플랜: FREE"; do not simulate active paid entitlements.
 - Privacy & safety: Do not log or display user credentials, authentication tokens, audio recordings, or answer transcripts in admin interfaces or audit logs.
 - Admin routes (`/admin/**`): Must be generated with `noindex,follow`, excluded from advertisements (`adExcluded: true`), excluded from `sitemap.xml`, and have `footer: "none"`.
+
+
+## Phase 3.1 Managed AI Rules
+
+- `src/features/managed-ai/` owns Quick Practice managed feedback; `supabase/functions/ai-api/` owns auth, prompts and Gemini. See `docs/MANAGED_AI.md`.
+- Managed AI requires real answer text and login. No managed STT/audio uploads; raw answers are not stored. Existing custom STT/LLM stays separate.
+- FREE is server-resolved regardless of profiles.plan. Preserve atomic user locking, stable request UUIDs, fair failure refunds, 2-minute reservation recovery and server burst/daily limits.
+- Runtime defaults OFF; keys belong only in Function secrets. PRO remains future configuration, never paid availability.
+- `/admin/ai/` reuses AdminLayout and lazy routing; noindex, ad excluded, no sitemap, no footer. Settings mutations and audit rows commit together; support is read-only.
+- Run `supabase/tests/managed_ai.sql` and `scripts/test-ai-concurrency.mjs` against a disposable DB for quota changes, plus mocked provider tests and browser UI QA. Do not use paid Gemini calls in CI.

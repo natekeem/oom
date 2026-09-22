@@ -76,7 +76,8 @@ export function getRouteLayoutMeta(viewId: ViewId, pathname = ""): RouteLayoutMe
   if (
     viewId === "admin-users" ||
     viewId === "admin-learning" ||
-    viewId === "admin-audit"
+    viewId === "admin-audit" ||
+    viewId === "admin-ai"
   ) {
     return { width: "wide", footer: "none" };
   }

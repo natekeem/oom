@@ -4,6 +4,7 @@ import { Card } from "../ui/Card";
 import { AiSettingsPanel } from "./AiSettingsPanel";
 import { topLevelNavigation } from "../layout/topLevelNavigation";
 import { PageIntro } from "../ui/PageIntro";
+import { ManagedAiSettings } from "../../features/managed-ai/ManagedFeedback";
 
 type AiSettingsViewProps = {
   settings: LlmSettings;
@@ -23,11 +24,14 @@ export function AiSettingsView({
   return (
     <div className="space-y-6">
       <PageIntro
-        description="브라우저에서 사내 API를 직접 호출합니다. API가 CORS 요청을 허용해야 하며, 설정되지 않아도 내장 질문과 훈련 기능은 계속 사용할 수 있습니다."
+        description="답변을 돌아보고, 다음 연습에서 바꿀 한 가지를 찾아보세요. AI 이용 여부와 관계없이 모든 기본 훈련을 계속할 수 있습니다."
         icon={topLevelNavigation.aiSettings.icon}
         tag="AI 피드백 / STT 설정"
-        title="내부 LLM 및 STT 서비스를 훈련 흐름에 연결합니다."
+        title="내 답변에서 시작하는 AI 코칭"
       />
+      <ManagedAiSettings />
+      <details className="space-y-5">
+      <summary className="cursor-pointer text-sm font-semibold text-zinc-900 dark:text-white">고급 사용자 설정 · 직접 연결한 STT / LLM</summary>
       <AiSettingsPanel
         onChange={onChange}
         onSave={onSave}
@@ -49,6 +53,7 @@ export function AiSettingsView({
           title="음성 자동 변환 (STT)"
         />
       </section>
+      </details>
       <Card className="border-amber-200 bg-amber-50 p-5 dark:border-amber-900 dark:bg-amber-950">
         <div className="flex gap-3">
           <Info className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />

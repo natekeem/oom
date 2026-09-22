@@ -18,3 +18,4 @@ public/generated-tts/audio/**/.*.wav
 public/generated-tts/audio/**/.*.webm
 public/generated-tts/audio/**/.*.peaks.json
 supabase/.temp/
+.tmp/

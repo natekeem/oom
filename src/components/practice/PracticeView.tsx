@@ -18,6 +18,7 @@ import type { ViewId } from "../layout/Sidebar";
 import type { ResolvedTrainingContext } from "../../training/types";
 import { OomWavePlayer, type OomWavePlayerHandle } from "../audio/OomWavePlayer";
 import { PracticeModeSelector } from "./PracticeModeSelector";
+import { ManagedFeedback } from "../../features/managed-ai/ManagedFeedback";
 
 type PracticeViewProps = {
   settings: LlmSettings;
@@ -658,6 +659,7 @@ function PracticeViewContent({
       {showReviewPanel ? (
         <div className="pt-2">
           <PracticeReviewPanel
+            managedFeedback={<ManagedFeedback key={attemptKey} answer={answer} question={activePrompt || ""} context={`${resolved.course.title} / ${levelLabel}`} onRetry={retryAttempt} disabled={isTranscribing} />}
             answer={answer}
             audioUrl={audioUrl}
             autoTranscribe={sttSettings?.autoTranscribe ?? true}

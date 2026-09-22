@@ -71,9 +71,9 @@ These checks require your configured project; unit tests mock the SDK and do not
 
 ## Future boundary
 
-The profile plan is a display field, not billing truth. Future server-owned subscriptions/payment state will authorize entitlements. Practice sessions/attempts, learning preferences and explicit study activities are implemented. Managed AI feedback, Kakao login, FREE/PRO entitlement, payments and ad-free PRO behavior are not implemented. No audio/transcript uploads, Edge Functions or AI keys are added.
+The profile plan is a display field, not billing truth. Future server-owned subscriptions/payment state will authorize entitlements. Practice sessions/attempts, learning preferences and explicit study activities are implemented. Managed AI feedback is implemented behind an OFF-by-default runtime switch; see [Phase 3.1 rollout](MANAGED_AI.md). Kakao login, paid entitlements, payments and ad-free PRO behavior are not implemented. Raw audio is not uploaded by managed AI; answer text is processed transiently for feedback.
 
-Current advanced-user STT/LLM remains browser → user-configured endpoint. Future managed mode will be browser → Supabase Edge Function → authentication/usage/plan validation → AI provider → persistence.
+Current advanced-user STT/LLM remains browser → user-configured endpoint. Managed mode is browser → ai-api → authentication/atomic quota → Gemini → structured feedback/usage persistence.
 
 References: [Google OAuth](https://supabase.com/docs/guides/auth/social-login/auth-google), [PKCE](https://supabase.com/docs/guides/auth/sessions/pkce-flow), [user profiles](https://supabase.com/docs/guides/auth/managing-user-data), [column privileges](https://supabase.com/docs/guides/database/postgres/column-level-security), [redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls).
 
@@ -151,6 +151,6 @@ The frontend browser never connects to the database using privileged service key
    - Access `/admin/` to view the Dashboard (Asia/Seoul day boundaries, real user and learning event counts).
    - Access `/admin/users/` to search users by name/email, view profile details, and inspect operational metrics.
    - Access `/admin/learning/` to filter practice sessions and study completions.
-   - Access `/admin/audit/` to view administrator action logs (viewed users, filtered queries).
+   - Access `/admin/audit/` to view administrator action logs (settings mutations only; ordinary views and filtered reads are not audited).
 3. **Role Enforcement:**
    - A user with `support` role accessing `/admin/audit/` receives a 403 response, and the UI displays an explanatory restriction notice.

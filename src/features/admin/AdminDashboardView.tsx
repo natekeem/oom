@@ -270,7 +270,7 @@ export function AdminDashboardView() {
             {/* 3. Quiet Roadmap Note */}
             <div className="rounded-md border border-dashed border-zinc-300 p-3.5 text-center text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
               <span className="font-semibold text-zinc-700 dark:text-zinc-300">향후 확장 예정:</span>{" "}
-              AI 호출량 및 비용 모니터링, 구독 및 결제 운영, 커뮤니티 관리 기능은 향후 단계에서 추가될 예정입니다.
+              구독 및 결제 운영, 커뮤니티 관리 기능은 향후 단계에서 추가될 예정입니다. AI 사용량과 설정은 AI 운영 메뉴에서 확인할 수 있습니다.
             </div>
           </>
         ) : null}

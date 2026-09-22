@@ -100,7 +100,7 @@ Inspect the exact staged file list before committing. For a content release, ens
 
 ## Future Intranet / Backend
 
-An intranet deployment can serve the same `dist/` from an internal static host. Supabase already provides optional external authentication and profiles. A future backend may add server-side STT/AI, logging, or dynamic TTS. Define those APIs and secret boundaries before implementation.
+An intranet deployment can serve the same `dist/` from an internal static host. Supabase already provides optional external authentication and profiles. The ai-api Edge Function now owns managed text feedback and usage metering; follow [MANAGED_AI.md](MANAGED_AI.md) for OFF-by-default rollout. A future backend may add managed STT or dynamic TTS. Define those APIs and secret boundaries before implementation.
 
 Fixed content does not need a backend migration. Static-first TTS can remain in the same build or move to an internal object store/CDN while preserving the manifest contract. Dynamic AI text can separately use browser fallback or a future GPU/server TTS service.
 

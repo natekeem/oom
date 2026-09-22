@@ -28,6 +28,7 @@ OOM은 OPIc 영어 말하기를 Course × Level 구조로 연습하는 브라우
 - STEP 6 빠른 연습과 실전 모의고사, 질문 청취 0/2 제한, MediaRecorder 녹음, 다시 듣기
 - 실전 모의고사의 Background Survey → Self Assessment → 시험 준비 → 자기소개 워밍업 → 1st Session → 난이도 재조정 → 2nd Session → 결과 요약 / 답변 복기 / 훈련 리포트
 - optional STT 전사, editable transcript, 사용자 설정 LLM 기반 KEEP / FIX / RETRY 피드백
+- Quick Practice의 로그인 기반 관리형 AI 피드백과 Admin AI 운영 (서버 기본 OFF; [배포 절차](docs/MANAGED_AI.md))
 - Heart / Bella / Sarah / Sky 음성과 WaveSurfer waveform
 - 고정 콘텐츠는 WebM/Opus 정적 음원을 먼저 쓰는 static-first TTS
 

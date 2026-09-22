@@ -5,6 +5,7 @@ import {
   RefreshCw,
   ShieldCheck,
   Users,
+  Bot,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -20,6 +21,7 @@ const navTabs = [
   { path: "/admin/", label: "대시보드", icon: LayoutDashboard },
   { path: "/admin/users/", label: "사용자", icon: Users },
   { path: "/admin/learning/", label: "학습 운영", icon: BookOpen },
+  { path: "/admin/ai/", label: "AI 운영", icon: Bot },
   { path: "/admin/audit/", label: "감사 로그", icon: FileText },
 ];
 
@@ -88,7 +90,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       {/* 2. Sub-Navigation Tabs */}
       <nav
         aria-label="관리자 메뉴"
-        className="flex space-x-1 border-b border-zinc-200/80 pb-px dark:border-zinc-800"
+        className="flex flex-wrap gap-1 border-b border-zinc-200/80 pb-px dark:border-zinc-800"
       >
         {navTabs.map((tab) => {
           const isActive =

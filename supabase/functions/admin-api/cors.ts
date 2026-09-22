@@ -11,8 +11,8 @@ export function getCorsHeaders(req: Request): HeadersInit {
 
   return {
     "Access-Control-Allow-Origin": allowOrigin,
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "GET, POST, PATCH, OPTIONS",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-region",
     "Access-Control-Expose-Headers": "server-timing, x-response-time, x-sb-edge-region",
     "Access-Control-Max-Age": "86400",
     "Vary": "Origin",

@@ -27,7 +27,7 @@ function getAdminApiBaseUrl(): string {
   return `${supabaseUrl.replace(/\/+$/, "")}/functions/v1/admin-api`;
 }
 
-async function requestAdminApi<T>(path: string, searchParams?: Record<string, string | number | undefined | null>): Promise<T> {
+export async function requestAdminApi<T>(path: string, searchParams?: Record<string, string | number | undefined | null>, mutation?: unknown): Promise<T> {
   if (!supabase) {
     throw new AdminApiError(500, "UNCONFIGURED", "Supabase가 설정되지 않았습니다.");
   }
@@ -52,10 +52,12 @@ async function requestAdminApi<T>(path: string, searchParams?: Record<string, st
   }
 
   const response = await fetch(url.toString(), {
-    method: "GET",
+    method: mutation ? "PATCH" : "GET",
+    ...(mutation ? { body: JSON.stringify(mutation) } : {}),
     headers: {
       Authorization: `Bearer ${sessionData.session.access_token}`,
       "Content-Type": "application/json",
+      "x-region": "ap-northeast-2",
     },
   });
 

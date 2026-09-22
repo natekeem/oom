@@ -59,6 +59,7 @@ describe("adminApi client module", () => {
 
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,
+      headers: new Headers(),
       status: 200,
       json: () =>
         Promise.resolve({
@@ -97,6 +98,7 @@ describe("adminApi client module", () => {
 
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,
+      headers: new Headers(),
       status: 200,
       json: () =>
         Promise.resolve({
@@ -174,6 +176,7 @@ describe("adminApi client module", () => {
       if (url.includes("/overview")) {
         return Promise.resolve({
           ok: true,
+      headers: new Headers(),
           status: 200,
           json: () =>
             Promise.resolve({
@@ -186,6 +189,7 @@ describe("adminApi client module", () => {
       if (url.includes("/users/user-abc")) {
         return Promise.resolve({
           ok: true,
+      headers: new Headers(),
           status: 200,
           json: () =>
             Promise.resolve({
@@ -197,6 +201,7 @@ describe("adminApi client module", () => {
       if (url.includes("/users")) {
         return Promise.resolve({
           ok: true,
+      headers: new Headers(),
           status: 200,
           json: () =>
             Promise.resolve({
@@ -211,6 +216,7 @@ describe("adminApi client module", () => {
       if (url.includes("/learning")) {
         return Promise.resolve({
           ok: true,
+      headers: new Headers(),
           status: 200,
           json: () =>
             Promise.resolve({
@@ -225,6 +231,7 @@ describe("adminApi client module", () => {
       if (url.includes("/audit")) {
         return Promise.resolve({
           ok: true,
+      headers: new Headers(),
           status: 200,
           json: () =>
             Promise.resolve({

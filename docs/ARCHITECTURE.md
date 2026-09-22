@@ -100,7 +100,7 @@ The frontend remains browser code + static hosting, with optional external Supab
 - recorder audio remains local unless the user explicitly calls a configured endpoint;
 - LLM/STT credentials remain browser-local settings.
 
-Supabase currently owns authentication, profiles, practice history, learning preferences and explicit study activity. A future backend may own STT, AI feedback, dynamic-text TTS, observability, or GPU inference. That is a boundary change requiring explicit design and secret handling. It does **not** require migrating enumerable fixed-content TTS away from static-first delivery; static assets can continue to be served by an intranet static host or CDN.
+Supabase currently owns authentication, profiles, practice history, learning preferences and explicit study activity. Managed text feedback is now owned by the ai-api Supabase Edge Function with server quotas, Gemini and usage persistence; runtime defaults OFF. A future backend may own STT, dynamic-text TTS or GPU inference. That is a boundary change requiring explicit design and secret handling. It does **not** require migrating enumerable fixed-content TTS away from static-first delivery; static assets can continue to be served by an intranet static host or CDN.
 
 ## Documentation and Generated Data
 
@@ -121,7 +121,7 @@ OOM → Supabase Auth → Google → Supabase → /auth/callback/ → session �
 
 profiles.plan is display-only, constrained to free/pro; clients can update only display_name/avatar_url under own-row RLS. Database triggers create free profiles and maintain updated_at. Future subscriptions/payment state must become server-authoritative; no client plan checks gate current functionality.
 
-Current advanced-user mode: browser → user-configured STT/LLM endpoint. Future managed mode: browser → Supabase Edge Function → auth/usage/plan checks → Gemini/OpenAI → persistence. No managed AI, audio storage, billing, subscription entitlement or extra providers are implemented. See [setup](SUPABASE_SETUP.md).
+Current advanced-user mode: browser → user-configured STT/LLM endpoint. Managed mode: browser → ai-api → verified auth → FREE entitlement → atomic quota reservation → Gemini → validated feedback + usage persistence. No managed STT, audio storage, billing or paid subscription entitlement is implemented. See [setup](SUPABASE_SETUP.md).
 
 ## Phase 2.8 activity boundary
 
@@ -131,7 +131,7 @@ STEP 2 exact recommendation grading records survey_completed; STEP 4 storyline c
 
 My Page separates recent study activities from practice sessions. User-keyed sections and request cleanup prevent account-switch flashes and stale responses. Activity failures do not hide profile/preferences or block training. learning_preferences remains the settings model; learning_sessions / learning_attempts remain the practice model.
 
-ServiceFooter owns shared low-weight navigation, with a landing color variant and Full Mock exclusion. PricingPage explains current FREE and planned PRO without activating payments, managed AI, subscriptions or ad-free behavior.
+ServiceFooter owns shared low-weight navigation, with a landing color variant and Full Mock exclusion. PricingPage explains current FREE and planned PRO without activating payments, subscriptions or ad-free behavior. Managed AI availability is controlled independently by the server kill switch.
 
 ## Phase 2.9 Layout System & Shell Architecture
 
@@ -159,3 +159,8 @@ Phase 3.0 establishes a secure, server-enforced administrative gateway and conso
 - **Credential & Secret Boundary:** The `SUPABASE_SERVICE_ROLE_KEY` is strictly confined to the Supabase Edge Function environment. The frontend browser bundle and static hosting never receive the service role key.
 - **Client UX & State Management:** `AdminAccessProvider` and `useAdminAccess` verify administrative authorization on mount and auth state change, without UI flickering. The Admin Console navigation button in the sidebar bottom rail is rendered only when authorized. Direct navigation to `/admin/**` routes is protected by `AdminGuard`, which displays clear unauthenticated/unauthorized states while the server independently blocks unprivileged queries.
 - **Data Integrity & Privacy:** Operational metrics in the dashboard utilize exact Asia/Seoul (`+09:00`) calendar-day boundaries and trailing rolling windows. Sensitive user credentials, auth tokens, passwords, audio blobs, and transcript texts are strictly excluded from audit logs and administrative views. Display plans remain labeled as "현재 표시 플랜: FREE" with zero phantom AI or subscription billing logic.
+
+
+## Phase 3.1 Managed AI
+
+`src/features/managed-ai/` owns the authenticated Quick Practice feedback UI. Server implementation, database privileges, atomic reservation/finalization, provider privacy and owner rollout are specified in [MANAGED_AI.md](MANAGED_AI.md). `profiles.plan` remains display-only; effective entitlement is FREE. `/admin/ai/` is lazy, noindex, ad-excluded and footer-free. User answer text is processed transiently; only validated feedback and usage metadata are persisted.

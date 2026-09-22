@@ -178,3 +178,8 @@ Desktop bottom order: account → theme → collapse/expand → 오늘의 한 �
 - The sidebar renders an Admin Console link (`ShieldCheck` icon) in the bottom utility area only when the authenticated user has an authorized role in `admin_users`.
 - Route-level `AdminGuard` provides UX feedback (loading spinner, sign-in CTA, 403 Forbidden card, error retry); true authorization is enforced server-side by the `admin-api` Edge Function.
 - All admin routes are generated as static HTML with `noindex,follow`, excluded from advertisements, and excluded from `sitemap.xml`.
+
+
+## Phase 3.1 AI operations route
+
+`/admin/ai/` maps to `admin-ai` / lazy `AdminAiView`, guarded by `AdminGuard` and server admin authorization. It uses wide PageContainer, footer none, noindex,follow and ad exclusion, and is absent from sitemap. This is an AdminLayout tab, not an additional training STEP or top-level learner navigation item.

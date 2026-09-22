@@ -42,7 +42,8 @@ export type ViewId =
   | "admin-dashboard"
   | "admin-users"
   | "admin-learning"
-  | "admin-audit";
+  | "admin-audit"
+  | "admin-ai";
 
 export const viewTitles: Record<ViewId, string> = {
   pricing: "요금제",
@@ -87,6 +88,7 @@ export const viewTitles: Record<ViewId, string> = {
   "admin-users": "관리자 콘솔 · 사용자 관리",
   "admin-learning": "관리자 콘솔 · 학습 운영",
   "admin-audit": "관리자 콘솔 · 감사 로그",
+  "admin-ai": "관리자 콘솔 · AI 운영",
 };
 
 export function getViewTitle(viewId: ViewId, resolved?: ResolvedTrainingContext | null): string {

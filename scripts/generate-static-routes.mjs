@@ -21,6 +21,7 @@ const baseRoutes = [
   { path: "/admin/users/", title: "관리자 콘솔 · 사용자 관리 | 오픽온미", description: "OOM 관리자 콘솔 사용자 관리입니다.", heading: "사용자 관리", content: ["가입 회원 현황과 계정별 학습 활동을 확인합니다. 관리자 인증 후 이용할 수 있습니다."], noindex: true, adExcluded: true },
   { path: "/admin/learning/", title: "관리자 콘솔 · 학습 운영 | 오픽온미", description: "OOM 관리자 콘솔 학습 운영 현황입니다.", heading: "학습 운영", content: ["실전 훈련 세션 및 학습 완료 이벤트를 모니터링합니다. 관리자 인증 후 이용할 수 있습니다."], noindex: true, adExcluded: true },
   { path: "/admin/audit/", title: "관리자 콘솔 · 감사 로그 | 오픽온미", description: "OOM 관리자 콘솔 감사 로그입니다.", heading: "감사 로그", content: ["관리자 작업 감사 로그를 안전하게 보관하고 열람합니다. 관리자 인증 후 이용할 수 있습니다."], noindex: true, adExcluded: true },
+  { path: "/admin/ai/", title: "관리자 콘솔 · AI 운영 | 오픽온미", description: "OOM 관리자 AI 운영입니다.", heading: "AI 운영", content: ["관리자 인증 후 AI 사용량과 운영 설정을 확인합니다."], noindex: true, adExcluded: true },
   {
     path: "/",
     title: "오픽온미 | 외울 건 줄이고 실전은 더 많이",

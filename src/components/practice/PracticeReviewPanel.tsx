@@ -12,6 +12,7 @@ import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
 import { OomWavePlayer } from "../audio/OomWavePlayer";
 import type { SttUiStatus } from "./sttUiStatus";
+import type { ReactNode } from "react";
 
 export type PracticeReviewPanelProps = {
   layout?: "standard" | "mock";
@@ -30,6 +31,7 @@ export type PracticeReviewPanelProps = {
   sttError?: string | null;
   sttStatus: SttUiStatus;
   hasRecording: boolean;
+  managedFeedback?: ReactNode;
 };
 
 function getCoachingSummary(feedback: string) {
@@ -69,6 +71,7 @@ export function PracticeReviewPanel({
   sttError,
   sttStatus,
   hasRecording,
+  managedFeedback,
 }: PracticeReviewPanelProps) {
   const sttConfigured = sttStatus !== "unconfigured";
   const wordCount = answer.trim().split(/\s+/).filter(Boolean).length;
@@ -91,7 +94,7 @@ export function PracticeReviewPanel({
         </h2>
       </div>
 
-      <div className={`grid gap-4 ${mockLayout ? "lg:grid-cols-2 lg:items-stretch" : "xl:grid-cols-[0.85fr_1.25fr_1.1fr] xl:items-start"}`}>
+      <div className={`grid gap-4 ${mockLayout ? "lg:grid-cols-2 lg:items-stretch" : managedFeedback ? "lg:grid-cols-2 lg:items-start" : "xl:grid-cols-[0.85fr_1.25fr_1.1fr] xl:items-start"}`}>
         {/* ① 내 녹음 */}
         <Card className={mockLayout ? "h-full p-4" : "p-5"}>
           <div className="flex items-center justify-between gap-2">
@@ -252,7 +255,7 @@ export function PracticeReviewPanel({
         </Card>
 
         {/* ③ AI 맞춤 피드백 */}
-        <Card className={`flex flex-col justify-between ${mockLayout ? "lg:col-span-2 p-4" : "p-5"}`}>
+        <Card className={`flex flex-col justify-between ${mockLayout ? "lg:col-span-2 p-4" : managedFeedback ? "lg:col-span-2 p-5" : "p-5"}`}>
           <div className="space-y-3">
             <div className="flex items-center gap-2 font-extrabold text-zinc-900 dark:text-white">
               <Bot className="h-4 w-4 text-indigo-500" />
@@ -263,8 +266,11 @@ export function PracticeReviewPanel({
               Transcript를 확인한 다음 선택한 목표 구간에 맞춰 피드백을 받아보세요.
             </p>
 
+            {managedFeedback}
+            {managedFeedback ? <p className="border-t border-zinc-200 pt-3 text-xs font-semibold dark:border-zinc-800">고급 사용자 설정 · 직접 연결한 LLM</p> : null}
             <Button
               className="w-full"
+              variant={managedFeedback ? "secondary" : "primary"}
               disabled={!answer.trim() || isFeedbackLoading || sttStatus === "transcribing"}
               onClick={onFeedback}
             >
@@ -274,7 +280,7 @@ export function PracticeReviewPanel({
                   피드백 분석 중...
                 </>
               ) : (
-                "AI 피드백 받기"
+                managedFeedback ? "사용자 설정 LLM 피드백" : "AI 피드백 받기"
               )}
             </Button>
 
@@ -296,7 +302,7 @@ export function PracticeReviewPanel({
             ) : null}
           </div>
 
-          {allowRetry ? (
+          {allowRetry && !managedFeedback ? (
             <div className="mt-4 border-t border-zinc-100 pt-3 dark:border-zinc-800">
               <Button
                 className="w-full"

@@ -1,4 +1,6 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render as renderWithoutRouter, screen, waitFor } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
+import type { ReactElement } from "react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { PracticeView } from "./components/practice/PracticeView";
@@ -7,6 +9,7 @@ import { TrainingSelectionProvider } from "./training/TrainingSelectionContext";
 import { saveTrainingSelection } from "./training/storage";
 import type { LlmSettings, SttSettings } from "./types";
 import { resolveTrainingContext } from "./training/courseRegistry";
+const render = (ui: ReactElement) => renderWithoutRouter(<MemoryRouter>{ui}</MemoryRouter>);
 
 const practiceApiMocks = vi.hoisted(() => ({
   callInternalLlm: vi.fn(),
@@ -159,7 +162,7 @@ describe("PracticeView & ExamScreenShell", () => {
     if (timerOnly) await user.click(timerOnly);
     await user.click(screen.getByRole("button", { name: /답변 종료/ }));
     await user.type(await screen.findByRole("textbox", { name: /Transcript/ }), "Last Saturday I went to the beach with my family.");
-    await user.click(screen.getByRole("button", { name: "AI 피드백 받기" }));
+    await user.click(screen.getByRole("button", { name: "사용자 설정 LLM 피드백" }));
 
     expect(screen.getAllByText("KEEP").length).toBeGreaterThan(0);
     expect(screen.getAllByText("FIX").length).toBeGreaterThan(0);

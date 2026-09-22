@@ -70,16 +70,14 @@ export function getRouteLayoutMeta(viewId: ViewId, pathname = ""): RouteLayoutMe
   }
 
   // 7. Admin Console utility pages
-  if (viewId === "admin-dashboard") {
-    return { width: "default", footer: "none" };
-  }
   if (
+    viewId === "admin-dashboard" ||
     viewId === "admin-users" ||
     viewId === "admin-learning" ||
     viewId === "admin-audit" ||
     viewId === "admin-ai"
   ) {
-    return { width: "wide", footer: "none" };
+    return { width: "default", footer: "none" };
   }
 
   // 8. Public content pages (Guides, Magazine Index, Pricing, About, Home)

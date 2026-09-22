@@ -90,6 +90,23 @@ describe("Phase 2.9 Layout System", () => {
       });
     });
 
+    it("assigns default width and no footer for admin console views", () => {
+      const adminViews = [
+        ["admin-dashboard", "/admin/"],
+        ["admin-users", "/admin/users/"],
+        ["admin-learning", "/admin/learning/"],
+        ["admin-ai", "/admin/ai/"],
+        ["admin-audit", "/admin/audit/"],
+      ] as const;
+
+      for (const [view, path] of adminViews) {
+        expect(getRouteLayoutMeta(view, path)).toEqual({
+          width: "default",
+          footer: "none",
+        });
+      }
+    });
+
     it("assigns default width and public footer for guides, pricing, and about", () => {
       expect(getRouteLayoutMeta("exam-guide", "/exam-guide/")).toEqual({
         width: "default",

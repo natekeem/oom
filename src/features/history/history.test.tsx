@@ -28,10 +28,10 @@ describe("useSessionPersistence", () => {
     expect(sid).toBeNull();
     expect(mockCreateSession).not.toHaveBeenCalled();
 
-    result.current.recordAttempt("q1", 1, 60);
+    await result.current.recordAttempt("q1", 1, 60);
     expect(mockRecordAttempt).not.toHaveBeenCalled();
 
-    result.current.completeSession();
+    await result.current.completeSession();
     expect(mockCompleteSession).not.toHaveBeenCalled();
   });
 
@@ -41,6 +41,8 @@ describe("useSessionPersistence", () => {
       user: { id: "user-1" },
     });
     mockCreateSession.mockResolvedValue({ id: "session-1" } as LearningSession);
+    mockRecordAttempt.mockResolvedValue("attempt-1");
+    mockCompleteSession.mockResolvedValue(true);
     
     const { result } = renderHook(() => useSessionPersistence("quick_practice"));
     
@@ -48,10 +50,10 @@ describe("useSessionPersistence", () => {
     expect(sid).toBe("session-1");
     expect(mockCreateSession).toHaveBeenCalledWith("user-1", "quick_practice", "advanced", 5);
     
-    result.current.recordAttempt("q1", 1, 60);
+    await result.current.recordAttempt("q1", 1, 60);
     expect(mockRecordAttempt).toHaveBeenCalledWith("user-1", "session-1", "q1", 1, 60, true);
     
-    result.current.completeSession();
+    await result.current.completeSession();
     expect(mockCompleteSession).toHaveBeenCalledWith("session-1", 1);
   });
 });

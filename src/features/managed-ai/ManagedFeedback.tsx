@@ -161,6 +161,7 @@ export function ManagedFeedback(props: {
   context: string;
   onRetry: () => void;
   disabled?: boolean;
+  learningAttemptId?: string | null;
 }) {
   const { user, status } = useAuth();
   // Synchronous remount on account change prevents old results or quota flashing.
@@ -179,6 +180,7 @@ function ManagedFeedbackSession({
   context,
   onRetry,
   disabled,
+  learningAttemptId,
   userId,
   authStatus,
 }: {
@@ -187,6 +189,7 @@ function ManagedFeedbackSession({
   context: string;
   onRetry: () => void;
   disabled?: boolean;
+  learningAttemptId?: string | null;
   userId?: string;
   authStatus: string;
 }) {
@@ -215,7 +218,7 @@ function ManagedFeedbackSession({
     try {
       const data = await getManagedFeedback(
         userId,
-        { requestId: request.current.id, answer, question, context },
+        { requestId: request.current.id, answer, question, context, learningAttemptId: learningAttemptId ?? undefined },
         controller.signal,
       );
       if (controller.signal.aborted) return;

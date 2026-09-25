@@ -68,7 +68,7 @@ STEP 6 is a routed product area: `/practice/` mounts only the hub, `/practice/qu
 
 Full Mock stores Survey selection, Mock initial Level, and 12~15 attempts only in current React memory. It does not persist Blobs; authenticated session summaries and attempts use the existing history repository. Survey eligibility follows explicit `TrainingStoryline.surveyOptionIds` → `TrainingPracticeQuestion.storylineId` relationships and never keyword matching; preferred pools fall back only within the same Course when needed to preserve session size. Its 40-minute main timer and question count exclude the 20~30 second Self Introduction warm-up, and its difficulty adjustment resolves another Level context for Session 2 prompts without changing the saved `TrainingSelection`. STT/LLM calls are prohibited during the exam and remain manual, one selected answer at a time, after completion. `mockReport.ts` derives deterministic process metrics from completion, target-duration fit, recording coverage, answer time, and available review evidence; it does not produce a 0–100 diagnostic score or estimated OPIc grade. The user can download a self-contained HTML snapshot locally without sending report data to an OOM server.
 
-`src/lib/stt.ts` and `src/lib/llm.ts` call user-configured endpoints directly from the browser. Settings are stored in localStorage. Endpoint CORS support is required. No STT/LLM key, transcript or recording is sent to or stored in Supabase.
+`src/lib/stt.ts` and `src/lib/llm.ts` call user-configured endpoints directly from the browser. Endpoint/model/options are stored in localStorage; API keys use sessionStorage by default, with explicit remember-key opt-in for persistent storage. Endpoint CORS support is required. No STT/LLM key, transcript or recording is sent to or stored in Supabase.
 
 Text transcripts can support structure, relevance, and language coaching. They do not contain sufficient acoustic evidence for pronunciation grading, and OOM must not claim otherwise.
 
@@ -164,3 +164,11 @@ Phase 3.0 establishes a secure, server-enforced administrative gateway and conso
 ## Phase 3.1 Managed AI
 
 `src/features/managed-ai/` owns the authenticated Quick Practice feedback UI. Server implementation, database privileges, atomic reservation/finalization, provider privacy and owner rollout are specified in [MANAGED_AI.md](MANAGED_AI.md). `profiles.plan` remains display-only; effective entitlement is FREE. `/admin/ai/` is lazy, noindex, ad-excluded and footer-free. User answer text is processed transiently; only validated feedback and usage metadata are persisted.
+
+## Phase 3.1.1 boundaries
+
+Frontend and Edge Functions both import the environment-neutral `shared/managed-ai/feedback.ts` contract. It has no React, browser, Node, Deno or Supabase dependencies. No frontend imports an Edge Function contract source.
+
+`courseCatalog.ts` discovers lightweight manifests and per-course navigation labels. AppShell, sidebar, STEP 1 and course-list consumers use this catalog. Full `courseRegistry.ts` and canonical content are in a shared lazy training/history chunk, reached by lazy views; they are not in the entry bundle. Full bundles remain synchronous within that chunk to preserve existing multi-level Full Mock and activity-label consumers. This phase deliberately avoids per-course async state machinery. Navigation parity tests prevent metadata drift. Simple route/toast entrances use 200ms CSS with reduced-motion support; complex lazy-view Framer animations remain intact.
+
+Session persistence returns promises and account-scoped IDs; Quick completion is explicit only. See [Managed AI](MANAGED_AI.md) for one-path feedback preference, secret storage, telemetry and rollout semantics.

@@ -1,3 +1,7 @@
+import { useAuth } from "../../auth/useAuth";
+import { Button, ButtonLink } from "../ui/Button";
+import { Card } from "../ui/Card";
+import { useFeedbackMode } from "../../lib/aiPreferences";
 import { useEffect, useRef, useState } from "react";
 import { callInternalLlm } from "../../lib/llm";
 import { transcribeAudio } from "../../lib/stt";
@@ -68,6 +72,7 @@ function PracticeViewContent({
   onToast: (title: string, description?: string, tone?: "success" | "error" | "info") => void;
   onNavigate?: (view: ViewId) => void;
 }) {
+  const feedbackMode = useFeedbackMode();
   const availableQuestions: PracticeItem[] = resolved.questions.map((q) => ({
     id: q.id,
     group: q.group,
@@ -98,6 +103,17 @@ function PracticeViewContent({
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [sttError, setSttError] = useState<string | null>(null);
 
+  const [summary, setSummary] = useState({ count: 0, seconds: 0 });
+  const summaryHeadingRef = useRef<HTMLHeadingElement>(null);
+  const [ended, setEnded] = useState(false);
+  const [ending, setEnding] = useState(false);
+  const endLock = useRef(false);
+  const [completionSaved, setCompletionSaved] = useState<boolean | null>(null);
+  const totals = useRef({ count: 0, seconds: 0 });
+  const persistedAnswers = useRef(new Map<number, Promise<string | null>>());
+  const [attemptPending, setAttemptPending] = useState(false);
+  const [finalizingRecording, setFinalizingRecording] = useState(false);
+  const [learningAttemptId, setLearningAttemptId] = useState<string | null>(null);
   const [attemptKey, setAttemptKey] = useState(0);
   const [recordingResult, setRecordingResult] = useState<RecordingResult | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
@@ -111,13 +127,17 @@ function PracticeViewContent({
   const timerIntervalRef = useRef<number | null>(null);
   const questionOrderRef = useRef(0);
 
-  // Phase 2: learning history persistence (fire-and-forget, no-op for anonymous)
+  // Best-effort history writes return the real attempt ID; anonymous practice stays local.
   const persistence = useSessionPersistence("quick_practice");
 
   const activePrompt = question?.prompt;
   const targetRangeLabel = `${resolved.level.targetSeconds[0]}–${resolved.level.targetSeconds[1]}초`;
   const levelLabel = `${resolved.level.displayName} (${resolved.level.targetLabel})`;
   const { preferences } = useTtsPreferences();
+
+  useEffect(() => {
+    if (ended) summaryHeadingRef.current?.focus();
+  }, [ended]);
 
   useEffect(() => {
     listenRequestRef.current += 1;
@@ -178,6 +198,7 @@ function PracticeViewContent({
   }, []);
 
   const drawQuestion = () => {
+    if (finalizingRecording || ending) return;
     stopSpeech();
     listenRequestRef.current += 1;
     questionPlayerRef.current?.stop();
@@ -215,6 +236,8 @@ function PracticeViewContent({
     setRecordingResult(null);
 
     attemptIdRef.current += 1;
+    setLearningAttemptId(null);
+    setAttemptPending(false);
     setAttemptKey((k) => k + 1);
 
     setQuestionChanged(true);
@@ -320,6 +343,7 @@ function PracticeViewContent({
   };
 
   const startAnswer = async () => {
+    if (finalizingRecording || ending) return;
     if (!activePrompt) {
       onToast("먼저 질문을 뽑아 주세요.", "랜덤 질문을 정한 뒤 답변을 시작할 수 있습니다.", "info");
       return;
@@ -355,29 +379,61 @@ function PracticeViewContent({
     setSessionState("recording");
   };
 
+  const persistAnswer = (seconds: number): Promise<string | null> => {
+    const key = attemptIdRef.current;
+    const existing = persistedAnswers.current.get(key);
+    if (existing) return existing;
+    if (!question) return Promise.resolve(null);
+    const order = ++questionOrderRef.current;
+    totals.current.count += 1;
+    totals.current.seconds += seconds;
+    setAttemptPending(true);
+    const pending = (async () => {
+      await persistence.startSession(resolved.level.id);
+      const id = await persistence.recordAttempt(question.id, order, seconds);
+      if (key === attemptIdRef.current) { setLearningAttemptId(id); setAttemptPending(false); }
+      return id;
+    })();
+    persistedAnswers.current.set(key, pending);
+    return pending;
+  };
+
+  const endPractice = async () => {
+    if (endLock.current) return;
+    endLock.current = true;
+    setEnding(true);
+    sttAbortRef.current?.abort();
+    stopSpeech();
+    await Promise.all(persistedAnswers.current.values());
+    const saved = await persistence.completeSession();
+    setCompletionSaved(saved);
+    setSummary({ ...totals.current });
+    setEnded(true);
+    setEnding(false);
+  };
+
   const stopAnswer = () => {
     if (recorderRef.current?.isRecording()) {
+      setFinalizingRecording(true);
+      setAttemptPending(true);
       recorderRef.current.stop();
+    } else {
+      void persistAnswer(elapsedSeconds);
     }
     setSessionState("complete");
   };
 
   const handleRecordingReady = async (recording: RecordingResult) => {
+    const completedAttempt = attemptIdRef.current;
+    setFinalizingRecording(false);
     setRecordingResult(recording);
     if (audioUrl) URL.revokeObjectURL(audioUrl);
     const newUrl = URL.createObjectURL(recording.blob);
     setAudioUrl(newUrl);
     setSessionState("complete");
 
-    // Phase 2: persist learning attempt (fire-and-forget)
-    if (question) {
-      const order = ++questionOrderRef.current;
-      // Lazily create session on first completed question
-      if (!persistence.getSessionId()) {
-        await persistence.startSession(resolved.level.id);
-      }
-      persistence.recordAttempt(question.id, order, recording.durationSeconds);
-    }
+    await persistAnswer(recording.durationSeconds);
+    if (completedAttempt !== attemptIdRef.current || endLock.current) return;
 
     if (!sttSettings?.endpoint?.trim() || !sttSettings.autoTranscribe) {
       return;
@@ -428,6 +484,7 @@ function PracticeViewContent({
   };
 
   const retryAttempt = () => {
+    if (finalizingRecording || ending) return;
     stopSpeech();
     listenRequestRef.current += 1;
     questionPlayerRef.current?.stop();
@@ -438,6 +495,8 @@ function PracticeViewContent({
     }
 
     attemptIdRef.current += 1;
+    setLearningAttemptId(null);
+    setAttemptPending(false);
     setListenCount(0);
     setIsSpeaking(false);
     setQuestionAudioSource(null);
@@ -465,17 +524,7 @@ function PracticeViewContent({
     }
 
     if (!settings.endpoint.trim()) {
-      setFeedback(
-        "KEEP\n답변을 직접 말하고 Transcript로 확인하는 복기 흐름을 완료했습니다.\n\n" +
-          "FIX\n질문의 시제와 첫 문장 직접 답하기 중 한 가지만 우선 확인하세요.\n\n" +
-          "RETRY\n질문의 핵심 표현으로 첫 문장을 시작해 같은 답변을 다시 말하세요.\n\n" +
-          `상세 체크리스트 · ${levelLabel}\n` +
-          `1. 목표 시간 (${resolved.level.targetSeconds.join("–")}초) 내에 주요 장면을 완성했는가?\n` +
-          `2. 질문에 첫 문장부터 직접 답했는가?\n` +
-          `3. 시제와 핵심 명사 2개 이상이 명확하게 들어갔는가?\n` +
-          `4. 침묵 대신 자연스러운 필러로 문장을 연결했는가?`
-      );
-      onToast("AI 설정이 필요합니다.", "설정 화면으로 이동해 내부 LLM Endpoint를 입력해 주세요.", "info");
+      onToast("사용자 지정 LLM 설정이 필요합니다.", "설정 화면으로 이동해 내부 LLM Endpoint를 입력해 주세요.", "info");
       return;
     }
 
@@ -556,6 +605,16 @@ function PracticeViewContent({
       Boolean(answer.trim()) ||
       Boolean(feedback);
 
+  if (ended) return <Card className="space-y-5 p-6 sm:p-8" data-practice-stage="summary">
+    <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">STEP 6 · 빠른 연습 종료</p>
+    <h1 ref={summaryHeadingRef} tabIndex={-1} className="text-2xl font-bold">오늘 연습을 마쳤어요.</h1>
+    <p>{summary.count}문제 연습 · 총 발화 {formatTime(Math.round(summary.seconds))}</p>
+    {completionSaved === false && <p className="text-xs text-zinc-500">이 기기의 연습을 마쳤어요. 계정 기록 저장이 확인되지 않았습니다.</p>}
+    <div className="flex flex-wrap gap-3">
+      <ButtonLink to="/mypage/" variant="secondary">마이페이지에서 기록 보기</ButtonLink>
+      <Button onClick={() => { persistence.reset(); persistedAnswers.current.clear(); totals.current = { count: 0, seconds: 0 }; questionOrderRef.current = 0; endLock.current = false; setEnded(false); retryAttempt(); }}>다시 연습하기</Button>
+    </div>
+  </Card>;
   return (
     <div className="space-y-8" data-practice-stage="question">
       {/* Page Header */}
@@ -655,11 +714,14 @@ function PracticeViewContent({
         ttsStatus={questionTtsStatus || undefined}
       />
 
+      <div className="flex justify-end"><Button variant="secondary" disabled={sessionState !== "complete" || attemptPending || ending || isFeedbackLoading} onClick={() => void endPractice()}>{ending ? "연습을 마치는 중…" : "연습 종료"}</Button></div>
+
       {/* Phase B: Post-Answer Coaching Review Panel (visible when complete or answer exists) */}
       {showReviewPanel ? (
         <div className="pt-2">
           <PracticeReviewPanel
-            managedFeedback={<ManagedFeedback key={attemptKey} answer={answer} question={activePrompt || ""} context={`${resolved.course.title} / ${levelLabel}`} onRetry={retryAttempt} disabled={isTranscribing} />}
+            customConfigured={Boolean(settings.endpoint.trim())}
+            managedFeedback={feedbackMode === "managed" ? <ManagedFeedback key={attemptKey} answer={answer} question={activePrompt || ""} context={`${resolved.course.title} / ${levelLabel}`} onRetry={retryAttempt} learningAttemptId={learningAttemptId} disabled={isTranscribing || attemptPending || ending} /> : undefined}
             answer={answer}
             audioUrl={audioUrl}
             autoTranscribe={sttSettings?.autoTranscribe ?? true}
@@ -687,10 +749,12 @@ export function PracticeView({
   onToast,
   onNavigate,
 }: PracticeViewProps) {
+  const { user, status } = useAuth();
   return (
     <TrainingSelectionGuard onNavigate={onNavigate} stepName="STEP 6. 실전 연습">
       {(resolved) => (
         <PracticeViewContent
+          key={`${user?.id || status}:${resolved.course.id}:${resolved.level.id}`}
           onNavigate={onNavigate}
           onToast={onToast}
           resolved={resolved}

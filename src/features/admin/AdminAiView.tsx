@@ -30,7 +30,7 @@ export interface AiOverview {
     error_code: string;
     created_at: string;
   }[];
-  users: { user_id: string; calls: number }[];
+  users: { user_id: string; display_name?: string | null; calls: number }[];
 }
 export interface AiSettings {
   runtime: {
@@ -51,11 +51,14 @@ export interface AiUsage {
   records: {
     request_id: string;
     user_id: string;
+    display_name?: string | null;
     status: string;
     model: string;
     effective_plan: string;
     input_tokens: number | null;
     output_tokens: number | null;
+    thought_tokens?: number | null;
+    cached_input_tokens?: number | null;
     estimated_cost_microusd: number | null;
     created_at: string;
     error_code: string | null;
@@ -268,7 +271,7 @@ function AdminAiSession() {
                 {overview.users.length ? (
                   overview.users.map((u) => (
                     <p key={u.user_id} className="break-all text-xs leading-6">
-                      {u.user_id} · {u.calls}회
+                      {u.display_name || "이름 없음"} · {u.calls}회 <span className="text-zinc-500">{u.user_id.slice(0, 8)}…</span>
                     </p>
                   ))
                 ) : (
@@ -376,7 +379,7 @@ function AdminAiSession() {
                       "시각 (KST)",
                       "사용자 / 모델",
                       "상태",
-                      "입력 / 출력",
+                      "입력 / 출력 / Thinking",
                       "예상 API 비용",
                     ].map((h) => (
                       <th className="whitespace-nowrap p-3" key={h}>
@@ -395,7 +398,7 @@ function AdminAiSession() {
                         {date(r.created_at)}
                       </td>
                       <td className="p-3">
-                        <p className="font-mono">{r.user_id}</p>
+                        <p>{r.display_name || "이름 없음"}</p><p className="font-mono text-zinc-500" title={r.user_id}>{r.user_id.slice(0, 8)}…</p>
                         <p className="mt-1 text-zinc-500">
                           {r.model} · {r.effective_plan.toUpperCase()}
                         </p>
@@ -414,7 +417,8 @@ function AdminAiSession() {
                         </Badge>
                       </td>
                       <td className="whitespace-nowrap p-3">
-                        {number(r.input_tokens)} / {number(r.output_tokens)}
+                        {number(r.input_tokens)} / {number(r.output_tokens)} / {number(r.thought_tokens ?? null)}
+                        <p className="text-[10px] text-zinc-500">캐시 입력 {number(r.cached_input_tokens ?? null)}</p>
                       </td>
                       <td className="p-3">{cost(r.estimated_cost_microusd)}</td>
                     </tr>

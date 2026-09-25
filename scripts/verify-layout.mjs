@@ -6,7 +6,7 @@ import { createRequire } from "node:module";
 
 const { chromium } = createRequire(import.meta.url)(process.env.PLAYWRIGHT_MODULE || "playwright");
 const base = process.env.OOM_LAYOUT_URL || "http://localhost:5173";
-const browser = await chromium.launch({ headless: true });
+const browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_EXECUTABLE ? { executablePath: process.env.PLAYWRIGHT_EXECUTABLE } : {}) });
 let checks = 0;
 try {
   const page = await browser.newPage({ reducedMotion: "reduce" });

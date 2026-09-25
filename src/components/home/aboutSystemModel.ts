@@ -1,4 +1,4 @@
-import { discoveredCourses } from "../../training/courseRegistry";
+import { discoveredCourses } from "../../training/courseCatalog";
 import { TRAINING_LEVELS } from "../../training/levels";
 import type { TrainingCourseId, TrainingLevelId } from "../../training/types";
 import type { AboutCourseOption, AboutLevelOption } from "./types";

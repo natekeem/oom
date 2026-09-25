@@ -1,4 +1,5 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { loadCustomSettings, saveCustomSettings } from "./lib/customSettingsStorage";
+
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { AppShell } from "./components/layout/AppShell";
@@ -7,7 +8,7 @@ import { Toast } from "./components/ui/Toast";
 import type { ViewId } from "./components/layout/Sidebar";
 import { viewIdForPath, viewPathForId } from "./lib/routes";
 import { TrainingSelectionProvider, useTrainingSelection } from "./training/TrainingSelectionContext";
-import { discoveredCourses } from "./training/courseRegistry";
+import { discoveredCourses } from "./training/courseCatalog";
 import { TRAINING_LEVELS } from "./training/levels";
 import type { LlmSettings, SttSettings, ToastMessage } from "./types";
 
@@ -102,23 +103,8 @@ const nextViewById: Partial<Record<ViewId, { view: ViewId; label: string }>> = {
   "roleplay-home": { view: "practice", label: "STEP 6" },
 };
 
-function loadSettings(): LlmSettings {
-  try {
-    const stored = window.localStorage.getItem(SETTINGS_KEY);
-    return stored ? { ...defaultSettings, ...(JSON.parse(stored) as Partial<LlmSettings>) } : defaultSettings;
-  } catch {
-    return defaultSettings;
-  }
-}
-
-function loadSttSettings(): SttSettings {
-  try {
-    const stored = window.localStorage.getItem(STT_SETTINGS_KEY);
-    return stored ? { ...defaultSttSettings, ...(JSON.parse(stored) as Partial<SttSettings>) } : defaultSttSettings;
-  } catch {
-    return defaultSttSettings;
-  }
-}
+function loadSettings(): LlmSettings { return loadCustomSettings(SETTINGS_KEY, defaultSettings); }
+function loadSttSettings(): SttSettings { return loadCustomSettings(STT_SETTINGS_KEY, defaultSttSettings); }
 
 function TrainingSetupRoute({ onNavigate }: { onNavigate: (view: ViewId) => void }) {
   const { selection, select, clear } = useTrainingSelection();
@@ -205,8 +191,10 @@ export default function App() {
     setToast({ id: Date.now(), title, description, tone });
 
   const saveSettings = () => {
-    window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-    window.localStorage.setItem(STT_SETTINGS_KEY, JSON.stringify(sttSettings));
+    saveCustomSettings(SETTINGS_KEY, settings);
+    setSettings({ ...settings, legacyStoredKey: false });
+    saveCustomSettings(STT_SETTINGS_KEY, sttSettings);
+    setSttSettings({ ...sttSettings, legacyStoredKey: false });
     showToast(
       "AI 및 STT 설정을 브라우저에 저장했습니다.",
       "공유 PC에서는 사용 후 설정을 지워 주세요.",
@@ -514,26 +502,22 @@ export default function App() {
           onToggleMobileMenu={() => setMobileOpen((value) => !value)}
           showTrainingHeader={isStepView}
         >
-          <AnimatePresence mode="wait">
-            <motion.div
-              animate={{ opacity: 1, y: 0 }}
+          <>
+            <div
               className={
                 isStepView
                   ? activeView === "practice-mock"
-                    ? "step-page lg:h-full lg:min-h-0"
-                    : "step-page"
-                  : undefined
+                    ? "oom-enter step-page lg:h-full lg:min-h-0"
+                    : "oom-enter step-page"
+                  : "oom-enter"
               }
-              exit={{ opacity: 0, y: -6 }}
-              initial={{ opacity: 0, y: 8 }}
               key={location.pathname}
-              transition={{ duration: 0.2 }}
             >
               <Suspense fallback={<div className="py-12 text-center text-sm text-zinc-500">화면을 불러오는 중...</div>}>
                 {screen}
               </Suspense>
-            </motion.div>
-          </AnimatePresence>
+            </div>
+          </>
           <Toast onDismiss={() => setToast(null)} toast={toast} />
         </AppShell>
       </TrainingSelectionProvider>

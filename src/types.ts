@@ -84,6 +84,8 @@ export type LlmAuthType = "bearer" | "x-api-key" | "none";
 export type LlmSettings = {
   endpoint: string;
   apiKey?: string;
+  rememberKey?: boolean;
+  legacyStoredKey?: boolean;
   model?: string;
   mode: LlmMode;
   authType: LlmAuthType;
@@ -93,6 +95,8 @@ export type LlmSettings = {
 export type SttSettings = {
   endpoint: string;
   apiKey?: string;
+  rememberKey?: boolean;
+  legacyStoredKey?: boolean;
   model?: string;
   authType: LlmAuthType;
   autoTranscribe: boolean;

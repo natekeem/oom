@@ -83,8 +83,7 @@ export async function callInternalLlm(settings: LlmSettings, messages: LlmMessag
   }
 
   if (!response.ok) {
-    const detail = typeof payload === "string" ? payload : JSON.stringify(payload);
-    throw new Error(`LLM 요청이 ${response.status}로 실패했습니다. ${detail.slice(0, 240)}`);
+    throw new Error(`LLM 요청이 ${response.status}로 실패했습니다. 연결 설정을 확인해 주세요.`);
   }
 
   return extractText(payload);

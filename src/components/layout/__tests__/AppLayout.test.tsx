@@ -90,7 +90,7 @@ describe("Phase 2.9 Layout System", () => {
       });
     });
 
-    it("assigns default width and no footer for admin console views", () => {
+    it("assigns wide tables and default dashboard/audit with no footer", () => {
       const adminViews = [
         ["admin-dashboard", "/admin/"],
         ["admin-users", "/admin/users/"],
@@ -101,7 +101,7 @@ describe("Phase 2.9 Layout System", () => {
 
       for (const [view, path] of adminViews) {
         expect(getRouteLayoutMeta(view, path)).toEqual({
-          width: "default",
+          width: ["admin-users", "admin-learning", "admin-ai"].includes(view) ? "wide" : "default",
           footer: "none",
         });
       }

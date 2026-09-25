@@ -2,7 +2,7 @@ import type { SupabaseClient } from "npm:@supabase/supabase-js@2";
 import type { AuthenticatedAdmin } from "../auth.ts";
 import { errorResponse, jsonResponse } from "../cors.ts";
 import { readBoundedJson } from "../../ai-api/handler.ts";
-import { uuidPattern } from "../../_shared/feedback.ts";
+import { uuidPattern } from "../../../../shared/managed-ai/feedback.ts";
 
 export async function handleAdminAi(
   req: Request,
@@ -70,7 +70,7 @@ export async function handleAdminAi(
   if (path === "/ai/overview") {
     const { data, error } = await db.rpc("admin_ai_overview");
     if (error) throw new Error("AI_OVERVIEW_FAILED");
-    return jsonResponse(req, data);
+    return jsonResponse(req, { ...data, users: await enrichUsers(db, data.users || []) });
   }
   if (path === "/ai/settings") {
     const results = await Promise.all([
@@ -108,7 +108,7 @@ export async function handleAdminAi(
     let query = db
       .from("ai_usage_events")
       .select(
-        "request_id,user_id,feature,effective_plan,model,status,input_tokens,output_tokens,estimated_cost_microusd,latency_ms,error_code,created_at",
+        "request_id,user_id,feature,effective_plan,model,status,input_tokens,output_tokens,thought_tokens,cached_input_tokens,estimated_cost_microusd,latency_ms,error_code,created_at",
         { count: "exact" },
       );
     for (const [key, column, allowed] of [
@@ -181,7 +181,7 @@ export async function handleAdminAi(
       .range((page - 1) * pageSize, page * pageSize - 1);
     if (error) throw new Error("AI_USAGE_FAILED");
     return jsonResponse(req, {
-      records: data,
+      records: await enrichUsers(db, data || []),
       total: count,
       page,
       pageSize,
@@ -189,4 +189,13 @@ export async function handleAdminAi(
     });
   }
   return errorResponse(req, 404, "NOT_FOUND", "요청 경로를 찾을 수 없습니다.");
+}
+
+async function enrichUsers<T extends { user_id: string }>(db: SupabaseClient, rows: T[]) {
+  const ids = [...new Set(rows.map(row => row.user_id))];
+  if (!ids.length) return rows;
+  const { data, error } = await db.from("profiles").select("id,display_name").in("id", ids);
+  if (error) throw new Error("AI_IDENTITIES_FAILED");
+  const names = new Map((data || []).map((p: { id: string; display_name: string | null }) => [p.id, p.display_name]));
+  return rows.map(row => ({ ...row, display_name: names.get(row.user_id) ?? null }));
 }

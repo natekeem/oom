@@ -9,7 +9,7 @@ import { Button, ButtonLink } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { PageIntro } from "../components/ui/PageIntro";
 import { TRAINING_LEVELS, formatTrainingPreset } from "../training/levels";
-import { discoveredCourses } from "../training/courseRegistry";
+import { discoveredCourses } from "../training/courseCatalog";
 import { useTrainingSelection } from "../training/TrainingSelectionContext";
 import { useLearningHistory } from "../features/history/useLearningHistory";
 import type { LearningMode, LearningSession, LearningSessionStatus } from "../features/history/historyTypes";

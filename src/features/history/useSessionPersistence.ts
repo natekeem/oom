@@ -1,89 +1,68 @@
-/**
- * Phase 2: Session persistence hook for practice components.
- *
- * Encapsulates the session lifecycle (create → record attempts → complete).
- * All writes are fire-and-forget: failures are silently caught and logged.
- * Anonymous users get safe no-op implementations.
- */
-
-import { useCallback, useRef } from "react";
+import { useMemo } from "react";
 import { useAuth } from "../../auth/useAuth";
 import type { LearningMode } from "./historyTypes";
 import * as repo from "./historyRepository";
 
+/** Best-effort writes, scoped to the current account. No unmount completion. */
 export function useSessionPersistence(mode: LearningMode) {
   const { user, status } = useAuth();
-  const sessionIdRef = useRef<string | null>(null);
-  const attemptCountRef = useRef(0);
+  const userId = status === "authenticated" ? user?.id : undefined;
+  return useMemo(() => createPersistence(userId, mode), [userId, mode]);
+}
 
-  const isAuthenticated = status === "authenticated" && user !== null;
-
-  const startSession = useCallback(
-    async (targetLevel: string | null, questionCount = 0): Promise<string | null> => {
-      if (!isAuthenticated || !user) return null;
-      try {
-        const session = await repo.createSession(user.id, mode, targetLevel, questionCount);
-        if (session) {
-          sessionIdRef.current = session.id;
-          attemptCountRef.current = 0;
-        }
-        return session?.id ?? null;
-      } catch {
-        return null;
-      }
-    },
-    [isAuthenticated, mode, user],
-  );
-
-  const recordAttempt = useCallback(
-    (
-      questionId: string,
-      questionOrder: number | null,
-      durationSeconds: number | null,
-      completed = true,
-    ): void => {
-      if (!isAuthenticated || !user || !sessionIdRef.current) return;
-      const sid = sessionIdRef.current;
-      attemptCountRef.current += 1;
-      void repo.createAttempt(user.id, sid, questionId, questionOrder, durationSeconds, completed);
-    },
-    [isAuthenticated, user],
-  );
-
-  const completeSession = useCallback((): void => {
-    if (!isAuthenticated || !sessionIdRef.current) return;
-    const sid = sessionIdRef.current;
-    const count = attemptCountRef.current;
-    void repo.completeSession(sid, count);
-  }, [isAuthenticated]);
-
-  const updateSessionQuestionCount = useCallback(
-    (questionCount: number): void => {
-      if (!isAuthenticated || !sessionIdRef.current) return;
-      void repo.updateSession(sessionIdRef.current, { questionCount });
-    },
-    [isAuthenticated],
-  );
-
-  const reset = useCallback(() => {
-    sessionIdRef.current = null;
-    attemptCountRef.current = 0;
-  }, []);
-
-  return {
-    /** Current DB session ID, or null if not started / anonymous. */
-    getSessionId: () => sessionIdRef.current,
-    /** Number of attempts recorded in the current session. */
-    getAttemptCount: () => attemptCountRef.current,
-    /** Create a new learning session. Only works for authenticated users. */
-    startSession,
-    /** Record a completed question attempt (fire-and-forget). */
-    recordAttempt,
-    /** Mark the current session as completed (fire-and-forget). */
-    completeSession,
-    /** Update the planned question count (e.g., after mock adjustment). */
-    updateSessionQuestionCount,
-    /** Reset local refs (for restart flows). */
-    reset,
+function createPersistence(userId: string | undefined, mode: LearningMode) {
+  const state = {
+    sessionId: null as string | null,
+    starting: null as Promise<string | null> | null,
+    attempts: new Map<number | string, Promise<string | null>>(),
+    count: 0,
+    completing: null as Promise<boolean> | null,
+    completed: false,
   };
+  const startSession = (targetLevel: string | null, questionCount = 0): Promise<string | null> => {
+    if (!userId) return Promise.resolve(null);
+    if (state.sessionId) return Promise.resolve(state.sessionId);
+    if (state.starting) return state.starting;
+    state.starting = repo.createSession(userId, mode, targetLevel, questionCount).then(session => {
+      state.sessionId = session?.id ?? null;
+      return state.sessionId;
+    }).catch(() => null).finally(() => { state.starting = null; });
+    return state.starting;
+  };
+  const recordAttempt = (questionId: string, questionOrder: number | null, durationSeconds: number | null, completed = true): Promise<string | null> => {
+    if (!userId || state.completed || state.completing) return Promise.resolve(null);
+    const key = questionOrder ?? questionId;
+    const existing = state.attempts.get(key);
+    if (existing) return existing;
+    const pending = (async () => {
+      const sid = state.sessionId || await state.starting;
+      if (!sid) return null;
+      const id = await repo.createAttempt(userId, sid, questionId, questionOrder, durationSeconds, completed);
+      if (id && completed) state.count += 1;
+      return id;
+    })().catch(() => null);
+    state.attempts.set(key, pending);
+    return pending;
+  };
+  const completeSession = (): Promise<boolean> => {
+    if (state.completed) return Promise.resolve(true);
+    if (state.completing) return state.completing;
+    state.completing = (async () => {
+      await state.starting;
+      await Promise.all(state.attempts.values());
+      if (!state.sessionId) return false;
+      const ok = await repo.completeSession(state.sessionId, state.count);
+      state.completed = ok;
+      return ok;
+    })().catch(() => false).finally(() => { state.completing = null; });
+    return state.completing;
+  };
+  const updateSessionQuestionCount = (questionCount: number) => {
+    if (state.sessionId) void repo.updateSession(state.sessionId, { questionCount });
+  };
+  const reset = () => {
+    state.sessionId = null; state.starting = null; state.count = 0;
+    state.attempts.clear(); state.completed = false; state.completing = null;
+  };
+  return { getSessionId: () => state.sessionId, getAttemptCount: () => state.count, startSession, recordAttempt, completeSession, updateSessionQuestionCount, reset };
 }

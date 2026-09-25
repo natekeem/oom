@@ -183,3 +183,7 @@ Desktop bottom order: account → theme → collapse/expand → 오늘의 한 �
 ## Phase 3.1 AI operations route
 
 `/admin/ai/` maps to `admin-ai` / lazy `AdminAiView`, guarded by `AdminGuard` and server admin authorization. It uses wide PageContainer, footer none, noindex,follow and ad exclusion, and is absent from sitemap. This is an AdminLayout tab, not an additional training STEP or top-level learner navigation item.
+
+### Phase 3.1.1 layout policy
+
+Admin dashboard and audit use default width (max-w-7xl). Users, Learning and AI use wide width (1440px maximum). All admin routes remain noindex, ad-excluded, sitemap-excluded and footer-free. AI settings remains default width. No new routes or training steps were added. Shell route entrances use CSS with reduced-motion support.

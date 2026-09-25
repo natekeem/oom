@@ -99,10 +99,10 @@ const overview = {
       created_at: "2026-09-21T06:00:00Z",
     },
   ],
-  users: [{ user_id: uid, calls: 3 }],
+  users: [{ user_id: uid, display_name: "QA fixture", calls: 3 }],
 };
 (async () => {
-  const b = await chromium.launch({ headless: true });
+  const b = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_EXECUTABLE ? { executablePath: process.env.PLAYWRIGHT_EXECUTABLE } : {}) });
   let captures = 0;
   const page = await b.newPage({
     viewport: { width: 1440, height: 1000 },
@@ -161,6 +161,14 @@ const overview = {
         created_at: "2026-09-21T00:00:00Z",
         updated_at: "2026-09-21T00:00:00Z",
       };
+    else if (path.includes("/rest/v1/learning_sessions")) {
+      data = { id: uid, user_id: uid, mode: "quick_practice", status: "in_progress", question_count: 0, answered_count: 0, started_at: new Date().toISOString(), completed_at: null };
+      if (route.request().method() === "PATCH") {
+        const patch = route.request().postDataJSON();
+        assert.equal(patch.status, "completed"); assert.equal(patch.answered_count, 1); assert.ok(patch.completed_at);
+      }
+    }
+    else if (path.includes("/rest/v1/learning_attempts")) data = { id: uid };
     else if (path.includes("/rest/v1/")) data = [];
     else if (path.endsWith("/admin-api/me"))
       data = {
@@ -182,6 +190,9 @@ const overview = {
             effective_plan: "free",
             input_tokens: 840,
             output_tokens: 900,
+            thought_tokens: 100,
+            cached_input_tokens: 200,
+            display_name: "QA fixture",
             estimated_cost_microusd: 2502,
             created_at: "2026-09-21T06:00:00Z",
           },
@@ -208,10 +219,12 @@ const overview = {
         recentLearningActivity: [],
       };
     else if (path.endsWith("/admin-api/users"))
-      data = { users: [], total: 0, totalPages: 0, page: 1, pageSize: 20 };
+      data = { users: [{ id: uid, displayName: "QA fixture", email: "qa@example.invalid", avatarUrl: null, joinedAt: "2026-09-21T00:00:00Z", lastSignInAt: null, planDisplay: "FREE", hasLearningPreferences: true, learningSessionCount: 2, learningActivityCount: 1, lastLearningAt: null }], total: 1, totalPages: 1, page: 1, pageSize: 20 };
+    else if (path.endsWith("/admin-api/learning")) data = { records: [{ id: uid, userId: uid, userDisplayName: "QA fixture", type: "session", modeOrType: "quick_practice", targetLevel: "advanced", status: "completed", questionCount: 1, answeredCount: 1, timestamp: "2026-09-21T00:00:00Z" }], total: 1, page: 1, totalPages: 1, pageSize: 20 };
     else if (path.endsWith("/ai-api/quota")) data = quota();
     else if (path.endsWith("/ai-api/feedback")) {
       posts++;
+      assert.equal(route.request().postDataJSON().learningAttemptId, uid);
       if (delay) await new Promise((r) => setTimeout(r, delay));
       if (mode === "error") {
         status = 503;
@@ -257,12 +270,15 @@ const overview = {
     await visit(route);
     await shot("reference-auth-" + route.replaceAll("/", ""));
   }
-  for (const width of [1440, 390]) {
-    await page.setViewportSize({ width, height: width === 1440 ? 1000 : 844 });
+  for (const width of [1440, 1920, 390]) {
+    await page.setViewportSize({ width, height: width === 390 ? 844 : width === 1920 ? 1080 : 1000 });
     for (const theme of ["dark", "light"]) {
       await page.evaluate((t) => localStorage.setItem("oom-theme", t), theme);
-      for (const route of ["/ai-settings/", "/admin/ai/"]) {
+      for (const route of ["/ai-settings/", "/admin/", "/admin/users/", "/admin/learning/", "/admin/ai/"]) {
         await visit(route);
+        const expected = ["/admin/users/", "/admin/learning/", "/admin/ai/"].includes(route) ? "wide" : "default";
+        assert.equal(await page.locator("[data-page-width]").getAttribute("data-page-width"), expected);
+        if (width === 1920) assert.equal(Math.round((await page.locator("[data-page-width]").boundingBox()).width), expected === "wide" ? 1440 : 1280);
         await shot(`after-${width}-${theme}-${route.replaceAll("/", "")}`);
       }
       await visit("/practice/quick/");
@@ -309,10 +325,38 @@ const overview = {
       );
       await page.getByText(/오늘 무료 AI 피드백을 모두/).waitFor();
       await shot(`quick-${width}-${theme}-quota`);
+      await page.getByRole("button", { name: "연습 종료", exact: true }).click();
+      await page.getByRole("heading", { name: "오늘 연습을 마쳤어요." }).waitFor();
+      assert.equal(await page.evaluate(() => document.activeElement?.textContent), "오늘 연습을 마쳤어요.");
+      await shot(`quick-${width}-${theme}-summary`);
+      assert.ok(await page.getByText(/1문제 연습/).count());
       used = 0;
       mode = "success";
     }
   }
+  await visit("/ai-settings/");
+  await page.getByRole("radio", { name: "OOM 관리형 AI · 권장" }).focus();
+  await page.keyboard.press("ArrowRight");
+  assert.equal(await page.evaluate(() => localStorage.getItem("oom-ai-feedback-mode")), "custom");
+  await page.getByLabel("API Key 또는 Authorization Token").pressSequentially("synthetic-qa-secret");
+  await page.getByLabel("API Key 또는 Authorization Token").press("Tab");
+  await page.getByRole("button", { name: "설정 저장하기" }).click();
+  assert.ok(!(await page.evaluate(() => localStorage.getItem("oom-llm-settings"))).includes("synthetic-qa-secret"));
+  assert.equal(await page.evaluate(() => sessionStorage.getItem("oom-llm-settings:key")), "synthetic-qa-secret");
+  await page.getByRole("checkbox", { name: "이 기기에 API Key 저장", exact: true }).first().check();
+  await page.getByRole("button", { name: "설정 저장하기" }).click();
+  assert.ok((await page.evaluate(() => localStorage.getItem("oom-llm-settings"))).includes("synthetic-qa-secret"));
+  await page.getByRole("checkbox", { name: "이 기기에 API Key 저장", exact: true }).first().uncheck();
+  await page.getByRole("button", { name: "설정 저장하기" }).click();
+  assert.ok(!(await page.evaluate(() => localStorage.getItem("oom-llm-settings"))).includes("synthetic-qa-secret"));
+  await shot("custom-settings-mobile");
+  await visit("/practice/quick/");
+  await page.getByRole("button", { name: "답변 시작", exact: true }).click();
+  await page.getByRole("button", { name: "타이머만 시작", exact: true }).click();
+  await page.getByRole("button", { name: "답변 종료", exact: true }).click();
+  await page.getByText("사용자 지정 LLM 설정이 필요합니다.").waitFor();
+  assert.equal(await page.getByRole("button", { name: "AI 피드백 받기", exact: true }).count(), 0);
+  await shot("custom-missing-mobile");
   await b.close();
   console.log("VISUAL QA PASS", captures, "screenshots, feedback posts", posts);
 })().catch((e) => {

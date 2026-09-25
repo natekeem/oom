@@ -1,3 +1,4 @@
+import { useFeedbackMode, setFeedbackMode } from "../../lib/aiPreferences";
 import { Info } from "lucide-react";
 import type { LlmSettings, SttSettings } from "../../types";
 import { Card } from "../ui/Card";
@@ -21,6 +22,7 @@ export function AiSettingsView({
   onSttChange,
   onSave,
 }: AiSettingsViewProps) {
+  const mode = useFeedbackMode();
   return (
     <div className="space-y-6">
       <PageIntro
@@ -29,8 +31,19 @@ export function AiSettingsView({
         tag="AI 피드백 / STT 설정"
         title="내 답변에서 시작하는 AI 코칭"
       />
+      <fieldset className="space-y-3">
+        <legend className="text-sm font-semibold">AI 피드백 방식</legend>
+        <div className="flex flex-wrap gap-4">
+          {([['managed', 'OOM 관리형 AI · 권장'], ['custom', '사용자 지정 LLM · 고급']] as const).map(([value, label]) => (
+            <label key={value} className="flex cursor-pointer items-center gap-2 rounded-md bg-zinc-100 px-4 py-3 text-sm dark:bg-zinc-800">
+              <input type="radio" name="feedback-mode" value={value} checked={mode === value} onChange={() => setFeedbackMode(value)} />{label}
+            </label>
+          ))}
+        </div>
+        <p className="text-xs text-zinc-500">빠른 연습에서는 선택한 방식만 사용합니다. 이용할 수 없을 때 다른 방식으로 자동 전환하지 않습니다.</p>
+      </fieldset>
       <ManagedAiSettings />
-      <details className="space-y-5">
+      <details key={mode} open={mode === "custom"} className="space-y-5">
       <summary className="cursor-pointer text-sm font-semibold text-zinc-900 dark:text-white">고급 사용자 설정 · 직접 연결한 STT / LLM</summary>
       <AiSettingsPanel
         onChange={onChange}

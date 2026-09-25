@@ -58,7 +58,7 @@ export async function transcribeAudio(
 
   if (!response.ok) {
     throw new Error(
-      `STT 요청이 상태 코드 ${response.status}로 실패했습니다. ${raw.slice(0, 200)}`
+      `STT 요청이 상태 코드 ${response.status}로 실패했습니다. 연결 설정을 확인해 주세요.`
     );
   }
 

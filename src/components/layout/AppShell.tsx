@@ -8,7 +8,7 @@ import { ExpandableSidebar } from "./ExpandableSidebar";
 import { PageContainer } from "./PageContainer";
 import { getRouteLayoutMeta } from "./layoutConfig";
 import { useTrainingSelection } from "../../training/TrainingSelectionContext";
-import { resolveTrainingContext } from "../../training/courseRegistry";
+import { getCourseNavigation } from "../../training/courseCatalog";
 import { cn } from "../../lib/utils";
 
 type AppShellProps = {
@@ -84,7 +84,7 @@ export function AppShell({
   const mainRef = useRef<HTMLElement | null>(null);
   const wasMobileOpenRef = useRef(false);
   const { selection } = useTrainingSelection();
-  const resolved = selection ? resolveTrainingContext(selection.courseId, selection.levelId) : null;
+  const resolved = selection ? getCourseNavigation(selection.courseId) : null;
 
   const { width, footer } = getRouteLayoutMeta(activeView, location.pathname);
 

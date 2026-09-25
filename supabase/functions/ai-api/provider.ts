@@ -1,9 +1,10 @@
-import { feedbackJsonSchema, type FeedbackInput } from "../_shared/feedback.ts";
+import { feedbackJsonSchema, type FeedbackInput } from "../../../shared/managed-ai/feedback.ts";
 
 export interface ProviderResult {
   output: unknown;
   inputTokens: number | null;
   outputTokens: number | null;
+  thoughtTokens?: number | null;
   cachedTokens: number | null;
 }
 export interface AiProvider {
@@ -76,11 +77,8 @@ export function geminiProvider(
         const body = await res.json();
         const usage = {
           inputTokens: count(body.usage?.total_input_tokens),
-          outputTokens:
-            count(body.usage?.total_output_tokens) === null
-              ? null
-              : body.usage.total_output_tokens +
-                (count(body.usage?.total_thought_tokens) ?? 0),
+          outputTokens: count(body.usage?.total_output_tokens),
+          thoughtTokens: count(body.usage?.total_thought_tokens),
           cachedTokens: count(body.usage?.total_cached_tokens),
         };
         try {

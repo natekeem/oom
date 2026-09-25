@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "npm:@supabase/supabase-js@2.116.0";
-import { parseFeedback, parseFeedbackInput } from "../_shared/feedback.ts";
+import { parseFeedback, parseFeedbackInput } from "../../../shared/managed-ai/feedback.ts";
 import { jsonResponse, withTiming } from "../admin-api/cors.ts";
 import {
   ProviderError,
@@ -179,6 +179,7 @@ export function createAiHandler(deps: AiDependencies) {
           p_attempt: input.learningAttemptId || null,
           p_input: result.inputTokens,
           p_output: result.outputTokens,
+          p_thought: result.thoughtTokens ?? null,
           p_cached: result.cachedTokens,
           p_latency: Math.round(performance.now() - start),
         };
@@ -211,6 +212,7 @@ export function createAiHandler(deps: AiDependencies) {
             p_error: code,
             p_input: usage?.inputTokens ?? null,
             p_output: usage?.outputTokens ?? null,
+            p_thought: usage?.thoughtTokens ?? null,
             p_cached: usage?.cachedTokens ?? null,
             p_latency: Math.round(performance.now() - start),
           });

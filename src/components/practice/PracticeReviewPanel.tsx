@@ -32,6 +32,7 @@ export type PracticeReviewPanelProps = {
   sttStatus: SttUiStatus;
   hasRecording: boolean;
   managedFeedback?: ReactNode;
+  customConfigured?: boolean;
 };
 
 function getCoachingSummary(feedback: string) {
@@ -72,6 +73,7 @@ export function PracticeReviewPanel({
   sttStatus,
   hasRecording,
   managedFeedback,
+  customConfigured = true,
 }: PracticeReviewPanelProps) {
   const sttConfigured = sttStatus !== "unconfigured";
   const wordCount = answer.trim().split(/\s+/).filter(Boolean).length;
@@ -267,7 +269,8 @@ export function PracticeReviewPanel({
             </p>
 
             {managedFeedback}
-            {managedFeedback ? <p className="border-t border-zinc-200 pt-3 text-xs font-semibold dark:border-zinc-800">고급 사용자 설정 · 직접 연결한 LLM</p> : null}
+            {!managedFeedback && !customConfigured ? <div className="space-y-2"><p className="text-xs">사용자 지정 LLM 설정이 필요합니다.</p><Button variant="secondary" onClick={onNavigateToSettings}>AI 설정 열기</Button></div> : null}
+            {!managedFeedback && customConfigured ? <>
             <Button
               className="w-full"
               variant={managedFeedback ? "secondary" : "primary"}
@@ -280,11 +283,12 @@ export function PracticeReviewPanel({
                   피드백 분석 중...
                 </>
               ) : (
-                managedFeedback ? "사용자 설정 LLM 피드백" : "AI 피드백 받기"
+                mockLayout ? "AI 피드백 받기" : "사용자 지정 LLM으로 분석"
               )}
             </Button>
 
-            {feedback ? (
+            </> : null}
+            {!managedFeedback && feedback ? (
               <div className="mt-3 space-y-3">
                 <div aria-label="KEEP FIX RETRY 핵심 코칭" className="grid gap-2">
                   {coachingSummary.map((item) => (

@@ -19,7 +19,7 @@ export function AiSettingsPanel({
   onSttChange,
   onSave,
 }: AiSettingsPanelProps) {
-  const updateLlm = (key: keyof LlmSettings, value: string) =>
+  const updateLlm = (key: keyof LlmSettings, value: string | boolean) =>
     onChange({ ...settings, [key]: value });
   const handleLlmMode = (event: ChangeEvent<HTMLSelectElement>) =>
     updateLlm("mode", event.target.value);
@@ -37,10 +37,10 @@ export function AiSettingsPanel({
           </span>
           <div>
             <h2 className="text-base font-bold text-zinc-900 dark:text-white">
-              내부 LLM 연결 설정 (평가/피드백)
+              사용자 지정 LLM 연결 설정
             </h2>
             <p className="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-              이 정보는 현재 브라우저의 localStorage에만 저장됩니다. 공유 PC에서는 사용 후 삭제하세요.
+              API Key는 기본적으로 이 브라우저 탭의 세션에서만 사용됩니다. 원하는 경우 이 기기에 저장할 수 있습니다.
             </p>
           </div>
         </div>
@@ -111,6 +111,7 @@ export function AiSettingsPanel({
         ) : null}
       </Card>
 
+      <KeyStorage settings={settings} onChange={(rememberKey) => updateLlm("rememberKey", rememberKey)} />
       {/* STT Settings Card */}
       <Card className="p-5 sm:p-6">
         <div className="flex gap-3">
@@ -174,6 +175,7 @@ export function AiSettingsPanel({
           </Field>
         </div>
 
+        <KeyStorage settings={sttSettings} onChange={(rememberKey) => updateStt("rememberKey", rememberKey)} />
         <div className="mt-5">
           <label className="flex items-center gap-3 cursor-pointer select-none">
             <input
@@ -221,4 +223,11 @@ function Field({
       {children}
     </label>
   );
+}
+
+function KeyStorage({ settings, onChange }: { settings: { rememberKey?: boolean; legacyStoredKey?: boolean }; onChange: (value: boolean) => void }) {
+  return <div className="space-y-2 text-xs text-zinc-600 dark:text-zinc-300">
+    {settings.legacyStoredKey && <p role="status">이 기기에 저장된 기존 API Key가 있습니다. 계속 저장할지 선택해주세요. 선택 후 설정 저장 시 적용됩니다.</p>}
+    <label className="flex items-center gap-2"><input type="checkbox" checked={settings.rememberKey === true} onChange={e => onChange(e.target.checked)} />이 기기에 API Key 저장</label>
+  </div>;
 }

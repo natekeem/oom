@@ -71,6 +71,14 @@ const view = () =>
     </MemoryRouter>,
   );
 describe("Admin AI operations", () => {
+  it("renders separate raw output/thinking/cache counts and a meaningful identity", async () => {
+    mocks.request.mockImplementation(async path => path === "/ai/settings" ? settings : path === "/ai/overview" ? overview : { ...usage, records: [{ request_id: "request", user_id: "12345678-rest", display_name: "Fixture learner", status: "succeeded", model: "gemini-3.5-flash-lite", effective_plan: "free", input_tokens: 100, output_tokens: 20, thought_tokens: 5, cached_input_tokens: 10, estimated_cost_microusd: 100, created_at: "2026-09-21T00:00:00Z", error_code: null }] });
+    view();
+    expect(await screen.findByText("Fixture learner")).toBeInTheDocument();
+    expect(screen.getByText("12345678…")).toBeInTheDocument();
+    expect(screen.getByText("100 / 20 / 5")).toBeInTheDocument();
+    expect(screen.getByText("캐시 입력 10")).toBeInTheDocument();
+  });
   it("has active navigation, loading and empty states", async () => {
     view();
     expect(screen.getByRole("link", { name: "AI 운영" })).toHaveAttribute(

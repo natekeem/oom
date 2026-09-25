@@ -14,7 +14,7 @@ import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 
 import { cn } from "../../lib/utils";
 import type { ViewId } from "./Sidebar";
 import { useTrainingSelection } from "../../training/TrainingSelectionContext";
-import { resolveTrainingContext } from "../../training/courseRegistry";
+import { getCourseNavigation } from "../../training/courseCatalog";
 import { OomBrandMark } from "../brand/OomBrandMark";
 import { topLevelNavigation } from "./topLevelNavigation";
 import { useAdminAccess } from "../../features/admin/useAdminAccess";
@@ -264,7 +264,7 @@ export function ExpandableSidebar({
   const mobileDialogRef = useRef<HTMLElement | null>(null);
   const [quoteOpen, setQuoteOpen] = useState(false);
   const { selection } = useTrainingSelection();
-  const resolved = selection ? resolveTrainingContext(selection.courseId, selection.levelId) : null;
+  const resolved = selection ? getCourseNavigation(selection.courseId) : null;
   const { status: adminStatus } = useAdminAccess();
   const isAdmin = adminStatus === "authorized";
   const isAdminActive = activeView.startsWith("admin-");

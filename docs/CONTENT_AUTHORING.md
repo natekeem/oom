@@ -9,6 +9,7 @@ Each active Course is one directory:
 ```text
 src/data/training/courses/course-N/
 ├─ manifest.ts
+├─ navigation.ts
 ├─ survey.ts
 ├─ storylines.ts
 ├─ variants.ts
@@ -19,6 +20,8 @@ src/data/training/courses/course-N/
 ```
 
 `index.ts` exports one `CourseBundle`. `src/training/courseRegistry.ts` discovers it automatically; do not add a manual central Course list.
+
+`navigation.ts` exposes only ordered storyline and roleplay `group` labels for the lightweight shell catalog. Keep these equal to the canonical content; `courseCatalog.test.ts` checks parity across all Levels. Do not import full course modules into shell metadata. Full bundles remain in the shared lazy training/history chunk.
 
 Other owners:
 

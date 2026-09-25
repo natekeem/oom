@@ -82,6 +82,12 @@ beforeEach(() => {
   });
 });
 describe("managed learner feedback", () => {
+  it.each(["10000000-0000-4000-a000-000000000001", null])("passes the actual attempt ID or allows unlinked feedback (%s)", async learningAttemptId => {
+    render(<MemoryRouter><AuthContext.Provider value={auth("A")}><ManagedFeedback answer="I visited the park." question="Describe a park." context="advanced" learningAttemptId={learningAttemptId} onRetry={vi.fn()} /></AuthContext.Provider></MemoryRouter>);
+    await screen.findByText(/0 \/ 3 사용/);
+    fireEvent.click(screen.getByRole("button", { name: "AI 피드백 받기" }));
+    await waitFor(() => expect(mocks.feedback).toHaveBeenCalledWith("A", expect.objectContaining({ learningAttemptId: learningAttemptId ?? undefined }), expect.any(AbortSignal)));
+  });
   it("keeps CTA unavailable without actual text", async () => {
     render(panel("A", " "));
     await screen.findByText(/0 \/ 3 사용/);

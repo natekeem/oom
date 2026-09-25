@@ -154,3 +154,7 @@ The frontend browser never connects to the database using privileged service key
    - Access `/admin/audit/` to view administrator action logs (settings mutations only; ordinary views and filtered reads are not audited).
 3. **Role Enforcement:**
    - A user with `support` role accessing `/admin/audit/` receives a 403 response, and the UI displays an explanatory restriction notice.
+
+## Phase 3.1.1 rollout dependency
+
+After `20260923000000_managed_ai_platform.sql`, apply `20260923122712_managed_ai_hardening.sql` with managed AI OFF, then deploy updated ai-api and admin-api together. The finalization RPC gains nullable p_thought, preserving separate raw output telemetry. Run both managed_ai.sql and managed_ai_hardening.sql, and use a disposable DB for concurrency verification. Follow the full [owner rollout](MANAGED_AI.md#owner-rollout), including attempt linkage, one authorized real request, quota/idempotency/kill-switch/account-switch checks, before frontend publication. Secrets remain Function-only.

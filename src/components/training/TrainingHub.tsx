@@ -14,7 +14,7 @@ import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
 import { useTrainingSelection } from "../../training/TrainingSelectionContext";
-import { discoveredCourses } from "../../training/courseRegistry";
+import { discoveredCourses } from "../../training/courseCatalog";
 import { TRAINING_LEVELS } from "../../training/levels";
 import { topLevelNavigation } from "../layout/topLevelNavigation";
 import { PageIntro } from "../ui/PageIntro";

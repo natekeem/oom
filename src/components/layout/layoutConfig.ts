@@ -77,7 +77,7 @@ export function getRouteLayoutMeta(viewId: ViewId, pathname = ""): RouteLayoutMe
     viewId === "admin-audit" ||
     viewId === "admin-ai"
   ) {
-    return { width: "default", footer: "none" };
+    return { width: ["admin-users", "admin-learning", "admin-ai"].includes(viewId) ? "wide" : "default", footer: "none" };
   }
 
   // 8. Public content pages (Guides, Magazine Index, Pricing, About, Home)

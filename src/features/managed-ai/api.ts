@@ -4,7 +4,7 @@ import {
   type AiQuota,
   type FeedbackInput,
   type ManagedAiFeedbackV1,
-} from "../../../supabase/functions/_shared/feedback";
+} from "../../../shared/managed-ai/feedback";
 export type { AiQuota, ManagedAiFeedbackV1 };
 export const aiMessages: Record<string, string> = {
   LOGIN_REQUIRED: "로그인하면 OOM AI 피드백을 이용할 수 있어요.",

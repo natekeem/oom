@@ -1,4 +1,4 @@
-import type { ResolvedTrainingContext } from "../../training/types";
+
 
 export type ViewId =
   | "pricing"
@@ -91,7 +91,7 @@ export const viewTitles: Record<ViewId, string> = {
   "admin-ai": "관리자 콘솔 · AI 운영",
 };
 
-export function getViewTitle(viewId: ViewId, resolved?: ResolvedTrainingContext | null): string {
+export function getViewTitle(viewId: ViewId, resolved?: { storylines: { group: string }[]; roleplays: { group: string }[] } | null): string {
   if (resolved) {
     if (viewId === "script-outdoor") return `STEP 4. ${resolved.storylines[0]?.group ?? "그룹 1"}`;
     if (viewId === "script-indoor") return `STEP 4. ${resolved.storylines[1]?.group ?? "그룹 2"}`;

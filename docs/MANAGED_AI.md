@@ -4,7 +4,7 @@
 
 Learner browser → `ai-api` → Supabase Auth `getUser(token)` → FREE entitlement → atomic quota reservation → Gemini → runtime JSON validation → transactional feedback + usage finalization → Quick Practice review.
 
-The frontend remains a static GitHub Pages application. `src/features/managed-ai/` owns learner API/UI; `supabase/functions/ai-api/` owns authentication, prompts and the provider boundary; `_shared/feedback.ts` contains only the public versioned contract. `admin-api/handlers/ai.ts` owns AI operations endpoints. No Gemini SDK or key is shipped to the browser. Ordinary users do not load the lazy Admin AI route.
+The frontend remains a static GitHub Pages application. `src/features/managed-ai/` owns learner API/UI; `supabase/functions/ai-api/` owns authentication, prompts and the provider boundary; `shared/managed-ai/feedback.ts` contains only the public versioned contract. `admin-api/handlers/ai.ts` owns AI operations endpoints. No Gemini SDK or key is shipped to the browser. Ordinary users do not load the lazy Admin AI route.
 
 Quick Practice receives managed feedback only in its completed answer review. A usable transcript or manually entered answer is required. No transcription is invented and no audio is sent to managed AI. Full Mock keeps its existing custom LLM review. User-configured STT/LLM continues as a distinct advanced path. Unauthenticated learning remains available.
 
@@ -21,7 +21,7 @@ Migration: `supabase/migrations/20260923000000_managed_ai_platform.sql`. It was 
 | `ai_usage_events` | Unique request UUID, input fingerprint, status, model/prompt/schema versions, provider token counts, timing, pricing snapshot and estimated cost |
 | `ai_feedback` | Validated result JSON, owner, unique usage event and optional same-owner learning attempt |
 
-Server-only functions: `ai_quota(uuid)`, `reserve_ai_usage(uuid,uuid,text)`, `finalize_ai_usage(uuid,uuid,jsonb,uuid,integer,integer,integer,integer,text)`, `admin_update_ai(uuid,jsonb)`, `admin_ai_overview()`.
+Server-only functions: `ai_quota(uuid)`, `reserve_ai_usage(uuid,uuid,text)`, `finalize_ai_usage(uuid,uuid,jsonb,uuid,integer,integer,integer,integer,text,integer)`, `admin_update_ai(uuid,jsonb)`, `admin_ai_overview()`.
 
 All functions have an empty `search_path`, schema-qualified application objects, and EXECUTE revoked from PUBLIC/anon/authenticated, granted only to service_role. Every new table has RLS enabled and all browser privileges revoked; even direct own-feedback SELECT is deliberately absent. Gateways are the only access path. No existing RLS policy is weakened.
 
@@ -51,9 +51,9 @@ The provider uses the stable `v1/interactions` REST API, `store:false`, structur
 
 Secret: `GEMINI_API_KEY`, Supabase Function secrets only. Provider timeout: 25 seconds including reading the response. No automatic provider retry, including 429/5xx; this avoids repeating potentially charged generation. The same learner UI/types can use a replacement `AiProvider` implementation later.
 
-Prompt version: `opic_answer_feedback_v1`; schema version: 1. Provider-reported input/output/cached token counts are recorded. Reported thought tokens are included in output cost; absent token metadata remains null. No fabricated token counts. Pricing is a reservation-time catalog snapshot in micro-USD per million tokens:
+Prompt version: `opic_answer_feedback_v1`; schema version: 1. Provider-reported input/output/cached token counts are recorded. Output and thought tokens are stored separately; thought tokens are added only for cost calculation. Absent token metadata remains null. Historical rows retain their old combined output count and have null thought_tokens; do not infer a historical split. No fabricated token counts. Pricing is a reservation-time catalog snapshot in micro-USD per million tokens:
 
-`ceil(((input - cached) × inputRate + cached × cachedRate + output × outputRate) / 1,000,000)`
+`ceil(((input - cached) × inputRate + cached × cachedRate + (output + coalesce(thought, 0)) × outputRate) / 1,000,000)`
 
 Cached input is subtracted from ordinary input. Missing required usage/rates leaves estimated cost null. Unknown-cost events are counted visibly. Standard paid-tier text prices seed the catalog; free-tier credits, tax, rounding, promotions and actual invoices are not inferred. The UI says **예상 API 비용**. Catalog/pricing additions require a reviewed server migration; price editing UI is deliberately omitted.
 
@@ -63,9 +63,11 @@ Official references: [model](https://ai.google.dev/gemini-api/docs/models/gemini
 
 Learner endpoints: `GET /quota?feature=answer_feedback`, `POST /feedback`. Every call verifies a real, non-anonymous Supabase user. Responses have controlled CORS, `Cache-Control: no-store`, `Server-Timing` and `X-Response-Time`; provider errors never reach learners verbatim.
 
-Quick review uses Page/Card/Button/Badge tokens and structured AI COACH, KEEP/FIX/RETRY, optional answer signals and rewritten example. There is no Markdown heuristic in the managed path, pronunciation metric, speech-speed grade or official OPIc score. The advanced custom path remains separate. AI Settings presents managed status/quota first and custom STT/LLM in a disclosure. There is no feedback/history cache in localStorage. Account-keyed components remount synchronously on logout/account change; pending responses are aborted/ignored. Quota refreshes on use, focus, local settings mutation and every minute; server enforcement is always authoritative across tabs.
+Quick review uses Page/Card/Button/Badge tokens and structured AI COACH, KEEP/FIX/RETRY, optional answer signals and rewritten example. There is no Markdown heuristic in the managed path, pronunciation metric, speech-speed grade or official OPIc score. The advanced custom path remains separate. AI Settings selects one feedback mode with device-local `oom-ai-feedback-mode` (default managed). Quick Practice displays only that path, without automatic fallback. Anonymous/OFF managed mode has safe login/unavailable guidance. Custom without an endpoint has a settings CTA, never pseudo-AI feedback. Custom STT/LLM stays in a disclosure, open when custom mode is selected. There is no feedback/history cache in localStorage. Account-keyed components remount synchronously on logout/account change; pending responses are aborted/ignored. Quota refreshes on use, focus, local settings mutation and every minute; server enforcement is always authoritative across tabs.
 
 `/admin/ai/` reuses AdminLayout and the wide PageContainer, is lazy-loaded, noindex, ad-excluded, footer-free and excluded from sitemap. It shows six primary KPIs, two lightweight 7-day charts, model/feature breakdowns, bounded recent failures/top users, average/p95 latency, and usage rows. Filters are dates, status, feature, model, effective plan and user UUID; 20 rows per server page, never all events downloaded.
+
+User labels use one bounded profiles query per page/overview (display name plus truncated UUID). Email is not added; no per-user Auth requests. The existing gateway retains timing headers.
 
 Admin endpoints: `GET /ai/overview`, `/ai/usage`, `/ai/settings`, `PATCH /ai/settings`. Support may read but cannot mutate. Owner/admin may change runtime ON/OFF, selected enabled catalog model and FREE/future PRO limits. The UI previews and confirms the change. Database role recheck, settings update and mutation audit are one transaction; read operations are not audited. Limit bounds are 0–1,000/day. Kill switch affects subsequent reservations; already-started requests may finish.
 
@@ -79,18 +81,18 @@ Public Pricing does not advertise “3/day available” before production verifi
 
 Use the intended project and inspect its existing migration history first. CLI 2.117.0 command help was checked for these flags.
 
-1. Apply `20260923000000_managed_ai_platform.sql` after Phase 3.0, via the project's SQL Editor or the established migration workflow. For a linked project with matching prior history: `npx supabase db push --linked --dry-run`, review the sole new AI migration, then `npx supabase db push --linked`. Do not reset production or edit prior migrations.
-2. Run `supabase/tests/managed_ai.sql` in SQL Editor (BEGIN/ROLLBACK). Run the concurrent test against a disposable database with all migrations applied, not production: set `AI_TEST_DATABASE_URL`, `AI_TEST_ALLOW_DISPOSABLE=yes`, optionally `PG_MODULE` pointing to an installed `pg`, then `node scripts/test-ai-concurrency.mjs`.
+1. Apply `20260923000000_managed_ai_platform.sql` after Phase 3.0, via the project's SQL Editor or the established migration workflow. For a linked project with matching prior history: `npx supabase db push --linked --dry-run`, review both pending AI migrations, then `npx supabase db push --linked`. Apply `20260923122712_managed_ai_hardening.sql` immediately after the Phase 3.1 migration. It adds nullable thought_tokens and atomically replaces the finalization signature; existing data and privileges remain protected. Keep AI OFF during this coordinated migration/function update. Do not reset production or edit prior migrations.
+2. Run `supabase/tests/managed_ai.sql` and `supabase/tests/managed_ai_hardening.sql` in SQL Editor (BEGIN/ROLLBACK). Run the concurrent test against a disposable database with all migrations applied, not production: set `AI_TEST_DATABASE_URL`, `AI_TEST_ALLOW_DISPOSABLE=yes`, optionally `PG_MODULE` pointing to an installed `pg`, then `node scripts/test-ai-concurrency.mjs`.
 3. Set `GEMINI_API_KEY` in Dashboard → Edge Functions → Secrets. Never paste it in chat, use `VITE_GEMINI_API_KEY`, GitHub Pages variables or localStorage. CLI alternative: put `GEMINI_API_KEY=...` in a protected file outside the repository and run `npx supabase secrets set --project-ref "$env:OOM_SUPABASE_PROJECT_REF" --env-file "C:\secure\oom-ai.env"`; remove that local file securely afterward.
 4. Deploy: `npx supabase functions deploy ai-api --project-ref "$env:OOM_SUPABASE_PROJECT_REF" --no-verify-jwt --use-api`.
 5. Deploy: `npx supabase functions deploy admin-api --project-ref "$env:OOM_SUPABASE_PROJECT_REF" --no-verify-jwt --use-api`. The flag disables the gateway's legacy JWT verification only; both functions independently verify the bearer token through Auth. Anonymous managed requests must return 401.
-6. Deploy/preview this frontend for the owner while runtime remains OFF. Check `/admin/ai/`: real empty/previous data, default model, FREE 3 and future PRO 30, permissions and disabled runtime. The static frontend may be deployed early because OFF is safe.
+6. Preview this frontend locally for the owner while runtime remains OFF. Check `/admin/ai/`: real empty/previous data, default model, FREE 3 and future PRO 30, permissions and disabled runtime. Keep the public frontend deployment until the verification steps below are complete.
 7. With an authenticated FREE test user, inspect `GET /quota?feature=answer_feedback`: FREE, limit 3, used 0, enabled false and correct next Seoul midnight. Verify unauthenticated requests are rejected.
 8. Owner/admin enables managed AI through the confirmation in Admin Console. Confirm the audit row.
-9. Perform **one real** feedback request from Quick Practice with non-sensitive practice text. Verify structured UI; one feedback row; one succeeded usage event; reported tokens/cost; remaining 2; same UUID recovery without another event/provider call; Admin AI totals; no raw-answer/audio DB column. Capture `Server-Timing`, `X-Response-Time` and actual `x-sb-edge-region` in Network tools.
+9. Perform **one real** feedback request from Quick Practice with non-sensitive practice text. Verify structured UI; one feedback row linked to the actual same-owner learning_attempt and learning_session; one succeeded usage event; separate input/output/thought/cached tokens and cost; remaining 2; same UUID recovery without another event/provider call; Admin AI totals; no raw-answer/audio DB column. Capture `Server-Timing`, `X-Response-Time` and actual `x-sb-edge-region` in Network tools.
 10. On the test account, exhaust the remaining FREE quota and verify the fourth distinct request is server-blocked. Test simultaneous last-slot requests in the disposable environment. Restore any temporary policy changes via Admin Console.
 11. Disable managed AI and verify the safe unavailable learner state while training still works. Test support PATCH rejection, owner/admin changes, audit rows, account switching and mobile feedback. Re-enable intentionally only after these checks.
-12. Deploy frontend if not already deployed. Only after production confirms FREE 3/day should Pricing advertise that allowance. Do not enable PRO purchase.
+12. Deploy frontend after owner verification. Only after production confirms FREE 3/day should Pricing advertise that allowance. Do not enable PRO purchase.
 
 Browser requests send `x-region: ap-northeast-2`. Verify the **actual** `x-sb-edge-region`; the requested region is not evidence of execution. [Supabase regional invocation](https://supabase.com/docs/guides/functions/regional-invocation) and [secret management](https://supabase.com/docs/guides/functions/secrets).
 
@@ -103,3 +105,17 @@ Repository commands are `npm run docs:generate`, `npm run docs:check` and `npm r
 SQL testing used a disposable PostgreSQL instance with all repository migrations and a minimal Auth schema/roles shim. This verifies PostgreSQL functions, grants, RLS and real concurrent locking; it does not replace target Supabase deployment tests or advisors.
 
 Deferred: managed STT, audio storage/processing, pronunciation analysis, aggregate Full Mock AI report, subscriptions/payments, PRO purchase, ad-free entitlement, community, optional feedback history and temporary entitlement overrides.
+
+## Phase 3.1.1 lifecycle and local settings
+
+One completed Quick answer creates one learning_attempt. The promise returns the persisted UUID; review waits for this write before allowing managed feedback. The request forwards that UUID and the gateway checks ownership before reserving quota; the composite database FK enforces it again. A failed write returns null and AI remains available without claiming a link. Duplicate completion callbacks reuse a promise; AI retries never insert attempts.
+
+Quick Practice's explicit **연습 종료** waits for pending attempts, then completes the learning_session with the count of successfully saved completed attempts and completed_at. Normal review, navigation, refresh and unmount never complete it. Completion is idempotent; summary metrics are local completed-answer count and measured duration. Failed/anonymous persistence is disclosed without blocking training. A new practice starts a fresh session. No extra aggregation is used for an AI-count card.
+
+Custom settings keys remain `oom-llm-settings` and `oom-stt-settings`. Only endpoint/model/options belong in localStorage by default. API keys use matching `<settings-key>:key` sessionStorage entries; `rememberKey: true` is explicit opt-in. Existing legacy keys remain usable and unchanged until the settings screen warns the user and they save their choice. Unchecked + save removes the persistent secret while retaining the current tab value. Settings are device-owned and survive logout/account changes; managed quota/results and learning sessions are account-scoped. Password inputs stay masked; custom credentials go only to the selected custom endpoint. No browser encryption claim is made.
+
+## Feedback quality evaluation (owner-run, not performed automatically)
+
+Synthetic cases are in `../fixtures/managed-ai-quality.json`. They contain no real user data. In an isolated staging project, use the normal authenticated Quick feedback flow for each answer. Keep the current default model unchanged in production. To compare one higher-quality Gemini model, first review its current compatibility/pricing and add it to the staging catalog via a reviewed migration if absent; select it only through existing admin settings. Never add a second provider or learner model selector for this exercise.
+
+For each case and model, record: question relevance, specific truthful strengths, actionable correction, concise retry tip, level-appropriate rewrite, natural Korean, no generic filler, no official grade/audio/pronunciation claims, and injection resistance. Save model/prompt/schema versions, latency, raw token breakdown, estimated cost, result text and a PASS/FAIL rationale in a local QA report. Review outcomes side by side; do not count schema compliance as proof of coaching quality. Restore staging settings afterward. Current outcome: mocked transport/schema/UI tests PASS; real-provider answer quality and model comparison NOT RUN (owner paid-call gate).

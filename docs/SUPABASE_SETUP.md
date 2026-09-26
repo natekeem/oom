@@ -158,3 +158,7 @@ The frontend browser never connects to the database using privileged service key
 ## Phase 3.1.1 rollout dependency
 
 After `20260923000000_managed_ai_platform.sql`, apply `20260923122712_managed_ai_hardening.sql` with managed AI OFF, then deploy updated ai-api and admin-api together. The finalization RPC gains nullable p_thought, preserving separate raw output telemetry. Run both managed_ai.sql and managed_ai_hardening.sql, and use a disposable DB for concurrency verification. Follow the full [owner rollout](MANAGED_AI.md#owner-rollout), including attempt linkage, one authorized real request, quota/idempotency/kill-switch/account-switch checks, before frontend publication. Secrets remain Function-only.
+
+## Phase 3.1.2 unified execution dependency
+
+Apply `20260925060910_unified_ai_execution_layer.sql` after both Phase 3.1 migrations while managed AI remains OFF. It expands the finite feature set, replaces quota/reservation RPC signatures with feature-aware forms, adds server-only `ai_generation_results`, and changes Admin AI limits to a per-feature structure. Deploy `ai-api`, `admin-api`, and the matching frontend together. Run both managed SQL suites plus the disposable concurrency test before owner verification. Verify all three features, custom precedence with zero managed usage, malformed-custom no-fallback behavior, and managed-OFF/custom-continues behavior before publication. The public Pricing page must not promise a live allowance until the target project, secrets, enablement and real requests are verified.

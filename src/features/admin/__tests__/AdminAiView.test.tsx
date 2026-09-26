@@ -18,8 +18,10 @@ const settings = {
     requests_per_minute: 5,
   },
   limits: [
-    { plan: "free", limit_count: 3 },
-    { plan: "pro", limit_count: 30 },
+    ...["answer_feedback", "script_rewrite", "roleplay_question"].flatMap((feature) => [
+      { plan: "free", feature, limit_count: 3, enabled: true },
+      { plan: "pro", feature, limit_count: 30, enabled: true },
+    ]),
   ],
   models: [
     {
@@ -126,8 +128,11 @@ describe("Admin AI operations", () => {
       expect(mocks.request).toHaveBeenCalledWith("/ai/settings", undefined, {
         enabled: true,
         model: "gemini-3.5-flash-lite",
-        freeLimit: 3,
-        proLimit: 30,
+        limits: {
+          answer_feedback: { free: 3, pro: 30 },
+          script_rewrite: { free: 3, pro: 30 },
+          roleplay_question: { free: 3, pro: 30 },
+        },
       }),
     );
   });
@@ -143,7 +148,7 @@ describe("Admin AI operations", () => {
   it("rejects invalid limits in the UI", async () => {
     view();
     await screen.findByText("AI 운영 설정");
-    fireEvent.change(screen.getByLabelText("FREE 하루 한도"), {
+    fireEvent.change(screen.getAllByLabelText("FREE 하루 한도")[0], {
       target: { value: "-1" },
     });
     expect(

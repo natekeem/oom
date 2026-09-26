@@ -1,4 +1,3 @@
-import { useFeedbackMode, setFeedbackMode } from "../../lib/aiPreferences";
 import { Info } from "lucide-react";
 import type { LlmSettings, SttSettings } from "../../types";
 import { Card } from "../ui/Card";
@@ -6,6 +5,9 @@ import { AiSettingsPanel } from "./AiSettingsPanel";
 import { topLevelNavigation } from "../layout/topLevelNavigation";
 import { PageIntro } from "../ui/PageIntro";
 import { ManagedAiSettings } from "../../features/managed-ai/ManagedFeedback";
+import { getAiConnection, hasCustomAiConfiguration } from "../../features/ai/providerResolver";
+import { Badge } from "../ui/Badge";
+import { Button } from "../ui/Button";
 
 type AiSettingsViewProps = {
   settings: LlmSettings;
@@ -13,6 +15,7 @@ type AiSettingsViewProps = {
   sttSettings: SttSettings;
   onSttChange: (settings: SttSettings) => void;
   onSave: () => void;
+  onClearCustom: () => void;
 };
 
 export function AiSettingsView({
@@ -21,8 +24,10 @@ export function AiSettingsView({
   sttSettings,
   onSttChange,
   onSave,
+  onClearCustom,
 }: AiSettingsViewProps) {
-  const mode = useFeedbackMode();
+  const connection = getAiConnection(settings);
+  const customConfigured = hasCustomAiConfiguration(settings);
   return (
     <div className="space-y-6">
       <PageIntro
@@ -31,19 +36,23 @@ export function AiSettingsView({
         tag="AI 피드백 / STT 설정"
         title="내 답변에서 시작하는 AI 코칭"
       />
-      <fieldset className="space-y-3">
-        <legend className="text-sm font-semibold">AI 피드백 방식</legend>
-        <div className="flex flex-wrap gap-4">
-          {([['managed', 'OOM 관리형 AI · 권장'], ['custom', '사용자 지정 LLM · 고급']] as const).map(([value, label]) => (
-            <label key={value} className="flex cursor-pointer items-center gap-2 rounded-md bg-zinc-100 px-4 py-3 text-sm dark:bg-zinc-800">
-              <input type="radio" name="feedback-mode" value={value} checked={mode === value} onChange={() => setFeedbackMode(value)} />{label}
-            </label>
-          ))}
+      <Card className="space-y-3 p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold text-zinc-500">현재 AI 연결</p>
+            <p className="mt-1 text-base font-bold">{connection.label}</p>
+          </div>
+          <Badge tone={connection.source === "custom" ? "amber" : "indigo"}>{connection.detail}</Badge>
         </div>
-        <p className="text-xs text-zinc-500">빠른 연습에서는 선택한 방식만 사용합니다. 이용할 수 없을 때 다른 방식으로 자동 전환하지 않습니다.</p>
-      </fieldset>
+        <p className="text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+          {customConfigured
+            ? "저장한 Endpoint가 OOM의 모든 LLM 기능에서 관리형 AI보다 우선합니다. 요청 실패 시 다른 제공자로 자동 전환하지 않습니다."
+            : "사용자 API 설정이 없으므로 로그인 후 OOM에서 제공하는 관리형 AI를 사용합니다."}
+        </p>
+        {customConfigured ? <Button size="sm" variant="secondary" onClick={onClearCustom}>사용자 API 설정 해제</Button> : null}
+      </Card>
       <ManagedAiSettings />
-      <details key={mode} open={mode === "custom"} className="space-y-5">
+      <details open={customConfigured} className="space-y-5">
       <summary className="cursor-pointer text-sm font-semibold text-zinc-900 dark:text-white">고급 사용자 설정 · 직접 연결한 STT / LLM</summary>
       <AiSettingsPanel
         onChange={onChange}

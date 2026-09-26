@@ -159,10 +159,10 @@ When product shape changes intentionally, update source, tests, and the relevant
 
 ## Managed feedback in Quick Practice
 
-Quick Practice completion review offers OOM managed AI for authenticated users with a real transcript or manually entered answer. Quota and runtime availability are authoritative server data; the default migration is OFF. KEEP/FIX/RETRY and optional 1–5 text-answer signals are structured JSON, never official OPIc scoring. Custom STT/LLM stays available as a separate advanced path; Full Mock behavior is unchanged. See [MANAGED_AI.md](MANAGED_AI.md).
+All LLM-assisted training surfaces use one execution contract. A usable custom LLM endpoint is browser-direct and automatically takes precedence; with no custom endpoint, authenticated users use managed AI subject to authoritative per-feature quota and runtime availability. The default migration is OFF. Quick Practice and Full Mock post-exam review use `answer_feedback`; STEP 4 uses `script_rewrite`; STEP 5 uses `roleplay_question`. No exam-time Full Mock call is added. See [MANAGED_AI.md](MANAGED_AI.md).
 
 ### Phase 3.1.1 refinement
 
-Quick review uses the feedback mode selected in AI Settings (managed by default; custom explicitly chosen). It never shows competing AI CTAs or a local placeholder as AI. A completed answer yields a persisted attempt ID when available. **연습 종료** explicitly completes the session and shows actual local answer count and duration; navigation and refresh do not imply completion. Full Mock's exam/review contracts remain unchanged.
+AI Settings shows the active connection rather than a mode selector. A configured custom endpoint applies across all LLM features; clearing it returns routing to managed AI. Invalid custom configuration, custom failure and managed failure are surfaced truthfully without provider fallback or local placeholder output. A completed Quick answer yields a persisted attempt ID when available. **연습 종료** explicitly completes the session and shows actual local answer count and duration; navigation and refresh do not imply completion. Full Mock's exam/review boundary remains unchanged.
 
 The shell now reads lightweight manifests/navigation from courseCatalog. Full canonical bundles are loaded through the lazy training/history views. Update each course's navigation.ts when canonical group labels change; catalog parity tests verify all three levels.

@@ -1,9 +1,7 @@
 import { useAuth } from "../../auth/useAuth";
 import { Button, ButtonLink } from "../ui/Button";
 import { Card } from "../ui/Card";
-import { useFeedbackMode } from "../../lib/aiPreferences";
 import { useEffect, useRef, useState } from "react";
-import { callInternalLlm } from "../../lib/llm";
 import { transcribeAudio } from "../../lib/stt";
 import { stopSpeech } from "../../lib/speech";
 import { getTtsManager } from "../../lib/tts/TtsManager";
@@ -72,7 +70,6 @@ function PracticeViewContent({
   onToast: (title: string, description?: string, tone?: "success" | "error" | "info") => void;
   onNavigate?: (view: ViewId) => void;
 }) {
-  const feedbackMode = useFeedbackMode();
   const availableQuestions: PracticeItem[] = resolved.questions.map((q) => ({
     id: q.id,
     group: q.group,
@@ -98,8 +95,6 @@ function PracticeViewContent({
   const [micFailed, setMicFailed] = useState(false);
 
   const [answer, setAnswer] = useState("");
-  const [feedback, setFeedback] = useState("");
-  const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [sttError, setSttError] = useState<string | null>(null);
 
@@ -229,8 +224,6 @@ function PracticeViewContent({
     setElapsedSeconds(0);
     setMicFailed(false);
     setAnswer("");
-    setFeedback("");
-    setIsFeedbackLoading(false);
     setIsTranscribing(false);
     setSttError(null);
     setRecordingResult(null);
@@ -507,84 +500,12 @@ function PracticeViewContent({
     setElapsedSeconds(0);
     setMicFailed(false);
     setAnswer("");
-    setFeedback("");
-    setIsFeedbackLoading(false);
     setIsTranscribing(false);
     setSttError(null);
     setRecordingResult(null);
     setAttemptKey((k) => k + 1);
 
     onToast("재도전 준비 완료", "질문을 다시 듣거나 '답변 시작'을 눌러 말해 보세요.", "info");
-  };
-
-  const getFeedback = async () => {
-    if (!answer.trim()) {
-      onToast("답변 텍스트가 비어 있습니다.", "음성을 녹음하거나 텍스트를 입력해 주세요.", "info");
-      return;
-    }
-
-    if (!settings.endpoint.trim()) {
-      onToast("사용자 지정 LLM 설정이 필요합니다.", "설정 화면으로 이동해 내부 LLM Endpoint를 입력해 주세요.", "info");
-      return;
-    }
-
-    setIsFeedbackLoading(true);
-
-    try {
-      const criteria = resolved.level.learningFocus.join(", ");
-      const courseInfo = `Course: ${resolved.course.title}`;
-      const durationSeconds = recordingResult?.durationSeconds ?? elapsedSeconds;
-      const wordCount = answer.trim().split(/\s+/).filter(Boolean).length;
-      const wpm = durationSeconds > 0 ? Math.round((wordCount / durationSeconds) * 60) : 0;
-
-      const courseRecommendedStory = question?.storylineId
-        ? resolved.storylines.find((story) => story.id === question.storylineId)
-        : null;
-
-      const storylineContext = courseRecommendedStory
-        ? `Anchor Scene: ${courseRecommendedStory.core.anchorScene}, Core Facts: ${courseRecommendedStory.core.facts.join(" / ")}`
-        : "";
-
-      const result = await callInternalLlm(settings, [
-        {
-          role: "system",
-          content:
-            `You are an expert OPIc speaking coach. Provide concise, constructive, and highly actionable feedback in Korean.\n` +
-            `Evaluate specifically against target level: ${levelLabel}.\n` +
-            `Level Learning Focus: ${criteria}.\n` +
-            `Target Duration: ${resolved.level.targetSeconds.join("–")}s.\n\n` +
-            `Start with exactly these three concise sections, in this order:\nKEEP\n(one strength)\nFIX\n(one highest-priority correction)\nRETRY\n(one immediate same-question mission)\n\n` +
-            `Then add a section titled 상세 진단 with optional detail on target-level fit, direct question response, ANSWER/SCENE-ACTION/RESULT structure, tense and specificity, word count/WPM/duration, and up to 3 natural alternatives.\n\n` +
-            `Rules:\n` +
-            `- Do NOT claim an official OPIc score or guarantee any grade.\n` +
-            `- Do NOT grade pronunciation or intonation from text.\n` +
-            `- Do NOT require exact script memorization; value natural communication and scene delivery.`,
-        },
-        {
-          role: "user",
-          content:
-            `Question: ${question?.prompt ?? "General OPIc question"}\n\n` +
-            `Student Answer Transcript:\n"${answer}"\n\n` +
-            `Context:\n` +
-            `- ${courseInfo}\n` +
-            `- Target Level: ${levelLabel}\n` +
-            `- Recording Duration: ${durationSeconds > 0 ? `${durationSeconds}s` : "Text direct input"}\n` +
-            `- Word Count: ${wordCount} words\n` +
-            `- Calculated WPM: ${wpm > 0 ? `${wpm} WPM` : "N/A"}\n` +
-            (storylineContext ? `- Associated Storyline: ${storylineContext}\n` : ""),
-        },
-      ]);
-
-      setFeedback(result);
-      onToast("AI 피드백을 받았습니다.", "고칠 점과 다음 시도 미션을 확인해 보세요.", "success");
-    } catch (error) {
-      setFeedback(
-        `KEEP\nTranscript를 확인하고 같은 질문 재도전까지 준비했습니다.\n\nFIX\n첫 문장이 질문에 직접 답하는지 한 가지만 확인하세요.\n\nRETRY\n첫 문장을 고쳐 같은 답변을 다시 말하세요.\n\n상세 진단\nAI 요청 실패: ${error instanceof Error ? error.message : "설정과 CORS 정책을 확인해 주세요."}`
-      );
-      onToast("AI 피드백에 실패했습니다.", "내장 체크리스트로 먼저 연습을 이어가세요.", "error");
-    } finally {
-      setIsFeedbackLoading(false);
-    }
   };
 
   const courseRecommended = question?.storylineId
@@ -603,7 +524,7 @@ function PracticeViewContent({
       Boolean(recordingResult) ||
       Boolean(audioUrl) ||
       Boolean(answer.trim()) ||
-      Boolean(feedback);
+      false;
 
   if (ended) return <Card className="space-y-5 p-6 sm:p-8" data-practice-stage="summary">
     <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">STEP 6 · 빠른 연습 종료</p>
@@ -714,23 +635,22 @@ function PracticeViewContent({
         ttsStatus={questionTtsStatus || undefined}
       />
 
-      <div className="flex justify-end"><Button variant="secondary" disabled={sessionState !== "complete" || attemptPending || ending || isFeedbackLoading} onClick={() => void endPractice()}>{ending ? "연습을 마치는 중…" : "연습 종료"}</Button></div>
+      <div className="flex justify-end"><Button variant="secondary" disabled={sessionState !== "complete" || attemptPending || ending} onClick={() => void endPractice()}>{ending ? "연습을 마치는 중…" : "연습 종료"}</Button></div>
 
       {/* Phase B: Post-Answer Coaching Review Panel (visible when complete or answer exists) */}
       {showReviewPanel ? (
         <div className="pt-2">
           <PracticeReviewPanel
-            customConfigured={Boolean(settings.endpoint.trim())}
-            managedFeedback={feedbackMode === "managed" ? <ManagedFeedback key={attemptKey} answer={answer} question={activePrompt || ""} context={`${resolved.course.title} / ${levelLabel}`} onRetry={retryAttempt} learningAttemptId={learningAttemptId} disabled={isTranscribing || attemptPending || ending} /> : undefined}
+            managedFeedback={<ManagedFeedback key={attemptKey} answer={answer} question={activePrompt || ""} context={`${resolved.course.title} / ${levelLabel}`} settings={settings} durationSeconds={recordingResult?.durationSeconds ?? elapsedSeconds} onRetry={retryAttempt} learningAttemptId={learningAttemptId} disabled={isTranscribing || attemptPending || ending} />}
             answer={answer}
             audioUrl={audioUrl}
             autoTranscribe={sttSettings?.autoTranscribe ?? true}
             durationSeconds={recordingResult?.durationSeconds ?? elapsedSeconds}
-            feedback={feedback}
+            feedback=""
             hasRecording={Boolean(recordingResult || audioUrl)}
-            isFeedbackLoading={isFeedbackLoading}
+            isFeedbackLoading={false}
             onAnswerChange={setAnswer}
-            onFeedback={getFeedback}
+            onFeedback={() => undefined}
             onNavigateToSettings={onNavigate ? () => onNavigate("ai-settings") : undefined}
             onRetryAttempt={retryAttempt}
             onTranscribe={handleManualTranscribe}

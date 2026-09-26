@@ -46,10 +46,14 @@ function extractText(payload: unknown) {
   if (typeof response.output_text === "string") return response.output_text;
   if (typeof response.text === "string") return response.text;
 
-  return JSON.stringify(payload, null, 2);
+  throw new Error("AI 응답 형식을 읽을 수 없습니다.");
 }
 
-export async function callInternalLlm(settings: LlmSettings, messages: LlmMessage[]): Promise<string> {
+export async function callInternalLlm(
+  settings: LlmSettings,
+  messages: LlmMessage[],
+  signal?: AbortSignal,
+): Promise<string> {
   if (!settings.endpoint.trim()) {
     throw new Error("AI 설정에서 API Endpoint URL을 입력해 주세요.");
   }
@@ -67,6 +71,7 @@ export async function callInternalLlm(settings: LlmSettings, messages: LlmMessag
     response = await fetch(settings.endpoint, {
       method: "POST",
       headers,
+      signal,
       body: JSON.stringify(buildBody(settings, messages)),
     });
   } catch (error) {
@@ -75,6 +80,7 @@ export async function callInternalLlm(settings: LlmSettings, messages: LlmMessag
   }
 
   const raw = await response.text();
+  if (raw.length > 30000) throw new Error("AI 응답이 허용된 크기를 초과했습니다.");
   let payload: unknown = raw;
   try {
     payload = raw ? JSON.parse(raw) : {};
@@ -86,5 +92,7 @@ export async function callInternalLlm(settings: LlmSettings, messages: LlmMessag
     throw new Error(`LLM 요청이 ${response.status}로 실패했습니다. 연결 설정을 확인해 주세요.`);
   }
 
-  return extractText(payload);
+  const text = extractText(payload).trim();
+  if (!text) throw new Error("AI 응답이 비어 있습니다.");
+  return text;
 }

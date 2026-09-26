@@ -28,7 +28,7 @@ OOM은 OPIc 영어 말하기를 Course × Level 구조로 연습하는 브라우
 - STEP 6 빠른 연습과 실전 모의고사, 질문 청취 0/2 제한, MediaRecorder 녹음, 다시 듣기
 - 실전 모의고사의 Background Survey → Self Assessment → 시험 준비 → 자기소개 워밍업 → 1st Session → 난이도 재조정 → 2nd Session → 결과 요약 / 답변 복기 / 훈련 리포트
 - optional STT 전사, editable transcript, 사용자 설정 LLM 기반 KEEP / FIX / RETRY 피드백
-- Quick Practice의 로그인 기반 관리형 AI 피드백과 Admin AI 운영 (서버 기본 OFF; [배포 절차](docs/MANAGED_AI.md))
+- 모든 LLM 기능의 자동 라우팅: 커스텀 endpoint가 있으면 브라우저에서 직접 호출하고, 없으면 로그인 기반 관리형 AI 사용 (서버 기본 OFF; [배포 절차](docs/MANAGED_AI.md))
 - Heart / Bella / Sarah / Sky 음성과 WaveSurfer waveform
 - 고정 콘텐츠는 WebM/Opus 정적 음원을 먼저 쓰는 static-first TTS
 
@@ -42,7 +42,7 @@ STEP 6의 빠른 연습은 자기소개 워밍업 없이 한 문제를 바로 �
 - Vitest + Testing Library
 - GitHub Pages 또는 일반 정적 호스팅
 
-프런트엔드는 GitHub Pages 정적 배포를 유지하며 Supabase를 외부 인증·프로필 서비스로 사용합니다. Google 로그인과 마이페이지를 통해 계정 정보, 목표 설정 상태, 최근 학습 기록을 관리할 수 있으며, 로그인 없이도 기존 훈련과 공개 콘텐츠를 자유롭게 이용할 수 있습니다. 설정은 [Supabase Setup](docs/SUPABASE_SETUP.md)을 참고하세요. LLM/STT endpoint·model과 피드백 방식은 브라우저 `localStorage`에 저장됩니다. API key는 기본적으로 탭 `sessionStorage`를 사용하며, 사용자가 “이 기기에 API Key 저장”을 선택하고 저장한 경우에만 영구 저장합니다. 기존 저장 키는 안내 후 사용자가 저장 정책을 선택할 때 전환됩니다. 소스에는 키를 포함하지 않습니다. STT 설정 key는 `oom-stt-settings`입니다.
+프런트엔드는 GitHub Pages 정적 배포를 유지하며 Supabase를 외부 인증·프로필 서비스로 사용합니다. Google 로그인과 마이페이지를 통해 계정 정보, 목표 설정 상태, 최근 학습 기록을 관리할 수 있으며, 로그인 없이도 기존 훈련과 공개 콘텐츠를 자유롭게 이용할 수 있습니다. 설정은 [Supabase Setup](docs/SUPABASE_SETUP.md)을 참고하세요. LLM/STT endpoint·model은 브라우저 `localStorage`에 저장됩니다. 커스텀 LLM endpoint가 설정되어 있으면 모든 LLM 기능에서 자동으로 우선 사용하고, 없으면 관리형 AI를 사용합니다. API key는 기본적으로 탭 `sessionStorage`를 사용하며, 사용자가 “이 기기에 API Key 저장”을 선택하고 저장한 경우에만 영구 저장합니다. 기존 저장 키는 안내 후 사용자가 저장 정책을 선택할 때 전환됩니다. 소스에는 키를 포함하지 않습니다. STT 설정 key는 `oom-stt-settings`입니다.
 
 ## Local development
 
@@ -103,7 +103,7 @@ TTS 콘텐츠를 추가하거나 수정했다면 [Content Authoring](docs/CONTEN
 
 STEP 2는 추천 조합을 정확히 채점했을 때, STEP 4·5는 상세 하단의 학습 완료를 눌렀을 때만 활동을 기록합니다. 방문·스크롤·음성 재생·체크박스 변경은 기록하지 않습니다. 비로그인 학습은 계속 사용할 수 있습니다.
 
-공개 /pricing/ 페이지는 현재 무료 기능과 준비 중인 PRO 계획을 안내합니다. 관리형 AI, 결제, 실제 구독 및 광고 제거 권한은 구현하지 않았습니다. 새 활동 테이블 배포 순서는 docs/SUPABASE_SETUP.md를 따릅니다.
+공개 /pricing/ 페이지는 현재 무료 기능과 준비 중인 PRO 계획을 안내합니다. 관리형 AI 실행 계층은 구현되어 있으나 서버 기본값은 OFF이며, 운영 배포·비밀 설정·실요청 검증 전에는 활성 서비스로 간주하지 않습니다. 결제, 실제 구독 및 광고 제거 권한은 구현하지 않았습니다. 배포 순서는 docs/SUPABASE_SETUP.md를 따릅니다.
 
 ## Phase 2.9 레이아웃 시스템 및 사이드바 개편
 

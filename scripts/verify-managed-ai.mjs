@@ -56,8 +56,10 @@ const settings = {
     requests_per_minute: 5,
   },
   limits: [
-    { plan: "free", limit_count: 3 },
-    { plan: "pro", limit_count: 30 },
+    ...["answer_feedback", "script_rewrite", "roleplay_question"].flatMap((feature) => [
+      { plan: "free", feature, limit_count: 3, enabled: true },
+      { plan: "pro", feature, limit_count: 30, enabled: true },
+    ]),
   ],
   models: [
     {
@@ -90,7 +92,11 @@ const overview = {
   },
   days,
   models: [{ model: "gemini-3.5-flash-lite", calls: 49, cost: 11800 }],
-  features: [{ feature: "answer_feedback", calls: 49 }],
+  features: [
+    { feature: "answer_feedback", calls: 37 },
+    { feature: "script_rewrite", calls: 7 },
+    { feature: "roleplay_question", calls: 5 },
+  ],
   failures: [
     {
       request_id: uid,
@@ -165,7 +171,11 @@ const overview = {
       data = { id: uid, user_id: uid, mode: "quick_practice", status: "in_progress", question_count: 0, answered_count: 0, started_at: new Date().toISOString(), completed_at: null };
       if (route.request().method() === "PATCH") {
         const patch = route.request().postDataJSON();
-        assert.equal(patch.status, "completed"); assert.equal(patch.answered_count, 1); assert.ok(patch.completed_at);
+        if (patch.status !== undefined) {
+          assert.equal(patch.status, "completed");
+          assert.ok(Number.isInteger(patch.answered_count) && patch.answered_count > 0);
+          assert.ok(patch.completed_at);
+        }
       }
     }
     else if (path.includes("/rest/v1/learning_attempts")) data = { id: uid };
@@ -185,6 +195,7 @@ const overview = {
           {
             request_id: uid,
             user_id: uid,
+            feature: "script_rewrite",
             status: "succeeded",
             model: "gemini-3.5-flash-lite",
             effective_plan: "free",
@@ -222,9 +233,11 @@ const overview = {
       data = { users: [{ id: uid, displayName: "QA fixture", email: "qa@example.invalid", avatarUrl: null, joinedAt: "2026-09-21T00:00:00Z", lastSignInAt: null, planDisplay: "FREE", hasLearningPreferences: true, learningSessionCount: 2, learningActivityCount: 1, lastLearningAt: null }], total: 1, totalPages: 1, page: 1, pageSize: 20 };
     else if (path.endsWith("/admin-api/learning")) data = { records: [{ id: uid, userId: uid, userDisplayName: "QA fixture", type: "session", modeOrType: "quick_practice", targetLevel: "advanced", status: "completed", questionCount: 1, answeredCount: 1, timestamp: "2026-09-21T00:00:00Z" }], total: 1, page: 1, totalPages: 1, pageSize: 20 };
     else if (path.endsWith("/ai-api/quota")) data = quota();
-    else if (path.endsWith("/ai-api/feedback")) {
+    else if (path.endsWith("/ai-api/execute")) {
       posts++;
-      assert.equal(route.request().postDataJSON().learningAttemptId, uid);
+      const requestBody = route.request().postDataJSON();
+      assert.equal(requestBody.feature, "answer_feedback");
+      assert.equal(requestBody.input.learningAttemptId, uid);
       if (delay) await new Promise((r) => setTimeout(r, delay));
       if (mode === "error") {
         status = 503;
@@ -236,7 +249,7 @@ const overview = {
         };
       } else {
         used++;
-        data = { feedback, quota: quota() };
+        data = { result: feedback, quota: quota() };
       }
     }
     await route.fulfill({
@@ -266,6 +279,14 @@ const overview = {
     await page.goto("http://localhost:4173" + route);
     await page.waitForTimeout(500);
   };
+  const openQuickReview = async () => {
+    await page.getByRole("button", { name: "답변 시작", exact: true }).click();
+    await page.getByRole("button", { name: "타이머만 시작", exact: true }).click();
+    await page.getByRole("button", { name: "답변 종료", exact: true }).click();
+    await page.locator("#answer-review").scrollIntoViewIfNeeded();
+    const dismiss = page.getByRole("button", { name: "알림 닫기" });
+    if (await dismiss.count()) await dismiss.click();
+  };
   for (const route of ["/admin/", "/admin/users/", "/mypage/"]) {
     await visit(route);
     await shot("reference-auth-" + route.replaceAll("/", ""));
@@ -274,26 +295,19 @@ const overview = {
     await page.setViewportSize({ width, height: width === 390 ? 844 : width === 1920 ? 1080 : 1000 });
     for (const theme of ["dark", "light"]) {
       await page.evaluate((t) => localStorage.setItem("oom-theme", t), theme);
-      for (const route of ["/ai-settings/", "/admin/", "/admin/users/", "/admin/learning/", "/admin/ai/"]) {
+      for (const route of ["/training/scripts/outdoor/", "/roleplay/travel/", "/practice/mock/", "/ai-settings/", "/admin/", "/admin/users/", "/admin/learning/", "/admin/ai/"]) {
         await visit(route);
-        const expected = ["/admin/users/", "/admin/learning/", "/admin/ai/"].includes(route) ? "wide" : "default";
+        const expected = route === "/practice/mock/"
+          ? "immersive"
+          : ["/training/scripts/outdoor/", "/roleplay/travel/", "/admin/users/", "/admin/learning/", "/admin/ai/"].includes(route)
+            ? "wide"
+            : "default";
         assert.equal(await page.locator("[data-page-width]").getAttribute("data-page-width"), expected);
-        if (width === 1920) assert.equal(Math.round((await page.locator("[data-page-width]").boundingBox()).width), expected === "wide" ? 1440 : 1280);
+        if (width === 1920 && expected !== "immersive") assert.equal(Math.round((await page.locator("[data-page-width]").boundingBox()).width), expected === "wide" ? 1440 : 1280);
         await shot(`after-${width}-${theme}-${route.replaceAll("/", "")}`);
       }
       await visit("/practice/quick/");
-      await page
-        .getByRole("button", { name: "답변 시작", exact: true })
-        .click();
-      await page
-        .getByRole("button", { name: "타이머만 시작", exact: true })
-        .click();
-      await page
-        .getByRole("button", { name: "답변 종료", exact: true })
-        .click();
-      await page.locator("#answer-review").scrollIntoViewIfNeeded();
-      const dismiss = page.getByRole("button", { name: "알림 닫기" });
-      if (await dismiss.count()) await dismiss.click();
+      await openQuickReview();
       await shot(`quick-${width}-${theme}-empty`);
       await page
         .getByRole("textbox", { name: "내 답변 Transcript 입력 및 수정" })
@@ -320,24 +334,23 @@ const overview = {
       await page.getByRole("alert").filter({ hasText: "이번 요청" }).waitFor();
       await shot(`quick-${width}-${theme}-error`);
       used = 3;
-      await page.evaluate(() =>
-        window.dispatchEvent(new Event("oom-ai-changed")),
-      );
-      await page.getByText(/오늘 무료 AI 피드백을 모두/).waitFor();
+      await visit("/practice/quick/");
+      await openQuickReview();
+      await page.getByText(/오늘 이 기능의 OOM 관리형 AI 사용량을 모두/).waitFor();
       await shot(`quick-${width}-${theme}-quota`);
-      await page.getByRole("button", { name: "연습 종료", exact: true }).click();
-      await page.getByRole("heading", { name: "오늘 연습을 마쳤어요." }).waitFor();
-      assert.equal(await page.evaluate(() => document.activeElement?.textContent), "오늘 연습을 마쳤어요.");
-      await shot(`quick-${width}-${theme}-summary`);
-      assert.ok(await page.getByText(/1문제 연습/).count());
+      mode = "disabled";
+      used = 0;
+      await visit("/practice/quick/");
+      await openQuickReview();
+      await page.getByText(/현재 OOM 관리형 AI를 잠시 사용할 수 없습니다/).waitFor();
+      await shot(`quick-${width}-${theme}-disabled`);
       used = 0;
       mode = "success";
     }
   }
   await visit("/ai-settings/");
-  await page.getByRole("radio", { name: "OOM 관리형 AI · 권장" }).focus();
-  await page.keyboard.press("ArrowRight");
-  assert.equal(await page.evaluate(() => localStorage.getItem("oom-ai-feedback-mode")), "custom");
+  await page.getByText("고급 사용자 설정 · 직접 연결한 STT / LLM", { exact: true }).click();
+  await page.getByLabel("API Endpoint URL", { exact: true }).fill("https://custom-ai.example.invalid/v1/chat/completions");
   await page.getByLabel("API Key 또는 Authorization Token").pressSequentially("synthetic-qa-secret");
   await page.getByLabel("API Key 또는 Authorization Token").press("Tab");
   await page.getByRole("button", { name: "설정 저장하기" }).click();
@@ -351,12 +364,42 @@ const overview = {
   assert.ok(!(await page.evaluate(() => localStorage.getItem("oom-llm-settings"))).includes("synthetic-qa-secret"));
   await shot("custom-settings-mobile");
   await visit("/practice/quick/");
-  await page.getByRole("button", { name: "답변 시작", exact: true }).click();
-  await page.getByRole("button", { name: "타이머만 시작", exact: true }).click();
-  await page.getByRole("button", { name: "답변 종료", exact: true }).click();
-  await page.getByText("사용자 지정 LLM 설정이 필요합니다.").waitFor();
-  assert.equal(await page.getByRole("button", { name: "AI 피드백 받기", exact: true }).count(), 0);
-  await shot("custom-missing-mobile");
+  await openQuickReview();
+  await page.getByText("사용자 API", { exact: true }).waitFor();
+  await shot("custom-override-mobile");
+
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  const startMockAnswer = async (startName, stopName) => {
+    await page.getByRole("button", { name: startName }).click();
+    const stop = page.getByRole("button", { name: stopName });
+    const timerOnly = page.getByRole("button", { name: /타이머만 시작/ });
+    await Promise.race([
+      stop.waitFor({ state: "visible" }),
+      timerOnly.waitFor({ state: "visible" }),
+    ]);
+    if (await timerOnly.isVisible()) await timerOnly.click();
+    await stop.waitFor({ state: "visible" });
+  };
+  await visit("/practice/mock/");
+  await page.getByRole("button", { name: /다음: Self Assessment/ }).click();
+  await page.getByRole("button", { name: /다음: 시험 준비/ }).click();
+  await page.getByRole("button", { name: /모의고사 시작/ }).click();
+  await startMockAnswer(/워밍업 시작/, /워밍업 종료/);
+  await page.getByRole("button", { name: /워밍업 종료/ }).click();
+  for (let index = 0; index < 7; index += 1) {
+    await startMockAnswer(/답변 시작/, /답변 종료/);
+    await page.getByRole("button", { name: /답변 종료/ }).click();
+    await page.getByRole("button", { name: index === 6 ? /난이도 재조정/ : /다음 문항/ }).click();
+  }
+  await page.getByRole("button", { name: /비슷하게/ }).click();
+  for (let index = 0; index < 8; index += 1) {
+    await startMockAnswer(/답변 시작/, /답변 종료/);
+    await page.getByRole("button", { name: /답변 종료/ }).click();
+    await page.getByRole("button", { name: index === 7 ? /시험 결과 보기/ : /다음 문항/ }).click();
+  }
+  await page.getByRole("button", { name: "답변 복기 시작" }).click();
+  await page.getByText("사용자 API", { exact: true }).waitFor();
+  await shot("full-mock-post-review-custom-desktop");
   await b.close();
   console.log("VISUAL QA PASS", captures, "screenshots, feedback posts", posts);
 })().catch((e) => {

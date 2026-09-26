@@ -1,16 +1,16 @@
-# Managed AI Platform v1 — Phase 3.1
+# Unified AI Execution Layer — Phase 3.1.2
 
 ## Boundary and ownership
 
-Learner browser → `ai-api` → Supabase Auth `getUser(token)` → FREE entitlement → atomic quota reservation → Gemini → runtime JSON validation → transactional feedback + usage finalization → Quick Practice review.
+Every LLM feature calls one frontend entrypoint, `runAiFeature(feature, input)`. A usable custom endpoint always wins and is called directly from the browser. If no custom endpoint exists, the request uses `ai-api` → Supabase Auth `getUser(token)` → FREE entitlement → per-feature atomic quota reservation → Gemini → runtime JSON validation → transactional result + usage finalization. Providers never fall back to each other.
 
-The frontend remains a static GitHub Pages application. `src/features/managed-ai/` owns learner API/UI; `supabase/functions/ai-api/` owns authentication, prompts and the provider boundary; `shared/managed-ai/feedback.ts` contains only the public versioned contract. `admin-api/handlers/ai.ts` owns AI operations endpoints. No Gemini SDK or key is shipped to the browser. Ordinary users do not load the lazy Admin AI route.
+The frontend remains a static GitHub Pages application. `src/features/ai/` owns provider resolution, custom prompts, response normalization and the canonical executor. `src/features/managed-ai/` owns the shared learner result UI and managed quota display. `supabase/functions/ai-api/` owns authentication, feature registry, server prompts and Gemini. Environment-neutral contracts live in `shared/ai/features.ts` and `shared/managed-ai/feedback.ts`. `admin-api/handlers/ai.ts` owns AI operations endpoints. No Gemini SDK or key is shipped to the browser. Ordinary users do not load the lazy Admin AI route.
 
-Quick Practice receives managed feedback only in its completed answer review. A usable transcript or manually entered answer is required. No transcription is invented and no audio is sent to managed AI. Full Mock keeps its existing custom LLM review. User-configured STT/LLM continues as a distinct advanced path. Unauthenticated learning remains available.
+The finite feature registry is `answer_feedback`, `script_rewrite`, and `roleplay_question`. It covers Quick Practice review, Full Mock post-exam review, STEP 4 script rewrite, and STEP 5 roleplay-question generation. A real transcript or manually entered answer is required for answer feedback. No transcription is invented and no audio is sent. Anonymous users may use a usable custom endpoint; managed execution requires login. Unauthenticated learning remains available.
 
 ## Database
 
-Migration: `supabase/migrations/20260923000000_managed_ai_platform.sql`. It was scaffolded with the CLI; its version was ordered after the existing Phase 3.0 migration (20260922). No applied migration was edited.
+Base migration: `supabase/migrations/20260923000000_managed_ai_platform.sql`; hardening: `20260923122712_managed_ai_hardening.sql`; unified execution: `20260925060910_unified_ai_execution_layer.sql`. The new migration was scaffolded with the Supabase CLI and extends rather than edits applied history.
 
 | Table | Purpose |
 | --- | --- |
@@ -19,9 +19,10 @@ Migration: `supabase/migrations/20260923000000_managed_ai_platform.sql`. It was 
 | `ai_runtime_settings` | Singleton runtime OFF by default, selected provider/model, burst limit 5/minute |
 | `ai_usage_buckets` | User + feature + Seoul calendar date; reserved and consumed counts |
 | `ai_usage_events` | Unique request UUID, input fingerprint, status, model/prompt/schema versions, provider token counts, timing, pricing snapshot and estimated cost |
-| `ai_feedback` | Validated result JSON, owner, unique usage event and optional same-owner learning attempt |
+| `ai_feedback` | Validated answer-feedback JSON, owner, unique usage event and optional same-owner learning attempt |
+| `ai_generation_results` | Validated script/roleplay result JSON and provenance; no raw request input |
 
-Server-only functions: `ai_quota(uuid)`, `reserve_ai_usage(uuid,uuid,text)`, `finalize_ai_usage(uuid,uuid,jsonb,uuid,integer,integer,integer,integer,text,integer)`, `admin_update_ai(uuid,jsonb)`, `admin_ai_overview()`.
+Server-only functions: `ai_quota(uuid,text)`, `reserve_ai_usage(uuid,uuid,text,text,text)`, `finalize_ai_usage(uuid,uuid,jsonb,uuid,integer,integer,integer,integer,text,integer)`, `admin_update_ai(uuid,jsonb)`, `admin_ai_overview()`.
 
 All functions have an empty `search_path`, schema-qualified application objects, and EXECUTE revoked from PUBLIC/anon/authenticated, granted only to service_role. Every new table has RLS enabled and all browser privileges revoked; even direct own-feedback SELECT is deliberately absent. Gateways are the only access path. No existing RLS policy is weakened.
 
@@ -41,7 +42,7 @@ Each operation takes the same transaction-scoped advisory lock derived from the 
 - On an uncertain persistence response, retry only the idempotent DB finalization once, never Gemini. If success committed, recover that result. Otherwise record a failure and known provider metadata, refund the slot, and permit a new explicit request. A DB outage leaves the lease for recovery. The learner sees “not consumed” only when a DB finalization confirms it.
 - Under the same user lock, 5 new valid requests in the last rolling minute are allowed. Reservations, successes, failures and daily-quota blocks count. Further requests return `RATE_LIMITED` without provider work or unbounded rate-block rows. Invalid payloads fail before reservation. Duplicate UUID lookups do not consume another burst slot.
 
-Input bounds: question 2,000 characters, context 600, answer 8,000, UUID fields only; unknown fields rejected. Streaming request body is capped at 40,000 bytes before JSON parsing. Feedback enforces exact keys/types, 1–5 integer dimensions, nonempty bounded strings, and at most 3 strengths/improvements. Database storage is additionally capped at 30KB JSON.
+Each feature has a finite, shared request/result schema. Unknown feature IDs and fields are rejected. Answer-feedback bounds remain question 2,000, context 600 and answer 8,000 characters. Script and roleplay inputs/results have their own bounded fields and list counts. Request bodies are capped before parsing, provider output is capped, all managed results are validated against the feature schema, and database result JSON is capped at 30KB.
 
 ## Gemini and cost
 
@@ -51,7 +52,7 @@ The provider uses the stable `v1/interactions` REST API, `store:false`, structur
 
 Secret: `GEMINI_API_KEY`, Supabase Function secrets only. Provider timeout: 25 seconds including reading the response. No automatic provider retry, including 429/5xx; this avoids repeating potentially charged generation. The same learner UI/types can use a replacement `AiProvider` implementation later.
 
-Prompt version: `opic_answer_feedback_v1`; schema version: 1. Provider-reported input/output/cached token counts are recorded. Output and thought tokens are stored separately; thought tokens are added only for cost calculation. Absent token metadata remains null. Historical rows retain their old combined output count and have null thought_tokens; do not infer a historical split. No fabricated token counts. Pricing is a reservation-time catalog snapshot in micro-USD per million tokens:
+Prompt versions are `opic_answer_feedback_v1`, `opic_script_rewrite_v1`, and `opic_roleplay_question_v1`; schema version is 1. Provider-reported input/output/cached token counts are recorded. Output and thought tokens are stored separately; thought tokens are added only for cost calculation. Absent token metadata remains null. Historical rows retain their old combined output count and have null thought_tokens; do not infer a historical split. No fabricated token counts. Pricing is a reservation-time catalog snapshot in micro-USD per million tokens:
 
 `ceil(((input - cached) × inputRate + cached × cachedRate + (output + coalesce(thought, 0)) × outputRate) / 1,000,000)`
 
@@ -61,9 +62,9 @@ Official references: [model](https://ai.google.dev/gemini-api/docs/models/gemini
 
 ## Learner and administrator surfaces
 
-Learner endpoints: `GET /quota?feature=answer_feedback`, `POST /feedback`. Every call verifies a real, non-anonymous Supabase user. Responses have controlled CORS, `Cache-Control: no-store`, `Server-Timing` and `X-Response-Time`; provider errors never reach learners verbatim.
+Learner endpoints: `GET /quota?feature=<feature>`, `POST /execute`. The old `POST /feedback` shape remains a compatibility adapter for answer feedback. Every managed call verifies a real, non-anonymous Supabase user. Responses have controlled CORS, `Cache-Control: no-store`, `Server-Timing` and `X-Response-Time`; provider errors never reach learners verbatim.
 
-Quick review uses Page/Card/Button/Badge tokens and structured AI COACH, KEEP/FIX/RETRY, optional answer signals and rewritten example. There is no Markdown heuristic in the managed path, pronunciation metric, speech-speed grade or official OPIc score. The advanced custom path remains separate. AI Settings selects one feedback mode with device-local `oom-ai-feedback-mode` (default managed). Quick Practice displays only that path, without automatic fallback. Anonymous/OFF managed mode has safe login/unavailable guidance. Custom without an endpoint has a settings CTA, never pseudo-AI feedback. Custom STT/LLM stays in a disclosure, open when custom mode is selected. There is no feedback/history cache in localStorage. Account-keyed components remount synchronously on logout/account change; pending responses are aborted/ignored. Quota refreshes on use, focus, local settings mutation and every minute; server enforcement is always authoritative across tabs.
+Quick review uses Page/Card/Button/Badge tokens and structured AI COACH, KEEP/FIX/RETRY, optional answer signals and rewritten example. There is no pronunciation metric, speech-speed grade or official OPIc score. AI Settings has no mode selector: a usable custom endpoint automatically overrides managed AI across every feature; clearing it returns all features to managed routing. A malformed non-empty custom configuration is shown as a configuration error and is never silently sent to managed AI. Custom and managed failures are truthful errors, never pseudo-AI output, and never trigger cross-provider fallback. There is no result/history cache in localStorage. Managed quota refreshes on use, focus, local settings mutation and every minute; server enforcement is authoritative across tabs.
 
 `/admin/ai/` reuses AdminLayout and the wide PageContainer, is lazy-loaded, noindex, ad-excluded, footer-free and excluded from sitemap. It shows six primary KPIs, two lightweight 7-day charts, model/feature breakdowns, bounded recent failures/top users, average/p95 latency, and usage rows. Filters are dates, status, feature, model, effective plan and user UUID; 20 rows per server page, never all events downloaded.
 
@@ -73,7 +74,7 @@ Admin endpoints: `GET /ai/overview`, `/ai/usage`, `/ai/settings`, `PATCH /ai/set
 
 ## Privacy and rollout state
 
-The raw answer is processed by the external provider and is not separately persisted in OOM DB, browser AI cache or server logs. No raw audio is uploaded by managed AI. Feedback output can reflect parts of the answer and is stored with usage metadata; this is disclosed. No blanket external-provider retention guarantee is made. `store:false` disables the provider's interaction storage feature, not every form of provider processing. Custom STT retains its existing explicit external endpoint behavior.
+Raw answers, script inputs and roleplay inputs are processed by the selected provider and are not separately persisted in OOM DB, browser AI cache or server logs. No raw audio is uploaded by managed AI. Validated managed outputs can reflect parts of the input and are stored with feature/version/usage metadata; custom execution is browser-direct and creates no managed usage event. No blanket external-provider retention guarantee is made. `store:false` disables the provider's interaction storage feature, not every form of provider processing. Custom STT retains its existing explicit external endpoint behavior.
 
 Public Pricing does not advertise “3/day available” before production verification. PRO remains 준비 중 with no checkout. The migration starts OFF. See the exact [owner rollout](#owner-rollout) below; a local fixture test is not proof of production Gemini availability.
 
@@ -81,17 +82,17 @@ Public Pricing does not advertise “3/day available” before production verifi
 
 Use the intended project and inspect its existing migration history first. CLI 2.117.0 command help was checked for these flags.
 
-1. Apply `20260923000000_managed_ai_platform.sql` after Phase 3.0, via the project's SQL Editor or the established migration workflow. For a linked project with matching prior history: `npx supabase db push --linked --dry-run`, review both pending AI migrations, then `npx supabase db push --linked`. Apply `20260923122712_managed_ai_hardening.sql` immediately after the Phase 3.1 migration. It adds nullable thought_tokens and atomically replaces the finalization signature; existing data and privileges remain protected. Keep AI OFF during this coordinated migration/function update. Do not reset production or edit prior migrations.
+1. Apply the Phase 3.1 base and hardening migrations, then `20260925060910_unified_ai_execution_layer.sql`, with managed AI OFF. For a linked project with matching prior history: `npx supabase db push --linked --dry-run`, review pending migrations, then `npx supabase db push --linked`. Deploy both functions and the frontend as one coordinated contract change. Do not reset production or edit prior migrations.
 2. Run `supabase/tests/managed_ai.sql` and `supabase/tests/managed_ai_hardening.sql` in SQL Editor (BEGIN/ROLLBACK). Run the concurrent test against a disposable database with all migrations applied, not production: set `AI_TEST_DATABASE_URL`, `AI_TEST_ALLOW_DISPOSABLE=yes`, optionally `PG_MODULE` pointing to an installed `pg`, then `node scripts/test-ai-concurrency.mjs`.
 3. Set `GEMINI_API_KEY` in Dashboard → Edge Functions → Secrets. Never paste it in chat, use `VITE_GEMINI_API_KEY`, GitHub Pages variables or localStorage. CLI alternative: put `GEMINI_API_KEY=...` in a protected file outside the repository and run `npx supabase secrets set --project-ref "$env:OOM_SUPABASE_PROJECT_REF" --env-file "C:\secure\oom-ai.env"`; remove that local file securely afterward.
 4. Deploy: `npx supabase functions deploy ai-api --project-ref "$env:OOM_SUPABASE_PROJECT_REF" --no-verify-jwt --use-api`.
 5. Deploy: `npx supabase functions deploy admin-api --project-ref "$env:OOM_SUPABASE_PROJECT_REF" --no-verify-jwt --use-api`. The flag disables the gateway's legacy JWT verification only; both functions independently verify the bearer token through Auth. Anonymous managed requests must return 401.
 6. Preview this frontend locally for the owner while runtime remains OFF. Check `/admin/ai/`: real empty/previous data, default model, FREE 3 and future PRO 30, permissions and disabled runtime. Keep the public frontend deployment until the verification steps below are complete.
-7. With an authenticated FREE test user, inspect `GET /quota?feature=answer_feedback`: FREE, limit 3, used 0, enabled false and correct next Seoul midnight. Verify unauthenticated requests are rejected.
+7. With an authenticated FREE test user, inspect quota for all three feature IDs: FREE, configured per-feature limits, enabled false and correct next Seoul midnight. Verify unauthenticated managed requests are rejected while an anonymous custom request remains browser-direct.
 8. Owner/admin enables managed AI through the confirmation in Admin Console. Confirm the audit row.
-9. Perform **one real** feedback request from Quick Practice with non-sensitive practice text. Verify structured UI; one feedback row linked to the actual same-owner learning_attempt and learning_session; one succeeded usage event; separate input/output/thought/cached tokens and cost; remaining 2; same UUID recovery without another event/provider call; Admin AI totals; no raw-answer/audio DB column. Capture `Server-Timing`, `X-Response-Time` and actual `x-sb-edge-region` in Network tools.
+9. Perform **one real** managed request for each feature with non-sensitive practice text. For answer feedback, verify the same-owner attempt link. Verify one succeeded usage event per feature, the correct result table, token/cost metadata, idempotent recovery, Admin AI feature labels, and no raw-input/audio DB column. Also verify one custom request per feature creates zero managed events. Capture `Server-Timing`, `X-Response-Time` and actual `x-sb-edge-region` in Network tools.
 10. On the test account, exhaust the remaining FREE quota and verify the fourth distinct request is server-blocked. Test simultaneous last-slot requests in the disposable environment. Restore any temporary policy changes via Admin Console.
-11. Disable managed AI and verify the safe unavailable learner state while training still works. Test support PATCH rejection, owner/admin changes, audit rows, account switching and mobile feedback. Re-enable intentionally only after these checks.
+11. Disable managed AI and verify the safe unavailable learner state while custom execution still works. Verify malformed custom settings do not fall through to managed. Test support PATCH rejection, owner/admin changes, audit rows, account switching and mobile result states. Re-enable intentionally only after these checks.
 12. Deploy frontend after owner verification. Only after production confirms FREE 3/day should Pricing advertise that allowance. Do not enable PRO purchase.
 
 Browser requests send `x-region: ap-northeast-2`. Verify the **actual** `x-sb-edge-region`; the requested region is not evidence of execution. [Supabase regional invocation](https://supabase.com/docs/guides/functions/regional-invocation) and [secret management](https://supabase.com/docs/guides/functions/secrets).
@@ -104,7 +105,7 @@ Repository commands are `npm run docs:generate`, `npm run docs:check` and `npm r
 
 SQL testing used a disposable PostgreSQL instance with all repository migrations and a minimal Auth schema/roles shim. This verifies PostgreSQL functions, grants, RLS and real concurrent locking; it does not replace target Supabase deployment tests or advisors.
 
-Deferred: managed STT, audio storage/processing, pronunciation analysis, aggregate Full Mock AI report, subscriptions/payments, PRO purchase, ad-free entitlement, community, optional feedback history and temporary entitlement overrides.
+Deferred: managed STT, audio storage/processing, pronunciation analysis, aggregate Full Mock AI report, subscriptions/payments, PRO purchase, ad-free entitlement, community, learner-visible result history and temporary entitlement overrides.
 
 ## Phase 3.1.1 lifecycle and local settings
 

@@ -1,6 +1,9 @@
 import { Clipboard, Highlighter, ListTree, LoaderCircle, Sparkles } from "lucide-react";
 import { useMemo, useState } from "react";
-import { callInternalLlm } from "../../lib/llm";
+import { runAiFeature } from "../../features/ai/runAiFeature";
+import { getAiConnection } from "../../features/ai/providerResolver";
+import { toAiExecutionError } from "../../features/ai/errors";
+import type { ScriptRewriteResultV1 } from "../../../shared/ai/features";
 import { cn } from "../../lib/utils";
 import type { LlmSettings, ScriptItem } from "../../types";
 import { Badge } from "../ui/Badge";
@@ -132,7 +135,7 @@ export function ScriptDetail({ script, settings, onToast }: ScriptDetailProps) {
   const [structureState, setStructureState] = useState({ key: structureKey, visible: false });
   const structureVisible = structureState.key === structureKey ? structureState.visible : false;
   const [revealBlind, setRevealBlind] = useState(false);
-  const [variation, setVariation] = useState("");
+  const [variation, setVariation] = useState<ScriptRewriteResultV1 | null>(null);
   const [variationLoading, setVariationLoading] = useState(false);
 
   const copyScript = async () => {
@@ -146,20 +149,27 @@ export function ScriptDetail({ script, settings, onToast }: ScriptDetailProps) {
   };
 
   const createVariation = async () => {
-    if (!settings.endpoint.trim()) {
-      onToast("AI 설정이 필요합니다.", "AI 피드백 / 설정에서 Endpoint를 저장한 뒤 다시 시도해 주세요.", "info");
-      return;
-    }
     setVariationLoading(true);
     try {
-      const result = await callInternalLlm(settings, [
-        { role: "system", content: "You are an OPIc English speaking coach. Return natural, spoken English. Keep vocabulary accessible for IM3 to AL." },
-        { role: "user", content: `Rewrite the OPIc script below naturally. Keep the original topic and core nouns, avoid difficult words, and treat filler phrases as optional recovery language. Target the current practice preset (${script.targetSeconds?.join("-") ?? "60-90"} seconds). Return the script and three short bullet points for what changed.\n\nTitle: ${script.title}\nKeywords: ${script.keywords.join(", ")}\n\nOriginal script:\n${script.englishScript}` },
-      ]);
-      setVariation(result);
+      if (!script.trainingCourseId || !script.trainingLevelId || !script.targetSeconds) throw new Error("INVALID_SCRIPT_CONTEXT");
+      const response = await runAiFeature({
+        feature: "script_rewrite",
+        input: {
+          scriptId: script.id,
+          title: script.title,
+          originalScript: script.englishScript,
+          keywords: script.keywords,
+          targetSeconds: script.targetSeconds,
+          courseId: script.trainingCourseId,
+          levelId: script.trainingLevelId,
+        },
+        customSettings: settings,
+      });
+      setVariation(response.result);
       onToast("자연스러운 변형을 만들었습니다.", "원본과 비교해 내 표현으로 바꿔 보세요.", "success");
     } catch (error) {
-      onToast("AI 변형에 실패했습니다.", error instanceof Error ? error.message : "설정과 CORS 정책을 확인해 주세요.", "error");
+      const safe = toAiExecutionError(error, getAiConnection(settings).source);
+      onToast("AI 변형에 실패했습니다.", error instanceof Error && error.message === "INVALID_SCRIPT_CONTEXT" ? "현재 Course와 Level 정보를 확인해 주세요." : safe.message, "error");
     } finally {
       setVariationLoading(false);
     }
@@ -254,7 +264,8 @@ export function ScriptDetail({ script, settings, onToast }: ScriptDetailProps) {
           />
           <div className="flex flex-wrap justify-end gap-2">
             <Button aria-label="영어 스크립트 복사" onClick={copyScript} size="sm" variant="secondary"><Clipboard className="h-3.5 w-3.5" />복사</Button>
-            <Button aria-label="AI로 자연스럽게 스크립트 변형" disabled={variationLoading} onClick={createVariation} size="sm"><Sparkles className="h-3.5 w-3.5" />{variationLoading ? "변형 중" : "AI로 자연스럽게 변형"}</Button>
+            <Badge tone={getAiConnection(settings).source === "custom" ? "amber" : "indigo"}>{getAiConnection(settings).label}</Badge>
+            <Button aria-label="AI로 자연스럽게 스크립트 변형" disabled={variationLoading} onClick={createVariation} size="sm"><Sparkles className="h-3.5 w-3.5" />{variationLoading ? "자연스럽게 다듬는 중..." : "AI로 자연스럽게 변형"}</Button>
           </div>
         </div>
       </Card>
@@ -264,7 +275,7 @@ export function ScriptDetail({ script, settings, onToast }: ScriptDetailProps) {
           <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Point Notes</h3>
           <ul className="mt-3 space-y-3">{script.pointNotes.map((note) => <li className="flex gap-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300" key={note}><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500" />{note}</li>)}</ul>
         </Card>
-        {variation ? <Card className="p-5"><div className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-indigo-500" /><h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">AI 변형 결과</h3></div><pre className="mt-3 whitespace-pre-wrap font-sans text-sm leading-6 text-zinc-600 dark:text-zinc-300">{variation}</pre></Card> : <Card className="p-5"><div className="flex items-center gap-2"><LoaderCircle className="h-4 w-4 text-zinc-400" /><h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">내 표현으로 한 번 더</h3></div><p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">원문을 그대로 암기하기보다, 등장인물이나 장소를 내 경험에 맞게 한두 개 바꿔 말해 보세요.</p></Card>}
+        {variation ? <Card className="p-5"><div className="flex items-center justify-between gap-2"><div className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-indigo-500" /><h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">AI 변형 결과</h3></div><Button size="sm" variant="secondary" onClick={() => void navigator.clipboard.writeText(variation.rewrittenScript)}>변형 복사</Button></div><p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-zinc-700 dark:text-zinc-200">{variation.rewrittenScript}</p>{variation.changes.length ? <ul className="mt-4 space-y-2 border-t border-zinc-100 pt-4 text-xs leading-5 text-zinc-500 dark:border-zinc-800">{variation.changes.map((change) => <li key={change}>• {change}</li>)}</ul> : null}</Card> : <Card className="p-5"><div className="flex items-center gap-2"><LoaderCircle className="h-4 w-4 text-zinc-400" /><h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">내 표현으로 한 번 더</h3></div><p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">원문을 그대로 암기하기보다, 등장인물이나 장소를 내 경험에 맞게 한두 개 바꿔 말해 보세요.</p></Card>}
       </div>
     </div>
   );

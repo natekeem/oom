@@ -47,7 +47,7 @@ try {
     user,
   ]);
   const reserve = (c) =>
-    c.query("select public.reserve_ai_usage($1,$2,$3) result", [
+    c.query("select public.reserve_ai_usage($1,$2,$3,'answer_feedback','opic_answer_feedback_v1') result", [
       user,
       randomUUID(),
       "a".repeat(64),
@@ -65,7 +65,7 @@ try {
     "DAILY_QUOTA_EXCEEDED",
     "RESERVED",
   ]);
-  const q = (await setup.query("select public.ai_quota($1) q", [user])).rows[0]
+  const q = (await setup.query("select public.ai_quota($1,'answer_feedback') q", [user])).rows[0]
     .q;
   assert.equal(q.reserved, 1);
   assert.equal(q.remaining, 0);

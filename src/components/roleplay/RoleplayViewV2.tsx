@@ -2,7 +2,9 @@ import { StudyCompletion } from "../../features/activity/StudyCompletion";
 import { ArrowLeft, Bot, ChartNoAxesCombined, CircleHelp, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { TRAINING_LEVELS } from "../../training/levels";
-import { callInternalLlm } from "../../lib/llm";
+import { runAiFeature } from "../../features/ai/runAiFeature";
+import { getAiConnection } from "../../features/ai/providerResolver";
+import { toAiExecutionError } from "../../features/ai/errors";
 import type { LlmSettings } from "../../types";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
@@ -68,31 +70,24 @@ function RoleplayViewV2Content({
   };
 
   const generateQuestion = async () => {
-    if (!settings.endpoint.trim()) {
-      onToast(
-        "AI 설정이 필요합니다.",
-        "AI 피드백 / 설정에서 Endpoint를 저장한 뒤 다시 시도해 주세요.",
-        "info"
-      );
-      return;
-    }
     setIsGenerating(true);
     try {
-      const result = await callInternalLlm(settings, [
-        {
-          role: "system",
-          content: "You create concise OPIc role-play prompts in natural English.",
+      const response = await runAiFeature({
+        feature: "roleplay_question",
+        input: {
+          scenarioId: scenario.id,
+          group: scenario.group,
+          situation: scenario.situation,
+          courseId: resolved.course.id,
+          levelId: resolved.level.id,
         },
-        {
-          role: "user",
-          content: `Create one realistic role-play question based on the OPIc survey group '${scenario.group}' and situation '${scenario.situation}'. Include a problem and ask the candidate to request options. Return only the English prompt.`,
-        },
-      ]);
-      setGeneratedQuestion(result);
+        customSettings: settings,
+      });
+      setGeneratedQuestion(response.result.prompt);
     } catch (error) {
       onToast(
         "AI 질문 생성에 실패했습니다.",
-        error instanceof Error ? error.message : "Endpoint와 CORS 설정을 확인해 주세요.",
+        toAiExecutionError(error, getAiConnection(settings).source).message,
         "error"
       );
     } finally {
@@ -315,10 +310,10 @@ function RoleplayViewV2Content({
               선택한 {scenario.group} 그룹을 바탕으로 Eva 스타일 질문을 만듭니다.
             </p>
           </div>
-          <Button disabled={isGenerating} onClick={generateQuestion}>
+          <div className="flex flex-wrap items-center gap-2"><Badge tone={getAiConnection(settings).source === "custom" ? "amber" : "indigo"}>{getAiConnection(settings).label}</Badge><Button disabled={isGenerating} onClick={generateQuestion}>
             <Sparkles className="h-4 w-4" />
             {isGenerating ? "생성 중" : "AI 롤플레이 질문 생성"}
-          </Button>
+          </Button></div>
         </div>
         {generatedQuestion ? (
           <div className="mt-4 rounded-md border border-indigo-100 bg-white p-4 dark:border-indigo-900 dark:bg-zinc-950">

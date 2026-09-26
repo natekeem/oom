@@ -3,6 +3,7 @@ import type { AuthenticatedAdmin } from "../auth.ts";
 import { errorResponse, jsonResponse } from "../cors.ts";
 import { readBoundedJson } from "../../ai-api/handler.ts";
 import { uuidPattern } from "../../../../shared/managed-ai/feedback.ts";
+import { AI_FEATURES } from "../../../../shared/ai/features.ts";
 
 export async function handleAdminAi(
   req: Request,
@@ -23,20 +24,13 @@ export async function handleAdminAi(
         Array.isArray(patch) ||
         !Object.keys(patch).length ||
         Object.keys(patch).some(
-          (k) => !["enabled", "model", "freeLimit", "proLimit"].includes(k),
+          (k) => !["enabled", "model", "limits"].includes(k),
         ) ||
         ("enabled" in patch && typeof patch.enabled !== "boolean") ||
         ("model" in patch &&
           (typeof patch.model !== "string" ||
             !/^gemini-[a-z0-9.-]{1,80}$/.test(patch.model))) ||
-        ["freeLimit", "proLimit"].some(
-          (k) =>
-            k in patch &&
-            (typeof patch[k] !== "number" ||
-              !Number.isInteger(patch[k]) ||
-              (patch[k] as number) < 0 ||
-              (patch[k] as number) > 1000),
-        )
+        ("limits" in patch && !validLimitsPatch(patch.limits))
       )
         throw new Error();
     } catch {
@@ -118,7 +112,7 @@ export async function handleAdminAi(
         ["reserved", "succeeded", "failed", "quota_blocked"],
       ],
       ["plan", "effective_plan", ["free", "pro"]],
-      ["feature", "feature", ["answer_feedback"]],
+      ["feature", "feature", AI_FEATURES],
     ] as const) {
       const value = p.get(key);
       if (value) {
@@ -189,6 +183,19 @@ export async function handleAdminAi(
     });
   }
   return errorResponse(req, 404, "NOT_FOUND", "요청 경로를 찾을 수 없습니다.");
+}
+
+function validLimitsPatch(value: unknown) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const limits = value as Record<string, unknown>;
+  if (!Object.keys(limits).length || Object.keys(limits).some((key) => !(AI_FEATURES as readonly string[]).includes(key))) return false;
+  return Object.values(limits).every((entry) => {
+    if (!entry || typeof entry !== "object" || Array.isArray(entry)) return false;
+    const plans = entry as Record<string, unknown>;
+    return Object.keys(plans).length > 0 &&
+      Object.keys(plans).every((key) => key === "free" || key === "pro") &&
+      Object.values(plans).every((count) => typeof count === "number" && Number.isInteger(count) && count >= 0 && count <= 1000);
+  });
 }
 
 async function enrichUsers<T extends { user_id: string }>(db: SupabaseClient, rows: T[]) {

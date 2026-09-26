@@ -149,9 +149,8 @@ describe("PracticeView & ExamScreenShell", () => {
     expect(screen.getByTestId("exam-console-grid").className).not.toContain("lg:grid-cols");
   });
 
-  it("shows custom settings guidance without fake AI feedback or opening the story hint", async () => {
+  it("shows managed login guidance without fake AI feedback or opening the story hint", async () => {
     const user = userEvent.setup();
-    localStorage.setItem("oom-ai-feedback-mode", "custom");
     render(
       <TrainingSelectionProvider>
         <PracticeView onToast={vi.fn()} settings={{ ...dummyLlmSettings, endpoint: "" }} sttSettings={dummySttSettings} />
@@ -163,8 +162,8 @@ describe("PracticeView & ExamScreenShell", () => {
     if (timerOnly) await user.click(timerOnly);
     await user.click(screen.getByRole("button", { name: /답변 종료/ }));
     await user.type(await screen.findByRole("textbox", { name: /Transcript/ }), "Last Saturday I went to the beach with my family.");
-    expect(screen.getByText("사용자 지정 LLM 설정이 필요합니다.")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "AI 설정 열기" })).toBeInTheDocument();
+    expect(screen.getByText(/OOM 관리형 AI를 이용/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "로그인 안내" })).toBeInTheDocument();
     expect(screen.queryByText("KEEP")).not.toBeInTheDocument();
     expect(practiceApiMocks.callInternalLlm).not.toHaveBeenCalled();
     expect(screen.getByRole("button", { name: /추천 스크립트 힌트 보기/ })).toHaveAttribute("aria-expanded", "false");

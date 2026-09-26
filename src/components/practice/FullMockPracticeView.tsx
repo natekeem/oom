@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SELF_INTRODUCTION_PROMPT, getSelfIntroduction } from "../../data/training/selfIntroduction";
-import { callInternalLlm } from "../../lib/llm";
+import { runAiFeature } from "../../features/ai/runAiFeature";
+import { toAiExecutionError } from "../../features/ai/errors";
+import { getAiConnection } from "../../features/ai/providerResolver";
 import { stopSpeech } from "../../lib/speech";
 import { transcribeAudio } from "../../lib/stt";
 import { EXAM_TTS_RATE } from "../../lib/tts/ratePreferences";
@@ -106,6 +108,7 @@ export function FullMockPracticeView({
   const [questionPlayRequest, setQuestionPlayRequest] = useState(0);
   const [questionTtsStatus, setQuestionTtsStatus] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const feedbackRequestsRef = useRef(new Map<string, { answer: string; id: string }>());
   const [selectedAudioUrl, setSelectedAudioUrl] = useState<string | null>(null);
   const [selectedReviewAttemptId, setSelectedReviewAttemptId] = useState<string | undefined>();
   const [isTranscribing, setIsTranscribing] = useState(false);
@@ -632,34 +635,43 @@ export function FullMockPracticeView({
 
   const getFeedback = async () => {
     if (!selectedAttempt?.transcript.trim()) return;
-    if (!settings.endpoint.trim()) {
-      updateAttempt(selectedAttempt.id, {
-        feedback: "KEEP\n모의고사를 끝까지 완료하고 선택한 답변을 직접 복기했습니다.\n\nFIX\n질문에 첫 문장부터 직접 답했는지 한 가지만 확인하세요.\n\nRETRY\nTranscript를 자연스럽게 다듬은 뒤 별도의 빠른 연습에서 다시 말해 보세요.",
-      });
-      onToast("AI 설정이 필요합니다.", "설정 화면에서 LLM Endpoint를 입력해 주세요.", "info");
-      return;
-    }
     const requestId = ++reviewRequestRef.current;
     setIsFeedbackLoading(true);
     try {
-      const feedback = await callInternalLlm(settings, [
-        {
-          role: "system",
-          content: "You are an OPIc speaking coach. Reply in Korean with concise KEEP, FIX, RETRY sections. Do not claim an official score or grade. Do not assess pronunciation from a transcript.",
+      const previous = feedbackRequestsRef.current.get(selectedAttempt.id);
+      const stable = previous?.answer === selectedAttempt.transcript
+        ? previous
+        : { answer: selectedAttempt.transcript, id: crypto.randomUUID() };
+      feedbackRequestsRef.current.set(selectedAttempt.id, stable);
+      const response = await runAiFeature({
+        feature: "answer_feedback",
+        input: {
+          question: selectedAttempt.question.prompt,
+          answer: selectedAttempt.transcript,
+          context: `${resolved.course.title} / ${selectedAttempt.question.sourceLevelId} / Full Mock post-exam review`,
+          source: "full_mock_review",
+          durationSeconds: selectedAttempt.durationSeconds,
         },
-        {
-          role: "user",
-          content: `Question: ${selectedAttempt.question.prompt}\nStudent transcript: ${selectedAttempt.transcript}\nDuration: ${selectedAttempt.durationSeconds}s\nThis is a post-exam review of one selected answer.`,
-        },
-      ]);
+        customSettings: settings,
+        requestId: stable.id,
+      });
+      const feedback = response.result.format === "text"
+        ? response.result.text
+        : [
+            `KEEP\n${response.result.feedback.strengths.join("\n")}`,
+            `FIX\n${response.result.feedback.improvements.map((item) => `${item.issue}: ${item.suggestion}`).join("\n")}`,
+            `RETRY\n${response.result.feedback.retryTip}`,
+            `상세 진단\n${response.result.feedback.overallSummary}\n\n${response.result.feedback.improvedAnswer}`,
+          ].join("\n\n");
       if (requestId === reviewRequestRef.current) {
         updateAttempt(selectedAttempt.id, { feedback });
         onToast("선택한 답변의 AI 피드백을 받았습니다.", undefined, "success");
       }
     } catch (error) {
       if (requestId === reviewRequestRef.current) {
-        updateAttempt(selectedAttempt.id, { feedback: `KEEP\n답변 복기 흐름을 완료했습니다.\n\nFIX\n첫 문장의 직접성을 확인하세요.\n\nRETRY\n같은 핵심 장면을 더 짧고 분명하게 말해 보세요.\n\nAI 요청 실패: ${error instanceof Error ? error.message : "설정을 확인해 주세요."}` });
-        onToast("AI 피드백에 실패했습니다.", "녹음과 Transcript는 그대로 보존됩니다.", "error");
+        const safe = toAiExecutionError(error, getAiConnection(settings).source);
+        onToast("AI 피드백에 실패했습니다.", `${safe.message} 녹음과 Transcript는 그대로 보존됩니다.`, "error");
+        if (safe.terminal) feedbackRequestsRef.current.delete(selectedAttempt.id);
       }
     } finally {
       if (requestId === reviewRequestRef.current) setIsFeedbackLoading(false);
@@ -755,6 +767,7 @@ export function FullMockPracticeView({
             hasRecording={Boolean(selectedAttempt.recording)}
             isFeedbackLoading={isFeedbackLoading}
             layout="mock"
+            providerLabel={getAiConnection(settings).label}
             onAnswerChange={(transcript) => updateAttempt(selectedAttempt.id, { transcript })}
             onFeedback={getFeedback}
             onNavigateToSettings={onNavigate ? () => onNavigate("ai-settings") : undefined}

@@ -202,6 +202,13 @@ export default function App() {
     );
   };
 
+  const clearCustomLlm = () => {
+    const cleared = { ...settings, endpoint: "", apiKey: "", legacyStoredKey: false };
+    saveCustomSettings(SETTINGS_KEY, cleared);
+    setSettings(cleared);
+    showToast("사용자 API 설정을 해제했습니다.", "이제 OOM 관리형 AI를 기본으로 사용합니다.", "success");
+  };
+
   if (isLanding) {
     return (
       <Suspense fallback={<div className="min-h-screen bg-[#07090d]" aria-label="랜딩 페이지를 불러오는 중" />}>
@@ -407,6 +414,7 @@ export default function App() {
         path="/ai-settings"
         element={
           <AiSettingsView
+            onClearCustom={clearCustomLlm}
             onChange={setSettings}
             onSave={saveSettings}
             onSttChange={setSttSettings}
@@ -419,6 +427,7 @@ export default function App() {
         path="/ai-settings/"
         element={
           <AiSettingsView
+            onClearCustom={clearCustomLlm}
             onChange={setSettings}
             onSave={saveSettings}
             onSttChange={setSttSettings}

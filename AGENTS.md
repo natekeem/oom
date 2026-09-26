@@ -172,3 +172,11 @@ Run `npm run tts:generate` only when the audit shows missing/changed assets. It 
 - Runtime defaults OFF; keys belong only in Function secrets. PRO remains future configuration, never paid availability.
 - `/admin/ai/` reuses AdminLayout and lazy routing; noindex, ad excluded, no sitemap, no footer. Settings mutations and audit rows commit together; support is read-only.
 - Run `supabase/tests/managed_ai.sql` and `scripts/test-ai-concurrency.mjs` against a disposable DB for quota changes, plus mocked provider tests and browser UI QA. Do not use paid Gemini calls in CI.
+
+## Phase 3.1.2 Unified AI Execution Rules
+
+- `src/features/ai/runAiFeature.ts` is the only frontend execution entrypoint for `answer_feedback`, `script_rewrite`, and `roleplay_question`. Runtime feature components must not import `src/lib/llm.ts` directly.
+- Provider precedence is automatic and global: a usable custom endpoint wins; no custom endpoint means managed AI. A malformed configured endpoint is an error. Never fall back between providers after a failure.
+- Custom execution remains browser-direct and may be used anonymously. Managed execution requires login, respects the global kill switch and per-feature quota, and stores validated output/usage only. Do not store raw answers, scripts, roleplay inputs, audio, or custom requests in managed telemetry.
+- Full Mock may call `answer_feedback` only during manual post-exam review. Its exam-time STT/AI prohibition remains unchanged.
+- Admin AI owns one managed kill switch/model and separate FREE/future-PRO limits for every feature. The kill switch must not disable custom endpoints. Public Pricing remains conservative until the owner rollout is verified in production.

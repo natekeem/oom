@@ -33,6 +33,7 @@ export type PracticeReviewPanelProps = {
   hasRecording: boolean;
   managedFeedback?: ReactNode;
   customConfigured?: boolean;
+  providerLabel?: string;
 };
 
 function getCoachingSummary(feedback: string) {
@@ -74,6 +75,7 @@ export function PracticeReviewPanel({
   hasRecording,
   managedFeedback,
   customConfigured = true,
+  providerLabel,
 }: PracticeReviewPanelProps) {
   const sttConfigured = sttStatus !== "unconfigured";
   const wordCount = answer.trim().split(/\s+/).filter(Boolean).length;
@@ -100,7 +102,7 @@ export function PracticeReviewPanel({
         {/* ① 내 녹음 */}
         <Card className={mockLayout ? "h-full p-4" : "p-5"}>
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 font-extrabold text-zinc-900 dark:text-white">
+            <div className="flex flex-wrap items-center gap-2 font-extrabold text-zinc-900 dark:text-white">
               <Headphones className="h-4 w-4 text-indigo-500" />
               <span className="text-sm">① 내 녹음</span>
             </div>
@@ -262,6 +264,7 @@ export function PracticeReviewPanel({
             <div className="flex items-center gap-2 font-extrabold text-zinc-900 dark:text-white">
               <Bot className="h-4 w-4 text-indigo-500" />
               <span className="text-sm">③ AI 맞춤 피드백</span>
+              {providerLabel ? <span className="rounded bg-zinc-100 px-2 py-1 text-[10px] font-semibold text-zinc-500 dark:bg-zinc-800">{providerLabel}</span> : null}
             </div>
 
             <p className="text-xs leading-5 text-zinc-500 dark:text-zinc-400">

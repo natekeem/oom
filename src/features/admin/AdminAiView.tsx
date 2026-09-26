@@ -6,6 +6,13 @@ import { Button } from "../../components/ui/Button";
 import { AdminLayout } from "./AdminLayout";
 import { requestAdminApi } from "./adminApi";
 import { useAdminAccess } from "./useAdminAccess";
+import { AI_FEATURES, type AiFeature } from "../../../shared/ai/features";
+
+const featureLabels: Record<AiFeature, string> = {
+  answer_feedback: "답변 피드백",
+  script_rewrite: "스크립트 변형",
+  roleplay_question: "롤플레이 질문 생성",
+};
 
 export interface AiOverview {
   today: {
@@ -38,7 +45,7 @@ export interface AiSettings {
     default_model: string;
     requests_per_minute: number;
   };
-  limits: { plan: string; limit_count: number }[];
+  limits: { plan: "free" | "pro"; feature: AiFeature; limit_count: number; enabled: boolean }[];
   models: {
     model: string;
     enabled: boolean;
@@ -53,6 +60,7 @@ export interface AiUsage {
     user_id: string;
     display_name?: string | null;
     status: string;
+    feature: AiFeature;
     model: string;
     effective_plan: string;
     input_tokens: number | null;
@@ -238,7 +246,7 @@ function AdminAiSession() {
                 ))}
                 {overview.features.map((f) => (
                   <p className="text-xs" key={f.feature}>
-                    {f.feature} · {f.calls}건
+                    {featureLabels[f.feature as AiFeature] ?? f.feature} · {f.calls}건
                   </p>
                 ))}
                 {!overview.models.length ? (
@@ -326,7 +334,7 @@ function AdminAiSession() {
                 ["reserved", "succeeded", "failed", "quota_blocked"],
               ],
               ["plan", "플랜", ["free", "pro"]],
-              ["feature", "기능", ["answer_feedback"]],
+              ["feature", "기능", [...AI_FEATURES]],
               ["model", "모델", settings?.models.map((m) => m.model) || []],
             ].map(([key, label, options]) => (
               <label key={key as string} className="text-xs text-zinc-500">
@@ -340,7 +348,7 @@ function AdminAiSession() {
                 >
                   <option value="">전체</option>
                   {(options as string[]).map((o) => (
-                    <option key={o}>{o}</option>
+                    <option key={o} value={o}>{key === "feature" ? featureLabels[o as AiFeature] : o}</option>
                   ))}
                 </select>
               </label>
@@ -400,7 +408,7 @@ function AdminAiSession() {
                       <td className="p-3">
                         <p>{r.display_name || "이름 없음"}</p><p className="font-mono text-zinc-500" title={r.user_id}>{r.user_id.slice(0, 8)}…</p>
                         <p className="mt-1 text-zinc-500">
-                          {r.model} · {r.effective_plan.toUpperCase()}
+                          {featureLabels[r.feature]} · {r.model} · {r.effective_plan.toUpperCase()}
                         </p>
                       </td>
                       <td className="p-3">
@@ -519,18 +527,20 @@ function SettingsForm({
 }) {
   const [enabled, setEnabled] = useState(settings.runtime.managed_ai_enabled);
   const [model, setModel] = useState(settings.runtime.default_model);
-  const [free, setFree] = useState(
-    settings.limits.find((l) => l.plan === "free")?.limit_count || 0,
-  );
-  const [pro, setPro] = useState(
-    settings.limits.find((l) => l.plan === "pro")?.limit_count || 0,
-  );
+  const initialLimits = () => Object.fromEntries(AI_FEATURES.map((feature) => [
+    feature,
+    {
+      free: settings.limits.find((limit) => limit.plan === "free" && limit.feature === feature)?.limit_count ?? 0,
+      pro: settings.limits.find((limit) => limit.plan === "pro" && limit.feature === feature)?.limit_count ?? 0,
+    },
+  ])) as Record<AiFeature, { free: number; pro: number }>;
+  const [limits, setLimits] = useState(initialLimits);
   const [confirm, setConfirm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const lock = useRef(false);
   const valid =
-    [free, pro].every((n) => Number.isInteger(n) && n >= 0 && n <= 1000) &&
+    Object.values(limits).flatMap((item) => [item.free, item.pro]).every((n) => Number.isInteger(n) && n >= 0 && n <= 1000) &&
     settings.models.some((m) => m.model === model && m.enabled);
   const save = async () => {
     if (lock.current || !valid || !canEdit) return;
@@ -540,8 +550,7 @@ function SettingsForm({
       await requestAdminApi("/ai/settings", undefined, {
         enabled,
         model,
-        freeLimit: free,
-        proLimit: pro,
+        limits,
       });
       window.dispatchEvent(new Event("oom-ai-changed"));
       onSaved();
@@ -569,9 +578,9 @@ function SettingsForm({
       </p>
       <fieldset
         disabled={!canEdit || saving}
-        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+        className="space-y-4"
       >
-        <label className="flex items-center gap-2 text-sm">
+        <div className="grid gap-4 sm:grid-cols-2"><label className="flex items-center gap-2 text-sm">
           <input
             type="checkbox"
             checked={enabled}
@@ -598,35 +607,26 @@ function SettingsForm({
                 <option key={m.model}>{m.model}</option>
               ))}
           </select>
-        </label>
-        <label className="text-xs">
-          FREE 하루 한도
-          <input
-            className={inputClass}
-            type="number"
-            min="0"
-            max="1000"
-            value={Number.isNaN(free) ? "" : free}
-            onChange={(e) => {
-              setFree(e.target.value === "" ? NaN : Number(e.target.value));
-              setConfirm(false);
-            }}
-          />
-        </label>
-        <label className="text-xs">
-          향후 PRO 하루 한도
-          <input
-            className={inputClass}
-            type="number"
-            min="0"
-            max="1000"
-            value={Number.isNaN(pro) ? "" : pro}
-            onChange={(e) => {
-              setPro(e.target.value === "" ? NaN : Number(e.target.value));
-              setConfirm(false);
-            }}
-          />
-        </label>
+        </label></div>
+        <div className="grid gap-3">
+          {AI_FEATURES.map((feature) => (
+            <div className="grid gap-3 rounded-md border border-zinc-200 p-3 dark:border-zinc-800 sm:grid-cols-[1fr_160px_160px]" key={feature}>
+              <p className="self-center text-sm font-semibold">{featureLabels[feature]}</p>
+              {(["free", "pro"] as const).map((plan) => (
+                <label className="text-xs" key={plan}>
+                  {plan === "free" ? "FREE 하루 한도" : "향후 PRO 하루 한도"}
+                  <input className={inputClass} type="number" min="0" max="1000"
+                    value={Number.isNaN(limits[feature][plan]) ? "" : limits[feature][plan]}
+                    onChange={(event) => {
+                      const value = event.target.value === "" ? NaN : Number(event.target.value);
+                      setLimits((current) => ({ ...current, [feature]: { ...current[feature], [plan]: value } }));
+                      setConfirm(false);
+                    }} />
+                </label>
+              ))}
+            </div>
+          ))}
+        </div>
       </fieldset>
       <details className="text-xs text-zinc-500">
         <summary className="cursor-pointer">예상 비용 산정 기준</summary>
@@ -654,8 +654,7 @@ function SettingsForm({
         confirm ? (
           <div className="space-y-3 rounded-md bg-amber-50 p-4 text-sm dark:bg-amber-950/40">
             <p>
-              AI {enabled ? "ON" : "OFF"} · FREE {free}회 · 향후 PRO {pro}회 ·{" "}
-              {model}로 변경할까요? 적용 즉시 이후 요청에 반영되며 감사 로그에
+              AI {enabled ? "ON" : "OFF"} · 기능별 한도 · {model}로 변경할까요? 적용 즉시 이후 요청에 반영되며 감사 로그에
               기록됩니다.
             </p>
             <div className="flex gap-2">
@@ -681,6 +680,7 @@ function SettingsForm({
           운영 지원 권한은 조회만 가능합니다.
         </p>
       )}
+      <p className="text-xs leading-5 text-zinc-500">Managed AI OFF는 OOM 관리형 요청만 차단합니다. 브라우저에서 직접 호출하는 사용자 지정 API와 STT는 영향을 받지 않습니다.</p>
     </Card>
   );
 }

@@ -176,3 +176,9 @@ Session persistence returns promises and account-scoped IDs; Quick completion is
 ## Phase 3.1.2 unified AI execution
 
 `shared/ai/features.ts` is the finite feature registry and schema boundary for `answer_feedback`, `script_rewrite`, and `roleplay_question`. Quick Practice, Full Mock post-exam review, STEP 4 script rewrite and STEP 5 roleplay-question generation import the canonical executor and do not import `src/lib/llm.ts` directly. The managed gateway owns server prompts and writes answer results to `ai_feedback`, generation results to `ai_generation_results`, and quota/telemetry to the shared usage tables. Raw feature inputs are not stored. Admin settings expose one global managed kill switch/model plus per-feature FREE and future-PRO limits; the kill switch never disables custom browser-direct calls.
+
+## Phase 3.1.3 generated learning UX
+
+`ScriptRewriteComparison` turns a validated script result into a learner-facing original/rewrite comparison. `scriptRewriteDiff.ts` performs deterministic local word matching and ignores punctuation, whitespace and capitalization-only noise; it does not call any provider. Script v2 results add typed short change notes while the renderer remains compatible with v1 string notes.
+
+`RoleplayPromptPanel` is the shared static/generated STEP 5 presentation contract: situation, practice prompt and optional cues. Roleplay v2 results add a concise scenario and cue list; v1 prompt-only results remain supported without fabricated cue data. These result-contract changes use the existing JSON result column and require no database migration. Provider resolution, quota reservation, idempotency, security and raw-input privacy are unchanged from Phase 3.1.2.

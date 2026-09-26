@@ -105,6 +105,8 @@ Roleplay has six named functions for recall, not six mandatory sentences. The le
 
 Situation detail, extra information questions, alternatives, and closing are OPTIONAL choices. Each Course owns its scenario situation, prompt, answer structure, learning function, and three Level-specific examples. STEP 5 audio uses the script voice and the selected Level playback rate.
 
+Static and AI-generated roleplay tasks use one presentation language: `상황 → 연습 질문 → 핵심 체크`. The prompt is visually primary, scenario context stays concise, and cues are optional. Generated Foundation tasks use clearer verbs and fewer constraints; Intermediate adds a realistic complication and 2–3 tasks; Advanced can include negotiation and nuanced constraints. All generated tasks are labeled as practice material rather than official exam wording. A failed generation never replaces or blocks the current Course-owned prompt.
+
 ## STEP 6 Mental Model
 
 STEP 6 is a parent area with two equal child routes. The hub does not mount Recorder, TTS, STT, or a Mock plan.
@@ -166,3 +168,9 @@ All LLM-assisted training surfaces use one execution contract. A usable custom L
 AI Settings shows the active connection rather than a mode selector. A configured custom endpoint applies across all LLM features; clearing it returns routing to managed AI. Invalid custom configuration, custom failure and managed failure are surfaced truthfully without provider fallback or local placeholder output. A completed Quick answer yields a persisted attempt ID when available. **연습 종료** explicitly completes the session and shows actual local answer count and duration; navigation and refresh do not imply completion. Full Mock's exam/review boundary remains unchanged.
 
 The shell now reads lightweight manifests/navigation from courseCatalog. Full canonical bundles are loaded through the lazy training/history views. Update each course's navigation.ts when canonical group labels change; catalog parity tests verify all three levels.
+
+### Phase 3.1.3 script and roleplay result UX
+
+STEP 4 keeps the canonical script fully usable while a rewrite is loading or fails. On success, original and rewrite appear side by side at desktop widths and stack in the mobile reading order `변형 포인트 → 원본 → AI 변형 결과 → 변경 이유`. Meaningful word changes receive subtle non-color-only underline/background cues. A local deterministic comparison ignores punctuation, whitespace and capitalization-only changes. AI semantic notes explain what changed and why; comparison itself never consumes another quota request.
+
+Script rewrite and roleplay generation use schema v2 for new structured results while stored schema v1 results continue to render. This display/schema refinement does not alter automatic custom-over-managed precedence, cross-provider no-fallback behavior, request UUID idempotency, quota or Full Mock exam-time AI restrictions.

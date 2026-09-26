@@ -48,10 +48,40 @@ export interface ScriptRewriteResultV1 {
   changes: string[];
 }
 
+export const SCRIPT_REWRITE_CHANGE_TYPES = [
+  "spoken_style",
+  "organization",
+  "specificity",
+  "naturalness",
+  "conciseness",
+] as const;
+
+export type ScriptRewriteChangeType = (typeof SCRIPT_REWRITE_CHANGE_TYPES)[number];
+
+export interface ScriptRewriteResultV2 {
+  schemaVersion: 2;
+  rewrittenScript: string;
+  changes: Array<{
+    type: ScriptRewriteChangeType;
+    summary: string;
+    reason?: string;
+  }>;
+}
+
 export interface RoleplayQuestionResultV1 {
   schemaVersion: 1;
   prompt: string;
 }
+
+export interface RoleplayQuestionResultV2 {
+  schemaVersion: 2;
+  scenario: string;
+  prompt: string;
+  cues: string[];
+}
+
+export type ScriptRewriteResult = ScriptRewriteResultV1 | ScriptRewriteResultV2;
+export type RoleplayQuestionResult = RoleplayQuestionResultV1 | RoleplayQuestionResultV2;
 
 export type AnswerFeedbackResultV1 =
   | { schemaVersion: 1; format: "structured"; feedback: ManagedAiFeedbackV1 }
@@ -65,8 +95,8 @@ export interface AiFeatureInputMap {
 
 export interface AiFeatureResultMap {
   answer_feedback: AnswerFeedbackResultV1;
-  script_rewrite: ScriptRewriteResultV1;
-  roleplay_question: RoleplayQuestionResultV1;
+  script_rewrite: ScriptRewriteResult;
+  roleplay_question: RoleplayQuestionResult;
 }
 
 export interface AiExecuteRequest<F extends AiFeature = AiFeature> {
@@ -161,29 +191,45 @@ export function parseAiExecuteRequest(value: unknown): AiExecuteRequest {
   } as AiExecuteRequest;
 }
 
-export function parseScriptRewriteResult(value: unknown): ScriptRewriteResultV1 {
-  if (
-    !object(value) ||
-    !only(value, ["schemaVersion", "rewrittenScript", "changes"]) ||
-    value.schemaVersion !== 1 ||
-    !text(value.rewrittenScript, 12000) ||
-    !Array.isArray(value.changes) ||
-    value.changes.length > 3 ||
-    !value.changes.every((item) => text(item, 300))
-  )
+export function parseScriptRewriteResult(value: unknown): ScriptRewriteResult {
+  if (!object(value) || !only(value, ["schemaVersion", "rewrittenScript", "changes"]) || !text(value.rewrittenScript, 12000) || !Array.isArray(value.changes))
     throw new Error("INVALID_AI_RESPONSE");
-  return value as unknown as ScriptRewriteResultV1;
+  if (
+    value.schemaVersion === 1 &&
+    value.changes.length <= 3 &&
+    value.changes.every((item) => text(item, 300))
+  ) return value as unknown as ScriptRewriteResultV1;
+  if (
+    value.schemaVersion === 2 &&
+    value.changes.length <= 5 &&
+    value.changes.every((item) =>
+      object(item) &&
+      only(item, ["type", "summary", "reason"]) &&
+      (SCRIPT_REWRITE_CHANGE_TYPES as readonly unknown[]).includes(item.type) &&
+      text(item.summary, 160) &&
+      (item.reason === undefined || text(item.reason, 240))
+    )
+  ) return value as unknown as ScriptRewriteResultV2;
+  throw new Error("INVALID_AI_RESPONSE");
 }
 
-export function parseRoleplayQuestionResult(value: unknown): RoleplayQuestionResultV1 {
+export function parseRoleplayQuestionResult(value: unknown): RoleplayQuestionResult {
+  if (!object(value)) throw new Error("INVALID_AI_RESPONSE");
   if (
-    !object(value) ||
-    !only(value, ["schemaVersion", "prompt"]) ||
-    value.schemaVersion !== 1 ||
-    !text(value.prompt, 1500)
-  )
-    throw new Error("INVALID_AI_RESPONSE");
-  return value as unknown as RoleplayQuestionResultV1;
+    value.schemaVersion === 1 &&
+    only(value, ["schemaVersion", "prompt"]) &&
+    text(value.prompt, 1500)
+  ) return value as unknown as RoleplayQuestionResultV1;
+  if (
+    value.schemaVersion === 2 &&
+    only(value, ["schemaVersion", "scenario", "prompt", "cues"]) &&
+    text(value.scenario, 800) &&
+    text(value.prompt, 1800) &&
+    Array.isArray(value.cues) &&
+    value.cues.length <= 4 &&
+    value.cues.every((item) => text(item, 180))
+  ) return value as unknown as RoleplayQuestionResultV2;
+  throw new Error("INVALID_AI_RESPONSE");
 }
 
 export function parseManagedFeatureResult<F extends AiFeature>(
@@ -213,12 +259,21 @@ export const scriptRewriteJsonSchema = {
   additionalProperties: false,
   required: ["schemaVersion", "rewrittenScript", "changes"],
   properties: {
-    schemaVersion: { type: "integer", enum: [1] },
+    schemaVersion: { type: "integer", enum: [2] },
     rewrittenScript: stringSchema(12000),
     changes: {
       type: "array",
-      maxItems: 3,
-      items: stringSchema(300),
+      maxItems: 5,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["type", "summary"],
+        properties: {
+          type: { type: "string", enum: [...SCRIPT_REWRITE_CHANGE_TYPES] },
+          summary: stringSchema(160),
+          reason: stringSchema(240),
+        },
+      },
     },
   },
 };
@@ -226,10 +281,16 @@ export const scriptRewriteJsonSchema = {
 export const roleplayQuestionJsonSchema = {
   type: "object",
   additionalProperties: false,
-  required: ["schemaVersion", "prompt"],
+  required: ["schemaVersion", "scenario", "prompt", "cues"],
   properties: {
-    schemaVersion: { type: "integer", enum: [1] },
-    prompt: stringSchema(1500),
+    schemaVersion: { type: "integer", enum: [2] },
+    scenario: stringSchema(800),
+    prompt: stringSchema(1800),
+    cues: {
+      type: "array",
+      maxItems: 4,
+      items: stringSchema(180),
+    },
   },
 };
 

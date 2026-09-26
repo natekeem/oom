@@ -1,9 +1,9 @@
-import { Clipboard, Highlighter, ListTree, LoaderCircle, Sparkles } from "lucide-react";
+import { Clipboard, Highlighter, ListTree, Sparkles } from "lucide-react";
 import { useMemo, useState } from "react";
 import { runAiFeature } from "../../features/ai/runAiFeature";
 import { getAiConnection } from "../../features/ai/providerResolver";
 import { toAiExecutionError } from "../../features/ai/errors";
-import type { ScriptRewriteResultV1 } from "../../../shared/ai/features";
+import type { ScriptRewriteResult } from "../../../shared/ai/features";
 import { cn } from "../../lib/utils";
 import type { LlmSettings, ScriptItem } from "../../types";
 import { Badge } from "../ui/Badge";
@@ -17,6 +17,7 @@ import {
   type ScriptLearningSegment,
 } from "./scriptLearningSections";
 import { TtsControls } from "./TtsControls";
+import { ScriptRewriteComparison } from "./ScriptRewriteComparison";
 
 type ScriptDetailProps = {
   script: ScriptItem;
@@ -135,7 +136,7 @@ export function ScriptDetail({ script, settings, onToast }: ScriptDetailProps) {
   const [structureState, setStructureState] = useState({ key: structureKey, visible: false });
   const structureVisible = structureState.key === structureKey ? structureState.visible : false;
   const [revealBlind, setRevealBlind] = useState(false);
-  const [variation, setVariation] = useState<ScriptRewriteResultV1 | null>(null);
+  const [variation, setVariation] = useState<ScriptRewriteResult | null>(null);
   const [variationLoading, setVariationLoading] = useState(false);
 
   const copyScript = async () => {
@@ -172,6 +173,17 @@ export function ScriptDetail({ script, settings, onToast }: ScriptDetailProps) {
       onToast("AI 변형에 실패했습니다.", error instanceof Error && error.message === "INVALID_SCRIPT_CONTEXT" ? "현재 Course와 Level 정보를 확인해 주세요." : safe.message, "error");
     } finally {
       setVariationLoading(false);
+    }
+  };
+
+  const copyVariation = async () => {
+    if (!variation) return;
+    try {
+      if (!navigator.clipboard) throw new Error("클립보드 권한이 없습니다.");
+      await navigator.clipboard.writeText(variation.rewrittenScript);
+      onToast("AI 변형 결과를 복사했습니다.", "내 표현으로 다시 말해 보세요.", "success");
+    } catch (error) {
+      onToast("복사하지 못했습니다.", error instanceof Error ? error.message : "브라우저 권한을 확인해 주세요.", "error");
     }
   };
 
@@ -270,13 +282,17 @@ export function ScriptDetail({ script, settings, onToast }: ScriptDetailProps) {
         </div>
       </Card>
 
-      <div className="grid gap-5 xl:grid-cols-2">
-        <Card className="p-5">
-          <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Point Notes</h3>
-          <ul className="mt-3 space-y-3">{script.pointNotes.map((note) => <li className="flex gap-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300" key={note}><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500" />{note}</li>)}</ul>
-        </Card>
-        {variation ? <Card className="p-5"><div className="flex items-center justify-between gap-2"><div className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-indigo-500" /><h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">AI 변형 결과</h3></div><Button size="sm" variant="secondary" onClick={() => void navigator.clipboard.writeText(variation.rewrittenScript)}>변형 복사</Button></div><p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-zinc-700 dark:text-zinc-200">{variation.rewrittenScript}</p>{variation.changes.length ? <ul className="mt-4 space-y-2 border-t border-zinc-100 pt-4 text-xs leading-5 text-zinc-500 dark:border-zinc-800">{variation.changes.map((change) => <li key={change}>• {change}</li>)}</ul> : null}</Card> : <Card className="p-5"><div className="flex items-center gap-2"><LoaderCircle className="h-4 w-4 text-zinc-400" /><h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">내 표현으로 한 번 더</h3></div><p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">원문을 그대로 암기하기보다, 등장인물이나 장소를 내 경험에 맞게 한두 개 바꿔 말해 보세요.</p></Card>}
-      </div>
+      <Card className="p-4 sm:px-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+          <h3 className="shrink-0 text-sm font-bold text-zinc-900 dark:text-zinc-100">스크립트 포인트</h3>
+          <div className="flex flex-wrap gap-2">
+            {script.pointNotes.slice(0, 5).map((note) => <span className="rounded-full bg-zinc-100 px-2.5 py-1 text-xs leading-5 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300" key={note}>{note}</span>)}
+            {script.pointNotes.length > 5 ? <Badge>+{script.pointNotes.length - 5}</Badge> : null}
+          </div>
+        </div>
+      </Card>
+
+      {variation ? <ScriptRewriteComparison onCopy={() => void copyVariation()} original={script.englishScript} result={variation} /> : null}
     </div>
   );
 }

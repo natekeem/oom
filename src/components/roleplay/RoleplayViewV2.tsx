@@ -13,6 +13,8 @@ import { TrainingSelectionGuard } from "../training/TrainingSelectionGuard";
 import type { ViewId } from "../layout/Sidebar";
 import type { ResolvedTrainingContext } from "../../training/types";
 import { TtsControls } from "../script/TtsControls";
+import type { RoleplayQuestionResult } from "../../../shared/ai/features";
+import { presentGeneratedRoleplayPrompt, RoleplayPromptPanel } from "./RoleplayPromptPanel";
 
 type RoleplayViewV2Props = {
   slotIndex?: number;
@@ -54,7 +56,7 @@ function RoleplayViewV2Content({
   const [selectedId, setSelectedId] = useState<string>(
     () => roleplays[selectedIndex]?.id ?? roleplays[0]?.id
   );
-  const [generatedQuestion, setGeneratedQuestion] = useState("");
+  const [generatedQuestion, setGeneratedQuestion] = useState<RoleplayQuestionResult | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const scenario =
@@ -64,6 +66,7 @@ function RoleplayViewV2Content({
 
   const handleSelectScenario = (idx: number, id: string) => {
     setSelectedId(id);
+    setGeneratedQuestion(null);
     if (onSlotChange) {
       onSlotChange(idx);
     }
@@ -83,7 +86,7 @@ function RoleplayViewV2Content({
         },
         customSettings: settings,
       });
-      setGeneratedQuestion(response.result.prompt);
+      setGeneratedQuestion(response.result);
     } catch (error) {
       onToast(
         "AI 질문 생성에 실패했습니다.",
@@ -94,6 +97,10 @@ function RoleplayViewV2Content({
       setIsGenerating(false);
     }
   };
+
+  const presentedPrompt = generatedQuestion
+    ? presentGeneratedRoleplayPrompt(generatedQuestion, scenario.situation)
+    : { scenario: scenario.situation, prompt: scenario.prompt, generated: false };
 
   return (
     <div className="space-y-6">
@@ -186,17 +193,7 @@ function RoleplayViewV2Content({
               {scenario.title}
             </h2>
           </div>
-          <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
-            {scenario.situation}
-          </p>
-          <div className="mt-5 rounded-md bg-zinc-50 p-4 dark:bg-zinc-950">
-            <p className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-              EVA QUESTION
-            </p>
-            <p className="mt-2 text-sm leading-6 text-zinc-800 dark:text-zinc-200">
-              {scenario.prompt}
-            </p>
-          </div>
+          <RoleplayPromptPanel {...presentedPrompt} />
           <h3 className="mt-5 text-sm font-bold text-zinc-900 dark:text-zinc-100">
             답변 구조
           </h3>
@@ -307,24 +304,15 @@ function RoleplayViewV2Content({
               </h2>
             </div>
             <p className="mt-1 text-sm text-indigo-700 dark:text-indigo-300">
-              선택한 {scenario.group} 그룹을 바탕으로 Eva 스타일 질문을 만듭니다.
+              선택한 {scenario.group} 상황과 현재 구간에 맞는 실전형 연습 질문을 만듭니다.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2"><Badge tone={getAiConnection(settings).source === "custom" ? "amber" : "indigo"}>{getAiConnection(settings).label}</Badge><Button disabled={isGenerating} onClick={generateQuestion}>
             <Sparkles className="h-4 w-4" />
-            {isGenerating ? "생성 중" : "AI 롤플레이 질문 생성"}
+            {isGenerating ? "새 연습 질문을 만드는 중..." : "AI 롤플레이 질문 생성"}
           </Button></div>
         </div>
-        {generatedQuestion ? (
-          <div className="mt-4 rounded-md border border-indigo-100 bg-white p-4 dark:border-indigo-900 dark:bg-zinc-950">
-            <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
-              PRACTICE PROMPT
-            </p>
-            <p className="mt-2 text-sm leading-6 text-zinc-800 dark:text-zinc-200">
-              {generatedQuestion}
-            </p>
-          </div>
-        ) : null}
+        <p className="mt-3 text-xs leading-5 text-indigo-700 dark:text-indigo-300">새 질문은 위 연습 질문 영역을 같은 형식으로 업데이트합니다. 생성에 실패해도 현재 질문은 그대로 사용할 수 있습니다.</p>
       </Card>
       <StudyCompletion unit={{ activity_type: "roleplay_completed", course_id: resolved.course.id, level_id: resolved.level.id, content_id: scenario.id }} />
     </div>

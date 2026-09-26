@@ -57,7 +57,7 @@ export async function executeCustomAi<F extends AiFeature>(
     if (feature === "script_rewrite") {
       if (parsed) return parseScriptRewriteResult(parsed) as AiFeatureResultMap[F];
       return parseScriptRewriteResult({
-        schemaVersion: 1,
+        schemaVersion: 2,
         rewrittenScript: output.trim(),
         changes: [],
       }) as AiFeatureResultMap[F];

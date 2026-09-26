@@ -16,9 +16,9 @@ beforeEach(() => vi.clearAllMocks());
 describe("custom provider normalization", () => {
   it("normalizes a valid structured script result", async () => {
     mocks.call.mockResolvedValue(JSON.stringify({
-      schemaVersion: 1,
+      schemaVersion: 2,
       rewrittenScript: "I visit the park after work.",
-      changes: ["현재형으로 정리"],
+      changes: [{ type: "organization", summary: "현재형으로 정리", reason: "일상 습관을 분명하게 보여 줘요." }],
     }));
     await expect(executeCustomAi("script_rewrite", {
       scriptId: "script-1",
@@ -29,9 +29,9 @@ describe("custom provider normalization", () => {
       courseId: "course-1",
       levelId: "foundation",
     }, settings)).resolves.toEqual({
-      schemaVersion: 1,
+      schemaVersion: 2,
       rewrittenScript: "I visit the park after work.",
-      changes: ["현재형으로 정리"],
+      changes: [{ type: "organization", summary: "현재형으로 정리", reason: "일상 습관을 분명하게 보여 줘요." }],
     });
   });
 

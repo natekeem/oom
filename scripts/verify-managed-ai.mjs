@@ -142,8 +142,8 @@ const overview = {
     },
     { user, token },
   );
-  const quota = () => ({
-    feature: "answer_feedback",
+  const quota = (feature = "answer_feedback") => ({
+    feature,
     plan: "free",
     limit: 3,
     used,
@@ -152,6 +152,22 @@ const overview = {
     resetsAt: "2026-09-22T00:00:00+09:00",
     enabled: mode !== "disabled",
   });
+  const generationResults = {
+    script_rewrite: {
+      schemaVersion: 2,
+      rewrittenScript: "Well, I usually visit the quiet park after work. The tree-lined path helps me slow down and relax.",
+      changes: [
+        { type: "spoken_style", summary: "filler 추가", reason: "실제 말하기처럼 자연스럽게 시작하도록 바꿨어요." },
+        { type: "specificity", summary: "장면 디테일 보강", reason: "공원 장면을 더 쉽게 떠올릴 수 있어요." },
+      ],
+    },
+    roleplay_question: {
+      schemaVersion: 2,
+      scenario: "Your family booked an ocean-view room, but the room you received faces the parking lot.",
+      prompt: "Talk to the front desk, explain the reservation mismatch, ask whether the correct room is available, and negotiate a room change or another practical solution.",
+      cues: ["예약 내용과 실제 객실 비교", "원래 객실 가능 여부 확인", "객실 변경 또는 대안 요청"],
+    },
+  };
   await page.route("https://oom-ai-qa.invalid/**", async (route) => {
     const u = new URL(route.request().url());
     const path = u.pathname;
@@ -232,24 +248,24 @@ const overview = {
     else if (path.endsWith("/admin-api/users"))
       data = { users: [{ id: uid, displayName: "QA fixture", email: "qa@example.invalid", avatarUrl: null, joinedAt: "2026-09-21T00:00:00Z", lastSignInAt: null, planDisplay: "FREE", hasLearningPreferences: true, learningSessionCount: 2, learningActivityCount: 1, lastLearningAt: null }], total: 1, totalPages: 1, page: 1, pageSize: 20 };
     else if (path.endsWith("/admin-api/learning")) data = { records: [{ id: uid, userId: uid, userDisplayName: "QA fixture", type: "session", modeOrType: "quick_practice", targetLevel: "advanced", status: "completed", questionCount: 1, answeredCount: 1, timestamp: "2026-09-21T00:00:00Z" }], total: 1, page: 1, totalPages: 1, pageSize: 20 };
-    else if (path.endsWith("/ai-api/quota")) data = quota();
+    else if (path.endsWith("/ai-api/quota")) data = quota(u.searchParams.get("feature") || "answer_feedback");
     else if (path.endsWith("/ai-api/execute")) {
       posts++;
       const requestBody = route.request().postDataJSON();
-      assert.equal(requestBody.feature, "answer_feedback");
-      assert.equal(requestBody.input.learningAttemptId, uid);
+      assert.ok(["answer_feedback", "script_rewrite", "roleplay_question"].includes(requestBody.feature));
+      if (requestBody.feature === "answer_feedback") assert.equal(requestBody.input.learningAttemptId, uid);
       if (delay) await new Promise((r) => setTimeout(r, delay));
-      if (mode === "error") {
-        status = 503;
+      if (mode === "error" || mode === "quota") {
+        status = mode === "quota" ? 429 : 503;
         data = {
-          error: { code: "PROVIDER_UNAVAILABLE" },
+          error: { code: mode === "quota" ? "DAILY_QUOTA_EXCEEDED" : "PROVIDER_UNAVAILABLE" },
           terminal: true,
           quotaConsumed: false,
-          quota: quota(),
+          quota: quota(requestBody.feature),
         };
       } else {
         used++;
-        data = { result: feedback, quota: quota() };
+        data = { result: requestBody.feature === "answer_feedback" ? feedback : generationResults[requestBody.feature], quota: quota(requestBody.feature) };
       }
     }
     await route.fulfill({
@@ -260,6 +276,20 @@ const overview = {
         "Access-Control-Allow-Headers": "*",
       },
       body: JSON.stringify(data),
+    });
+  });
+  await page.route("https://custom-ai.example.invalid/**", async (route) => {
+    const body = route.request().postDataJSON();
+    const serialized = JSON.stringify(body);
+    const feature = serialized.includes("script_rewrite") ? "script_rewrite" : serialized.includes("roleplay_question") ? "roleplay_question" : "answer_feedback";
+    const content = feature === "answer_feedback"
+      ? "KEEP: clear context. FIX: use past tense. RETRY: add one detail."
+      : JSON.stringify(generationResults[feature]);
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      headers: { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "*" },
+      body: JSON.stringify({ choices: [{ message: { content } }] }),
     });
   });
   const shot = async (name) => {
@@ -305,6 +335,45 @@ const overview = {
         assert.equal(await page.locator("[data-page-width]").getAttribute("data-page-width"), expected);
         if (width === 1920 && expected !== "immersive") assert.equal(Math.round((await page.locator("[data-page-width]").boundingBox()).width), expected === "wide" ? 1440 : 1280);
         await shot(`after-${width}-${theme}-${route.replaceAll("/", "")}`);
+      }
+      used = 0;
+      mode = "success";
+      delay = 800;
+      await visit("/training/scripts/outdoor/");
+      await page.getByRole("button", { name: "AI로 자연스럽게 스크립트 변형" }).click();
+      await shot(`script-${width}-${theme}-loading`);
+      await page.getByRole("heading", { name: "AI 변형 결과" }).waitFor();
+      await shot(`script-${width}-${theme}-success`);
+      mode = "error";
+      delay = 0;
+      await page.getByRole("button", { name: "AI로 자연스럽게 스크립트 변형" }).click();
+      await page.getByRole("status").filter({ hasText: "AI 변형에 실패했습니다" }).waitFor();
+      await shot(`script-${width}-${theme}-failure`);
+      if (width === 1440 && theme === "dark") {
+        mode = "quota";
+        await page.getByRole("button", { name: "AI로 자연스럽게 스크립트 변형" }).click();
+        await page.getByRole("status").filter({ hasText: "오늘 이 기능" }).waitFor();
+        await shot("script-1440-dark-quota");
+      }
+
+      used = 0;
+      mode = "success";
+      delay = 800;
+      await visit("/roleplay/travel/");
+      await page.getByRole("button", { name: "AI 롤플레이 질문 생성" }).click();
+      await shot(`roleplay-${width}-${theme}-loading`);
+      await page.getByText("AI 새 질문", { exact: true }).waitFor();
+      await shot(`roleplay-${width}-${theme}-success`);
+      mode = "error";
+      delay = 0;
+      await page.getByRole("button", { name: "AI 롤플레이 질문 생성" }).click();
+      await page.getByRole("status").filter({ hasText: "AI 질문 생성에 실패했습니다" }).waitFor();
+      await shot(`roleplay-${width}-${theme}-failure`);
+      if (width === 1440 && theme === "dark") {
+        mode = "quota";
+        await page.getByRole("button", { name: "AI 롤플레이 질문 생성" }).click();
+        await page.getByRole("status").filter({ hasText: "오늘 이 기능" }).waitFor();
+        await shot("roleplay-1440-dark-quota");
       }
       await visit("/practice/quick/");
       await openQuickReview();
@@ -367,6 +436,16 @@ const overview = {
   await openQuickReview();
   await page.getByText("사용자 API", { exact: true }).waitFor();
   await shot("custom-override-mobile");
+  await visit("/training/scripts/outdoor/");
+  await page.getByText("사용자 API", { exact: true }).waitFor();
+  await page.getByRole("button", { name: "AI로 자연스럽게 스크립트 변형" }).click();
+  await page.getByRole("heading", { name: "AI 변형 결과" }).waitFor();
+  await shot("script-custom-mobile-success");
+  await visit("/roleplay/travel/");
+  await page.getByText("사용자 API", { exact: true }).waitFor();
+  await page.getByRole("button", { name: "AI 롤플레이 질문 생성" }).click();
+  await page.getByText("AI 새 질문", { exact: true }).waitFor();
+  await shot("roleplay-custom-mobile-success");
 
   await page.setViewportSize({ width: 1440, height: 1000 });
   const startMockAnswer = async (startName, stopName) => {

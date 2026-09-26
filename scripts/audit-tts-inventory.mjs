@@ -742,14 +742,14 @@ export async function buildAudit() {
         {
           source: "src/components/script/ScriptDetail.tsx",
           value: "AI-generated script variation",
-          reason: "callInternalLlm response is determined at runtime",
+          reason: "runAiFeature response is determined at runtime",
           currentRuntimeTts: "No; displayed as text only",
           future: "Potentially dynamic; retain runtime TTS if playback is added",
         },
         {
           source: "src/components/roleplay/RoleplayViewV2.tsx",
           value: "AI-generated roleplay question",
-          reason: "callInternalLlm response is determined at runtime",
+          reason: "runAiFeature response is determined at runtime",
           currentRuntimeTts: "No; displayed as text only",
           future: "Potentially dynamic; retain runtime TTS if playback is added",
         },

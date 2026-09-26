@@ -97,9 +97,13 @@ describe("managed gateway", () => {
   it("routes a generation feature through the same reservation and finalization pipeline", async () => {
     const s = setup();
     const result = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       rewrittenScript: "I usually visit the park after work.",
-      changes: ["습관을 나타내는 현재형으로 정리"],
+      changes: [{
+        type: "organization",
+        summary: "습관을 나타내는 현재형으로 정리",
+        reason: "반복되는 일상을 더 분명하게 말할 수 있어요.",
+      }],
     };
     s.provider.generate.mockResolvedValue({
       output: result,
@@ -134,7 +138,7 @@ describe("managed gateway", () => {
     );
     expect(s.rpc).toHaveBeenCalledWith("reserve_ai_usage", expect.objectContaining({
       p_feature: "script_rewrite",
-      p_prompt_version: "opic_script_rewrite_v1",
+      p_prompt_version: "opic_script_rewrite_v2",
     }));
     expect(s.rpc).toHaveBeenCalledWith("finalize_ai_usage", expect.objectContaining({
       p_result: result,

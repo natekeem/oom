@@ -61,17 +61,70 @@ select pg_temp.invalid('insert into public.stt_model_catalog(provider, model) va
 -- 4. Initial runtime kill switch is OFF
 select pg_temp.assert_true(not (public.stt_quota('32000000-0000-4000-a000-000000000001')->>'enabled')::boolean, 'initial STT kill switch OFF');
 
--- 5. Owner updates settings, support denied, audit log written
-select public.admin_update_stt('32000000-0000-4000-a000-000000000002', '{"enabled":true,"limits":{"free":60000}}');
-select pg_temp.assert_true((select count(*) from public.admin_audit_logs where admin_user_id='32000000-0000-4000-a000-000000000002' and action='update_stt_settings') = 1, 'mutation audit recorded');
+-- 5. Admin updates STT settings & regression checks
+-- 5.1 enabled=true only
+select public.admin_update_stt('32000000-0000-4000-a000-000000000002', '{"enabled":true}');
+select pg_temp.assert_true((select managed_stt_enabled from public.stt_runtime_settings where id), 'enabled=true only succeeded');
 
+-- 5.2 enabled=false only
+select public.admin_update_stt('32000000-0000-4000-a000-000000000002', '{"enabled":false}');
+select pg_temp.assert_true(not (select managed_stt_enabled from public.stt_runtime_settings where id), 'enabled=false only succeeded');
+
+-- 5.3 valid free/pro limits
+select public.admin_update_stt('32000000-0000-4000-a000-000000000002', '{"limits":{"free":120000,"pro":720000}}');
+select pg_temp.assert_true((select daily_limit_ms_free = 120000 and daily_limit_ms_pro = 720000 from public.stt_runtime_settings where id), 'valid free/pro limits succeeded');
+
+-- 5.4 model change
+select public.admin_update_stt('32000000-0000-4000-a000-000000000002', '{"model":"gemini-3.5-transcribe"}');
+select pg_temp.assert_true((select default_model = 'gemini-3.5-transcribe' from public.stt_runtime_settings where id), 'model change succeeded');
+
+-- 5.5 combined enabled/model/limits patch
+select public.admin_update_stt('32000000-0000-4000-a000-000000000002', '{"enabled":true,"model":"gemini-3.5-transcribe","limits":{"free":60000,"pro":3600000}}');
+select pg_temp.assert_true((select managed_stt_enabled and default_model = 'gemini-3.5-transcribe' and daily_limit_ms_free = 60000 and daily_limit_ms_pro = 3600000 from public.stt_runtime_settings where id), 'combined enabled/model/limits patch succeeded');
+
+-- 5.6 unknown limits key rejected
+do $$ begin
+  begin
+    perform public.admin_update_stt('32000000-0000-4000-a000-000000000002', '{"limits":{"unknown":12345}}');
+    raise exception 'unknown limits key was allowed';
+  exception when raise_exception then
+    if sqlerrm <> 'INVALID_SETTINGS' then raise; end if;
+  end;
+end $$;
+
+-- 5.7 support/non-admin rejected
+-- Support role (user 3) rejected
 do $$ begin
   begin
     perform public.admin_update_stt('32000000-0000-4000-a000-000000000003', '{"enabled":false}');
-    raise exception 'support allowed';
+    raise exception 'support role was allowed';
   exception when raise_exception then
     if sqlerrm <> 'FORBIDDEN' then raise; end if;
   end;
+end $$;
+
+-- Non-admin regular user (user 1) rejected
+do $$ begin
+  begin
+    perform public.admin_update_stt('32000000-0000-4000-a000-000000000001', '{"enabled":false}');
+    raise exception 'non-admin user was allowed';
+  exception when raise_exception then
+    if sqlerrm <> 'FORBIDDEN' then raise; end if;
+  end;
+end $$;
+
+-- 5.8 successful mutation creates exactly one audit row per mutation
+do $$
+declare
+  audit_count_before integer;
+  audit_count_after integer;
+begin
+  select count(*) into audit_count_before from public.admin_audit_logs where admin_user_id='32000000-0000-4000-a000-000000000002' and action='update_stt_settings';
+  perform public.admin_update_stt('32000000-0000-4000-a000-000000000002', '{"enabled":true,"limits":{"free":60000}}');
+  select count(*) into audit_count_after from public.admin_audit_logs where admin_user_id='32000000-0000-4000-a000-000000000002' and action='update_stt_settings';
+  if audit_count_after - audit_count_before <> 1 then
+    raise exception 'Expected exactly 1 audit row created, before: %, after: %', audit_count_before, audit_count_after;
+  end if;
 end $$;
 
 -- 6. Atomic duration reservation

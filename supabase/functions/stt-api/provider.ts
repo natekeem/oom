@@ -42,6 +42,66 @@ export class SttProviderError extends Error {
 
 const OPIC_VOCABULARY_BIAS = ["OPIc", "AL", "IH", "IM1", "IM2", "IM3"];
 
+export const GEMINI_STT_CANONICAL_MIMES = [
+  "audio/webm",
+  "audio/ogg",
+  "audio/wav",
+  "audio/m4a",
+  "audio/mp3",
+  "audio/mpeg",
+  "audio/aac",
+  "audio/flac",
+] as const;
+
+export type GeminiSttCanonicalMime = (typeof GEMINI_STT_CANONICAL_MIMES)[number];
+
+const BROWSER_MIME_ALIASES: Record<string, GeminiSttCanonicalMime> = {
+  "video/webm": "audio/webm",
+  "video/mp4": "audio/m4a",
+  "audio/mp4": "audio/m4a",
+  "audio/x-m4a": "audio/m4a",
+  "audio/x-wav": "audio/wav",
+  "audio/wave": "audio/wav",
+  "audio/mpeg": "audio/mp3",
+};
+
+export function normalizeGeminiMime(
+  rawMime?: string | null,
+  filename?: string
+): GeminiSttCanonicalMime | null {
+  if (!rawMime && !filename) return null;
+
+  let mime = (rawMime || "").toLowerCase().trim();
+
+  // Strip MIME parameters such as ;codecs=opus
+  if (mime.includes(";")) {
+    mime = mime.split(";")[0].trim();
+  }
+
+  // Handle octet-stream or missing mime with known filename extension
+  if ((!mime || mime === "application/octet-stream") && filename) {
+    if (/\.webm$/i.test(filename)) mime = "audio/webm";
+    else if (/\.ogg$/i.test(filename)) mime = "audio/ogg";
+    else if (/\.(wav|wave)$/i.test(filename)) mime = "audio/wav";
+    else if (/\.(m4a|mp4)$/i.test(filename)) mime = "audio/m4a";
+    else if (/\.aac$/i.test(filename)) mime = "audio/aac";
+    else if (/\.(mp3|mpeg)$/i.test(filename)) mime = "audio/mp3";
+    else if (/\.flac$/i.test(filename)) mime = "audio/flac";
+  }
+
+  // Map browser aliases safely
+  if (mime in BROWSER_MIME_ALIASES) {
+    mime = BROWSER_MIME_ALIASES[mime];
+  }
+
+  // Whitelist verification: only canonical MIME formats supported by Gemini STT
+  if ((GEMINI_STT_CANONICAL_MIMES as readonly string[]).includes(mime)) {
+    return mime as GeminiSttCanonicalMime;
+  }
+
+  return null;
+}
+
 export function geminiSttProvider(apiKey: string): SttProvider {
   return {
     async transcribe(
@@ -53,6 +113,8 @@ export function geminiSttProvider(apiKey: string): SttProvider {
       if (!apiKey) {
         throw new SttProviderError("SERVER_ERROR", "GEMINI_API_KEY is not configured on the server.");
       }
+
+      const canonicalMime = normalizeGeminiMime(mimeType) || mimeType;
 
       // Step 1: Upload audio to Gemini Files API
       let fileUri = "";
@@ -69,8 +131,8 @@ export function geminiSttProvider(apiKey: string): SttProvider {
           headers: {
             "X-Goog-Upload-Protocol": "media",
             "X-Goog-Upload-Header-Content-Length": audioBytes.byteLength.toString(),
-            "X-Goog-Upload-Header-Content-Type": mimeType,
-            "Content-Type": mimeType,
+            "X-Goog-Upload-Header-Content-Type": canonicalMime,
+            "Content-Type": canonicalMime,
           },
           body: audioBytes,
           signal: combinedSignal,
@@ -108,13 +170,13 @@ export function geminiSttProvider(apiKey: string): SttProvider {
             {
               type: "audio",
               uri: fileUri,
-              mime_type: mimeType,
+              mime_type: canonicalMime,
             },
           ],
           generation_config: {
             transcription_config: {
               mode: "verbatim",
-              language_code: "en-US",
+              language_codes: ["en-US"],
               custom_vocabulary: OPIC_VOCABULARY_BIAS,
             },
           },

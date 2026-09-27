@@ -5,7 +5,11 @@ import {
   type SttSource,
 } from "../../../shared/stt/types.ts";
 import { jsonResponse, withTiming } from "../admin-api/cors.ts";
-import { SttProviderError, type SttProvider } from "./provider.ts";
+import {
+  normalizeGeminiMime,
+  SttProviderError,
+  type SttProvider,
+} from "./provider.ts";
 
 export interface SttDependencies {
   authenticate(req: Request): Promise<{ userId: string; db: SupabaseClient } | null>;
@@ -33,20 +37,6 @@ const statusCodes: Record<SttErrorCode, number> = {
 };
 
 const MAX_AUDIO_BYTES = 25 * 1024 * 1024; // 25 MB
-
-function isAllowedMime(mime: string, filename?: string): boolean {
-  const normalized = mime.toLowerCase().split(";")[0].trim();
-  if (
-    normalized.startsWith("audio/") ||
-    ["video/webm", "video/mp4"].includes(normalized)
-  ) {
-    return true;
-  }
-  if (normalized === "application/octet-stream" && filename) {
-    return /\.(webm|mp4|wav|ogg|m4a|aac)$/i.test(filename);
-  }
-  return false;
-}
 
 export function createSttHandler(deps: SttDependencies) {
   return async (req: Request): Promise<Response> => {
@@ -127,11 +117,9 @@ export function createSttHandler(deps: SttDependencies) {
       }
 
       const filename = audioFile instanceof File ? audioFile.name : undefined;
-      let mimeType = (formData.get("mimeType") as string) || audioFile.type || "audio/webm";
-      if (mimeType === "application/octet-stream" && filename && /\.(webm|mp4|wav|ogg|m4a|aac)$/i.test(filename)) {
-        mimeType = filename.endsWith(".mp4") ? "video/mp4" : "audio/webm";
-      }
-      if (!isAllowedMime(mimeType, filename)) {
+      const rawMime = (formData.get("mimeType") as string) || audioFile.type || "audio/webm";
+      const canonicalMime = normalizeGeminiMime(rawMime, filename);
+      if (!canonicalMime) {
         return fail("UNSUPPORTED_AUDIO_FORMAT", "지원하지 않는 오디오 형식입니다.");
       }
 
@@ -212,7 +200,7 @@ export function createSttHandler(deps: SttDependencies) {
       try {
         const providerResult = await deps.provider.transcribe(
           audioBytes,
-          mimeType,
+          canonicalMime,
           reservation.model,
           req.signal
         );

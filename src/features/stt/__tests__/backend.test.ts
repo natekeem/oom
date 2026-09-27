@@ -1,7 +1,12 @@
 import { webcrypto } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
 import { createSttHandler } from "../../../../supabase/functions/stt-api/handler";
-import { SttProviderError, type SttProvider } from "../../../../supabase/functions/stt-api/provider";
+import {
+  geminiSttProvider,
+  normalizeGeminiMime,
+  SttProviderError,
+  type SttProvider,
+} from "../../../../supabase/functions/stt-api/provider";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 Object.defineProperty(globalThis.crypto, "subtle", {
@@ -349,5 +354,186 @@ describe("stt-api Edge Function Handler", () => {
       p_user: "test-user-uuid",
       p_error: "PROVIDER_UNAVAILABLE",
     }));
+  });
+
+  describe("MIME Normalization & Whitelist for Gemini STT", () => {
+    it("normalizes audio/webm;codecs=opus to canonical audio/webm", () => {
+      expect(normalizeGeminiMime("audio/webm;codecs=opus")).toBe("audio/webm");
+    });
+
+    it("normalizes audio/ogg;codecs=opus to canonical audio/ogg", () => {
+      expect(normalizeGeminiMime("audio/ogg;codecs=opus")).toBe("audio/ogg");
+    });
+
+    it("accepts canonical audio/webm directly", () => {
+      expect(normalizeGeminiMime("audio/webm")).toBe("audio/webm");
+    });
+
+    it("normalizes audio/x-wav and audio/wave to canonical audio/wav", () => {
+      expect(normalizeGeminiMime("audio/x-wav")).toBe("audio/wav");
+      expect(normalizeGeminiMime("audio/wave")).toBe("audio/wav");
+    });
+
+    it("normalizes video/webm to audio/webm for audio-only recorder", () => {
+      expect(normalizeGeminiMime("video/webm")).toBe("audio/webm");
+    });
+
+    it("normalizes audio/x-m4a and audio/mp4 to audio/m4a", () => {
+      expect(normalizeGeminiMime("audio/x-m4a")).toBe("audio/m4a");
+      expect(normalizeGeminiMime("audio/mp4")).toBe("audio/m4a");
+    });
+
+    it("rejects unsupported audio/foo as null", () => {
+      expect(normalizeGeminiMime("audio/foo")).toBeNull();
+      expect(normalizeGeminiMime("audio/foo;codecs=bar")).toBeNull();
+    });
+  });
+
+  describe("STT Handler MIME Normalization & Rejection Regression", () => {
+    it("normalizes audio/webm;codecs=opus and passes canonical MIME to provider", async () => {
+      const deps = createMockDeps("RESERVED");
+      const handler = createSttHandler(deps);
+      const req = buildFormRequest({
+        audio: dummyAudio,
+        mimeType: "audio/webm;codecs=opus",
+        durationMs: 5000,
+      });
+
+      const res = await handler(req);
+      expect(res.status).toBe(200);
+      expect(deps.provider.transcribe).toHaveBeenCalledWith(
+        expect.any(Uint8Array),
+        "audio/webm",
+        "gemini-3.5-transcribe",
+        expect.anything()
+      );
+    });
+
+    it("normalizes audio/ogg;codecs=opus and passes canonical MIME to provider", async () => {
+      const deps = createMockDeps("RESERVED");
+      const handler = createSttHandler(deps);
+      const req = buildFormRequest({
+        audio: dummyAudio,
+        mimeType: "audio/ogg;codecs=opus",
+        durationMs: 5000,
+      });
+
+      const res = await handler(req);
+      expect(res.status).toBe(200);
+      expect(deps.provider.transcribe).toHaveBeenCalledWith(
+        expect.any(Uint8Array),
+        "audio/ogg",
+        "gemini-3.5-transcribe",
+        expect.anything()
+      );
+    });
+
+    it("accepts audio/webm and passes canonical MIME to provider", async () => {
+      const deps = createMockDeps("RESERVED");
+      const handler = createSttHandler(deps);
+      const req = buildFormRequest({
+        audio: dummyAudio,
+        mimeType: "audio/webm",
+        durationMs: 5000,
+      });
+
+      const res = await handler(req);
+      expect(res.status).toBe(200);
+      expect(deps.provider.transcribe).toHaveBeenCalledWith(
+        expect.any(Uint8Array),
+        "audio/webm",
+        "gemini-3.5-transcribe",
+        expect.anything()
+      );
+    });
+
+    it("normalizes audio/x-wav and passes canonical audio/wav to provider", async () => {
+      const deps = createMockDeps("RESERVED");
+      const handler = createSttHandler(deps);
+      const req = buildFormRequest({
+        audio: dummyAudio,
+        mimeType: "audio/x-wav",
+        durationMs: 5000,
+      });
+
+      const res = await handler(req);
+      expect(res.status).toBe(200);
+      expect(deps.provider.transcribe).toHaveBeenCalledWith(
+        expect.any(Uint8Array),
+        "audio/wav",
+        "gemini-3.5-transcribe",
+        expect.anything()
+      );
+    });
+
+    it("rejects unsupported audio/foo before provider call", async () => {
+      const deps = createMockDeps("RESERVED");
+      const handler = createSttHandler(deps);
+      const req = buildFormRequest({
+        audio: dummyAudio,
+        mimeType: "audio/foo",
+        durationMs: 5000,
+      });
+
+      const res = await handler(req);
+      expect(res.status).toBe(415);
+      const body = await res.json();
+      expect(body.error.code).toBe("UNSUPPORTED_AUDIO_FORMAT");
+      expect(deps.rpc).not.toHaveBeenCalledWith("reserve_stt_usage", expect.anything());
+      expect(deps.provider.transcribe).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("geminiSttProvider canonical payload & language_codes", () => {
+    it("passes canonical MIME and language_codes: ['en-US'] to Gemini APIs", async () => {
+      const originalFetch = globalThis.fetch;
+      const fetchMock = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+        const urlStr = String(url);
+        if (urlStr.includes("/files?key=")) {
+          return new Response(
+            JSON.stringify({ file: { name: "files/test-file", uri: "https://example.com/file" } }),
+            { status: 200 }
+          );
+        }
+        if (urlStr.includes("/interactions?key=")) {
+          const body = JSON.parse(init?.body as string);
+          expect(body.input[0].mime_type).toBe("audio/webm");
+          expect(body.generation_config.transcription_config.language_codes).toEqual(["en-US"]);
+          expect(body.generation_config.transcription_config.mode).toBe("verbatim");
+          return new Response(
+            JSON.stringify({
+              candidates: [{ content: { parts: [{ text: "I went to the park yesterday." }] } }],
+              usageMetadata: { promptTokenCount: 120, candidatesTokenCount: 25 },
+            }),
+            { status: 200 }
+          );
+        }
+        return new Response(null, { status: 200 });
+      });
+
+      globalThis.fetch = fetchMock;
+      try {
+        const provider = geminiSttProvider("mock-gemini-key");
+        const result = await provider.transcribe(
+          new Uint8Array([1, 2, 3]),
+          "audio/webm;codecs=opus",
+          "gemini-3.5-transcribe"
+        );
+
+        expect(result.transcript).toBe("I went to the park yesterday.");
+        expect(result.language).toBe("en-US");
+        expect(result.inputTokens).toBe(120);
+        expect(result.outputTokens).toBe(25);
+
+        // Verify upload call headers had canonical MIME
+        const uploadCall = fetchMock.mock.calls.find((c) => String(c[0]).includes("/files?key="));
+        expect(uploadCall).toBeDefined();
+        const uploadHeaders = uploadCall![1]?.headers as Record<string, string>;
+        expect(uploadHeaders["X-Goog-Upload-Header-Content-Type"]).toBe("audio/webm");
+        expect(uploadHeaders["Content-Type"]).toBe("audio/webm");
+      } finally {
+        globalThis.fetch = originalFetch;
+      }
+    });
   });
 });

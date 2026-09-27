@@ -263,63 +263,71 @@ function AdminAiSession() {
                 metric="cost"
               />
             </div>
-            <div className="grid gap-4 lg:grid-cols-3">
-              <Card className="space-y-3 p-5">
-                <h3 className="text-sm font-semibold">
-                  모델 / 기능별 사용 · 7일
-                </h3>
-                {overview.models.map((m) => (
-                  <p key={m.model} className="break-all text-xs leading-6">
-                    {m.model}
-                    <br />
-                    {m.calls}건 · {cost(m.cost)}
-                  </p>
-                ))}
-                {overview.features.map((f) => (
-                  <p className="text-xs" key={f.feature}>
-                    {featureLabels[f.feature as AiFeature] ?? f.feature} · {f.calls}건
-                  </p>
-                ))}
-                {!overview.models.length ? (
-                  <p className="text-xs text-zinc-500">
-                    아직 사용 기록이 없습니다.
-                  </p>
-                ) : null}
-              </Card>
-              <Card className="space-y-3 p-5">
-                <h3 className="text-sm font-semibold">최근 실패 · 최대 10건</h3>
-                {overview.failures.length ? (
-                  overview.failures.map((f) => (
-                    <p
-                      key={f.request_id}
-                      className="break-all text-xs leading-6"
-                    >
-                      {date(f.created_at)} · {f.error_code}
-                      <br />
-                      <span className="text-zinc-500">{f.model}</span>
-                    </p>
-                  ))
-                ) : (
-                  <p className="text-xs text-zinc-500">최근 실패가 없습니다.</p>
-                )}
-              </Card>
-              <Card className="space-y-3 p-5">
-                <h3 className="text-sm font-semibold">
-                  사용량 상위 사용자 · 7일
-                </h3>
-                {overview.users.length ? (
-                  overview.users.map((u) => (
-                    <p key={u.user_id} className="break-all text-xs leading-6">
-                      {u.display_name || "이름 없음"} · {u.calls}회 <span className="text-zinc-500">{u.user_id.slice(0, 8)}…</span>
-                    </p>
-                  ))
-                ) : (
-                  <p className="text-xs text-zinc-500">
-                    아직 사용 기록이 없습니다.
-                  </p>
-                )}
-              </Card>
-            </div>
+            {(() => {
+              const overviewModels = overview.models ?? [];
+              const overviewFeatures = overview.features ?? [];
+              const failures = overview.failures ?? [];
+              const users = overview.users ?? [];
+              return (
+                <div className="grid gap-4 lg:grid-cols-3">
+                  <Card className="space-y-3 p-5">
+                    <h3 className="text-sm font-semibold">
+                      모델 / 기능별 사용 · 7일
+                    </h3>
+                    {overviewModels.map((m) => (
+                      <p key={m.model} className="break-all text-xs leading-6">
+                        {m.model}
+                        <br />
+                        {m.calls}건 · {cost(m.cost)}
+                      </p>
+                    ))}
+                    {overviewFeatures.map((f) => (
+                      <p className="text-xs" key={f.feature}>
+                        {featureLabels[f.feature as AiFeature] ?? f.feature} · {f.calls}건
+                      </p>
+                    ))}
+                    {!overviewModels.length ? (
+                      <p className="text-xs text-zinc-500">
+                        아직 사용 기록이 없습니다.
+                      </p>
+                    ) : null}
+                  </Card>
+                  <Card className="space-y-3 p-5">
+                    <h3 className="text-sm font-semibold">최근 실패 · 최대 10건</h3>
+                    {failures.length ? (
+                      failures.map((f) => (
+                        <p
+                          key={f.request_id}
+                          className="break-all text-xs leading-6"
+                        >
+                          {date(f.created_at)} · {f.error_code}
+                          <br />
+                          <span className="text-zinc-500">{f.model}</span>
+                        </p>
+                      ))
+                    ) : (
+                      <p className="text-xs text-zinc-500">최근 실패가 없습니다.</p>
+                    )}
+                  </Card>
+                  <Card className="space-y-3 p-5">
+                    <h3 className="text-sm font-semibold">
+                      사용량 상위 사용자 · 7일
+                    </h3>
+                    {users.length ? (
+                      users.map((u) => (
+                        <p key={u.user_id} className="break-all text-xs leading-6">
+                          {u.display_name || "이름 없음"} · {u.calls}회 <span className="text-zinc-500">{u.user_id.slice(0, 8)}…</span>
+                        </p>
+                      ))
+                    ) : (
+                      <p className="text-xs text-zinc-500">
+                        아직 사용 기록이 없습니다.
+                      </p>
+                    )}
+                  </Card>
+                </div>
+              );
+            })()}
           </>
         ) : null}
         {settings && !loading ? (
@@ -366,7 +374,7 @@ function AdminAiSession() {
               ],
               ["plan", "플랜", ["free", "pro"]],
               ["feature", "기능", [...AI_FEATURES]],
-              ["model", "모델", settings?.models.map((m) => m.model) || []],
+              ["model", "모델", (settings?.models ?? []).map((m) => m.model)],
             ].map(([key, label, options]) => (
               <label key={key as string} className="text-xs text-zinc-500">
                 {label as string}
@@ -409,7 +417,7 @@ function AdminAiSession() {
             <p role="alert" className="text-sm">
               {usageError}
             </p>
-          ) : usage?.records.length ? (
+          ) : (usage?.records ?? []).length ? (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead className="text-zinc-500">
@@ -428,7 +436,7 @@ function AdminAiSession() {
                   </tr>
                 </thead>
                 <tbody>
-                  {usage.records.map((r) => (
+                  {(usage?.records ?? []).map((r) => (
                     <tr
                       className="border-t border-zinc-100 dark:border-zinc-800"
                       key={r.request_id}
@@ -508,44 +516,49 @@ function AdminAiSession() {
 }
 function Trend({
   title,
-  days,
+  days = [],
   metric,
 }: {
   title: string;
-  days: AiOverview["days"];
+  days?: AiOverview["days"];
   metric: "calls" | "cost";
 }) {
-  const max = Math.max(1, ...days.map((d) => d[metric] || 0));
+  const safeDays = Array.isArray(days) ? days : [];
+  const max = Math.max(1, ...safeDays.map((d) => (d ? d[metric] || 0 : 0)));
   return (
     <Card className="min-w-0 p-5">
       <h3 className="text-sm font-semibold">{title}</h3>
-      <div
-        className="mt-5 flex h-36 items-end gap-2"
-        role="img"
-        aria-label={days
-          .map((d) => `${d.day}: ${metric === "cost" ? cost(d.cost) : d.calls}`)
-          .join(", ")}
-      >
-        {days.map((d) => (
-          <div
-            key={d.day}
-            className="flex h-full min-w-0 flex-1 flex-col justify-end text-center"
-          >
-            <span className="mb-1 truncate text-[10px] text-zinc-500">
-              {metric === "cost" ? d.cost === null ? "—" : (d.cost / 1000000).toFixed(4) : d.calls}
-            </span>
+      {!safeDays.length ? (
+        <p className="mt-5 text-xs text-zinc-500">추이 데이터가 없습니다.</p>
+      ) : (
+        <div
+          className="mt-5 flex h-36 items-end gap-2"
+          role="img"
+          aria-label={safeDays
+            .map((d) => `${d.day}: ${metric === "cost" ? cost(d.cost) : d.calls}`)
+            .join(", ")}
+        >
+          {safeDays.map((d) => (
             <div
-              className="mx-auto w-full max-w-12 rounded-t bg-indigo-500/70 dark:bg-indigo-400/60"
-              style={{
-                height: `${Math.max(2, ((d[metric] || 0) / max) * 90)}px`,
-              }}
-            />
-            <span className="mt-2 text-[10px] text-zinc-500">
-              {d.day.slice(5, 10)}
-            </span>
-          </div>
-        ))}
-      </div>
+              key={d.day}
+              className="flex h-full min-w-0 flex-1 flex-col justify-end text-center"
+            >
+              <span className="mb-1 truncate text-[10px] text-zinc-500">
+                {metric === "cost" ? d.cost === null ? "—" : (d.cost / 1000000).toFixed(4) : d.calls}
+              </span>
+              <div
+                className="mx-auto w-full max-w-12 rounded-t bg-indigo-500/70 dark:bg-indigo-400/60"
+                style={{
+                  height: `${Math.max(2, (((d ? d[metric] : 0) || 0) / max) * 90)}px`,
+                }}
+              />
+              <span className="mt-2 text-[10px] text-zinc-500">
+                {d.day ? d.day.slice(5, 10) : ""}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
     </Card>
   );
 }
@@ -558,13 +571,21 @@ function SettingsForm({
   canEdit: boolean;
   onSaved: () => void;
 }) {
-  const [enabled, setEnabled] = useState(settings.runtime.managed_ai_enabled);
-  const [model, setModel] = useState(settings.runtime.default_model);
+  const runtime = settings?.runtime ?? {
+    managed_ai_enabled: false,
+    default_model: "gemini-2.5-flash",
+    requests_per_minute: 10,
+  };
+  const models = settings?.models ?? [];
+  const limitsList = settings?.limits ?? [];
+
+  const [enabled, setEnabled] = useState(Boolean(runtime.managed_ai_enabled));
+  const [model, setModel] = useState(runtime.default_model);
   const initialLimits = () => Object.fromEntries(AI_FEATURES.map((feature) => [
     feature,
     {
-      free: settings.limits.find((limit) => limit.plan === "free" && limit.feature === feature)?.limit_count ?? 0,
-      pro: settings.limits.find((limit) => limit.plan === "pro" && limit.feature === feature)?.limit_count ?? 0,
+      free: limitsList.find((limit) => limit.plan === "free" && limit.feature === feature)?.limit_count ?? 0,
+      pro: limitsList.find((limit) => limit.plan === "pro" && limit.feature === feature)?.limit_count ?? 0,
     },
   ])) as Record<AiFeature, { free: number; pro: number }>;
   const [limits, setLimits] = useState(initialLimits);
@@ -572,9 +593,10 @@ function SettingsForm({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const lock = useRef(false);
+  const enabledModels = models.filter((m) => m.enabled);
   const valid =
     Object.values(limits).flatMap((item) => [item.free, item.pro]).every((n) => Number.isInteger(n) && n >= 0 && n <= 1000) &&
-    settings.models.some((m) => m.model === model && m.enabled);
+    (enabledModels.length === 0 || enabledModels.some((m) => m.model === model));
   const save = async () => {
     if (lock.current || !valid || !canEdit) return;
     lock.current = true;
@@ -600,14 +622,14 @@ function SettingsForm({
       <div className="flex flex-wrap items-center gap-3">
         <h3 className="text-sm font-semibold">AI 운영 설정</h3>
         <Badge
-          tone={settings.runtime.managed_ai_enabled ? "emerald" : "default"}
+          tone={runtime.managed_ai_enabled ? "emerald" : "default"}
         >
-          {settings.runtime.managed_ai_enabled ? "운영 중" : "OFF"}
+          {runtime.managed_ai_enabled ? "운영 중" : "OFF"}
         </Badge>
       </div>
       <p className="text-xs text-zinc-500">
         FREE는 현재 기본 정책입니다. PRO 한도는 미래 설정이며 구독·구매 기능은
-        준비 중입니다. 요청 제한: 분당 {settings.runtime.requests_per_minute}회.
+        준비 중입니다. 요청 제한: 분당 {runtime.requests_per_minute}회.
       </p>
       <fieldset
         disabled={!canEdit || saving}
@@ -634,11 +656,12 @@ function SettingsForm({
               setConfirm(false);
             }}
           >
-            {settings.models
-              .filter((m) => m.enabled)
-              .map((m) => (
-                <option key={m.model}>{m.model}</option>
-              ))}
+            {enabledModels.map((m) => (
+              <option key={m.model} value={m.model}>{m.model}</option>
+            ))}
+            {enabledModels.length === 0 && (
+              <option value={model}>{model}</option>
+            )}
           </select>
         </label></div>
         <div className="grid gap-3">
@@ -663,7 +686,7 @@ function SettingsForm({
       </fieldset>
       <details className="text-xs text-zinc-500">
         <summary className="cursor-pointer">예상 비용 산정 기준</summary>
-        {settings.models.map((m) => (
+        {models.map((m) => (
           <p key={m.model} className="mt-2 break-words leading-6">
             {m.model} · 100만 토큰 입력{" "}
             {cost(m.input_cost_per_million_microusd)} / 출력{" "}
@@ -672,6 +695,9 @@ function SettingsForm({
             {m.pricing_note}
           </p>
         ))}
+        {!models.length && (
+          <p className="mt-2 text-xs text-zinc-500">등록된 모델 정보가 없습니다.</p>
+        )}
       </details>
       {!valid ? (
         <p role="alert" className="text-xs text-amber-600">

@@ -44,41 +44,44 @@ const aiOverview = {
   failures: [],
 };
 
-const sttSettings = {
+// Exact production contract: { runtime, models } without a `limits` array
+const prodSttSettings = {
   runtime: {
     managed_stt_enabled: false,
+    default_provider: "gemini",
     default_model: "gemini-3.5-transcribe",
-    requests_per_minute: 10,
+    requests_per_minute: 5,
+    daily_limit_ms_free: 600000,
+    daily_limit_ms_pro: 3600000,
   },
-  limits: [
-    { plan: "free", limit_duration_ms: 600000, enabled: true },
-    { plan: "pro", limit_duration_ms: 3600000, enabled: true },
-  ],
   models: [
     {
+      provider: "gemini",
       model: "gemini-3.5-transcribe",
       enabled: true,
-      cost_per_minute_microusd: 4000,
-      pricing_note: "Gemini Transcribe",
+      input_cost_per_million_microusd: 2000000,
+      output_cost_per_million_microusd: 12000000,
+      estimated_cost_per_second_microusd: 83,
+      pricing_note: "Gemini 3.5 Transcribe official pricing",
     },
   ],
 };
 
-const sttOverview = {
+const richSttOverview = {
   today: {
     calls: 15,
     succeeded: 14,
     failed: 1,
     users: 5,
-    durationMs: 450000, // 7.5 mins
+    audioDurationMs: 450000, // 7.5 mins
     cost: 30000,
     unknownCost: 0,
     blocked: 2,
     avgLatency: 1200,
     p95Latency: 2100,
   },
-  days: [{ day: "2026-09-27", calls: 15, durationMs: 450000, cost: 30000 }],
-  models: [{ model: "gemini-3.5-transcribe", calls: 15, durationMs: 450000, cost: 30000 }],
+  days: [{ day: "2026-09-27", calls: 15, audioDurationMs: 450000, cost: 30000 }],
+  models: [{ model: "gemini-3.5-transcribe", calls: 15, audioDurationMs: 450000, cost: 30000 }],
   failures: [
     {
       request_id: "req-err-1",
@@ -87,7 +90,7 @@ const sttOverview = {
       created_at: "2026-09-27T08:00:00Z",
     },
   ],
-  users: [{ user_id: "user-abc-12345678", display_name: "Mock Learner", calls: 4, durationMs: 120000 }],
+  users: [{ user_id: "user-abc-12345678", display_name: "Mock Learner", calls: 4, audioDurationMs: 120000 }],
 };
 
 const sttUsage = {
@@ -117,8 +120,8 @@ beforeEach(() => {
     if (path === "/ai/settings") return aiSettings;
     if (path === "/ai/overview") return aiOverview;
     if (path === "/ai/usage") return { records: [], total: 0, totalPages: 1, page: 1 };
-    if (path === "/stt/settings") return sttSettings;
-    if (path === "/stt/overview") return sttOverview;
+    if (path === "/stt/settings") return prodSttSettings;
+    if (path === "/stt/overview") return richSttOverview;
     if (path === "/stt/usage") return sttUsage;
     return {};
   });
@@ -160,7 +163,7 @@ describe("Admin STT operations tab", () => {
     fireEvent.click(screen.getByRole("button", { name: "음성 인식 (STT)" }));
 
     await screen.findByText("STT 운영 설정");
-    expect(screen.getByText("현재 표시 플랜: FREE. PRO 한도는 미래 설정이며 유료 구독은 준비 중입니다. 요청 제한: 분당 10회.")).toBeInTheDocument();
+    expect(screen.getByText(/요청 제한: 분당 5회/)).toBeInTheDocument();
 
     const checkbox = screen.getByLabelText("Managed STT ON");
     expect(checkbox).not.toBeChecked();
@@ -181,10 +184,139 @@ describe("Admin STT operations tab", () => {
         expect.objectContaining({
           enabled: true,
           model: "gemini-3.5-transcribe",
-          freeLimitMs: 600000,
-          proLimitMs: 3600000,
+          limits: {
+            free: 600000,
+            pro: 3600000,
+          },
         })
       )
     );
+  });
+
+  it("reproduces production initial state: zero usage in database and no limits in settings without crashing", async () => {
+    // Exact production bug reproduction:
+    // 1. settings has { runtime, models } without limits
+    // 2. overview has empty arrays for days, models, failures, users, sources
+    // 3. usage records is empty
+    mocks.request.mockImplementation(async (path: string) => {
+      if (path === "/stt/settings") {
+        return {
+          runtime: {
+            managed_stt_enabled: false,
+            default_provider: "gemini",
+            default_model: "gemini-3.5-transcribe",
+            requests_per_minute: 5,
+            daily_limit_ms_free: 600000,
+            daily_limit_ms_pro: 3600000,
+          },
+          models: [
+            {
+              provider: "gemini",
+              model: "gemini-3.5-transcribe",
+              enabled: true,
+              estimated_cost_per_second_microusd: 83,
+              pricing_note: "Gemini 3.5 Transcribe official pricing",
+            },
+          ],
+        };
+      }
+      if (path === "/stt/overview") {
+        return {
+          today: {
+            calls: 0,
+            succeeded: 0,
+            failed: 0,
+            users: 0,
+            audioDurationMs: 0,
+            audioMinutes: 0,
+            cost: null,
+            unknownCost: 0,
+            blocked: 0,
+            avgLatency: null,
+            p95Latency: null,
+          },
+          days: [],
+          models: [],
+          sources: [],
+          failures: [],
+          users: [],
+        };
+      }
+      if (path === "/stt/usage") {
+        return { records: [], total: 0, totalPages: 1, page: 1 };
+      }
+      return {};
+    });
+
+    renderView();
+    fireEvent.click(screen.getByRole("button", { name: "음성 인식 (STT)" }));
+
+    // Does NOT throw TypeError: Cannot read properties of undefined (reading 'find')
+    expect(await screen.findByText("STT 음성 인식 운영")).toBeInTheDocument();
+    expect(await screen.findByText("STT 운영 설정")).toBeInTheDocument();
+
+    // Verify empty state notices rendered safely
+    expect(screen.getAllByText("아직 사용 기록이 없습니다.").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText("최근 실패가 없습니다.")).toBeInTheDocument();
+    expect(screen.getByText("조건에 맞는 사용 기록이 없습니다.")).toBeInTheDocument();
+
+    // Verify initial values properly populated from runtime limits
+    const freeInput = screen.getByLabelText(/FREE 하루 한도/);
+    const proInput = screen.getByLabelText(/향후 PRO 하루 한도/);
+    expect((freeInput as HTMLInputElement).value).toBe("10");
+    expect((proInput as HTMLInputElement).value).toBe("60");
+  });
+
+  it("handles loading states gracefully while requests are in flight", async () => {
+    // Never-resolving promise to inspect in-flight states
+    mocks.request.mockImplementation(() => new Promise(() => {}));
+
+    renderView();
+    fireEvent.click(screen.getByRole("button", { name: "음성 인식 (STT)" }));
+
+    expect(screen.getByText("STT 운영 정보를 불러오는 중...")).toBeInTheDocument();
+    expect(screen.getByText("STT 설정을 불러오는 중...")).toBeInTheDocument();
+    expect(screen.getByText("사용 기록을 불러오는 중...")).toBeInTheDocument();
+  });
+
+  it("handles API failure with isolated error cards and retry functionality", async () => {
+    mocks.request.mockImplementation(async (path: string) => {
+      if (path === "/stt/overview") throw new Error("Network Error");
+      if (path === "/stt/settings") throw new Error("Server Error");
+      if (path === "/stt/usage") throw new Error("DB Error");
+      return {};
+    });
+
+    renderView();
+    fireEvent.click(screen.getByRole("button", { name: "음성 인식 (STT)" }));
+
+    expect(await screen.findByText("STT 운영 현황을 불러오지 못했습니다.")).toBeInTheDocument();
+    expect(screen.getByText("STT 운영 설정을 불러오지 못했습니다.")).toBeInTheDocument();
+    expect(screen.getByText("사용 기록을 불러오지 못했습니다. 필터 값을 확인해 주세요.")).toBeInTheDocument();
+  });
+
+  it("renders independently when settings resolves before overview", async () => {
+    let resolveOverview: (value: unknown) => void = () => {};
+    mocks.request.mockImplementation(async (path: string) => {
+      if (path === "/stt/settings") return prodSttSettings;
+      if (path === "/stt/usage") return { records: [], total: 0, totalPages: 1, page: 1 };
+      if (path === "/stt/overview") {
+        return new Promise((resolve) => {
+          resolveOverview = resolve;
+        });
+      }
+      return {};
+    });
+
+    renderView();
+    fireEvent.click(screen.getByRole("button", { name: "음성 인식 (STT)" }));
+
+    // Settings is already visible while overview is still loading
+    expect(await screen.findByText("STT 운영 설정")).toBeInTheDocument();
+    expect(screen.getByText("STT 운영 정보를 불러오는 중...")).toBeInTheDocument();
+
+    // Now resolve overview
+    resolveOverview(richSttOverview);
+    expect(await screen.findByText("7.5분")).toBeInTheDocument();
   });
 });

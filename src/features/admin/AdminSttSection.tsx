@@ -10,63 +10,343 @@ export interface SttOverview {
     succeeded: number;
     failed: number;
     users: number;
-    durationMs: number | null;
+    durationMs?: number | null;
+    audioDurationMs?: number | null;
+    audioMinutes?: number | null;
     cost: number | null;
     unknownCost: number;
     blocked: number;
     avgLatency: number | null;
     p95Latency: number | null;
-  };
-  days: { day: string; calls: number; durationMs: number | null; cost: number | null }[];
-  models: { model: string; calls: number; durationMs: number | null; cost: number | null }[];
+  } | null;
+  days: {
+    day: string;
+    calls: number;
+    durationMs?: number | null;
+    audioDurationMs?: number | null;
+    minutes?: number | null;
+    cost: number | null;
+  }[];
+  models: {
+    model: string;
+    calls: number;
+    durationMs?: number | null;
+    audioDurationMs?: number | null;
+    cost: number | null;
+  }[];
+  sources: { source: string; calls: number }[];
   failures: {
     request_id: string;
     model: string;
     error_code: string;
     created_at: string;
   }[];
-  users: { user_id: string; display_name?: string | null; calls: number; durationMs: number }[];
+  users: {
+    user_id: string;
+    display_name?: string | null;
+    calls: number;
+    durationMs?: number | null;
+    audioDurationMs?: number | null;
+  }[];
+}
+
+export interface SttRuntimeData {
+  managed_stt_enabled: boolean;
+  default_provider?: string;
+  default_model: string;
+  requests_per_minute: number;
+  daily_limit_ms_free?: number;
+  daily_limit_ms_pro?: number;
+  updated_at?: string;
+}
+
+export interface SttModelData {
+  provider: string;
+  model: string;
+  enabled: boolean;
+  input_cost_per_million_microusd?: number;
+  output_cost_per_million_microusd?: number;
+  estimated_cost_per_second_microusd?: number;
+  cost_per_minute_microusd?: number;
+  pricing_note?: string;
+}
+
+export interface SttLimitData {
+  plan: "free" | "pro";
+  limit_duration_ms: number;
+  enabled: boolean;
 }
 
 export interface SttSettingsData {
-  runtime: {
-    managed_stt_enabled: boolean;
-    default_model: string;
-    requests_per_minute: number;
-  };
-  limits: { plan: "free" | "pro"; limit_duration_ms: number; enabled: boolean }[];
-  models: {
-    model: string;
-    enabled: boolean;
-    cost_per_minute_microusd: number;
-    pricing_note: string;
-  }[];
+  runtime: SttRuntimeData;
+  models: SttModelData[];
+  limits: SttLimitData[];
+}
+
+export interface SttUsageRecord {
+  request_id: string;
+  user_id: string;
+  display_name?: string | null;
+  status: string;
+  model: string;
+  effective_plan: string;
+  duration_ms: number | null;
+  estimated_cost_microusd: number | null;
+  audio_format: string | null;
+  created_at: string;
+  error_code: string | null;
 }
 
 export interface SttUsage {
-  records: {
-    request_id: string;
-    user_id: string;
-    display_name?: string | null;
-    status: string;
-    model: string;
-    effective_plan: string;
-    duration_ms: number | null;
-    estimated_cost_microusd: number | null;
-    audio_format: string | null;
-    created_at: string;
-    error_code: string | null;
-  }[];
+  records: SttUsageRecord[];
   page: number;
   total: number;
   totalPages: number;
 }
 
+export function normalizeSttOverview(raw: unknown): SttOverview {
+  const data = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  const rawToday =
+    data.today && typeof data.today === "object"
+      ? (data.today as Record<string, unknown>)
+      : null;
+
+  const today = rawToday
+    ? {
+        calls: Number(rawToday.calls) || 0,
+        succeeded: Number(rawToday.succeeded) || 0,
+        failed: Number(rawToday.failed) || 0,
+        users: Number(rawToday.users) || 0,
+        durationMs:
+          typeof rawToday.audioDurationMs === "number"
+            ? rawToday.audioDurationMs
+            : typeof rawToday.durationMs === "number"
+            ? rawToday.durationMs
+            : 0,
+        audioDurationMs:
+          typeof rawToday.audioDurationMs === "number"
+            ? rawToday.audioDurationMs
+            : typeof rawToday.durationMs === "number"
+            ? rawToday.durationMs
+            : 0,
+        audioMinutes:
+          typeof rawToday.audioMinutes === "number"
+            ? rawToday.audioMinutes
+            : typeof rawToday.audioDurationMs === "number"
+            ? Math.round((rawToday.audioDurationMs / 60000) * 10) / 10
+            : null,
+        cost: typeof rawToday.cost === "number" ? rawToday.cost : null,
+        unknownCost: Number(rawToday.unknownCost) || 0,
+        blocked: Number(rawToday.blocked) || 0,
+        avgLatency: typeof rawToday.avgLatency === "number" ? rawToday.avgLatency : null,
+        p95Latency: typeof rawToday.p95Latency === "number" ? rawToday.p95Latency : null,
+      }
+    : null;
+
+  const days = Array.isArray(data.days)
+    ? data.days.map((d: Record<string, unknown>) => ({
+        day: String(d.day || ""),
+        calls: Number(d.calls) || 0,
+        durationMs:
+          typeof d.audioDurationMs === "number"
+            ? d.audioDurationMs
+            : typeof d.durationMs === "number"
+            ? d.durationMs
+            : null,
+        audioDurationMs:
+          typeof d.audioDurationMs === "number"
+            ? d.audioDurationMs
+            : typeof d.durationMs === "number"
+            ? d.durationMs
+            : null,
+        minutes:
+          typeof d.minutes === "number"
+            ? d.minutes
+            : typeof d.audioDurationMs === "number"
+            ? Math.round((d.audioDurationMs / 60000) * 10) / 10
+            : null,
+        cost: typeof d.cost === "number" ? d.cost : null,
+      }))
+    : [];
+
+  const models = Array.isArray(data.models)
+    ? data.models.map((m: Record<string, unknown>) => ({
+        model: String(m.model || ""),
+        calls: Number(m.calls) || 0,
+        durationMs:
+          typeof m.audioDurationMs === "number"
+            ? m.audioDurationMs
+            : typeof m.durationMs === "number"
+            ? m.durationMs
+            : null,
+        audioDurationMs:
+          typeof m.audioDurationMs === "number"
+            ? m.audioDurationMs
+            : typeof m.durationMs === "number"
+            ? m.durationMs
+            : null,
+        cost: typeof m.cost === "number" ? m.cost : null,
+      }))
+    : [];
+
+  const sources = Array.isArray(data.sources)
+    ? data.sources.map((s: Record<string, unknown>) => ({
+        source: String(s.source || ""),
+        calls: Number(s.calls) || 0,
+      }))
+    : [];
+
+  const failures = Array.isArray(data.failures)
+    ? data.failures.map((f: Record<string, unknown>) => ({
+        request_id: String(f.request_id || ""),
+        model: String(f.model || ""),
+        error_code: String(f.error_code || ""),
+        created_at: String(f.created_at || ""),
+      }))
+    : [];
+
+  const users = Array.isArray(data.users)
+    ? data.users.map((u: Record<string, unknown>) => ({
+        user_id: String(u.user_id || ""),
+        display_name: u.display_name ? String(u.display_name) : null,
+        calls: Number(u.calls) || 0,
+        durationMs:
+          typeof u.audioDurationMs === "number"
+            ? u.audioDurationMs
+            : typeof u.durationMs === "number"
+            ? u.durationMs
+            : 0,
+        audioDurationMs:
+          typeof u.audioDurationMs === "number"
+            ? u.audioDurationMs
+            : typeof u.durationMs === "number"
+            ? u.durationMs
+            : 0,
+      }))
+    : [];
+
+  return {
+    today,
+    days,
+    models,
+    sources,
+    failures,
+    users,
+  };
+}
+
+export function normalizeSttSettings(raw: unknown): SttSettingsData {
+  const data = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  const rawRuntime =
+    data.runtime && typeof data.runtime === "object"
+      ? (data.runtime as Record<string, unknown>)
+      : {};
+
+  const runtime: SttRuntimeData = {
+    managed_stt_enabled: Boolean(rawRuntime.managed_stt_enabled),
+    default_provider: String(rawRuntime.default_provider || "gemini"),
+    default_model: String(rawRuntime.default_model || "gemini-3.5-transcribe"),
+    requests_per_minute: Number(rawRuntime.requests_per_minute) || 5,
+    daily_limit_ms_free:
+      typeof rawRuntime.daily_limit_ms_free === "number" ? rawRuntime.daily_limit_ms_free : 600000,
+    daily_limit_ms_pro:
+      typeof rawRuntime.daily_limit_ms_pro === "number" ? rawRuntime.daily_limit_ms_pro : 3600000,
+    updated_at: rawRuntime.updated_at ? String(rawRuntime.updated_at) : undefined,
+  };
+
+  const models: SttModelData[] = Array.isArray(data.models)
+    ? data.models.map((m: Record<string, unknown>) => {
+        const secCost =
+          typeof m.estimated_cost_per_second_microusd === "number"
+            ? m.estimated_cost_per_second_microusd
+            : 83;
+        const minCost =
+          typeof m.cost_per_minute_microusd === "number"
+            ? m.cost_per_minute_microusd
+            : secCost * 60;
+        return {
+          provider: String(m.provider || "gemini"),
+          model: String(m.model || ""),
+          enabled: Boolean(m.enabled ?? true),
+          input_cost_per_million_microusd:
+            typeof m.input_cost_per_million_microusd === "number"
+              ? m.input_cost_per_million_microusd
+              : 2000000,
+          output_cost_per_million_microusd:
+            typeof m.output_cost_per_million_microusd === "number"
+              ? m.output_cost_per_million_microusd
+              : 12000000,
+          estimated_cost_per_second_microusd: secCost,
+          cost_per_minute_microusd: minCost,
+          pricing_note: String(m.pricing_note || ""),
+        };
+      })
+    : [];
+
+  const rawLimits = Array.isArray(data.limits) ? (data.limits as Record<string, unknown>[]) : null;
+  const limits: SttLimitData[] = rawLimits
+    ? rawLimits.map((l) => ({
+        plan: (l.plan === "pro" ? "pro" : "free") as "free" | "pro",
+        limit_duration_ms: Number(l.limit_duration_ms) || (l.plan === "pro" ? 3600000 : 600000),
+        enabled: Boolean(l.enabled ?? true),
+      }))
+    : [
+        {
+          plan: "free",
+          limit_duration_ms: runtime.daily_limit_ms_free ?? 600000,
+          enabled: true,
+        },
+        {
+          plan: "pro",
+          limit_duration_ms: runtime.daily_limit_ms_pro ?? 3600000,
+          enabled: true,
+        },
+      ];
+
+  return {
+    runtime,
+    models,
+    limits,
+  };
+}
+
+export function normalizeSttUsage(raw: unknown): SttUsage {
+  const data = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  const records = Array.isArray(data.records)
+    ? data.records.map((r: Record<string, unknown>) => ({
+        request_id: String(r.request_id || ""),
+        user_id: String(r.user_id || ""),
+        display_name: r.display_name ? String(r.display_name) : null,
+        status: String(r.status || "reserved"),
+        model: String(r.model || ""),
+        effective_plan: String(r.effective_plan || "free"),
+        duration_ms:
+          typeof r.audio_duration_ms === "number"
+            ? r.audio_duration_ms
+            : typeof r.duration_ms === "number"
+            ? r.duration_ms
+            : null,
+        estimated_cost_microusd:
+          typeof r.estimated_cost_microusd === "number" ? r.estimated_cost_microusd : null,
+        audio_format: r.audio_format ? String(r.audio_format) : null,
+        created_at: String(r.created_at || ""),
+        error_code: r.error_code ? String(r.error_code) : null,
+      }))
+    : [];
+
+  return {
+    records,
+    page: Number(data.page) || 1,
+    total: Number(data.total) || 0,
+    totalPages: Number(data.totalPages) || 1,
+  };
+}
+
 const inputClass =
   "mt-1 h-10 w-full min-w-0 rounded-md border border-zinc-300 bg-white px-3 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100";
 
-const cost = (v: number | null) =>
-  v === null
+const cost = (v: number | null | undefined) =>
+  v === null || v === undefined
     ? "미집계"
     : new Intl.NumberFormat("ko-KR", {
         style: "currency",
@@ -74,23 +354,28 @@ const cost = (v: number | null) =>
         minimumFractionDigits: 4,
       }).format(v / 1000000);
 
-const number = (v: number | null) =>
-  v === null ? "미집계" : Math.round(v).toLocaleString();
+const number = (v: number | null | undefined) =>
+  v === null || v === undefined ? "미집계" : Math.round(v).toLocaleString();
 
-const formatMinutes = (ms: number | null) => {
+const formatMinutes = (ms: number | null | undefined) => {
   if (ms === null || ms === undefined) return "미집계";
   const mins = (ms / 60000).toFixed(1);
   return `${mins}분`;
 };
 
-const date = (v: string) =>
-  new Intl.DateTimeFormat("ko-KR", {
-    timeZone: "Asia/Seoul",
-    month: "numeric",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(v));
+const date = (v: string) => {
+  try {
+    return new Intl.DateTimeFormat("ko-KR", {
+      timeZone: "Asia/Seoul",
+      month: "numeric",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(v));
+  } catch {
+    return v;
+  }
+};
 
 export function AdminSttSection({ canEdit }: { canEdit: boolean }) {
   const [overview, setOverview] = useState<SttOverview | null>(null);
@@ -100,30 +385,46 @@ export function AdminSttSection({ canEdit }: { canEdit: boolean }) {
   const [applied, setApplied] = useState<Record<string, string>>({});
   const [page, setPage] = useState(1);
   const [revision, setRevision] = useState(0);
-  const [error, setError] = useState("");
-  const [usageError, setUsageError] = useState("");
-  const [loading, setLoading] = useState(true);
+
+  const [overviewLoading, setOverviewLoading] = useState(true);
+  const [settingsLoading, setSettingsLoading] = useState(true);
   const [usageLoading, setUsageLoading] = useState(true);
+
+  const [overviewError, setOverviewError] = useState("");
+  const [settingsError, setSettingsError] = useState("");
+  const [usageError, setUsageError] = useState("");
 
   useEffect(() => {
     let active = true;
-    void Promise.all([
-      requestAdminApi<SttOverview>("/stt/overview"),
-      requestAdminApi<SttSettingsData>("/stt/settings"),
-    ])
-      .then(([o, s]) => {
+
+    requestAdminApi<unknown>("/stt/overview")
+      .then((data) => {
         if (active) {
-          setOverview(o);
-          setSettings(s);
-          setError("");
+          setOverview(normalizeSttOverview(data));
+          setOverviewError("");
         }
       })
       .catch(() => {
-        if (active) setError("STT 운영 정보를 불러오지 못했습니다.");
+        if (active) setOverviewError("STT 운영 현황을 불러오지 못했습니다.");
       })
       .finally(() => {
-        if (active) setLoading(false);
+        if (active) setOverviewLoading(false);
       });
+
+    requestAdminApi<unknown>("/stt/settings")
+      .then((data) => {
+        if (active) {
+          setSettings(normalizeSttSettings(data));
+          setSettingsError("");
+        }
+      })
+      .catch(() => {
+        if (active) setSettingsError("STT 운영 설정을 불러오지 못했습니다.");
+      })
+      .finally(() => {
+        if (active) setSettingsLoading(false);
+      });
+
     return () => {
       active = false;
     };
@@ -131,10 +432,10 @@ export function AdminSttSection({ canEdit }: { canEdit: boolean }) {
 
   useEffect(() => {
     let active = true;
-    void requestAdminApi<SttUsage>("/stt/usage", { ...applied, page })
+    requestAdminApi<unknown>("/stt/usage", { ...applied, page })
       .then((data) => {
         if (active) {
-          setUsage(data);
+          setUsage(normalizeSttUsage(data));
           setUsageError("");
         }
       })
@@ -151,12 +452,32 @@ export function AdminSttSection({ canEdit }: { canEdit: boolean }) {
   }, [revision, applied, page]);
 
   const refresh = () => {
-    setLoading(true);
+    setOverviewLoading(true);
+    setSettingsLoading(true);
     setUsageLoading(true);
     setRevision((v) => v + 1);
   };
 
-  const t = overview?.today;
+  const t = overview?.today ?? {
+    calls: 0,
+    succeeded: 0,
+    failed: 0,
+    users: 0,
+    audioDurationMs: 0,
+    audioMinutes: 0,
+    durationMs: 0,
+    cost: null,
+    unknownCost: 0,
+    blocked: 0,
+    avgLatency: null,
+    p95Latency: null,
+  };
+
+  const overviewModels = overview?.models ?? [];
+  const failures = overview?.failures ?? [];
+  const users = overview?.users ?? [];
+  const records = usage?.records ?? [];
+  const settingsModels = settings?.models ?? [];
 
   return (
     <div className="space-y-6">
@@ -172,23 +493,23 @@ export function AdminSttSection({ canEdit }: { canEdit: boolean }) {
         </Button>
       </div>
 
-      {loading ? (
+      {overviewLoading ? (
         <p role="status" className="py-8 text-sm text-zinc-500">
           STT 운영 정보를 불러오는 중...
         </p>
-      ) : error ? (
+      ) : overviewError ? (
         <Card className="p-5">
-          <p role="alert">{error}</p>
+          <p role="alert">{overviewError}</p>
           <Button className="mt-3" onClick={refresh}>
             다시 시도
           </Button>
         </Card>
-      ) : t && overview ? (
+      ) : overview ? (
         <>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
             {[
               ["오늘 STT 호출", number(t.calls)],
-              ["오늘 전사 시간", formatMinutes(t.durationMs)],
+              ["오늘 전사 시간", formatMinutes(t.audioDurationMs ?? t.durationMs)],
               [
                 "성공률",
                 t.succeeded + t.failed
@@ -218,22 +539,22 @@ export function AdminSttSection({ canEdit }: { canEdit: boolean }) {
           <div className="grid gap-4 lg:grid-cols-3">
             <Card className="space-y-3 p-5">
               <h3 className="text-sm font-semibold">모델별 사용 · 7일</h3>
-              {overview.models.map((m) => (
+              {overviewModels.map((m) => (
                 <p key={m.model} className="break-all text-xs leading-6">
                   {m.model}
                   <br />
-                  {m.calls}건 · {formatMinutes(m.durationMs)} · {cost(m.cost)}
+                  {m.calls}건 · {formatMinutes(m.audioDurationMs ?? m.durationMs)} · {cost(m.cost)}
                 </p>
               ))}
-              {!overview.models.length ? (
+              {!overviewModels.length ? (
                 <p className="text-xs text-zinc-500">아직 사용 기록이 없습니다.</p>
               ) : null}
             </Card>
 
             <Card className="space-y-3 p-5">
               <h3 className="text-sm font-semibold">최근 실패 · 최대 10건</h3>
-              {overview.failures.length ? (
-                overview.failures.map((f) => (
+              {failures.length ? (
+                failures.map((f) => (
                   <p key={f.request_id} className="break-all text-xs leading-6">
                     {date(f.created_at)} · {f.error_code}
                     <br />
@@ -247,10 +568,10 @@ export function AdminSttSection({ canEdit }: { canEdit: boolean }) {
 
             <Card className="space-y-3 p-5">
               <h3 className="text-sm font-semibold">사용량 상위 사용자 · 7일</h3>
-              {overview.users.length ? (
-                overview.users.map((u) => (
+              {users.length ? (
+                users.map((u) => (
                   <p key={u.user_id} className="break-all text-xs leading-6">
-                    {u.display_name || "이름 없음"} · {u.calls}회 ({formatMinutes(u.durationMs)}){" "}
+                    {u.display_name || "이름 없음"} · {u.calls}회 ({formatMinutes(u.audioDurationMs ?? u.durationMs)}){" "}
                     <span className="text-zinc-500">{u.user_id.slice(0, 8)}…</span>
                   </p>
                 ))
@@ -262,7 +583,18 @@ export function AdminSttSection({ canEdit }: { canEdit: boolean }) {
         </>
       ) : null}
 
-      {settings && !loading ? (
+      {settingsLoading ? (
+        <p role="status" className="py-4 text-sm text-zinc-500">
+          STT 설정을 불러오는 중...
+        </p>
+      ) : settingsError ? (
+        <Card className="p-5">
+          <p role="alert">{settingsError}</p>
+          <Button className="mt-3" onClick={refresh}>
+            다시 시도
+          </Button>
+        </Card>
+      ) : settings ? (
         <SttSettingsForm
           key={revision}
           settings={settings}
@@ -300,7 +632,7 @@ export function AdminSttSection({ canEdit }: { canEdit: boolean }) {
           {[
             ["status", "상태", ["reserved", "succeeded", "failed", "quota_blocked"]],
             ["plan", "플랜", ["free", "pro"]],
-            ["model", "모델", settings?.models.map((m) => m.model) || []],
+            ["model", "모델", settingsModels.map((m) => m.model)],
           ].map(([key, label, options]) => (
             <label key={key as string} className="text-xs text-zinc-500">
               {label as string}
@@ -344,7 +676,7 @@ export function AdminSttSection({ canEdit }: { canEdit: boolean }) {
           <p role="alert" className="text-sm">
             {usageError}
           </p>
-        ) : usage?.records.length ? (
+        ) : records.length ? (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="text-zinc-500">
@@ -359,7 +691,7 @@ export function AdminSttSection({ canEdit }: { canEdit: boolean }) {
                 </tr>
               </thead>
               <tbody>
-                {usage.records.map((r) => (
+                {records.map((r) => (
                   <tr
                     className="border-t border-zinc-100 dark:border-zinc-800"
                     key={r.request_id}
@@ -422,7 +754,7 @@ export function AdminSttSection({ canEdit }: { canEdit: boolean }) {
             <Button
               size="sm"
               variant="secondary"
-              disabled={!usage || page >= usage.totalPages || usageLoading}
+              disabled={!usage || page >= (usage.totalPages || 1) || usageLoading}
               onClick={() => {
                 setUsageLoading(true);
                 setPage((p) => p + 1);
@@ -439,39 +771,44 @@ export function AdminSttSection({ canEdit }: { canEdit: boolean }) {
 
 function SttTrend({
   title,
-  days,
+  days = [],
   metric,
 }: {
   title: string;
-  days: SttOverview["days"];
+  days?: SttOverview["days"];
   metric: "calls" | "cost";
 }) {
-  const max = Math.max(1, ...days.map((d) => d[metric] || 0));
+  const safeDays = Array.isArray(days) ? days : [];
+  const max = Math.max(1, ...safeDays.map((d) => (d ? d[metric] || 0 : 0)));
   return (
     <Card className="min-w-0 p-5">
       <h3 className="text-sm font-semibold">{title}</h3>
-      <div
-        className="mt-5 flex h-36 items-end gap-2"
-        role="img"
-        aria-label={days
-          .map((d) => `${d.day}: ${metric === "cost" ? cost(d.cost) : d.calls}`)
-          .join(", ")}
-      >
-        {days.map((d) => (
-          <div key={d.day} className="flex h-full min-w-0 flex-1 flex-col justify-end text-center">
-            <span className="mb-1 truncate text-[10px] text-zinc-500">
-              {metric === "cost" ? (d.cost === null ? "—" : (d.cost / 1000000).toFixed(4)) : d.calls}
-            </span>
-            <div
-              className="mx-auto w-full max-w-12 rounded-t bg-emerald-500/70 dark:bg-emerald-400/60"
-              style={{
-                height: `${Math.max(2, ((d[metric] || 0) / max) * 90)}px`,
-              }}
-            />
-            <span className="mt-2 text-[10px] text-zinc-500">{d.day.slice(5, 10)}</span>
-          </div>
-        ))}
-      </div>
+      {!safeDays.length ? (
+        <p className="mt-5 text-xs text-zinc-500">추이 데이터가 없습니다.</p>
+      ) : (
+        <div
+          className="mt-5 flex h-36 items-end gap-2"
+          role="img"
+          aria-label={safeDays
+            .map((d) => `${d.day}: ${metric === "cost" ? cost(d.cost) : d.calls}`)
+            .join(", ")}
+        >
+          {safeDays.map((d) => (
+            <div key={d.day} className="flex h-full min-w-0 flex-1 flex-col justify-end text-center">
+              <span className="mb-1 truncate text-[10px] text-zinc-500">
+                {metric === "cost" ? (d.cost === null ? "—" : (d.cost / 1000000).toFixed(4)) : d.calls}
+              </span>
+              <div
+                className="mx-auto w-full max-w-12 rounded-t bg-emerald-500/70 dark:bg-emerald-400/60"
+                style={{
+                  height: `${Math.max(2, (((d ? d[metric] : 0) || 0) / max) * 90)}px`,
+                }}
+              />
+              <span className="mt-2 text-[10px] text-zinc-500">{d.day ? d.day.slice(5, 10) : ""}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </Card>
   );
 }
@@ -485,14 +822,28 @@ function SttSettingsForm({
   canEdit: boolean;
   onSaved: () => void;
 }) {
-  const [enabled, setEnabled] = useState(settings.runtime.managed_stt_enabled);
-  const [model, setModel] = useState(settings.runtime.default_model);
+  const runtime = settings?.runtime ?? {
+    managed_stt_enabled: false,
+    default_model: "gemini-3.5-transcribe",
+    requests_per_minute: 5,
+  };
+  const models = settings?.models ?? [];
+  const limits = settings?.limits ?? [];
+
+  const [enabled, setEnabled] = useState(Boolean(runtime.managed_stt_enabled));
+  const [model, setModel] = useState(
+    runtime.default_model || models.find((m) => m.enabled)?.model || "gemini-3.5-transcribe"
+  );
 
   const initialFreeMins = Math.round(
-    (settings.limits.find((l) => l.plan === "free")?.limit_duration_ms ?? 600000) / 60000
+    (limits.find((l) => l.plan === "free")?.limit_duration_ms ??
+      runtime.daily_limit_ms_free ??
+      600000) / 60000
   );
   const initialProMins = Math.round(
-    (settings.limits.find((l) => l.plan === "pro")?.limit_duration_ms ?? 3600000) / 60000
+    (limits.find((l) => l.plan === "pro")?.limit_duration_ms ??
+      runtime.daily_limit_ms_pro ??
+      3600000) / 60000
   );
 
   const [freeMins, setFreeMins] = useState(initialFreeMins);
@@ -502,6 +853,7 @@ function SttSettingsForm({
   const [error, setError] = useState("");
   const lock = useRef(false);
 
+  const enabledModels = models.filter((m) => m.enabled);
   const valid =
     Number.isInteger(freeMins) &&
     freeMins >= 0 &&
@@ -509,7 +861,7 @@ function SttSettingsForm({
     Number.isInteger(proMins) &&
     proMins >= 0 &&
     proMins <= 1440 &&
-    settings.models.some((m) => m.model === model && m.enabled);
+    (enabledModels.length === 0 || enabledModels.some((m) => m.model === model));
 
   const save = async () => {
     if (lock.current || !valid || !canEdit) return;
@@ -519,8 +871,10 @@ function SttSettingsForm({
       await requestAdminApi("/stt/settings", undefined, {
         enabled,
         model,
-        freeLimitMs: freeMins * 60000,
-        proLimitMs: proMins * 60000,
+        limits: {
+          free: freeMins * 60000,
+          pro: proMins * 60000,
+        },
       });
       window.dispatchEvent(new Event("oom-stt-changed"));
       onSaved();
@@ -537,13 +891,13 @@ function SttSettingsForm({
     <Card className="space-y-4 p-5">
       <div className="flex flex-wrap items-center gap-3">
         <h3 className="text-sm font-semibold">STT 운영 설정</h3>
-        <Badge tone={settings.runtime.managed_stt_enabled ? "emerald" : "default"}>
-          {settings.runtime.managed_stt_enabled ? "운영 중" : "OFF"}
+        <Badge tone={runtime.managed_stt_enabled ? "emerald" : "default"}>
+          {runtime.managed_stt_enabled ? "운영 중" : "OFF"}
         </Badge>
       </div>
       <p className="text-xs text-zinc-500">
         현재 표시 플랜: FREE. PRO 한도는 미래 설정이며 유료 구독은 준비 중입니다. 요청 제한: 분당{" "}
-        {settings.runtime.requests_per_minute}회.
+        {runtime.requests_per_minute}회.
       </p>
 
       <fieldset disabled={!canEdit || saving} className="space-y-4">
@@ -569,11 +923,14 @@ function SttSettingsForm({
                 setConfirm(false);
               }}
             >
-              {settings.models
-                .filter((m) => m.enabled)
-                .map((m) => (
-                  <option key={m.model}>{m.model}</option>
-                ))}
+              {enabledModels.map((m) => (
+                <option key={m.model} value={m.model}>
+                  {m.model}
+                </option>
+              ))}
+              {enabledModels.length === 0 && (
+                <option value={model}>{model}</option>
+              )}
             </select>
           </label>
         </div>
@@ -614,13 +971,16 @@ function SttSettingsForm({
 
       <details className="text-xs text-zinc-500">
         <summary className="cursor-pointer">예상 비용 산정 기준</summary>
-        {settings.models.map((m) => (
+        {models.map((m) => (
           <p key={m.model} className="mt-2 break-words leading-6">
-            {m.model} · 분당 {cost(m.cost_per_minute_microusd)}
+            {m.model} · 분당 {cost(m.cost_per_minute_microusd ?? (m.estimated_cost_per_second_microusd ? m.estimated_cost_per_second_microusd * 60 : null))}
             <br />
-            {m.pricing_note}
+            {m.pricing_note || "Gemini 3.5 Transcribe 기준"}
           </p>
         ))}
+        {!models.length && (
+          <p className="mt-2">등록된 모델 정보가 없습니다.</p>
+        )}
       </details>
 
       {!valid ? (

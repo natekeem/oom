@@ -119,11 +119,18 @@ export function AiSettingsPanel({
             <AudioLines className="h-5 w-5" />
           </span>
           <div>
-            <h2 className="text-base font-bold text-zinc-900 dark:text-white">
-              음성 인식 (STT) 연결 설정 (선택)
-            </h2>
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-base font-bold text-zinc-900 dark:text-white">
+                사용자 지정 STT API 연결 설정 (고급)
+              </h2>
+              {sttSettings.endpoint?.trim() ? (
+                <span className="rounded bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-800 dark:bg-amber-950/60 dark:text-amber-300">
+                  사용자 STT API가 우선 적용됩니다
+                </span>
+              ) : null}
+            </div>
             <p className="mt-1 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-              녹음 완료 시 음성을 텍스트로 자동 변환합니다. Whisper 호환 multipart/form-data 엔드포인트를 지원합니다.
+              사용자 지정 Endpoint가 저장되어 있으면 OOM 관리형 STT보다 우선 적용됩니다. 요청 실패 시 다른 제공자로 자동 전환되지 않습니다.
             </p>
           </div>
         </div>

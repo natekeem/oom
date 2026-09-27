@@ -2,7 +2,9 @@ import { useAuth } from "../../auth/useAuth";
 import { Button, ButtonLink } from "../ui/Button";
 import { Card } from "../ui/Card";
 import { useEffect, useRef, useState } from "react";
-import { transcribeAudio } from "../../lib/stt";
+import { runStt } from "../../features/stt/runStt";
+import { formatSttErrorMessage } from "../../features/stt/errors";
+import type { SttProviderSource } from "../../../shared/stt/types";
 import { stopSpeech } from "../../lib/speech";
 import { getTtsManager } from "../../lib/tts/TtsManager";
 import { EXAM_TTS_RATE } from "../../lib/tts/ratePreferences";
@@ -90,13 +92,16 @@ function PracticeViewContent({
   const [showQuestionText, setShowQuestionText] = useState(false);
   const [showStoryHint, setShowStoryHint] = useState(false);
 
+  const { user } = useAuth();
   const [sessionState, setSessionState] = useState<ExamSessionState>("ready");
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [micFailed, setMicFailed] = useState(false);
 
   const [answer, setAnswer] = useState("");
+  const [isEdited, setIsEdited] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [sttError, setSttError] = useState<string | null>(null);
+  const [sttProvider, setSttProvider] = useState<SttProviderSource | null>(null);
 
   const [summary, setSummary] = useState({ count: 0, seconds: 0 });
   const summaryHeadingRef = useRef<HTMLHeadingElement>(null);
@@ -224,6 +229,8 @@ function PracticeViewContent({
     setElapsedSeconds(0);
     setMicFailed(false);
     setAnswer("");
+    setIsEdited(false);
+    setSttProvider(null);
     setIsTranscribing(false);
     setSttError(null);
     setRecordingResult(null);
@@ -428,19 +435,14 @@ function PracticeViewContent({
     await persistAnswer(recording.durationSeconds);
     if (completedAttempt !== attemptIdRef.current || endLock.current) return;
 
-    if (!sttSettings?.endpoint?.trim() || !sttSettings.autoTranscribe) {
+    if (sttSettings?.autoTranscribe === false) {
       return;
     }
 
-    await performTranscribe(recording.blob, recording.mimeType);
+    await performTranscribe(recording.blob, recording.mimeType, recording.durationSeconds);
   };
 
-  const performTranscribe = async (blob: Blob, mimeType: string) => {
-    if (!sttSettings?.endpoint?.trim()) {
-      onToast("STT 설정이 필요합니다.", "AI 설정에서 STT Endpoint를 먼저 저장해 주세요.", "info");
-      return;
-    }
-
+  const performTranscribe = async (blob: Blob, mimeType: string, durationSeconds?: number) => {
     sttAbortRef.current?.abort();
     const controller = new AbortController();
     sttAbortRef.current = controller;
@@ -450,14 +452,25 @@ function PracticeViewContent({
     setSttError(null);
 
     try {
-      const text = await transcribeAudio(sttSettings, blob, mimeType, controller.signal);
+      const result = await runStt({
+        blob,
+        mimeType,
+        durationSeconds: durationSeconds ?? recordingResult?.durationSeconds ?? elapsedSeconds,
+        source: "quick_practice",
+        learningAttemptId,
+        customSettings: sttSettings,
+        localModeRequested: sttSettings?.preferLocalOnDevice,
+        signal: controller.signal,
+      });
       if (!controller.signal.aborted && requestAttemptId === attemptIdRef.current) {
-        setAnswer(text);
+        setAnswer(result.transcript);
+        setIsEdited(false);
+        setSttProvider(result.providerSource);
         onToast("음성을 텍스트로 변환했습니다.", "필요시 수정 후 AI 피드백을 요청하세요.", "success");
       }
     } catch (error) {
       if (!controller.signal.aborted && requestAttemptId === attemptIdRef.current) {
-        const msg = error instanceof Error ? error.message : "STT 변환에 실패했습니다.";
+        const msg = formatSttErrorMessage(error);
         setSttError(msg);
         onToast("STT 변환 실패", `${msg} (직접 입력하거나 다시 변환할 수 있습니다)`, "error");
       }
@@ -473,7 +486,12 @@ function PracticeViewContent({
       onToast("변환할 녹음이 없습니다.", "먼저 답변을 녹음해 주세요.", "info");
       return;
     }
-    performTranscribe(recordingResult.blob, recordingResult.mimeType);
+    performTranscribe(recordingResult.blob, recordingResult.mimeType, recordingResult.durationSeconds);
+  };
+
+  const handleAnswerChange = (value: string) => {
+    setAnswer(value);
+    setIsEdited(true);
   };
 
   const retryAttempt = () => {
@@ -500,6 +518,8 @@ function PracticeViewContent({
     setElapsedSeconds(0);
     setMicFailed(false);
     setAnswer("");
+    setIsEdited(false);
+    setSttProvider(null);
     setIsTranscribing(false);
     setSttError(null);
     setRecordingResult(null);
@@ -514,10 +534,21 @@ function PracticeViewContent({
 
   const sttStatus = deriveSttUiStatus({
     endpoint: sttSettings?.endpoint,
+    isLoggedIn: Boolean(user && !user.is_anonymous),
+    hasCustomStt: Boolean(sttSettings?.endpoint?.trim()),
     isTranscribing,
     transcript: answer,
+    isEdited,
     error: sttError,
   });
+
+  const providerLabel = sttProvider === "custom"
+    ? "사용자 STT"
+    : sttProvider === "browser_local"
+      ? "기기 내 STT"
+      : sttProvider === "managed"
+        ? "관리형 STT"
+        : undefined;
 
   const showReviewPanel =
     sessionState === "complete" ||
@@ -649,13 +680,14 @@ function PracticeViewContent({
             feedback=""
             hasRecording={Boolean(recordingResult || audioUrl)}
             isFeedbackLoading={false}
-            onAnswerChange={setAnswer}
+            onAnswerChange={handleAnswerChange}
             onFeedback={() => undefined}
             onNavigateToSettings={onNavigate ? () => onNavigate("ai-settings") : undefined}
             onRetryAttempt={retryAttempt}
             onTranscribe={handleManualTranscribe}
             sttError={sttError}
             sttStatus={sttStatus}
+            providerLabel={providerLabel}
           />
         </div>
       ) : null}

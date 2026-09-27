@@ -6,6 +6,7 @@ import { handleMe } from "./handlers/me.ts";
 import { handleOverview } from "./handlers/overview.ts";
 import { handleGetUserDetail, handleListUsers } from "./handlers/users.ts";
 import { handleAdminAi } from "./handlers/ai.ts";
+import { handleAdminStt } from "./handlers/stt.ts";
 
 export function normalizeAdminPath(pathname: string): string {
   let path = pathname
@@ -27,8 +28,15 @@ export async function handleAdminApiRequest(req: Request): Promise<Response> {
   const preflight = handleCorsPreflight(req);
   if (preflight) return preflight;
 
-  // 2. Phase 3.0 supports GET requests only (except OPTIONS handled above)
-  if (req.method !== "GET" && !(req.method === "PATCH" && normalizeAdminPath(new URL(req.url).pathname) === "/ai/settings")) {
+  const url = new URL(req.url);
+  const path = normalizeAdminPath(url.pathname);
+
+  // 2. Allow GET requests, and PATCH only for /ai/settings and /stt/settings
+  const isAllowedPatch =
+    req.method === "PATCH" &&
+    (path === "/ai/settings" || path === "/stt/settings");
+
+  if (req.method !== "GET" && !isAllowedPatch) {
     return withTiming(
       errorResponse(req, 405, "METHOD_NOT_ALLOWED", "지원하지 않는 HTTP 메서드입니다."),
       startTime
@@ -42,8 +50,6 @@ export async function handleAdminApiRequest(req: Request): Promise<Response> {
   }
 
   const { adminUser, adminClient } = authResult;
-  const url = new URL(req.url);
-  const path = normalizeAdminPath(url.pathname);
 
   try {
     let res: Response;
@@ -53,6 +59,11 @@ export async function handleAdminApiRequest(req: Request): Promise<Response> {
       if (origin && !["https://opic-on-me.com", "http://localhost:5173", "http://localhost:4173"].includes(origin)) {
         res = errorResponse(req, 403, "FORBIDDEN", "허용되지 않은 요청입니다.");
       } else res = await handleAdminAi(req, adminClient, adminUser, path);
+    } else if (path.startsWith("/stt/")) {
+      const origin = req.headers.get("origin");
+      if (origin && !["https://opic-on-me.com", "http://localhost:5173", "http://localhost:4173"].includes(origin)) {
+        res = errorResponse(req, 403, "FORBIDDEN", "허용되지 않은 요청입니다.");
+      } else res = await handleAdminStt(req, adminClient, adminUser, path);
     } else if (path === "/me") {
       res = handleMe(req, adminUser);
     } else if (path === "/overview") {

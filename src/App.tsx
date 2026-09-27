@@ -209,6 +209,13 @@ export default function App() {
     showToast("사용자 API 설정을 해제했습니다.", "이제 OOM 관리형 AI를 기본으로 사용합니다.", "success");
   };
 
+  const clearCustomStt = () => {
+    const cleared = { ...sttSettings, endpoint: "", apiKey: "", legacyStoredKey: false };
+    saveCustomSettings(STT_SETTINGS_KEY, cleared);
+    setSttSettings(cleared);
+    showToast("사용자 지정 STT 설정을 해제했습니다.", "이제 OOM 관리형 STT를 기본으로 사용합니다.", "success");
+  };
+
   if (isLanding) {
     return (
       <Suspense fallback={<div className="min-h-screen bg-[#07090d]" aria-label="랜딩 페이지를 불러오는 중" />}>
@@ -415,6 +422,7 @@ export default function App() {
         element={
           <AiSettingsView
             onClearCustom={clearCustomLlm}
+            onClearCustomStt={clearCustomStt}
             onChange={setSettings}
             onSave={saveSettings}
             onSttChange={setSttSettings}
@@ -428,6 +436,7 @@ export default function App() {
         element={
           <AiSettingsView
             onClearCustom={clearCustomLlm}
+            onClearCustomStt={clearCustomStt}
             onChange={setSettings}
             onSave={saveSettings}
             onSttChange={setSttSettings}

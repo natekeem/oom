@@ -6,6 +6,9 @@ import { topLevelNavigation } from "../layout/topLevelNavigation";
 import { PageIntro } from "../ui/PageIntro";
 import { ManagedAiSettings } from "../../features/managed-ai/ManagedFeedback";
 import { getAiConnection, hasCustomAiConfiguration } from "../../features/ai/providerResolver";
+import { ManagedSttSettings } from "../../features/stt/ManagedSttSettings";
+import { BrowserLocalSttCard } from "../../features/stt/BrowserLocalSttCard";
+import { getSttConnection, hasCustomSttConfiguration } from "../../features/stt/providerResolver";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 
@@ -16,6 +19,7 @@ type AiSettingsViewProps = {
   onSttChange: (settings: SttSettings) => void;
   onSave: () => void;
   onClearCustom: () => void;
+  onClearCustomStt?: () => void;
 };
 
 export function AiSettingsView({
@@ -25,17 +29,23 @@ export function AiSettingsView({
   onSttChange,
   onSave,
   onClearCustom,
+  onClearCustomStt,
 }: AiSettingsViewProps) {
   const connection = getAiConnection(settings);
   const customConfigured = hasCustomAiConfiguration(settings);
+  const sttConnection = getSttConnection(sttSettings);
+  const customSttConfigured = hasCustomSttConfiguration(sttSettings);
+
   return (
     <div className="space-y-6">
       <PageIntro
-        description="답변을 돌아보고, 다음 연습에서 바꿀 한 가지를 찾아보세요. AI 이용 여부와 관계없이 모든 기본 훈련을 계속할 수 있습니다."
+        description="답변을 돌아보고, 다음 연습에서 바꿀 한 가지를 찾아보세요. AI 및 STT 이용 여부와 관계없이 모든 기본 훈련을 계속할 수 있습니다."
         icon={topLevelNavigation.aiSettings.icon}
         tag="AI 피드백 / STT 설정"
         title="내 답변에서 시작하는 AI 코칭"
       />
+
+      {/* AI Connection */}
       <Card className="space-y-3 p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -52,7 +62,33 @@ export function AiSettingsView({
         {customConfigured ? <Button size="sm" variant="secondary" onClick={onClearCustom}>사용자 API 설정 해제</Button> : null}
       </Card>
       <ManagedAiSettings />
-      <details open={customConfigured} className="space-y-5">
+
+      {/* STT Connection */}
+      <Card className="space-y-3 p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold text-zinc-500">현재 STT 연결</p>
+            <p className="mt-1 text-base font-bold">{sttConnection.label}</p>
+          </div>
+          <Badge tone={sttConnection.badgeTone}>{sttConnection.detail}</Badge>
+        </div>
+        <p className="text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+          {customSttConfigured
+            ? "저장한 사용자 지정 STT Endpoint가 OOM 관리형 STT보다 항상 우선합니다. 요청 실패 시 다른 제공자로 자동 전환하지 않습니다."
+            : sttConnection.source === "browser_local"
+            ? "지원되는 브라우저에서 기기 내 음성 인식(processLocally)을 우선 시도합니다."
+            : "사용자 STT 설정이 없으므로 로그인 후 OOM에서 제공하는 관리형 STT(Gemini 3.5 Transcribe)를 사용합니다."}
+        </p>
+        {customSttConfigured && onClearCustomStt ? (
+          <Button size="sm" variant="secondary" onClick={onClearCustomStt}>
+            사용자 지정 STT 설정 해제
+          </Button>
+        ) : null}
+      </Card>
+      <ManagedSttSettings />
+      <BrowserLocalSttCard sttSettings={sttSettings} onChange={onSttChange} />
+
+      <details open={customConfigured || customSttConfigured} className="space-y-5">
       <summary className="cursor-pointer text-sm font-semibold text-zinc-900 dark:text-white">고급 사용자 설정 · 직접 연결한 STT / LLM</summary>
       <AiSettingsPanel
         onChange={onChange}

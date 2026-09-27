@@ -77,7 +77,6 @@ export function PracticeReviewPanel({
   customConfigured = true,
   providerLabel,
 }: PracticeReviewPanelProps) {
-  const sttConfigured = sttStatus !== "unconfigured";
   const wordCount = answer.trim().split(/\s+/).filter(Boolean).length;
   const coachingSummary = feedback ? getCoachingSummary(feedback) : [];
   const mockLayout = layout === "mock";
@@ -146,26 +145,50 @@ export function PracticeReviewPanel({
         {/* ② 음성 받아쓰기 (STT) */}
         <Card className={`border-indigo-200/80 dark:border-indigo-900/60 ${mockLayout ? "h-full p-4" : "p-5"}`}>
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-sm font-extrabold text-zinc-900 dark:text-white">
-              ② 음성 받아쓰기 (STT)
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-extrabold text-zinc-900 dark:text-white">
+                ② 음성 받아쓰기 (STT)
+              </p>
+              {providerLabel ? (
+                <span className="rounded bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                  {providerLabel}
+                </span>
+              ) : null}
+            </div>
             {sttStatus === "success" ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
                 <CheckCircle2 className="h-3.5 w-3.5" />
-                변환 완료
+                전사 완료
+              </span>
+            ) : null}
+            {sttStatus === "edited" ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-bold text-amber-700 dark:bg-amber-950/60 dark:text-amber-300">
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                직접 수정됨
               </span>
             ) : null}
           </div>
 
           {/* STT Status Banners */}
+          {sttStatus === "login_required" ? (
+            <div className={`mt-3 rounded-md border border-indigo-200 bg-indigo-50/80 text-indigo-950 dark:border-indigo-900/60 dark:bg-indigo-950/40 dark:text-indigo-100 ${mockLayout ? "flex flex-wrap items-center justify-between gap-2 p-2.5" : "p-3.5"}`}>
+              <div>
+                <p className="text-xs font-bold">OOM 관리형 STT는 로그인이 필요합니다.</p>
+                <p className={`${mockLayout ? "mt-0.5" : "mt-1"} text-xs leading-5 text-indigo-900/90 dark:text-indigo-200/90`}>
+                  로그인하면 매일 10분의 음성 인식이 제공됩니다. 직접 텍스트를 입력하거나 사용자 지정 STT API를 연결할 수도 있습니다.
+                </p>
+              </div>
+            </div>
+          ) : null}
+
           {sttStatus === "unconfigured" ? (
             <div className={`mt-3 rounded-md border border-amber-200 bg-amber-50/80 text-amber-950 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-100 ${mockLayout ? "flex flex-wrap items-center justify-between gap-2 p-2.5" : "p-3.5"}`}>
               <div>
                 <p className="text-xs font-bold">{mockLayout ? "STT 미설정" : "STT가 아직 설정되지 않았습니다."}</p>
                 <p className={`${mockLayout ? "mt-0.5" : "mt-1"} text-xs leading-5 text-amber-900/90 dark:text-amber-200/90`}>
                   {mockLayout
-                    ? "AI 설정에서 Endpoint를 연결하면 사용할 수 있습니다."
-                    : "AI 설정에서 Whisper/STT Endpoint를 설정하면 녹음한 답변을 자동으로 텍스트로 변환할 수 있습니다."}
+                    ? "AI 설정에서 Endpoint를 연결하거나 로그인하여 관리형 STT를 사용하세요."
+                    : "로그인하여 OOM 관리형 STT를 이용하거나, AI 설정에서 사용자 지정 STT Endpoint를 연결할 수 있습니다."}
                 </p>
               </div>
               {onNavigateToSettings ? (
@@ -196,7 +219,7 @@ export function PracticeReviewPanel({
           {sttStatus === "transcribing" ? (
             <div className="mt-3 flex items-center gap-2 rounded-md bg-indigo-50 p-3 text-xs font-bold text-indigo-900 dark:bg-indigo-950/60 dark:text-indigo-200">
               <Loader2 className="h-4 w-4 animate-spin text-indigo-600 dark:text-indigo-400" />
-              <span>음성을 텍스트로 변환 중...</span>
+              <span>전사 중...</span>
             </div>
           ) : null}
 
@@ -205,9 +228,9 @@ export function PracticeReviewPanel({
               <div className="flex items-start gap-2">
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                 <div className="space-y-0.5">
-                  <p className="text-xs font-bold">음성 변환에 실패했습니다.</p>
+                  <p className="text-xs font-bold">전사 실패</p>
                   <p className="text-[11px] leading-4 text-red-800 dark:text-red-300">
-                    {sttError ?? "녹음은 그대로 보존되어 있습니다."}
+                    {sttError ?? "녹음은 그대로 보존되어 있습니다. 직접 입력하거나 다시 시도할 수 있습니다."}
                   </p>
                 </div>
               </div>
@@ -215,12 +238,12 @@ export function PracticeReviewPanel({
           ) : null}
 
           {/* Manual Transcribe Button */}
-          {sttConfigured && sttStatus !== "transcribing" && hasRecording ? (
+          {sttStatus !== "transcribing" && hasRecording ? (
             <div className="mt-3">
               <Button onClick={onTranscribe} size="sm" variant="secondary">
                 <RefreshCw className="h-3.5 w-3.5" />
-                {sttStatus === "success" || sttStatus === "error"
-                  ? "다시 변환"
+                {sttStatus === "success" || sttStatus === "edited" || sttStatus === "error"
+                  ? "전사 다시 하기"
                   : "음성을 텍스트로 변환"}
               </Button>
             </div>
@@ -233,7 +256,7 @@ export function PracticeReviewPanel({
                 className="text-xs font-bold text-zinc-700 dark:text-zinc-200"
                 htmlFor="practice-transcript-input"
               >
-                내 답변 Transcript
+                {sttStatus === "edited" ? "수정된 전사" : "내 답변 전사"}
               </label>
               {wordCount > 0 ? (
                 <span className="text-[11px] text-zinc-400">

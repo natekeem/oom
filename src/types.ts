@@ -100,6 +100,7 @@ export type SttSettings = {
   model?: string;
   authType: LlmAuthType;
   autoTranscribe: boolean;
+  preferLocalOnDevice?: boolean;
 };
 
 export type LlmMessage = {

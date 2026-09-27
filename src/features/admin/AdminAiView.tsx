@@ -7,6 +7,7 @@ import { AdminLayout } from "./AdminLayout";
 import { requestAdminApi } from "./adminApi";
 import { useAdminAccess } from "./useAdminAccess";
 import { AI_FEATURES, type AiFeature } from "../../../shared/ai/features";
+import { AdminSttSection } from "./AdminSttSection";
 
 const featureLabels: Record<AiFeature, string> = {
   answer_feedback: "답변 피드백",
@@ -101,6 +102,7 @@ export function AdminAiView() {
 }
 function AdminAiSession() {
   const { role } = useAdminAccess();
+  const [activeTab, setActiveTab] = useState<"llm" | "stt">("llm");
   const [overview, setOverview] = useState<AiOverview | null>(null);
   const [settings, setSettings] = useState<AiSettings | null>(null);
   const [usage, setUsage] = useState<AiUsage | null>(null);
@@ -166,18 +168,47 @@ function AdminAiSession() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-semibold">AI 운영</h2>
-            <p className="mt-1 text-xs text-zinc-500">
-              오늘 00:00 KST 기준 · 7일 추이는 오늘 포함 · 예상 API 비용은 실제
-              청구 금액과 다를 수 있습니다.
-            </p>
-          </div>
-          <Button size="sm" variant="secondary" onClick={refresh}>
-            새로고침
-          </Button>
+        <div className="flex gap-2 border-b border-zinc-200 pb-2 dark:border-zinc-800">
+          <button
+            type="button"
+            className={`rounded-md px-3 py-1.5 text-sm font-semibold transition-colors ${
+              activeTab === "llm"
+                ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300"
+                : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+            }`}
+            onClick={() => setActiveTab("llm")}
+          >
+            AI 피드백 (LLM)
+          </button>
+          <button
+            type="button"
+            className={`rounded-md px-3 py-1.5 text-sm font-semibold transition-colors ${
+              activeTab === "stt"
+                ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300"
+                : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+            }`}
+            onClick={() => setActiveTab("stt")}
+          >
+            음성 인식 (STT)
+          </button>
         </div>
+
+        {activeTab === "stt" ? (
+          <AdminSttSection canEdit={role === "owner" || role === "admin"} />
+        ) : (
+          <>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-semibold">AI 운영</h2>
+                <p className="mt-1 text-xs text-zinc-500">
+                  오늘 00:00 KST 기준 · 7일 추이는 오늘 포함 · 예상 API 비용은 실제
+                  청구 금액과 다를 수 있습니다.
+                </p>
+              </div>
+              <Button size="sm" variant="secondary" onClick={refresh}>
+                새로고침
+              </Button>
+            </div>
         {loading ? (
           <p role="status" className="py-8 text-sm text-zinc-500">
             AI 운영 정보를 불러오는 중...
@@ -469,6 +500,8 @@ function AdminAiSession() {
             </div>
           </div>
         </Card>
+        </>
+        )}
       </div>
     </AdminLayout>
   );

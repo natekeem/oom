@@ -4,7 +4,9 @@ import { runAiFeature } from "../../features/ai/runAiFeature";
 import { toAiExecutionError } from "../../features/ai/errors";
 import { getAiConnection } from "../../features/ai/providerResolver";
 import { stopSpeech } from "../../lib/speech";
-import { transcribeAudio } from "../../lib/stt";
+import { runStt } from "../../features/stt/runStt";
+import { formatSttErrorMessage } from "../../features/stt/errors";
+import { useAuth } from "../../auth/useAuth";
 import { EXAM_TTS_RATE } from "../../lib/tts/ratePreferences";
 import { normalizeTtsText, sha256TtsText } from "../../lib/tts/cacheKey";
 import { getTtsManager } from "../../lib/tts/TtsManager";
@@ -109,6 +111,7 @@ export function FullMockPracticeView({
   const [questionTtsStatus, setQuestionTtsStatus] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
   const feedbackRequestsRef = useRef(new Map<string, { answer: string; id: string }>());
+  const { user } = useAuth();
   const [selectedAudioUrl, setSelectedAudioUrl] = useState<string | null>(null);
   const [selectedReviewAttemptId, setSelectedReviewAttemptId] = useState<string | undefined>();
   const [isTranscribing, setIsTranscribing] = useState(false);
@@ -601,10 +604,6 @@ export function FullMockPracticeView({
       onToast("변환할 녹음이 없습니다.", "이 문항은 타이머 기록만 저장되었습니다.", "info");
       return;
     }
-    if (!sttSettings?.endpoint?.trim()) {
-      onToast("STT 설정이 필요합니다.", "AI 설정에서 STT Endpoint를 먼저 저장해 주세요.", "info");
-      return;
-    }
     sttAbortRef.current?.abort();
     const controller = new AbortController();
     sttAbortRef.current = controller;
@@ -612,19 +611,22 @@ export function FullMockPracticeView({
     setIsTranscribing(true);
     updateAttempt(selectedAttempt.id, { sttError: undefined });
     try {
-      const transcript = await transcribeAudio(
-        sttSettings,
-        selectedAttempt.recording.blob,
-        selectedAttempt.recording.mimeType,
-        controller.signal,
-      );
+      const result = await runStt({
+        blob: selectedAttempt.recording.blob,
+        mimeType: selectedAttempt.recording.mimeType,
+        durationSeconds: selectedAttempt.recording.durationSeconds,
+        source: "mock_review",
+        customSettings: sttSettings,
+        localModeRequested: sttSettings?.preferLocalOnDevice,
+        signal: controller.signal,
+      });
       if (!controller.signal.aborted && requestId === reviewRequestRef.current) {
-        updateAttempt(selectedAttempt.id, { transcript });
+        updateAttempt(selectedAttempt.id, { transcript: result.transcript });
         onToast("음성을 텍스트로 변환했습니다.", "수정 후 선택한 답변의 AI 피드백을 요청할 수 있습니다.", "success");
       }
     } catch (error) {
       if (!controller.signal.aborted && requestId === reviewRequestRef.current) {
-        const message = error instanceof Error ? error.message : "STT 변환에 실패했습니다.";
+        const message = formatSttErrorMessage(error);
         updateAttempt(selectedAttempt.id, { sttError: message });
         onToast("STT 변환 실패", "녹음은 그대로 보존되어 있습니다.", "error");
       }
@@ -741,6 +743,8 @@ export function FullMockPracticeView({
   if (phase.phase === "complete" || phase.phase === "review") {
     const sttStatus = deriveSttUiStatus({
       endpoint: sttSettings?.endpoint,
+      isLoggedIn: Boolean(user && !user.is_anonymous),
+      hasCustomStt: Boolean(sttSettings?.endpoint?.trim()),
       isTranscribing,
       transcript: selectedAttempt?.transcript ?? "",
       error: selectedAttempt?.sttError ?? null,

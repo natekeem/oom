@@ -46,6 +46,7 @@ describe("Edge Function: admin-api logic & security", () => {
       expect(res!.status).toBe(204);
       expect(res!.headers.get("Access-Control-Allow-Origin")).toBe("https://opic-on-me.com");
       expect(res!.headers.get("Access-Control-Allow-Methods")).toContain("GET");
+      expect(res!.headers.get("Access-Control-Allow-Headers")).toContain("x-request-id");
     });
 
     it("restricts unknown origin to production domain", () => {

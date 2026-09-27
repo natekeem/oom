@@ -163,6 +163,30 @@ describe("stt-api Edge Function Handler", () => {
     expect(res.status).toBe(204);
   });
 
+  it("handles CORS OPTIONS preflight requesting authorization, content-type, x-request-id", async () => {
+    const deps = createMockDeps();
+    const handler = createSttHandler(deps);
+    const req = new Request("https://example.test/functions/v1/stt-api/transcribe", {
+      method: "OPTIONS",
+      headers: {
+        origin: "https://opic-on-me.com",
+        "access-control-request-method": "POST",
+        "access-control-request-headers": "authorization, content-type, x-request-id",
+      },
+    });
+
+    const res = await handler(req);
+    expect(res.status).toBe(204);
+    expect(res.headers.get("access-control-allow-origin")).toBe("https://opic-on-me.com");
+    const allowedHeaders = (res.headers.get("access-control-allow-headers") ?? "")
+      .toLowerCase()
+      .split(",")
+      .map((h) => h.trim());
+    expect(allowedHeaders).toContain("authorization");
+    expect(allowedHeaders).toContain("content-type");
+    expect(allowedHeaders).toContain("x-request-id");
+  });
+
   it("requires bearer authentication (LOGIN_REQUIRED)", async () => {
     const deps = createMockDeps();
     const handler = createSttHandler(deps);

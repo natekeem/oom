@@ -145,33 +145,42 @@ export function AdminAuditView() {
               <table className="w-full text-left text-xs">
                 <thead className="border-b border-zinc-200/80 bg-zinc-50/70 font-semibold text-zinc-600 dark:border-zinc-800 dark:bg-zinc-800/40 dark:text-zinc-300">
                   <tr>
-                    <th className="px-4 py-3">일시 (KST)</th>
-                    <th className="px-3 py-3">작업 관리자</th>
-                    <th className="px-3 py-3">작업 내용 (Action)</th>
-                    <th className="px-3 py-3">대상</th>
+                    <th className="w-36 whitespace-nowrap px-4 py-3">일시 (KST)</th>
+                    <th className="w-32 whitespace-nowrap px-3 py-3">작업 관리자</th>
+                    <th className="w-44 whitespace-nowrap px-3 py-3">작업 내용 (Action)</th>
+                    <th className="w-40 whitespace-nowrap px-3 py-3">대상</th>
                     <th className="px-4 py-3">메타데이터</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/60">
-                  {logs.map((log) => (
-                    <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 transition-colors" key={log.id}>
-                      <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">
-                        {formatDate(log.createdAt)}
-                      </td>
-                      <td className="px-3 py-3 font-medium text-zinc-900 dark:text-zinc-100">
-                        {log.adminDisplayName || log.adminUserId.slice(0, 8)}
-                      </td>
-                      <td className="px-3 py-3 font-mono font-semibold text-indigo-600 dark:text-indigo-400">
-                        {log.action}
-                      </td>
-                      <td className="px-3 py-3 text-zinc-600 dark:text-zinc-400">
-                        {log.targetType ? `${log.targetType} (${log.targetId ?? "-"})` : "-"}
-                      </td>
-                      <td className="px-4 py-3 font-mono text-[11px] text-zinc-500">
-                        {JSON.stringify(log.metadata)}
-                      </td>
-                    </tr>
-                  ))}
+                  {logs.map((log) => {
+                    const metadataStr =
+                      log.metadata && Object.keys(log.metadata).length > 0
+                        ? JSON.stringify(log.metadata)
+                        : "-";
+                    return (
+                      <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 transition-colors" key={log.id}>
+                        <td className="whitespace-nowrap px-4 py-3 text-zinc-600 dark:text-zinc-400">
+                          {formatDate(log.createdAt)}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-3 font-medium text-zinc-900 dark:text-zinc-100">
+                          {log.adminDisplayName || log.adminUserId.slice(0, 8)}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-3 font-mono font-semibold text-indigo-600 dark:text-indigo-400">
+                          {log.action}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-3 text-zinc-600 dark:text-zinc-400">
+                          {log.targetType ? `${log.targetType} (${log.targetId ?? "-"})` : "-"}
+                        </td>
+                        <td
+                          className="max-w-[240px] truncate px-4 py-3 font-mono text-[11px] text-zinc-500 xl:max-w-[320px]"
+                          title={metadataStr !== "-" ? metadataStr : undefined}
+                        >
+                          {metadataStr}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

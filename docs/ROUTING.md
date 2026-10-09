@@ -119,7 +119,7 @@ Public route targets use the canonical `https://opic-on-me.com/path/` form. Inte
 | `contact` | Footer legal page | `LegalPageView` | No | `/contact/` lists the inquiry email |
 | `terms` | Footer legal page | `LegalPageView` | No | `/terms/` explains study-use terms and non-affiliation |
 | `editorial-policy` | Footer trust page | `LegalPageView` | No | `/editorial-policy/` identifies operator/author responsibility and explains sourcing, review, corrections, and AI-assistance rules |
-| `image-credits` | Footer trust page | `LegalPageView` | No | `/image-credits/` lists magazine cover image credits and license links |
+| `image-credits` | Footer trust page | `LegalPageView` | No | `/image-credits/` discloses generated magazine cover production and file usage |
 | `admin-dashboard` | Bottom utilities / Admin Console | `AdminDashboardView` | No | `/admin/`; Dashboard metrics with Asia/Seoul calendar day boundary; server-guarded |
 | `admin-users` | Admin Console sub-tab | `AdminUsersView` | No | `/admin/users/`; User directory and profile inspection |
 | `admin-learning` | Admin Console sub-tab | `AdminLearningView` | No | `/admin/learning/`; Learning sessions and activities operations log |

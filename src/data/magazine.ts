@@ -91,7 +91,7 @@ type StudyArticleInput = {
 const studyArticleDetails: Record<string, { image: string; imageAlt: string; imagePosition?: string; sections: MagazineArticleSection[] }> = {
   "opic-survey-choice-guide": {
     image: opicSurveyChoiceGuideCover,
-    imageAlt: "책상 위 노트와 펜, 안경을 놓고 OPIc 서베이 선택지를 정리하는 장면",
+    imageAlt: "일상 장면 사진을 말할 수 있는 소재와 제외할 소재로 나누는 학습자",
     sections: [
       {
         heading: "시험 전날 바꾸고 싶어지는 선택지",
@@ -141,7 +141,7 @@ const studyArticleDetails: Record<string, { image: string; imageAlt: string; ima
   },
   "opic-55-difficulty-guide": {
     image: opic55DifficultyGuideCover,
-    imageAlt: "노트북을 켜 두고 OPIc 난이도와 답변 길이를 정리하는 책상",
+    imageAlt: "마이크 앞에서 짧고 긴 답변 파형과 카페 장면 단서를 비교하는 학습자",
     sections: [
       {
         heading: "5-5가 어려운 단어를 뜻하지는 않는다",
@@ -191,7 +191,7 @@ const studyArticleDetails: Record<string, { image: string; imageAlt: string; ima
   },
   "opic-roleplay-6-step-template": {
     image: opicRoleplay6StepTemplateCover,
-    imageAlt: "노트북과 휴대폰이 놓인 책상에서 롤플레이 요청 흐름을 정리하는 장면",
+    imageAlt: "예약 변경 전화를 하며 핵심 카드 세 장과 선택 카드를 구분하는 학습자",
     sections: [
       {
         heading: "롤플레이는 친절한 문장 암기가 아니다",
@@ -241,7 +241,7 @@ const studyArticleDetails: Record<string, { image: string; imageAlt: string; ima
   },
   "opic-recording-review-routine": {
     image: opicRecordingReviewRoutineCover,
-    imageAlt: "책상 위 마이크와 녹음 장비로 OPIc 답변을 다시 들어보는 장면",
+    imageAlt: "헤드폰으로 녹음 파형을 듣고 끊긴 한 지점만 표시하는 학습자",
     sections: [
       {
         heading: "녹음 파일을 다시 들을 때 먼저 보이는 것",
@@ -291,7 +291,7 @@ const studyArticleDetails: Record<string, { image: string; imageAlt: string; ima
   },
   "opic-home-topic-script-guide": {
     image: opicHomeTopicScriptGuideCover,
-    imageAlt: "집 안 책상과 창가를 배경으로 거주지 답변 장면을 떠올리는 홈 오피스",
+    imageAlt: "해 질 무렵 집 창가의 작은 책상에서 계획을 적는 학습자",
     sections: [
       {
         heading: "집 이야기는 특별하지 않아도 된다",
@@ -341,7 +341,7 @@ const studyArticleDetails: Record<string, { image: string; imageAlt: string; ima
   },
   "opic-travel-topic-script-guide": {
     image: opicTravelTopicScriptGuideCover,
-    imageAlt: "여행 가방과 지도, 노트를 펼쳐 두고 여행 답변 소재를 정리하는 장면",
+    imageAlt: "갑작스러운 비를 피해 해변 카페에서 여행 계획을 바꾼 학습자",
     sections: [
       {
         heading: "여행지는 하나만 있어도 충분하다",
@@ -391,7 +391,7 @@ const studyArticleDetails: Record<string, { image: string; imageAlt: string; ima
   },
   "opic-indoor-topic-guide": {
     image: opicIndoorTopicGuideCover,
-    imageAlt: "카페 테이블에서 노트북과 커피를 두고 실내 활동 답변을 정리하는 장면",
+    imageAlt: "퇴근 뒤 조용한 카페 창가 자리에서 노트를 정리하는 학습자",
     sections: [
       {
         heading: "카페 이야기가 짧아지는 이유",
@@ -441,7 +441,7 @@ const studyArticleDetails: Record<string, { image: string; imageAlt: string; ima
   },
   "opic-im-to-ih-practice-plan": {
     image: opicImToIhPracticePlanCover,
-    imageAlt: "작은 노트에 답변 확장 계획을 적어 IM에서 IH로 가는 연습을 준비하는 장면",
+    imageAlt: "짧은 녹음 파형을 행동과 이유, 느낌이 있는 긴 답변으로 확장하는 학습자",
     imagePosition: "center 54%",
     sections: [
       {
@@ -492,7 +492,7 @@ const studyArticleDetails: Record<string, { image: string; imageAlt: string; ima
   },
   "opic-last-week-study-plan": {
     image: opicLastWeekStudyPlanCover,
-    imageAlt: "노트와 필기구를 펼쳐 시험 일주일 전 OPIc 연습 일정을 정리하는 장면",
+    imageAlt: "7칸 주간 계획표에 익숙한 장면과 질문 카드만 배치하는 학습자",
     sections: [
       {
         heading: "마지막 일주일에는 새 노트를 만들지 않는다",
@@ -542,7 +542,7 @@ const studyArticleDetails: Record<string, { image: string; imageAlt: string; ima
   },
   "opic-answer-checklist": {
     image: opicAnswerChecklistCover,
-    imageAlt: "체크리스트 노트에 답변 녹음 후 확인할 항목을 적어 둔 장면",
+    imageAlt: "녹음 파형의 멈춘 지점과 네 가지 답변 확인 토큰을 점검하는 장면",
     sections: [
       {
         heading: "녹음을 들을 때 가장 먼저 볼 것",
@@ -623,6 +623,7 @@ const additionalStudyArticles: MagazineArticleDraft[] = [
       subtitle: "많이 고르는 선택지가 아니라 내가 바로 말할 수 있는 장면을 기준으로 서베이를 정리하는 방법입니다.",
       summary: "OPIc 서베이는 관심사 목록처럼 보이지만 연습에서는 답변 소재를 줄이는 장치로 써야 합니다. 오픽온미의 고정 서베이를 활용해 말할 범위를 좁히는 기준을 정리했습니다.",
       takeaway: "좋은 서베이 선택은 멋진 취미가 아니라 10초 안에 장소, 행동, 감정이 떠오르는 선택입니다.",
+      modifiedAt: "2026-10-09",
       focus: "서베이 선택",
       scene: "자주 가는 장소나 반복하는 활동",
       routine: "내가 실제로 말할 수 있는 선택지 5-7개",
@@ -637,6 +638,7 @@ const additionalStudyArticles: MagazineArticleDraft[] = [
       subtitle: "난이도 5-5를 어려운 단어의 문제가 아니라 답변 길이와 구체성의 기준으로 이해하는 가이드입니다.",
       summary: "5-5 연습은 긴 답변을 무조건 만들기 위한 단계가 아닙니다. 한 장면을 60-90초로 설명하고 이유와 변화를 붙이는 기준으로 활용해야 합니다.",
       takeaway: "난이도 5-5는 말할 내용을 크게 만드는 설정이 아니라 답변 안의 장면을 더 구체적으로 만드는 연습 기준입니다.",
+      modifiedAt: "2026-10-09",
       focus: "난이도 5-5",
       scene: "60-90초로 설명할 수 있는 생활 장면",
       routine: "장소, 행동, 이유, 변화가 들어간 답변 길이",
@@ -677,6 +679,7 @@ const additionalStudyArticles: MagazineArticleDraft[] = [
       subtitle: "녹음 후 모든 실수를 고치려 하지 않고 다음 답변으로 이어지는 수정 포인트만 찾는 연습법입니다.",
       summary: "녹음 복습은 평가가 아니라 다음 답변을 설계하는 과정입니다. 10분 안에 질문, 녹음, 표시, 재녹음을 끝내는 실전 루틴을 소개합니다.",
       takeaway: "녹음 복습의 목표는 완벽한 파일이 아니라 다음 질문에서 바로 써먹을 수정 포인트 하나를 찾는 것입니다.",
+      modifiedAt: "2026-10-09",
       focus: "녹음 복습",
       scene: "실전 연습 화면에서 말한 60초 답변",
       routine: "질문 선택, 첫 녹음, 끊긴 지점 표시, 수정 녹음",
@@ -691,6 +694,7 @@ const additionalStudyArticles: MagazineArticleDraft[] = [
       subtitle: "평범한 집 이야기를 위치, 루틴, 변화, 문제 해결로 확장하는 스크립트 가이드입니다.",
       summary: "집 주제는 특별한 사건보다 익숙한 공간을 구체적으로 말하는 힘이 중요합니다. 한 공간을 골라 여러 질문으로 바꾸는 방법을 설명합니다.",
       takeaway: "집 답변은 멋진 집 소개가 아니라 내가 자주 머무는 공간과 반복 행동을 보여 주는 장면입니다.",
+      modifiedAt: "2026-10-09",
       focus: "집/거주지 주제",
       scene: "책상, 창문, 방 구조, 동네 길 같은 익숙한 공간",
       routine: "공간 하나와 반복 행동 하나",
@@ -705,6 +709,7 @@ const additionalStudyArticles: MagazineArticleDraft[] = [
       subtitle: "하나의 여행 장면을 여러 질문 유형으로 바꾸는 OPIc 스크립트 훈련법입니다.",
       summary: "여행 글을 많이 외우는 대신 한 번의 여행 장면을 묘사, 비교, 문제 해결 질문으로 변형하는 연습이 필요합니다.",
       takeaway: "여행 주제는 장소명보다 계획, 예상과 다른 일, 해결 과정이 있어야 여러 질문에 버팁니다.",
+      modifiedAt: "2026-10-09",
       focus: "여행 주제",
       scene: "짧은 여행이나 당일치기 경험",
       routine: "출발 이유, 장소 묘사, 예상과 다른 일, 마무리 감정",
@@ -719,6 +724,7 @@ const additionalStudyArticles: MagazineArticleDraft[] = [
       subtitle: "실내 주제를 감각 묘사와 루틴으로 바꿔 말하는 오픽온미식 답변 설계입니다.",
       summary: "실내활동은 평범해 보이지만 소리, 조명, 좌석, 시간대 같은 단서를 넣으면 충분히 구체적인 답변 소재가 됩니다.",
       takeaway: "실내 주제는 장소의 화려함보다 내가 그곳에서 반복하는 행동과 느끼는 안정감이 핵심입니다.",
+      modifiedAt: "2026-10-09",
       focus: "실내활동 주제",
       scene: "카페, 방, 영화관, 음악 듣는 공간",
       routine: "장소 감각, 반복 행동, 쉬는 이유",
@@ -733,6 +739,7 @@ const additionalStudyArticles: MagazineArticleDraft[] = [
       subtitle: "짧은 직접 답변에서 장면 중심 답변으로 넘어가기 위한 연습 계획입니다.",
       summary: "IM에서 IH를 목표로 할 때는 어려운 단어보다 답변 안의 정보 밀도와 연결 방식이 중요합니다. 짧은 답변을 장면으로 확장하는 습관을 정리했습니다.",
       takeaway: "IH를 목표로 할수록 답변은 더 어려워지는 것이 아니라 더 선명해져야 합니다.",
+      modifiedAt: "2026-10-09",
       focus: "IM에서 IH로 가는 연습",
       scene: "짧은 답변을 60초 장면으로 확장하는 과정",
       routine: "직접 답변, 구체적 행동, 이유, 감정 추가",
@@ -747,6 +754,7 @@ const additionalStudyArticles: MagazineArticleDraft[] = [
       subtitle: "새 자료를 늘리기보다 기존 장면을 정리하고 녹음 루틴을 유지하는 마지막 주 계획입니다.",
       summary: "시험 일주일 전에는 새 스크립트를 많이 추가하기보다 이미 고른 장면을 짧게 말하고 다시 녹음하는 루틴이 필요합니다.",
       takeaway: "마지막 주의 목표는 더 많이 아는 것이 아니라 이미 아는 장면을 시험장에서 바로 꺼내는 것입니다.",
+      modifiedAt: "2026-10-09",
       focus: "시험 일주일 전 계획",
       scene: "이미 준비한 서베이와 스크립트 장면",
       routine: "하루 2개 질문 녹음과 한 가지 수정",
@@ -761,6 +769,7 @@ const additionalStudyArticles: MagazineArticleDraft[] = [
       subtitle: "OPIc 답변을 들은 뒤 무엇부터 고쳐야 할지 정리하는 실전 점검표입니다.",
       summary: "녹음 후에는 모든 오류를 찾기보다 질문 대응, 장면 선명도, 연결, 마무리 순서로 확인해야 합니다. 실전 연습과 바로 연결되는 체크리스트를 제공합니다.",
       takeaway: "좋은 체크리스트는 실수를 많이 찾는 표가 아니라 다음 녹음에서 하나를 고치게 만드는 표입니다.",
+      modifiedAt: "2026-10-09",
       focus: "답변 녹음 체크리스트",
       scene: "실전 연습에서 저장한 답변 녹음",
       routine: "질문 대응, 장면, 연결어, 마무리 점검",

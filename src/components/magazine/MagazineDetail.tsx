@@ -70,7 +70,7 @@ export function MagazineDetail() {
 
       <figure className="mx-auto mt-8 max-w-5xl overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900">
         <img alt={article.imageAlt} className="aspect-[16/8] w-full object-cover" src={article.image} />
-        <figcaption className="px-4 py-2.5 text-xs text-zinc-500 dark:text-zinc-400">OOM 매거진 편집용 이미지 · 출처와 라이선스는 이미지 출처 페이지에서 확인할 수 있습니다.</figcaption>
+        <figcaption className="px-4 py-2.5 text-xs text-zinc-500 dark:text-zinc-400">OOM 매거진 편집용 이미지 · 제작 방식과 사용 파일은 이미지 출처 페이지에서 확인할 수 있습니다.</figcaption>
       </figure>
 
       <div className="mx-auto mt-10 max-w-3xl space-y-10">

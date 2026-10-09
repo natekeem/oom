@@ -191,23 +191,28 @@ export const legalPages: Record<LegalPageId, LegalPage> = {
     id: "image-credits",
     eyebrow: "이미지 출처",
     title: "이미지 출처",
-    description: "오픽온미 매거진 표지에 사용한 외부 이미지의 출처·라이선스와 오픽온미 전용 생성 이미지의 제작 방식을 정리합니다.",
+    description: "오픽온미 매거진 전용 생성 이미지의 제작 방식과 사이트에 사용하는 표지 파일을 정리합니다.",
     updatedAt: "2026-10-09",
     sections: [
       {
         heading: "표기 기준",
         paragraphs: [
-          "오픽온미는 매거진 표지 이미지를 외부 URL로 직접 연결하지 않고 프로젝트 asset으로 저장해 사용합니다. 이 페이지는 CC BY, CC BY-SA처럼 저작자 표시가 필요한 이미지의 출처를 공개하기 위한 페이지입니다.",
-          "2026년 10월 9일 추가한 매거진 15편에는 각 주제에 맞춰 오픽온미 전용으로 생성한 이미지를 사용합니다. 생성 이미지는 실제 응시자, 수업 또는 시험 장면을 촬영한 사진이 아니며 외부 스톡 이미지의 출처나 저작자 표시를 대신하지 않습니다.",
+          "오픽온미는 아래 매거진 표지를 각 글의 학습 주제에 맞춰 전용으로 생성하고 프로젝트 asset으로 저장해 사용합니다. 외부 이미지 URL을 직접 연결하지 않습니다.",
+          "2026년 7월 12일 공개한 가이드 10편의 기존 Flickr·StockSnap 표지는 2026년 10월 9일 모두 전용 생성 이미지로 교체했습니다. 교체된 외부 이미지는 더 이상 사이트 빌드에 포함하거나 표시하지 않습니다.",
         ],
-        bullets: ["공통 처리: 3:2 비율의 로컬 asset으로 저장하고 웹 표시용 JPEG로 최적화", "외부 이미지의 저작권과 라이선스는 각 원 출처와 라이선스 조건을 따릅니다.", "CC0 이미지는 별도 저작자 표시 의무가 없지만 내부 출처 문서에 기록해 둡니다."],
+        bullets: ["공개 대상: 오픽온미 전용 생성 표지 25종", "저장 방식: 외부 핫링크 없이 로컬 asset으로 번들링", "표시 형식: 3:2 비율, 1536×1024 JPEG"],
       },
       {
-        heading: "오픽온미 전용 생성 표지 15종",
+        heading: "생성 및 사용 원칙",
         paragraphs: [
-          "아래 표지는 2026년 10월 9일 OpenAI 이미지 생성 도구로 각 글의 학습 주제에 맞게 제작했습니다. 이미지 안에는 실제 OPIc 화면, 공식 로고, 상표 또는 식별 가능한 실제 수험자 자료를 사용하지 않았습니다.",
-          "생성 원본은 프로젝트 외부에 보존하고, 사이트에는 1536×1024 JPEG 사본만 포함합니다. 외부 사진 저작자 표시는 필요하지 않지만 생성 이미지라는 사실과 사용 파일을 투명하게 공개합니다.",
+          "표지 25종은 2026년 10월 9일 OpenAI 이미지 생성 도구로 각 글의 학습 장면에 맞게 제작했습니다. 실제 응시자, 실제 수업 또는 공식 시험 화면을 촬영한 사진이 아닙니다.",
+          "이미지 안에는 OPIc 공식 로고, 제3자 상표, 식별 가능한 실제 수험자 자료를 사용하지 않았습니다. 생성 원본 PNG는 프로젝트 외부에 보존하고 사이트에는 웹 표시용 JPEG 사본만 포함합니다.",
         ],
+        bullets: ["의미를 전달하는 문구나 식별 가능한 브랜드 로고·워터마크가 없는 학습 장면 중심 구성", "글별 대표 과제와 직접 연결되는 서로 다른 장면", "생성 파일과 주제 매핑은 내부 출처 문서에도 함께 기록"],
+      },
+      {
+        heading: "콘텐츠 확장 생성 표지 15종",
+        paragraphs: ["2026년 10월 9일 추가한 매거진 15편에 사용하는 전용 표지입니다."],
         bullets: [
           "opic-self-assessment-selection-guide-cover.jpg",
           "opic-holistic-assessment-checklist-cover.jpg",
@@ -227,81 +232,21 @@ export const legalPages: Record<LegalPageId, LegalPage> = {
         ],
       },
       {
-        heading: "OPIc 서베이 선택, 답변 범위를 좁히는 기준",
+        heading: "2026년 7월 12일 게시물 교체 표지 10종",
         paragraphs: [
-          "이미지 파일: src/assets/magazine/opic-survey-choice-guide-cover.jpg",
-          "저작자: Generationbass.com",
-          "수정 여부: 원본 이미지를 로컬 asset으로 저장하고 Vite 빌드 과정에서 번들링했습니다.",
+          "아래 파일은 2026년 7월 12일 공개한 가이드의 기존 외부 사진을 대체합니다. 글의 핵심 학습 과제를 직접 보여 주도록 모두 새로 생성했습니다.",
         ],
-        links: [
-          { label: "출처 이미지: Pen, Diary and Glasses", href: "https://www.flickr.com/photos/46959536@N04/4827013488" },
-          { label: "라이선스: CC BY 2.0", href: "https://creativecommons.org/licenses/by/2.0/" },
-        ],
-      },
-      {
-        heading: "녹음으로 답변을 고치는 10분 루틴",
-        paragraphs: [
-          "이미지 파일: src/assets/magazine/opic-recording-review-routine-cover.jpg",
-          "저작자: TimWilson",
-          "수정 여부: 원본 이미지를 로컬 asset으로 저장하고 Vite 빌드 과정에서 번들링했습니다.",
-        ],
-        links: [
-          { label: "출처 이미지: The Podcave", href: "https://www.flickr.com/photos/70816538@N00/76894378" },
-          { label: "라이선스: CC BY 2.0", href: "https://creativecommons.org/licenses/by/2.0/" },
-        ],
-      },
-      {
-        heading: "여행 주제를 묘사·비교·문제해결로 확장하는 법",
-        paragraphs: [
-          "이미지 파일: src/assets/magazine/opic-travel-topic-script-guide-cover.jpg",
-          "저작자: brewbooks",
-          "수정 여부: 원본 이미지를 로컬 asset으로 저장하고 Vite 빌드 과정에서 번들링했습니다.",
-        ],
-        links: [
-          { label: "출처 이미지: Whats' in My Bag? Packed", href: "https://www.flickr.com/photos/93452909@N00/4256613426" },
-          { label: "라이선스: CC BY-SA 2.0", href: "https://creativecommons.org/licenses/by-sa/2.0/" },
-        ],
-      },
-      {
-        heading: "카페·집·실내활동 답변 소재 만드는 법",
-        paragraphs: [
-          "이미지 파일: src/assets/magazine/opic-indoor-topic-guide-cover.jpg",
-          "저작자: Rawpixel Ltd",
-          "수정 여부: 원본 이미지를 로컬 asset으로 저장하고 Vite 빌드 과정에서 번들링했습니다.",
-        ],
-        links: [
-          { label: "출처 이미지: Business meeting at a cafe", href: "https://www.flickr.com/photos/147875007@N03/45739277852" },
-          { label: "라이선스: CC BY 2.0", href: "https://creativecommons.org/licenses/by/2.0/" },
-        ],
-      },
-      {
-        heading: "IM에서 IH로 올릴 때 바꿔야 할 답변 습관",
-        paragraphs: [
-          "이미지 파일: src/assets/magazine/opic-im-to-ih-practice-plan-cover.jpg",
-          "저작자: Bohman",
-          "수정 여부: 원본 이미지를 로컬 asset으로 저장하고 Vite 빌드 과정에서 번들링했습니다.",
-        ],
-        links: [
-          { label: "출처 이미지: moleskine-1", href: "https://www.flickr.com/photos/79729522@N00/3216438752" },
-          { label: "라이선스: CC BY 2.0", href: "https://creativecommons.org/licenses/by/2.0/" },
-        ],
-      },
-      {
-        heading: "시험 일주일 전 OPIc 학습 플랜",
-        paragraphs: [
-          "이미지 파일: src/assets/magazine/opic-last-week-study-plan-cover.jpg",
-          "저작자: Infodad",
-          "수정 여부: 원본 이미지를 로컬 asset으로 저장하고 Vite 빌드 과정에서 번들링했습니다.",
-        ],
-        links: [
-          { label: "출처 이미지: Moleskine", href: "https://www.flickr.com/photos/39154012@N00/4072560067" },
-          { label: "라이선스: CC BY-SA 2.0", href: "https://creativecommons.org/licenses/by-sa/2.0/" },
-        ],
-      },
-      {
-        heading: "CC0 이미지",
-        paragraphs: [
-          "난이도 5-5 가이드, 롤플레이 6단계 템플릿, 집/거주지 주제 가이드, 답변 체크리스트 표지에는 CC0 이미지가 사용되었습니다. CC0 이미지는 저작자 표시 의무가 없지만, 투명성을 위해 docs/image-sources.md에 출처와 다운로드 정보를 기록했습니다.",
+        bullets: [
+          "opic-survey-choice-guide-cover.jpg",
+          "opic-55-difficulty-guide-cover.jpg",
+          "opic-roleplay-6-step-template-cover.jpg",
+          "opic-recording-review-routine-cover.jpg",
+          "opic-home-topic-script-guide-cover.jpg",
+          "opic-travel-topic-script-guide-cover.jpg",
+          "opic-indoor-topic-guide-cover.jpg",
+          "opic-im-to-ih-practice-plan-cover.jpg",
+          "opic-last-week-study-plan-cover.jpg",
+          "opic-answer-checklist-cover.jpg",
         ],
       },
     ],

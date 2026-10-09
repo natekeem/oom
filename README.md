@@ -88,7 +88,7 @@ TTS 콘텐츠를 추가하거나 수정했다면 [Content Authoring](docs/CONTEN
 | [Project Snapshot](docs/PROJECT_SNAPSHOT.md) | GENERATED | package scripts와 `src/` inventory |
 | `artifacts/tts-inventory.json` | GENERATED DEV INPUT | `tts:audit`이 만들고 generator/validator가 읽는 inventory |
 | `docs/AUDIT_*.md`, `docs/IMPLEMENTATION_AUDIT_RESOLUTION.md`, `docs/TRAINING_CONTENT_QA.md` | HISTORICAL | 특정 시점의 감사와 해결 기록; 현재 architecture source가 아님 |
-| [Magazine Image Sources](docs/image-sources.md) | PROVENANCE | 로컬 이미지 출처와 라이선스 |
+| [Magazine Image Sources](docs/image-sources.md) | PROVENANCE | 매거진 생성 이미지의 제작 방식과 파일 기록 |
 | [reference/](reference/README.md) | EXPERIMENTAL / REFERENCE | 제공받은 설계·실험 패키지; production source가 아님 |
 
 ## Deployment summary

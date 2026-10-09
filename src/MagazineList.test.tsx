@@ -9,6 +9,7 @@ describe("Magazine editorial listing", () => {
     expect(magazineArticles).toHaveLength(30);
     expect(new Set(magazineArticles.map((article) => article.id)).size).toBe(30);
     expect(new Set(magazineArticles.map((article) => article.title)).size).toBe(30);
+    expect(new Set(magazineArticles.map((article) => article.image)).size).toBe(30);
 
     const publishedDates = magazineArticles.map((article) => article.publishedAt);
     expect(publishedDates).toEqual([...publishedDates].sort((left, right) => right.localeCompare(left)));
@@ -17,6 +18,12 @@ describe("Magazine editorial listing", () => {
       expect(Date.parse(`${article.modifiedAt}T00:00:00+09:00`)).toBeLessThanOrEqual(Date.now());
       expect(article.sources.length).toBeGreaterThanOrEqual(2);
     }
+  });
+
+  it("keeps every 2026-07-12 guide on a dedicated cover", () => {
+    const julyGuides = magazineArticles.filter((article) => article.publishedAt === "2026-07-12");
+    expect(julyGuides).toHaveLength(10);
+    expect(new Set(julyGuides.map((article) => article.image)).size).toBe(10);
   });
 
   it("keeps the new editorial expansion substantive instead of summary-only", () => {

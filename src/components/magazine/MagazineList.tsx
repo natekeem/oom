@@ -38,7 +38,11 @@ export function MagazineList() {
                 </div>
                 <h2 className="mt-2 text-balance text-lg font-semibold tracking-tight text-zinc-950 dark:text-white">{article.title}</h2>
                 <p className="mt-1 line-clamp-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{article.summary}</p>
-                <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">작성·검수 {article.author}</p>
+                <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+                  {article.author === article.reviewer
+                    ? `작성 책임 ${article.author}`
+                    : `작성 ${article.author} · 별도 검수 ${article.reviewer}`}
+                </p>
                 <Link className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold text-indigo-600 transition group-hover:gap-2.5 hover:text-indigo-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:text-indigo-300 dark:hover:text-indigo-200 dark:focus-visible:ring-offset-zinc-900" to={`/magazine/${article.id}/`}>
                   기사 읽기 <ArrowRight aria-hidden="true" className="h-4 w-4" />
                 </Link>

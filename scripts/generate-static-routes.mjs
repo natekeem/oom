@@ -6,7 +6,6 @@ const projectRoot = process.cwd();
 const distDir = join(projectRoot, "dist");
 const distIndexPath = join(distDir, "index.html");
 const siteUrl = "https://opic-on-me.com";
-const lastmod = "2026-07-27";
 const require = createRequire(import.meta.url);
 
 const baseRoutes = [
@@ -308,7 +307,7 @@ const pageGuides = {
   "/exam-guide/day/": { purpose: "시험 당일 페이지는 규정 신분증, 입실 통제 시간, 오리엔테이션과 본시험 흐름, 현장 오류 대응을 한곳에서 점검하도록 만든 준비 목록입니다.", how: "응시자 유형에 맞는 신분증 원본을 준비하고 시험 시작보다 여유 있게 도착합니다. 입실 직전에는 공식 수험자 가이드에서 신분증 인정 범위와 입실 시간을 다시 확인합니다.", benefit: "학습 내용과 무관한 신분증·지각 문제로 응시하지 못하는 위험을 줄이고 시험실에서의 진행 순서를 미리 이해할 수 있습니다.", checklist: ["유효한 규정 신분증 원본을 준비했다", "시험 센터와 입실 시간을 확인했다", "헤드셋과 녹음 오류 시 감독관에게 알릴 것을 기억한다"], mistakes: ["신분증 사진이나 사본을 준비한다", "시험 시작 시간에 맞춰 도착하면 된다고 생각한다"], links: [["/exam-guide/faq/", "시험장 질문 확인"], ["/exam-guide/results/", "성적 확인 안내"], ["/training/", "실전 훈련으로 이동"]] },
   "/exam-guide/results/": { purpose: "성적·인증서 페이지는 성적 발표 시점, 확인 가능 기간, 인증서 출력과 제출, 세이빙 쿠폰과 UR 안내를 구분해 설명합니다.", how: "시험 후 공식 홈페이지에서 발표 상태를 확인하고 기관 제출 시 등급, Test ID와 응시일을 다시 대조합니다. 쿠폰이나 재시험 조건은 개인 상황에 따라 달라질 수 있으므로 공식 문의를 우선합니다.", benefit: "성적 확인과 기관 제출에 필요한 정보를 빠뜨리지 않고, 예외 상황을 일반적인 결과 보장으로 오해하지 않을 수 있습니다.", checklist: ["공식 성적 발표 화면을 확인했다", "인증서의 Test ID와 응시일을 확인했다", "제출 기관의 유효기간 기준을 확인했다"], mistakes: ["사이트 안내를 실제 성적 조회로 오해한다", "예외 쿠폰이 모든 미응시 상황에 적용된다고 생각한다"], links: [["/exam-guide/faq/", "성적 관련 질문"], ["/exam-guide/", "수험 가이드 전체 보기"], ["/contact/", "오류 제보"]] },
   "/exam-guide/faq/": { purpose: "자주 묻는 질문 페이지는 신청, 시험장, 신분증, 답변 방식, 성적 확인 과정에서 반복해서 혼동되는 내용을 짧은 문답으로 정리합니다.", how: "질문을 범주별로 확인하고 공식 기준 표시가 있는 답변은 연결된 공식 페이지에서 최신 내용을 다시 읽습니다. 개인 경험이나 학습 팁은 공식 운영 규정과 구분합니다.", benefit: "긴 가이드를 모두 다시 읽지 않고도 현재 막힌 지점을 찾고, 추가 확인이 필요한 공식 자료로 이동할 수 있습니다.", checklist: ["내 질문의 범주를 먼저 확인했다", "공식 기준과 학습 팁을 구분했다", "변동 가능한 정보는 최신 공식 페이지에서 확인했다"], mistakes: ["FAQ 한 문장만 보고 예외 조건을 생략한다", "커뮤니티 후기를 공식 정책보다 우선한다"], links: [["/exam-guide/overview/", "시험 구조"], ["/exam-guide/apply/", "신청 안내"], ["/exam-guide/day/", "시험 당일"], ["/exam-guide/results/", "성적 안내"]] },
-  "/magazine/": { purpose: "오픽 매거진은 오픽온미의 훈련 화면을 실제로 활용하는 방법을 설명하는 학습 노트 모음입니다. 각 글은 서로 다른 연습 문제를 다루고 작성자, 공개일, 수정일과 확인한 공식 자료를 표시합니다.", how: "현재 필요한 문제에 가까운 글 한 편을 고른 뒤 예시를 그대로 외우지 말고 자신의 장소, 행동, 이유와 변화로 바꿉니다. 글 마지막의 관련 훈련 화면에서 같은 구조를 직접 말하고 녹음합니다.", benefit: "검색어별 답안을 늘리는 대신 하나의 장면을 여러 질문에 옮기는 오픽온미의 학습 방식을 글과 도구 사이에서 반복할 수 있습니다.", checklist: ["글의 작성·검수자와 수정일을 확인했다", "예문에서 바꿀 요소를 정했다", "관련 훈련 화면에서 직접 녹음했다", "공식 자료와 OOM 학습 조언을 구분했다"], mistakes: ["예문을 정답으로 외운다", "비슷한 글을 여러 편 읽고도 직접 말하지 않는다"], links: [["/magazine/opic-survey-choice-guide/", "서베이 선택 가이드"], ["/magazine/opic-recording-review-routine/", "10분 녹음 복습"], ["/magazine/opic-roleplay-6-step-template/", "롤플레이 6단계"], ["/magazine/opic-answer-checklist/", "답변 체크리스트"], ["/editorial-policy/", "콘텐츠 편집 원칙"]] },
+  "/magazine/": { purpose: "오픽 매거진은 오픽온미의 훈련 화면을 실제로 활용하는 방법을 설명하는 학습 노트 모음입니다. 각 글은 서로 다른 연습 문제를 다루고 작성자, 공개일, 수정일과 확인한 공식 자료를 표시합니다.", how: "현재 필요한 문제에 가까운 글 한 편을 고른 뒤 예시를 그대로 외우지 말고 자신의 장소, 행동, 이유와 변화로 바꿉니다. 글 마지막의 관련 훈련 화면에서 같은 구조를 직접 말하고 녹음합니다.", benefit: "검색어별 답안을 늘리는 대신 하나의 장면을 여러 질문에 옮기는 오픽온미의 학습 방식을 글과 도구 사이에서 반복할 수 있습니다.", checklist: ["글의 작성·검토자와 수정일을 확인했다", "예문에서 바꿀 요소를 정했다", "관련 훈련 화면에서 직접 녹음했다", "공식 자료와 OOM 학습 조언을 구분했다"], mistakes: ["예문을 정답으로 외운다", "비슷한 글을 여러 편 읽고도 직접 말하지 않는다"], links: [["/magazine/opic-survey-choice-guide/", "서베이 선택 가이드"], ["/magazine/opic-recording-review-routine/", "10분 녹음 복습"], ["/magazine/opic-roleplay-6-step-template/", "롤플레이 기능 메뉴"], ["/magazine/opic-answer-checklist/", "답변 체크리스트"], ["/editorial-policy/", "콘텐츠 편집 원칙"]] },
   "/training/": { purpose: "OPIc 실전 훈련의 전체 학습 원리와 6단계를 한눈에 이해하는 허브입니다.", how: "STEP 1에서 목표 구간과 코스를 정하고, STEP 2에서 추천 서베이를 익힌 뒤, STEP 3~5에서 같은 이야기를 확장하고, STEP 6에서 직접 말하고 점검합니다.", benefit: "새 답변을 계속 추가하기보다 적은 수의 스토리를 여러 질문에 재사용하는 훈련 흐름을 유지합니다.", checklist: ["오늘 연습할 STEP 하나를 고른다", "새 주제보다 기존 장면을 먼저 변형한다", "녹음 복습은 한 가지 수정만 남긴다"], links: [["/training/setup/", "STEP 1 목표/코스 설정"], ["/training/survey/", "STEP 2 추천 서베이 익히기"], ["/practice/", "STEP 6 실전 연습"]] },
   "/training/setup/": { purpose: "목표 등급과 훈련 코스를 선택해 전체 훈련 콘텐츠를 맞춤 구성하는 STEP 1 화면입니다.", how: "1구간(AL), 2구간(IH/IM3), 3구간(IM2/IM1) 중 목표를 선택하고, Everyday & Getaway, Culture & City, Nature & Weekend 코스 중 하나를 결정한 뒤 학습을 시작합니다.", benefit: "내 목표 등급에 맞는 답변 밀도와 서베이·스토리 세트가 자동으로 배정되어 불필요한 암기를 줄입니다.", checklist: ["목표 구간을 선택했다", "학습 코스를 선택했다", "이 구성으로 학습 시작을 눌렀다"], links: [["/training/", "훈련 개요 허브"], ["/training/survey/", "STEP 2 추천 서베이 익히기로 이동"]] },
   "/training/survey/": { purpose: "추천 서베이 익히기 페이지는 실제 관심사를 모두 고르는 곳이 아니라 답변 범위를 좁히기 위한 연습용 선택표입니다.", how: "현재 코스의 추천 조합을 보고 직접 골라보며 시험 전에 익숙해집니다.", benefit: "선택한 Course의 핵심 스토리를 반복 활용할 수 있도록 서베이 조합을 기억해 질문을 받았을 때 장면을 더 빨리 떠올릴 수 있습니다.", checklist: ["추천 항목을 직접 선택해 보았다", "채점하기로 누락된 항목을 점검했다", "4개 핵심 스토리 그룹과의 연계를 확인했다"], mistakes: ["남들이 많이 고른다는 이유만으로 선택한다", "선택지를 자주 바꿔 스크립트 장면이 흔들린다"], links: [["/training/difficulty/", "난이도 설정으로 이동"], ["/magazine/opic-survey-choice-guide/", "서베이 선택 가이드"]] },
@@ -342,6 +341,19 @@ function loadTypeScriptExport(relativePath, exportName) {
   return module.exports[exportName];
 }
 
+const magazineArticles = loadTypeScriptExport("src/data/magazine.ts", "magazineArticles");
+const getRelatedMagazineArticles = loadTypeScriptExport("src/data/magazine.ts", "getRelatedMagazineArticles");
+const selectionDependentPaths = new Set(loadTypeScriptExport("src/lib/publicationPolicy.ts", "SELECTION_DEPENDENT_PATHS"));
+const isAdEligiblePath = loadTypeScriptExport("src/lib/publicationPolicy.ts", "isAdEligiblePath");
+
+pageGuides["/magazine/"] = {
+  ...pageGuides["/magazine/"],
+  links: [
+    ...magazineArticles.map((article) => [`/magazine/${article.id}/`, article.title]),
+    ["/editorial-policy/", "콘텐츠 편집 원칙"],
+  ],
+};
+
 function sectionsFromGuide(guide) {
   if (!guide) return undefined;
   const sections = [
@@ -356,13 +368,17 @@ function sectionsFromGuide(guide) {
   return sections;
 }
 
-const enrichedBaseRoutes = baseRoutes.map((route) => ({
-  ...route,
-  sections: route.sections ?? sectionsFromGuide(pageGuides[route.path]),
-  adExcluded: route.noindex || ["/pricing/", "/ai-settings/", "/practice/", "/practice/quick/", "/practice/mock/", "/magazine/"].includes(route.path),
-}));
+const enrichedBaseRoutes = baseRoutes.map((route) => {
+  const noindex = route.noindex || selectionDependentPaths.has(route.path);
+  return {
+    ...route,
+    noindex,
+    sections: route.sections ?? sectionsFromGuide(pageGuides[route.path]),
+    adExcluded: route.adExcluded || !isAdEligiblePath(route.path),
+  };
+});
 
-const magazineRoutes = loadTypeScriptExport("src/data/magazine.ts", "magazineArticles").map((article) => ({
+const magazineRoutes = magazineArticles.map((article) => ({
   path: "/magazine/" + article.id + "/",
   title: article.title + " | 오픽온미",
   description: article.summary,
@@ -371,6 +387,7 @@ const magazineRoutes = loadTypeScriptExport("src/data/magazine.ts", "magazineArt
   type: "article",
   article,
   lastmod: article.modifiedAt,
+  adExcluded: !isAdEligiblePath("/magazine/" + article.id + "/"),
 }));
 
 const legalRoutes = Object.values(loadTypeScriptExport("src/data/legalPages.ts", "legalPages")).map((page) => ({
@@ -452,8 +469,15 @@ function renderSections(sections = []) {
 
 function articleBody(route) {
   const article = route.article;
+  const reviewCredit = article.author === article.reviewer
+    ? `작성 책임: <span rel="author">${escapeHtml(article.author)}</span>`
+    : `작성: <span rel="author">${escapeHtml(article.author)}</span> · 별도 검수: ${escapeHtml(article.reviewer)}`;
   const sources = renderLinks(article.sources);
   const relatedLinks = renderLinks([
+    ...getRelatedMagazineArticles(article.id).map((relatedArticle) => ({
+      href: `/magazine/${relatedArticle.id}/`,
+      label: relatedArticle.title,
+    })),
     { href: "/training/", label: "훈련 화면에서 적용하기" },
     { href: "/magazine/", label: "전체 매거진 보기" },
     { href: "/editorial-policy/", label: "콘텐츠 편집 원칙" },
@@ -464,9 +488,9 @@ function articleBody(route) {
       <h1>${escapeHtml(article.title)}</h1>
       <p>${escapeHtml(article.subtitle)}</p>
       <p>${escapeHtml(article.summary)}</p>
-      <p>작성·검수: <span rel="author">${escapeHtml(article.author)}</span> · 최종 수정: <time datetime="${escapeHtml(article.modifiedAt)}">${escapeHtml(article.modifiedAt)}</time></p>
+      <p>${reviewCredit} · 최종 수정: <time datetime="${escapeHtml(article.modifiedAt)}">${escapeHtml(article.modifiedAt)}</time></p>
       <section>
-        <h2>작성·검수 메모</h2>
+        <h2>작성 근거</h2>
         <p>${escapeHtml(article.creationNote)}</p>
         <p><a href="/editorial-policy/">오픽온미 편집 원칙 확인</a></p>
       </section>
@@ -567,13 +591,9 @@ function generateSitemap() {
   const urls = routes
     .filter((route) => !route.noindex)
     .map((route) => {
-      const depth = route.path.split("/").filter(Boolean).length;
-      const priority = route.path === "/" ? "1.0" : depth <= 2 ? "0.8" : "0.6";
+      const lastmodEntry = route.lastmod ? `\n    <lastmod>${route.lastmod}</lastmod>` : "";
       return `  <url>
-    <loc>${canonicalFor(route.path)}</loc>
-    <lastmod>${route.lastmod ?? lastmod}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>${priority}</priority>
+    <loc>${canonicalFor(route.path)}</loc>${lastmodEntry}
   </url>`;
     })
     .join("\n");

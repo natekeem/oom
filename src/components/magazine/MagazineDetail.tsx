@@ -1,15 +1,14 @@
 import { useEffect } from "react";
 import { ArrowLeft, Clock3, ExternalLink, Lightbulb, UserRoundCheck } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
-import { magazineArticles } from "../../data/magazine";
+import { getRelatedMagazineArticles, magazineArticles } from "../../data/magazine";
 import { Badge } from "../ui/Badge";
 import { Card } from "../ui/Card";
 
 export function MagazineDetail() {
   const { id } = useParams<{ id: string }>();
   const article = magazineArticles.find((item) => item.id === id);
-  const articleIndex = article ? magazineArticles.findIndex((item) => item.id === article.id) : -1;
-  const relatedArticle = articleIndex >= 0 ? magazineArticles[(articleIndex + 1) % magazineArticles.length] : undefined;
+  const relatedArticles = article ? getRelatedMagazineArticles(article.id) : [];
 
   useEffect(() => {
     const scriptId = "oom-article-structured-data";
@@ -59,7 +58,12 @@ export function MagazineDetail() {
         <h1 className="mt-4 text-balance text-3xl font-bold tracking-tight text-zinc-950 sm:text-4xl lg:text-5xl dark:text-white">{article.title}</h1>
         <p className="mt-4 text-balance text-lg leading-8 text-zinc-600 dark:text-zinc-300">{article.subtitle}</p>
         <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-xs leading-5 text-zinc-500 dark:text-zinc-400">
-          <span className="inline-flex items-center gap-1.5"><UserRoundCheck aria-hidden="true" className="h-3.5 w-3.5" />작성·검수 {article.author}</span>
+          <span className="inline-flex items-center gap-1.5">
+            <UserRoundCheck aria-hidden="true" className="h-3.5 w-3.5" />
+            {article.author === article.reviewer
+              ? `작성 책임 ${article.author}`
+              : `작성 ${article.author} · 별도 검수 ${article.reviewer}`}
+          </span>
           <span>최종 수정 <time dateTime={article.modifiedAt}>{article.modifiedAt.replaceAll("-", ".")}</time></span>
         </div>
       </header>
@@ -75,7 +79,7 @@ export function MagazineDetail() {
         {article.disclaimer ? <aside className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900 dark:border-amber-900/70 dark:bg-amber-950/40 dark:text-amber-100"><span className="font-semibold">읽기 전 참고.</span> {article.disclaimer}</aside> : null}
 
         <aside className="rounded-xl border border-zinc-200 bg-zinc-50 p-5 text-sm leading-7 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
-          <p className="font-semibold text-zinc-950 dark:text-white">작성·검수 메모</p>
+          <p className="font-semibold text-zinc-950 dark:text-white">작성 근거</p>
           <p className="mt-2">{article.creationNote}</p>
           <Link className="mt-3 inline-flex font-semibold text-indigo-700 underline-offset-4 hover:underline dark:text-indigo-300" to="/editorial-policy/">오픽온미 편집 원칙 확인</Link>
         </aside>
@@ -128,9 +132,24 @@ export function MagazineDetail() {
           </ul>
         </section>
 
-        <div className="flex flex-wrap gap-3 border-t border-zinc-200 pt-7 dark:border-zinc-800">
+        <section className="border-t border-zinc-200 pt-7 dark:border-zinc-800" aria-labelledby="related-magazine-articles">
+          <h2 className="text-lg font-bold text-zinc-950 dark:text-white" id="related-magazine-articles">함께 읽을 글</h2>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            {relatedArticles.map((relatedArticle) => (
+              <Link
+                className="rounded-xl border border-zinc-200 bg-white p-4 text-sm font-semibold leading-6 text-zinc-800 transition hover:border-indigo-300 hover:text-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:border-indigo-700 dark:hover:text-indigo-300 dark:focus-visible:ring-offset-zinc-950"
+                key={relatedArticle.id}
+                to={`/magazine/${relatedArticle.id}/`}
+              >
+                <span className="block text-xs font-medium text-zinc-500 dark:text-zinc-400">{relatedArticle.category}</span>
+                <span className="mt-1 block">{relatedArticle.title}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <div className="flex flex-wrap gap-3">
           <Link className="inline-flex rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:focus-visible:ring-offset-zinc-950" to="/training/">훈련 화면에서 적용하기</Link>
-          {relatedArticle ? <Link className="inline-flex rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:focus-visible:ring-offset-zinc-950" to={`/magazine/${relatedArticle.id}/`}>다음 글: {relatedArticle.title}</Link> : null}
           <Link className="inline-flex rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:focus-visible:ring-offset-zinc-950" to="/magazine/">전체 매거진 보기</Link>
         </div>
       </div>

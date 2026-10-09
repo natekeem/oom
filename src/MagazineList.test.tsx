@@ -5,6 +5,33 @@ import { MagazineList } from "./components/magazine/MagazineList";
 import { magazineArticles } from "./data/magazine";
 
 describe("Magazine editorial listing", () => {
+  it("publishes 30 unique, truthfully dated articles in newest-first order", () => {
+    expect(magazineArticles).toHaveLength(30);
+    expect(new Set(magazineArticles.map((article) => article.id)).size).toBe(30);
+    expect(new Set(magazineArticles.map((article) => article.title)).size).toBe(30);
+
+    const publishedDates = magazineArticles.map((article) => article.publishedAt);
+    expect(publishedDates).toEqual([...publishedDates].sort((left, right) => right.localeCompare(left)));
+    for (const article of magazineArticles) {
+      expect(article.publishedAt <= article.modifiedAt).toBe(true);
+      expect(Date.parse(`${article.modifiedAt}T00:00:00+09:00`)).toBeLessThanOrEqual(Date.now());
+      expect(article.sources.length).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it("keeps the new editorial expansion substantive instead of summary-only", () => {
+    const newArticles = magazineArticles.filter((article) => article.publishedAt === "2026-10-09");
+    expect(newArticles).toHaveLength(15);
+
+    for (const article of newArticles) {
+      expect(article.sections.length).toBeGreaterThanOrEqual(4);
+      expect(article.sections.flatMap((section) => section.paragraphs).length).toBeGreaterThanOrEqual(8);
+      expect(article.sections.some((section) => section.example)).toBe(true);
+      expect(article.sections.some((section) => section.bullets)).toBe(true);
+      expect(article.creationNote.length).toBeGreaterThan(40);
+    }
+  });
+
   it("uses one full-width 3:2 landscape ratio with cover cropping", () => {
     const { container } = render(<MemoryRouter><MagazineList /></MemoryRouter>);
     const covers = Array.from(container.querySelectorAll<HTMLImageElement>("[data-magazine-cover]"));

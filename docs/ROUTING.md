@@ -6,6 +6,15 @@ OOM uses `BrowserRouter` and `Routes` for clean URL matching. `src/App.tsx` deri
 
 GitHub Pages cannot rewrite unknown paths to the SPA shell. `scripts/generate-static-routes.mjs` therefore runs after Vite build and creates real `dist/**/index.html` files for sitemap routes. These files keep the Vite bundle and include route-specific SEO metadata plus meaningful static body content. Magazine article routes are generated from `src/data/magazine.ts` so the built HTML includes the full article structure instead of a short summary-only placeholder.
 
+Search publication, advertising, and learner state are separate policies. `src/lib/publicationPolicy.ts` is the runtime owner for the shared rules:
+
+- STEP 2~6 routes that require an explicit `TrainingSelection` are generated with `noindex,follow` and omitted from `sitemap.xml`; they remain directly reachable public application routes.
+- `/training/` and `/training/setup/` remain stable, indexable entry pages, but do not load advertising.
+- the AdSense Auto ads script is limited to stable magazine detail and candidate-guide pages. Ownership is verified independently with `google-adsense-account` metadata and `ads.txt`.
+- no crawler or first-time visitor receives a silently persisted fallback Course or Level.
+
+The sitemap emits `lastmod` only when the source owns a truthful modification date. It does not synthesize one shared date, `changefreq`, or `priority` for every route.
+
 `ViewId` and the page-title map are defined in `src/components/layout/Sidebar.tsx`. Dynamic titles based on active Course context are resolved with `getViewTitle`. When adding a view, update all of the following together:
 
 1. `ViewId`

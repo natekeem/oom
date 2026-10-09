@@ -6,6 +6,7 @@ import { AppShell } from "./components/layout/AppShell";
 import { SIDEBAR_EXPANDED_STORAGE_KEY } from "./components/layout/ExpandableSidebar";
 import { Toast } from "./components/ui/Toast";
 import type { ViewId } from "./components/layout/Sidebar";
+import { isAdEligiblePath } from "./lib/publicationPolicy";
 import { viewIdForPath, viewPathForId } from "./lib/routes";
 import { TrainingSelectionProvider, useTrainingSelection } from "./training/TrainingSelectionContext";
 import { discoveredCourses } from "./training/courseCatalog";
@@ -134,11 +135,7 @@ export default function App() {
 
   const activeView = viewIdForPath(location.pathname);
   const isLanding = location.pathname === "/";
-  const isMagazineDetail = /^\/magazine\/[^/]+\/?$/.test(location.pathname);
-  const adExcluded =
-    ["pricing", "mypage", "auth-callback", "practice", "practice-quick", "practice-mock", "ai-settings", "about", "privacy", "contact", "terms", "editorial-policy", "image-credits", "admin-dashboard", "admin-users", "admin-learning", "admin-audit", "admin-ai"].includes(
-      activeView
-    ) || (activeView === "magazine-list" && !isMagazineDetail);
+  const adExcluded = !isAdEligiblePath(location.pathname);
 
   const onNavigate = useCallback((view: ViewId) => {
     if (navigationGuardRef.current && !navigationGuardRef.current()) return;

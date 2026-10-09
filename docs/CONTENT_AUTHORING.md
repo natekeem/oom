@@ -30,8 +30,19 @@ Other owners:
 - Course 1 Advanced regression reference: `src/data/scripts.ts`
 - voice preview phrases: `src/lib/tts/voiceConfig.ts`
 - shared self-introduction guide and warm-up: `src/data/training/selfIntroduction.ts`
+- public magazine articles and editorial metadata: `src/data/magazine.ts`
 
 Do not place Course-specific copy in general route components or SEO metadata.
+
+## Magazine Articles
+
+Magazine content is editorial content, not a second owner for Course runtime data. Each published article must provide a stable ID, descriptive title and summary, real publication and modification dates, an original example or worksheet, an explicit non-affiliation/non-guarantee boundary where relevant, and at least two directly relevant primary sources. Do not copy ACTFL tables, descriptors, or Can-Do examples; summarize the principle and author OOM examples independently.
+
+Use the actual public release date. Never backdate articles to manufacture an appearance of publishing history, and update `modifiedAt` only for a substantive revision. The generated Article JSON-LD and sitemap date must agree with the source record.
+
+The runtime list and generated static magazine index must link every published article with a real anchor. Detail pages expose at least three peer articles through `getRelatedMagazineArticles`, so a new article must remain useful within the existing topic graph rather than exist only as a sitemap URL. When adding or revising a batch, inspect repeated section headings, examples, source sets, and creation notes; article count is not a substitute for distinct user value.
+
+Magazine prose and examples are not part of the fixed spoken TTS inventory unless a separate training owner imports the exact text. Adding a magazine-only article therefore does not by itself require TTS generation.
 
 ## Add a New Course
 

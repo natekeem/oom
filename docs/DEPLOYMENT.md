@@ -33,6 +33,10 @@ source `index.html`
 → generated `dist/sitemap.xml`
 ```
 
+The generated sitemap contains only stable search landing pages. Selection-dependent STEP 2~6 application routes still receive direct route artifacts, canonical URLs, and `noindex,follow`, but they are not sitemap entries. A `<lastmod>` element is emitted only for a route with a source-owned, truthful date.
+
+All generated pages retain the `google-adsense-account` ownership meta tag. The Auto ads script itself is allowlisted to magazine detail and candidate-guide pages; training, roleplay, practice, pricing, account, navigation, and trust pages do not load it. `npm run verify:pages` validates this distinction across the complete generated route inventory.
+
 GitHub Pages cannot rewrite arbitrary SPA paths. The generated route files make direct requests such as `/training/`, `/about/`, and `/practice/` return real built HTML. Only unknown paths use `public/404.html` to return through the SPA fallback.
 
 Do not add redirect-only source placeholders under `public/<route>/index.html`. The post-build route generator is the source for canonical route artifacts, and `npm run verify:pages` rejects redirect-only HTML in `dist/`.

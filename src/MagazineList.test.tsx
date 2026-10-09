@@ -22,6 +22,7 @@ describe("Magazine editorial listing", () => {
   it("keeps the new editorial expansion substantive instead of summary-only", () => {
     const newArticles = magazineArticles.filter((article) => article.publishedAt === "2026-10-09");
     expect(newArticles).toHaveLength(15);
+    expect(new Set(newArticles.map((article) => article.image)).size).toBe(15);
 
     for (const article of newArticles) {
       expect(article.sections.length).toBeGreaterThanOrEqual(4);

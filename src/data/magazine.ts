@@ -3,14 +3,29 @@ const naturalConversation = new URL("../assets/magazine/natural-conversation.web
 const oomStudyWorkflow = new URL("../assets/magazine/oom-study-workflow.webp", import.meta.url).href;
 const opic55DifficultyGuideCover = new URL("../assets/magazine/opic-55-difficulty-guide-cover.jpg", import.meta.url).href;
 const opicAnswerChecklistCover = new URL("../assets/magazine/opic-answer-checklist-cover.jpg", import.meta.url).href;
+const opic40MinutePacingPlanCover = new URL("../assets/magazine/opic-40-minute-pacing-plan-cover.jpg", import.meta.url).href;
+const opicCampingWeatherProblemSolutionCover = new URL("../assets/magazine/opic-camping-weather-problem-solution-cover.jpg", import.meta.url).href;
 const opicHomeTopicScriptGuideCover = new URL("../assets/magazine/opic-home-topic-script-guide-cover.jpg", import.meta.url).href;
+const opicHolisticAssessmentChecklistCover = new URL("../assets/magazine/opic-holistic-assessment-checklist-cover.jpg", import.meta.url).href;
 const opicImToIhPracticePlanCover = new URL("../assets/magazine/opic-im-to-ih-practice-plan-cover.jpg", import.meta.url).href;
 const opicIndoorTopicGuideCover = new URL("../assets/magazine/opic-indoor-topic-guide-cover.jpg", import.meta.url).href;
 const opicLastWeekStudyPlanCover = new URL("../assets/magazine/opic-last-week-study-plan-cover.jpg", import.meta.url).href;
+const opicMovieMusicPerformanceStoryMapCover = new URL("../assets/magazine/opic-movie-music-performance-story-map-cover.jpg", import.meta.url).href;
+const opicMuseumPhotoReadingGuideCover = new URL("../assets/magazine/opic-museum-photo-reading-guide-cover.jpg", import.meta.url).href;
+const opicParkWalkingHikingAnswerMapCover = new URL("../assets/magazine/opic-park-walking-hiking-answer-map-cover.jpg", import.meta.url).href;
+const opicPronunciationComprehensibilityGuideCover = new URL("../assets/magazine/opic-pronunciation-comprehensibility-guide-cover.jpg", import.meta.url).href;
+const opicQuestionTypeDecoderCover = new URL("../assets/magazine/opic-question-type-decoder-cover.jpg", import.meta.url).href;
 const opicRecordingReviewRoutineCover = new URL("../assets/magazine/opic-recording-review-routine-cover.jpg", import.meta.url).href;
 const opicRoleplay6StepTemplateCover = new URL("../assets/magazine/opic-roleplay-6-step-template-cover.jpg", import.meta.url).href;
+const opicSecondDifficultyChoiceCover = new URL("../assets/magazine/opic-second-difficulty-choice-cover.jpg", import.meta.url).href;
+const opicSelfAssessmentSelectionGuideCover = new URL("../assets/magazine/opic-self-assessment-selection-guide-cover.jpg", import.meta.url).href;
+const opicShoppingExchangeRoleplayCover = new URL("../assets/magazine/opic-shopping-exchange-roleplay-cover.jpg", import.meta.url).href;
 const opicSurveyChoiceGuideCover = new URL("../assets/magazine/opic-survey-choice-guide-cover.jpg", import.meta.url).href;
+const opicTextTypeUpgradeDrillCover = new URL("../assets/magazine/opic-text-type-upgrade-drill-cover.jpg", import.meta.url).href;
+const opicTimeFrameStorylineGuideCover = new URL("../assets/magazine/opic-time-frame-storyline-guide-cover.jpg", import.meta.url).href;
 const opicTravelTopicScriptGuideCover = new URL("../assets/magazine/opic-travel-topic-script-guide-cover.jpg", import.meta.url).href;
+const opicTwoListensMemoryGridCover = new URL("../assets/magazine/opic-two-listens-memory-grid-cover.jpg", import.meta.url).href;
+const opicWordRecoveryCircumlocutionCover = new URL("../assets/magazine/opic-word-recovery-circumlocution-cover.jpg", import.meta.url).href;
 const selfIntroductionCover = new URL("../assets/magazine/self-introduction-cover.jpg", import.meta.url).href;
 const selfIntroductionWarmup = new URL("../assets/magazine/self-introduction-warmup.jpg", import.meta.url).href;
 const strategyStoryPractice = new URL("../assets/magazine/strategy-story-practice.webp", import.meta.url).href;
@@ -1149,8 +1164,8 @@ const assessmentMagazineArticles: MagazineArticleDraft[] = [
     modifiedAt: "2026-10-09",
     readMinutes: "7분 읽기",
     summary: "Self Assessment는 원하는 결과를 입력하는 칸이 아니라 개인에게 맞는 시험 구성을 정하는 단계입니다. 실제 녹음 세 개에서 반복해서 확인되는 능력을 기준으로 선택하는 방법을 정리했습니다.",
-    image: oomStudyWorkflow,
-    imageAlt: "Self Assessment 선택 근거를 세 개의 녹음으로 점검하는 학습 노트",
+    image: opicSelfAssessmentSelectionGuideCover,
+    imageAlt: "스마트폰의 세 녹음 파형을 비교하며 Self Assessment 근거를 점검하는 학습자",
     takeaway: "가장 높은 설명이 아니라, 도움 없이 여러 주제에서 반복해서 보여 줄 수 있는 설명을 고르는 것이 Self Assessment의 출발점입니다.",
     disclaimer: "한국 OPIc의 실제 선택 문구와 화면은 응시 시점의 공식 안내를 따르세요. 이 글의 판단표는 선택을 대신하거나 특정 등급을 보장하지 않는 OOM 연습 도구입니다.",
     creationNote: "한국 OPIc 진행프로세스와 ACTFL OPIc Familiarization Guide의 Self Assessment 설명을 대조하고, 선택 근거표와 예시는 OOM 학습용으로 구성했습니다.",
@@ -1215,8 +1230,8 @@ const assessmentMagazineArticles: MagazineArticleDraft[] = [
     modifiedAt: "2026-10-09",
     readMinutes: "8분 읽기",
     summary: "OPIc은 한 문법 항목만 떼어 채점하는 시험이 아니라 전체 답변에서 기능, 이해 가능성, 내용과 맥락, 발화 구조를 종합적으로 봅니다. 이 원칙을 등급 계산기가 아닌 다음 녹음용 체크리스트로 바꿉니다.",
-    image: gradeSpeakingPractice,
-    imageAlt: "OPIc 공식 평가 요소 네 가지를 녹음 복습표로 정리하는 모습",
+    image: opicHolisticAssessmentChecklistCover,
+    imageAlt: "헤드폰으로 녹음을 듣고 네 가지 색 카드 옆 노트를 점검하는 학습자",
     takeaway: "네 요소를 점수로 더하지 말고, 다음 답변에서 가장 먼저 고칠 한 요소를 찾는 관찰 렌즈로 사용하세요.",
     disclaimer: "이 체크리스트는 공식 채점표나 등급 환산표가 아닙니다. 실제 OPIc 결과는 공인 평가자가 전체 발화 표본을 종합적으로 평가해 결정합니다.",
     creationNote: "한국 OPIc 시험소개와 ACTFL OPIc 평가 요소 원문을 확인한 뒤, 네 요소를 점수화하지 않는 녹음 복습 질문으로 재구성했습니다.",
@@ -1280,8 +1295,8 @@ const assessmentMagazineArticles: MagazineArticleDraft[] = [
     modifiedAt: "2026-10-09",
     readMinutes: "8분 읽기",
     summary: "Text Type은 어려운 접속사를 몇 개 썼는지가 아니라 필요한 생각을 어느 정도 길이와 조직으로 표현하는지를 보는 관점입니다. 정보 나열을 원인과 결과가 있는 짧은 단락으로 바꾸는 드릴을 제공합니다.",
-    image: naturalConversation,
-    imageAlt: "짧은 영어 문장을 장면 중심 단락으로 연결해 보는 노트",
+    image: opicTextTypeUpgradeDrillCover,
+    imageAlt: "그림 카드를 한 줄로 연결하며 장면 중심 답변 순서를 구성하는 학습자",
     takeaway: "좋은 단락은 긴 문장 하나가 아니라, 같은 중심 장면을 향해 역할이 다른 문장들이 이어지는 구조입니다.",
     disclaimer: "예시 단계는 학습을 위한 비교이며 공식 등급 판정표가 아닙니다. 발화 길이 하나만으로 OPIc 등급을 예측할 수 없습니다.",
     creationNote: "ACTFL OPIc의 Text Type 설명과 2024 Speaking Guidelines를 확인하고, 동일 소재를 문장 기능별로 연결하는 OOM 드릴을 구성했습니다.",
@@ -1345,8 +1360,8 @@ const assessmentMagazineArticles: MagazineArticleDraft[] = [
     modifiedAt: "2026-10-09",
     readMinutes: "8분 읽기",
     summary: "여러 시간대를 다루는 답변은 동사 형태만 바꾸는 연습으로 안정되지 않습니다. NOW, THEN, TURN 세 칸에 사실을 배치해 듣는 사람이 변화의 방향을 따라오게 만드는 방법을 설명합니다.",
-    image: strategyStoryPractice,
-    imageAlt: "현재와 과거, 변화 지점을 세 칸 시간축으로 정리한 학습 노트",
+    image: opicTimeFrameStorylineGuideCover,
+    imageAlt: "같은 카페 장면의 시간대별 사진 세 장으로 답변 시간축을 연습하는 학습자",
     takeaway: "시제를 정확히 말하려 애쓰기 전에 언제의 이야기인지 먼저 고정하면, 동사와 연결 표현을 선택할 기준이 생깁니다.",
     disclaimer: "시간대 활용은 ACTFL 숙련도 설명의 한 요소이지만, 특정 시제를 사용했다고 특정 OPIc 등급이 보장되는 것은 아닙니다.",
     creationNote: "ACTFL 2024 Speaking Guidelines의 시간대·서술 기능 설명과 공식 OPIc 평가 요소를 검토하고, NOW–THEN–TURN 시간축을 설계했습니다.",
@@ -1410,8 +1425,8 @@ const assessmentMagazineArticles: MagazineArticleDraft[] = [
     modifiedAt: "2026-10-09",
     readMinutes: "8분 읽기",
     summary: "ACTFL은 Accuracy를 문법만이 아니라 어휘, 발음, 유창성 등이 전체 이해 가능성에 미치는 영향으로 설명합니다. 억양 흉내나 STT 인식률 대신 사람이 다시 들어야 했던 구간을 중심으로 복습합니다.",
-    image: opicRecordingReviewRoutineCover,
-    imageAlt: "녹음 파형을 들으며 이해하기 어려운 구간을 표시하는 학습자",
+    image: opicPronunciationComprehensibilityGuideCover,
+    imageAlt: "마이크 앞에서 말하고 헤드폰으로 녹음을 확인하는 학습자",
     takeaway: "발음 복습의 목표는 특정 억양을 복제하는 것이 아니라, 듣는 사람이 핵심 장소·행동·요청을 한 번에 이해하도록 만드는 것입니다.",
     disclaimer: "transcript와 STT 결과만으로 발음, 억양, 리듬 또는 음향적 유창성을 평가할 수 없습니다. 이 글은 공식 발음 채점이나 등급 예측을 제공하지 않습니다.",
     creationNote: "ACTFL OPIc의 Accuracy·comprehensibility 설명과 2024 Speaking Guidelines를 확인하고, 오디오를 직접 듣는 이해 가능성 점검표를 구성했습니다.",
@@ -1478,8 +1493,8 @@ const examPracticeMagazineArticles: MagazineArticleDraft[] = [
     modifiedAt: "2026-10-09",
     readMinutes: "8분 읽기",
     summary: "같은 공원이나 카페 주제도 질문 기능에 따라 답변의 출발점이 달라집니다. 핵심 동사, 시간 표현, 역할 상황을 단서로 다섯 질문 유형을 분류하고 첫 문장을 결정하는 방법을 제공합니다.",
-    image: strategyStoryPractice,
-    imageAlt: "OPIc 질문에서 기능과 시간 단서를 표시하는 분류 카드",
+    image: opicQuestionTypeDecoderCover,
+    imageAlt: "묘사와 루틴, 경험, 비교, 문제 해결을 나타내는 그림 카드를 분류하는 학습자",
     takeaway: "주제를 맞히는 것보다 질문이 시킨 일을 먼저 말하면, 준비한 장면을 유지하면서도 엉뚱한 답변을 피할 수 있습니다.",
     disclaimer: "실제 문항과 출제 조합은 공개되지 않으며 이 글의 분류는 공식 기출 목록이 아닙니다. OOM 연습 질문을 기능별로 해석하기 위한 도구입니다.",
     creationNote: "ACTFL OPIc의 Function·Content/Context 설명과 Familiarization Guide의 시험 구조를 확인하고, 다섯 기능 분류와 예시를 구성했습니다.",
@@ -1546,8 +1561,8 @@ const examPracticeMagazineArticles: MagazineArticleDraft[] = [
     modifiedAt: "2026-10-09",
     readMinutes: "8분 읽기",
     summary: "즉흥 말하기에서는 정확한 명사가 바로 떠오르지 않을 수 있습니다. 멈추거나 한국어를 삽입하기보다 상대가 대상을 추론할 수 있는 두 가지 단서를 주고 장면으로 돌아오는 방법을 연습합니다.",
-    image: naturalConversation,
-    imageAlt: "영어 단어 대신 용도와 모양으로 뜻을 우회 설명하는 대화 장면",
+    image: opicWordRecoveryCircumlocutionCover,
+    imageAlt: "카페에서 손짓으로 사물의 모양과 용도를 우회 설명하는 두 사람",
     takeaway: "회복의 목표는 잊은 단어를 끝내 찾아내는 것이 아니라, 핵심 메시지를 전달한 뒤 원래 이야기로 돌아오는 것입니다.",
     disclaimer: "우회 설명은 특정 등급을 보장하는 공식 공식이 아닙니다. 의미가 통하는 자연스러운 대체 표현을 만드는 OOM 발화 연습입니다.",
     creationNote: "ACTFL 2024 Speaking Guidelines의 전략적 지식·이해 가능성 설명과 공식 수험자 조언을 검토하고, 열 개의 우회 설명 훈련 방식을 구성했습니다.",
@@ -1612,8 +1627,8 @@ const examPracticeMagazineArticles: MagazineArticleDraft[] = [
     modifiedAt: "2026-10-09",
     readMinutes: "7분 읽기",
     summary: "한국 OPIc 공식 진행 안내에는 질문 청취 기회와 시험장 물품 제한이 명시되어 있습니다. 종이에 적는 전략이 아니라 머릿속 세 칸으로 질문 핵심을 유지하고 바로 첫 문장으로 전환하는 연습을 제공합니다.",
-    image: opicAnswerChecklistCover,
-    imageAlt: "두 번의 질문 청취에서 WHO TIME TASK 세 칸을 기억하는 훈련 카드",
+    image: opicTwoListensMemoryGridCover,
+    imageAlt: "두 개의 질문 파형을 들으며 빈 노트로 핵심을 기억하는 학습자",
     takeaway: "첫 번째 청취에서 모든 단어를 잡으려 하지 말고 TASK를 찾은 뒤, 두 번째 청취로 WHO와 TIME을 확인하세요.",
     disclaimer: "실제 청취 횟수와 시험장 반입·사용 제한은 응시일의 한국 OPIc 공식 안내를 최종 확인하세요. 이 글은 기억 훈련을 위한 비공식 학습 자료입니다.",
     creationNote: "한국 OPIc 공식 진행프로세스의 질문 청취 안내와 응시자 유의사항의 물품 제한을 확인하고, 메모 없이 적용하는 WHO–TIME–TASK 드릴을 구성했습니다.",
@@ -1677,8 +1692,8 @@ const examPracticeMagazineArticles: MagazineArticleDraft[] = [
     modifiedAt: "2026-10-09",
     readMinutes: "8분 읽기",
     summary: "한국 OPIc 공식 안내의 전체 시험시간, 문항 수, 문항별 답변시간 구조를 바탕으로 준비·발화·이동 시간을 직접 측정합니다. 공식 권장 시간이 아닌 세 가지 연습 프로필로 나에게 맞는 완주 기준을 찾습니다.",
-    image: opicLastWeekStudyPlanCover,
-    imageAlt: "40분 OPIc 모의 연습 시간을 세 구간으로 나누는 타이머 계획표",
+    image: opic40MinutePacingPlanCover,
+    imageAlt: "타이머와 여러 질문 카드를 세 구간으로 배치하는 학습자",
     takeaway: "한 답변을 완벽하게 만드는 것보다 전체 세션에서 말할 기회를 고르게 확보하는 페이스가 중요합니다.",
     disclaimer: "아래 시간은 OOM이 제안하는 모의 연습용 범위이며 OPIc 공식 권장 답변시간이나 채점 기준이 아닙니다. 실제 시험 운영 정보는 응시 전 공식 안내를 확인하세요.",
     creationNote: "한국 OPIc 공식 시험시간·문항 수·문항별 진행 정보를 확인하고, 답변 녹음 로그를 기반으로 세 가지 연습용 페이스 프로필을 설계했습니다.",
@@ -1742,8 +1757,8 @@ const examPracticeMagazineArticles: MagazineArticleDraft[] = [
     modifiedAt: "2026-10-09",
     readMinutes: "8분 읽기",
     summary: "한국 OPIc은 첫 세션 뒤 난이도를 다시 선택하는 과정을 안내합니다. 한 문제의 기분이나 원하는 결과가 아니라 이해, 기능 수행, 회복, 지속성 네 증거로 첫 세션을 돌아보는 판단표입니다.",
-    image: opic55DifficultyGuideCover,
-    imageAlt: "첫 세션 수행을 네 가지 증거로 점검해 난이도 재조정을 준비하는 노트",
+    image: opicSecondDifficultyChoiceCover,
+    imageAlt: "첫 세션 녹음 파형과 두 난이도 카드를 비교하는 학습자",
     takeaway: "재조정은 목표를 선언하는 버튼이 아니라, 방금 수행한 질문 범위가 현재 발화를 충분히 보여 주었는지 판단하는 순간입니다.",
     disclaimer: "난이도 선택과 실제 출제·평가의 세부 알고리즘은 공개되어 있지 않습니다. 이 글은 선택 결과나 OPIc 등급을 예측·보장하지 않습니다.",
     creationNote: "한국 OPIc 공식 진행프로세스와 수험자 가이드에서 1st Session·난이도 재조정·2nd Session 흐름을 확인하고, 수행 증거 중심 판단표를 구성했습니다.",
@@ -1810,8 +1825,8 @@ const topicPracticeMagazineArticles: MagazineArticleDraft[] = [
     modifiedAt: "2026-10-09",
     readMinutes: "8분 읽기",
     summary: "영화, 음악, 공연은 각각의 목록을 말하기보다 누구와 어디서 무엇을 보고 들었는지 한 장면으로 연결할 때 재사용하기 쉽습니다. OOM Culture & City 코스와 이어지는 장면 지도를 제공합니다.",
-    image: opicIndoorTopicGuideCover,
-    imageAlt: "영화 음악 공연 경험을 한 문화생활 장면으로 연결한 스토리 지도",
+    image: opicMovieMusicPerformanceStoryMapCover,
+    imageAlt: "영화관과 공연, 음악 사진을 하나의 문화 경험으로 고르는 장면",
     takeaway: "작품 정보를 많이 외우기보다 장소·동행·감각·개인적 의미가 있는 한 장면을 준비하면 여러 문화 질문에 자연스럽게 이동할 수 있습니다.",
     disclaimer: "이 글의 질문과 예시는 OOM이 직접 만든 연습 자료이며 실제 OPIc 문항이나 공식 출제 범위를 재현하지 않습니다.",
     creationNote: "ACTFL의 기능·내용·발화구조 기준과 즉흥 발화 준비 조언을 확인하고, OOM Culture & City 코스의 문화 장면을 활용해 예시와 워크시트를 구성했습니다.",
@@ -1875,8 +1890,8 @@ const topicPracticeMagazineArticles: MagazineArticleDraft[] = [
     modifiedAt: "2026-10-09",
     readMinutes: "8분 읽기",
     summary: "교환·환불 상황에서 문제 설명, 질문 또는 요청, 다음 행동의 CORE 세 기능을 먼저 세우고 정보 확인, 대안, 마무리의 OPTIONAL 기능을 상황에 맞게 더합니다. OOM의 flexible menu 계약을 실제 쇼핑 장면에 적용합니다.",
-    image: opicRoleplay6StepTemplateCover,
-    imageAlt: "영수증을 보며 교환 요청과 대안을 정리하는 쇼핑 롤플레이 노트",
+    image: opicShoppingExchangeRoleplayCover,
+    imageAlt: "매장에서 영수증과 상자를 들고 교환 대안을 묻는 고객",
     takeaway: "롤플레이의 완성도는 여섯 칸을 모두 채우는 데 있지 않고 상대가 문제와 원하는 조치, 다음 행동을 이해하도록 만드는 데 있습니다.",
     disclaimer: "이 예시는 OOM 연습용 상황이며 실제 OPIc 문항을 복원하지 않습니다. 정해진 문장 수나 표현이 특정 등급을 보장하지 않습니다.",
     creationNote: "ACTFL OPIc의 질문·요청 기능과 2024 Speaking Guidelines의 상호작용 과제를 검토하고, OOM CORE 3 + OPTIONAL 3 모델에 맞춰 쇼핑 예시를 구성했습니다.",
@@ -1942,8 +1957,8 @@ const topicPracticeMagazineArticles: MagazineArticleDraft[] = [
     modifiedAt: "2026-10-09",
     readMinutes: "8분 읽기",
     summary: "공원과 걷기 주제에서 매번 같은 산책 설명만 반복하지 않도록 ROUTINE과 EVENT를 두 열로 나눕니다. OOM Culture & City와 Nature & Weekend 코스에서 같은 장소를 충돌 없이 재사용할 수 있습니다.",
-    image: opicTravelTopicScriptGuideCover,
-    imageAlt: "공원 산책의 반복 루틴과 한 번의 하이킹 사건을 두 열로 정리한 지도",
+    image: opicParkWalkingHikingAnswerMapCover,
+    imageAlt: "도시 공원 산책로와 숲길 사이에서 다음 길을 고르는 학습자",
     takeaway: "장소는 하나여도 반복 행동과 한 번의 사건을 분리하면 루틴 질문과 과거 경험 질문에 각각 직접 답할 수 있습니다.",
     disclaimer: "이 글의 소재와 질문 변형은 OOM이 만든 연습 예시이며 실제 OPIc 문항 목록이나 출제 빈도를 의미하지 않습니다.",
     creationNote: "ACTFL Speaking Guidelines의 익숙한 주제·서술 기능과 공식 수험자 즉흥 발화 조언을 확인하고, OOM 두 코스의 야외 장면을 활용해 ROUTINE/EVENT 지도를 구성했습니다.",
@@ -2007,8 +2022,8 @@ const topicPracticeMagazineArticles: MagazineArticleDraft[] = [
     modifiedAt: "2026-10-09",
     readMinutes: "8분 읽기",
     summary: "캠핑과 해변, 드라이브 장면은 날씨 변화 하나만으로도 문제 해결 질문에 확장할 수 있습니다. 실제 경험 범위 안에서 두 대안을 비교하고 선택 결과까지 말하는 OOM Nature & Weekend 연습입니다.",
-    image: opicTravelTopicScriptGuideCover,
-    imageAlt: "비가 온 캠핑장에서 두 가지 대안을 비교하는 문제 해결 지도",
+    image: opicCampingWeatherProblemSolutionCover,
+    imageAlt: "비 오는 캠핑장에서 타프를 고정하고 장비를 옮기는 두 사람",
     takeaway: "좋은 문제 해결 이야기는 문제가 크기 때문이 아니라 선택 이유와 다음 행동이 분명해서 따라가기 쉽습니다.",
     disclaimer: "예시는 OOM이 직접 만든 연습 장면이며 실제 OPIc 기출을 재현하지 않습니다. 과장된 사건을 추가하거나 답안을 암기할 필요가 없습니다.",
     creationNote: "ACTFL 2024 Speaking Guidelines의 과거 서술·문제 처리 기능과 OPIc Function 기준을 검토하고, OOM Nature & Weekend 코스에 맞는 decision tree를 구성했습니다.",
@@ -2072,8 +2087,8 @@ const topicPracticeMagazineArticles: MagazineArticleDraft[] = [
     modifiedAt: "2026-10-09",
     readMinutes: "8분 읽기",
     summary: "문화 취향 질문은 작품 정보를 많이 아는지보다 내가 무엇을 보고 어떻게 반응했는지를 구체적으로 말할 때 선명해집니다. CLAIM–EVIDENCE–MEANING 세 칸으로 박물관, 사진, 독서 장면을 설계합니다.",
-    image: opicIndoorTopicGuideCover,
-    imageAlt: "박물관 사진과 독서 경험을 주장 근거 의미 세 칸으로 정리한 노트",
+    image: opicMuseumPhotoReadingGuideCover,
+    imageAlt: "박물관에서 사진집과 벽면 작품을 비교해 보는 관람객",
     takeaway: "취향은 형용사 목록이 아니라 관찰한 근거와 그 경험이 내 행동을 어떻게 바꾸었는지 말할 때 설득력을 얻습니다.",
     disclaimer: "작품명과 문화 정보는 답변 재료일 뿐이며 이 글의 예시는 공식 OPIc 문항이나 평가 답안을 의미하지 않습니다.",
     creationNote: "ACTFL OPIc의 의견·설명 기능과 공식 즉흥 발화 준비 조언을 검토하고, OOM Nature & Weekend 문화 장면을 활용한 CLAIM–EVIDENCE–MEANING 도구를 구성했습니다.",

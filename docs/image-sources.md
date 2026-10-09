@@ -3,6 +3,26 @@
 Downloaded for local use on 2026-07-11. Images are stored under `src/assets/magazine/` and are not hotlinked.
 Images with CC BY or CC BY-SA attribution requirements are also listed on the public `/image-credits/` page.
 
+## OOM-generated magazine covers (2026-10-09)
+
+The following 3:2 covers were generated specifically for OOM with the built-in OpenAI image generation tool. They are not stock photos, do not depict real OPIc test takers or official test screens, and contain no third-party logos or source imagery. The retained generation outputs are PNG files outside the project; the site uses 1536×1024 JPEG copies at quality 82.
+
+- `opic-self-assessment-selection-guide-cover.jpg` — learner comparing three voice recordings before self-assessment
+- `opic-holistic-assessment-checklist-cover.jpg` — learner reviewing a recording with four evidence cards
+- `opic-text-type-upgrade-drill-cover.jpg` — learner connecting separate scene cards into one sequence
+- `opic-time-frame-storyline-guide-cover.jpg` — learner arranging one location across multiple time frames
+- `opic-pronunciation-comprehensibility-guide-cover.jpg` — learner recording and listening for comprehensibility
+- `opic-question-type-decoder-cover.jpg` — learner sorting five visual question-function cards
+- `opic-word-recovery-circumlocution-cover.jpg` — cafe conversation using shape and purpose to recover a word
+- `opic-two-listens-memory-grid-cover.jpg` — learner listening twice while keeping the notebook blank
+- `opic-40-minute-pacing-plan-cover.jpg` — timer and grouped prompt cards for full-session pacing
+- `opic-second-difficulty-choice-cover.jpg` — learner comparing two difficulty choices after a recorded session
+- `opic-movie-music-performance-story-map-cover.jpg` — one cultural memory linked across film, music, and performance
+- `opic-shopping-exchange-roleplay-cover.jpg` — customer and clerk discussing an exchange and alternatives
+- `opic-park-walking-hiking-answer-map-cover.jpg` — everyday park path meeting a memorable hiking trail
+- `opic-camping-weather-problem-solution-cover.jpg` — campers securing shelter and moving gear in light rain
+- `opic-museum-photo-reading-guide-cover.jpg` — museum visitor comparing a photo book with gallery work
+
 ## opic-survey-choice-guide
 
 - Image file: `src/assets/magazine/opic-survey-choice-guide-cover.jpg`

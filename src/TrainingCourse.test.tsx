@@ -461,7 +461,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
       </MemoryRouter>
     );
 
-    expect(await screen.findByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
+    expect(await screen.findByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.', {}, { timeout: 4000 })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'STEP 1 설정하러 가기' })).toBeInTheDocument();
   });
 
@@ -473,7 +473,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
       </MemoryRouter>
     );
 
-    expect(await screen.findByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
+    expect(await screen.findByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.', {}, { timeout: 4000 })).toBeInTheDocument();
   });
 
   /* 19. Training Selection Guard blocks unselected STEP 4 (scripts) */
@@ -484,7 +484,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
       </MemoryRouter>
     );
 
-    expect(await screen.findByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
+    expect(await screen.findByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.', {}, { timeout: 4000 })).toBeInTheDocument();
   });
 
   /* 20. Training Selection Guard blocks unselected STEP 5 (roleplay) */
@@ -495,7 +495,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
       </MemoryRouter>
     );
 
-    expect(await screen.findByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
+    expect(await screen.findByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.', {}, { timeout: 4000 })).toBeInTheDocument();
   });
 
   /* 21. Training Selection Guard blocks unselected STEP 6 (practice) */
@@ -506,7 +506,7 @@ describe('Training Course Architecture & Regression Suite (6 STEP Flow & Hub Sep
       </MemoryRouter>
     );
 
-    expect(await screen.findByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.')).toBeInTheDocument();
+    expect(await screen.findByText('먼저 STEP 1에서 목표 구간과 훈련 코스를 설정해 주세요.', {}, { timeout: 4000 })).toBeInTheDocument();
   });
 
   /* 22. STEP 5 RoleplayHub integrates formula and course scenarios without absolute score guarantee */

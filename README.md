@@ -29,8 +29,8 @@ OOM은 OPIc 영어 말하기를 Course × Level 구조로 연습하는 브라우
 - 실전 모의고사의 Background Survey → Self Assessment → 시험 준비 → 자기소개 워밍업 → 1st Session → 난이도 재조정 → 2nd Session → 결과 요약 / 답변 복기 / 훈련 리포트
 - optional STT 전사, editable transcript, 사용자 설정 LLM 기반 KEEP / FIX / RETRY 피드백
 - 모든 LLM 기능의 자동 라우팅: 커스텀 endpoint가 있으면 브라우저에서 직접 호출하고, 없으면 로그인 기반 관리형 AI 사용 (서버 기본 OFF; [배포 절차](docs/MANAGED_AI.md))
-- Heart / Bella / Sarah / Sky 음성과 WaveSurfer waveform
-- 고정 콘텐츠는 WebM/Opus 정적 음원을 먼저 쓰는 static-first TTS
+- Heart / Bella / Sarah / Sky 4개 음성과 744개 정적 WebM/Opus 음원·피크 자산을 먼저 쓰는 static-first TTS, WaveSurfer waveform
+- 고정 콘텐츠는 빌드된 정적 음원을 우선 재생하고 누락 시에만 Kokoro 브라우저 합성 및 Web Speech로 폴백
 
 STEP 6의 빠른 연습은 자기소개 워밍업 없이 한 문제를 바로 듣고 녹음한 뒤 STT·AI로 복기합니다. 실전 모의고사는 현재 Course의 설문을 확인하고 Mock 전용 Self Assessment Level을 고른 뒤, 문항 수와 40분 타이머에 포함되지 않는 20~30초 자기소개 워밍업을 거쳐 두 Session을 이어갑니다. Survey와 Mock Level은 현재 세션 메모리에만 있으며 저장된 `TrainingSelection`을 바꾸지 않습니다. 시험 중에는 STT·AI·transcript·힌트를 호출하거나 표시하지 않습니다. 종료 후에는 결과 요약, 답변 복기, 훈련 리포트를 같은 세션에서 오가며 확인합니다. 훈련 리포트는 완료율, 목표 발화 시간 적합도, 녹음과 답변 시간, 선택적으로 수행한 STT·AI 복기 범위만 보여 주며 점수나 예상 OPIc 등급을 산출하지 않습니다. 리포트는 서버 전송 없이 standalone HTML로 내려받을 수 있습니다.
 
@@ -42,7 +42,7 @@ STEP 6의 빠른 연습은 자기소개 워밍업 없이 한 문제를 바로 �
 - Vitest + Testing Library
 - GitHub Pages 또는 일반 정적 호스팅
 
-프런트엔드는 GitHub Pages 정적 배포를 유지하며 Supabase를 외부 인증·프로필 서비스로 사용합니다. Google 로그인과 마이페이지를 통해 계정 정보, 목표 설정 상태, 최근 학습 기록을 관리할 수 있으며, 로그인 없이도 기존 훈련과 공개 콘텐츠를 자유롭게 이용할 수 있습니다. 설정은 [Supabase Setup](docs/SUPABASE_SETUP.md)을 참고하세요. LLM/STT endpoint·model은 브라우저 `localStorage`에 저장됩니다. 커스텀 LLM endpoint가 설정되어 있으면 모든 LLM 기능에서 자동으로 우선 사용하고, 없으면 관리형 AI를 사용합니다. API key는 기본적으로 탭 `sessionStorage`를 사용하며, 사용자가 “이 기기에 API Key 저장”을 선택하고 저장한 경우에만 영구 저장합니다. 기존 저장 키는 안내 후 사용자가 저장 정책을 선택할 때 전환됩니다. 소스에는 키를 포함하지 않습니다. STT 설정 key는 `oom-stt-settings`입니다.
+프런트엔드는 GitHub Pages 정적 배포를 유지하며 Supabase를 외부 인증·프로필 서비스로 사용합니다. Google 로그인과 마이페이지를 통해 계정 정보, 목표 설정 상태, 최근 학습 기록을 관리할 수 있으며, 로그인 없이도 기존 훈련과 공개 콘텐츠를 자유롭게 이용할 수 있습니다. 설정은 [Supabase Setup](docs/SUPABASE_SETUP.md)을 참고하세요. LLM/STT endpoint·model은 브라우저 `localStorage`에 저장됩니다. 커스텀 LLM endpoint가 설정되어 있으면 모든 LLM 기능에서 자동으로 우선 사용하고, 없으면 관리형 AI를 사용합니다(관리형 AI 서버는 기본 OFF 상태이며 관리자 배포 전에는 custom endpoint 또는 로그인 안내가 적용됩니다). API key는 기본적으로 탭 `sessionStorage`를 사용하며, 사용자가 “이 기기에 API Key 저장”을 선택하고 저장한 경우에만 `localStorage`에 평문으로 영구 저장됩니다(공용 PC 주의). 커스텀 STT 사용 시 녹음된 오디오는 브라우저에서 사용자가 설정한 외부 STT 엔드포인트로 직접 전송됩니다. 소스에는 키를 포함하지 않습니다. STT 설정 key는 `oom-stt-settings`입니다.
 
 ## Local development
 
@@ -69,7 +69,7 @@ npm run tts:audit
 npm run tts:validate -- --prune-dry-run
 ```
 
-`npm run build`는 TypeScript와 Vite 빌드 후 `scripts/generate-static-routes.mjs`로 canonical route별 `dist/**/index.html`을 생성합니다. `npm run verify:pages`는 crawler-visible 본문, canonical URL, bundle 참조, Pages 필수 파일을 검사합니다.
+`npm run build`는 TypeScript와 Vite 빌드 후 `scripts/generate-static-routes.mjs`로 canonical route별 `dist/**/index.html`(총 73개 사전 렌더링 정적 HTML, 48개 sitemap 색인 대상)을 생성합니다. `npm run verify:pages`는 crawler-visible 본문, canonical URL, bundle 참조, Pages 필수 파일을 검사합니다.
 
 TTS 콘텐츠를 추가하거나 수정했다면 [Content Authoring](docs/CONTENT_AUTHORING.md)의 순서를 따릅니다. `npm run tts:generate`는 FFmpeg/ffprobe가 있는 개발자 PC에서 실행하며, 출력된 dev URL에서 생성 시작을 눌러야 합니다. 이미 검증된 동일 hash/voice asset은 건너뛰고 누락분만 생성합니다. CI에서는 음원을 생성하지 않습니다.
 

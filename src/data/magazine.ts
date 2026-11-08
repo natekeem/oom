@@ -29,6 +29,8 @@ const opicWordRecoveryCircumlocutionCover = new URL("../assets/magazine/opic-wor
 const selfIntroductionCover = new URL("../assets/magazine/self-introduction-cover.jpg", import.meta.url).href;
 const selfIntroductionWarmup = new URL("../assets/magazine/self-introduction-warmup.jpg", import.meta.url).href;
 const strategyStoryPractice = new URL("../assets/magazine/strategy-story-practice.webp", import.meta.url).href;
+const opicActualExamScreenUiGuideCover = new URL("../assets/magazine/opic-actual-exam-screen-ui-guide-cover.jpg", import.meta.url).href;
+const opic2026Survey12ItemsStrategyCover = new URL("../assets/magazine/opic-2026-survey-12-items-strategy-cover.jpg", import.meta.url).href;
 
 export type MagazineExample = {
   title: string;
@@ -2147,6 +2149,138 @@ const topicPracticeMagazineArticles: MagazineArticleDraft[] = [
         note: {
           title: "형용사 없는 45초",
           text: "좋다·흥미롭다·편안하다는 평가어를 쓰지 않고 관찰, 머문 행동, 이후 변화만 45초 동안 말하세요. 마지막 재녹음에서 필요한 형용사 하나만 되돌립니다.",
+        },
+      },
+    ],
+  },
+  {
+    id: "opic-actual-exam-screen-ui-guide",
+    category: "시험 구조",
+    title: "오픽 실제 시험 화면 완벽 해부: EVA 인터페이스와 다시듣기·Next 버튼 조작법",
+    subtitle: "시험장 모니터 앞에서 당황하지 않도록 가상 인터뷰어 화면 구성, 2회 청취 타이밍, 마이크 녹음 게이지와 Next 이동 기준을 순서대로 정리했습니다.",
+    date: "2026.11.08",
+    publishedAt: "2026-11-08",
+    modifiedAt: "2026-11-08",
+    readMinutes: "8분 읽기",
+    summary: "오픽(OPIc) 실제 시험 화면에는 영어 질문 자막이 표시되지 않으며, 1차 청취 종료 후 제한된 시간 안에만 다시듣기 버튼을 누를 수 있습니다. 시험 당일 화면 구조와 4가지 핵심 조작 포인트를 실전 흐름대로 안내합니다.",
+    image: opicActualExamScreenUiGuideCover,
+    imageAlt: "OPIc 실제 시험 화면의 가상 인터뷰어 EVA 영역, 2회 청취 재생 바, 레코딩 게이지, Next 버튼 배치를 보여주는 인터페이스 도식",
+    takeaway: "시험 화면 조작의 핵심은 ‘자막 없이 귀로 첫 동사와 시제를 잡고, 2차 청취 여부를 3초 안에 결정하며, 문항별 시계에 쫓기지 않고 내 호흡대로 Next를 누르는 것’입니다.",
+    disclaimer: "본 가이드는 공개된 OPIc 수험자 가이드와 응시자 유의사항을 바탕으로 재구성한 학습용 도식이며, 응시 시점이나 센터 환경에 따라 세부 버튼 디자인은 달라질 수 있습니다.",
+    creationNote: "한국 OPIc 공식 수험자 가이드의 본시험 화면 구성 안내와 ACTFL OPIc Familiarization Guide의 문항 진행·청취 규칙을 교차 검증하여 수험자용 조작 체크리스트로 구성했습니다.",
+    sources: [magazineSources.opicCandidateGuide, magazineSources.actflFamiliarization, magazineSources.opicCandidateNotice],
+    sections: [
+      {
+        heading: "1. 오픽 실제 시험 화면에 ‘있는 것’과 ‘없는 것’",
+        paragraphs: [
+          "처음 오픽 시험장에 들어간 수험자가 가장 크게 당황하는 지점은 화면 어디에도 영어 질문 텍스트(자막)가 나오지 않는다는 사실입니다. 화면 중앙에는 가상 인터뷰어(EVA) 영상이 배치되고, 상단에는 문항 번호(1~15번), 하단에는 재생 버튼과 녹음 상태 표시줄, 우측 하단에 Next 버튼만 놓여 있습니다.",
+          "또한 토익스피킹처럼 문항마다 ‘45초 남음’ 같은 강제 카운트다운 타이머가 크게 줄어들지 않습니다. 전체 시험 시간 약 40분 안에서 수험자가 각 문항의 답변 길이를 자율적으로 조절하고 스스로 Next 버튼을 눌러 다음 문항으로 넘어가는 구조입니다.",
+        ],
+        bullets: [
+          "상단 진행 표시줄: 현재 문항 번호(보통 1~15번)와 진행 위치 표시",
+          "중앙 EVA 인터뷰어 영역: 영상과 음성으로만 질문 제시 (영어 자막 없음)",
+          "하단 청취 컨트롤: Play/Replay 버튼 및 청취 횟수(최대 2회) 표시",
+          "우측 하단 Next 버튼: 최소 녹음 시간이 지난 뒤 활성화되며 클릭 시 다음 문항 이동",
+        ],
+      },
+      {
+        heading: "2. 다시듣기(Replay) 버튼의 골든타임 5초",
+        paragraphs: [
+          "모든 질문은 최대 두 번까지 들을 수 있습니다. 첫 번째 질문 재생이 끝나면 짧은 대기 구간 동안 Play 버튼이 깜빡이며 다시듣기 기회가 열리는데, 이때 망설이다가 시간이 지나면 자동으로 녹음(Recording) 상태가 시작됩니다.",
+          "일단 Recording 표시등이 켜진 뒤에는 질문을 다시 들을 수 없습니다. 따라서 1차 청취를 할 때 질문 전체를 완벽히 해석하려 하기보다 ‘무엇을(명사)’, ‘어느 시제로(현재 루틴 vs 과거 경험 vs 롤플레이 요청)’ 묻는지만 먼저 잡아야 합니다. 만약 두 번째 문장이나 질문 의도를 놓쳤다면 1차 음성이 끝나자마자 지체 없이 Replay를 눌러 두 번째 청취 시간을 확보하세요.",
+        ],
+        example: {
+          title: "1차 청취 직후 3초 판단 기준",
+          description: "질문 음성이 끝나는 순간 아래 세 가지만 확인하고 바로 결정합니다.",
+          lines: [
+            "즉시 답변 시작: 주제(예: 자주 가는 공원)와 시제(현재 루틴)가 둘 다 선명하게 들렸을 때",
+            "즉시 Replay 클릭: 주제는 들렸지만 ‘처음 계기’인지 ‘최근 사건’인지 끝부분 의문사가 헷갈릴 때",
+            "2차 청취 중 할 일: 첫 문장 도입부(“I usually go to...”)를 머릿속에 고정해 녹음 시작과 동시에 첫마디가 나가게 준비",
+          ],
+        },
+      },
+      {
+        heading: "3. Recording 레벨 게이지와 Next 버튼 활성화 규칙",
+        paragraphs: [
+          "녹음이 시작되면 화면 하단에 Recording 표시와 함께 내 목소리 크기에 반응하는 마이크 레벨 게이지가 움직입니다. 간혹 긴장해서 마이크가 입에서 너무 멀어지거나 손으로 마이크를 건드리면 게이지가 거의 움직이지 않거나 붉은색으로 튈 수 있으므로, 첫 문장을 말할 때 게이지가 정상적으로 반응하는지 눈으로 한 번 확인하는 습관이 안전합니다.",
+          "답변을 시작하고 첫 몇 초 동안은 우측 하단 Next 버튼이 비활성화되어 있다가 일정 시간이 지나면 누를 수 있는 상태로 바뀝니다. 할 말이 일찍 끝났더라도 마지막 마무리 문장(“That’s why I really enjoy spending time there.”)을 또렷하게 말한 뒤 1초 정도 호흡을 두고 Next를 누르면 답변 끝부분이 잘리는 현상을 예방할 수 있습니다.",
+        ],
+      },
+      {
+        heading: "4. 7번 문항 이후 난이도 재조정(Self-Assessment Adjust) 화면",
+        paragraphs: [
+          "초반 세션(보통 7번 문항)이 끝나면 중간에 난이도를 유지할지, 한 단계 낮추거나 높일지 묻는 선택 화면이 한 번 더 나타납니다. 이 화면은 앞선 답변이 채점되어 감점되었다는 뜻이 아니라, 수험자가 체감한 질문 수준을 스스로 점검하라는 표준 절차입니다.",
+          "앞선 1~7번 질문의 의도를 대체로 알아들었고 준비한 장면으로 답변을 이어 갔다면 그대로 ‘비슷한 수준 유지’를 고르는 편이 흐름을 지키는 데 유리합니다. 오픽온미의 STEP 6 실전 모의고사 화면에서 이 전체 UI 흐름을 시험 전 최소 두 번 이상 그대로 연습해 두면 시험장 모니터가 훨씬 익숙하게 느껴집니다.",
+        ],
+        note: {
+          title: "시험장 화면 적응 3분 루틴",
+          text: "오픽온미의 ‘시험 화면 · 조작법(/exam-guide/screen/)’ 도식을 먼저 읽고, 곧바로 ‘STEP 6 실전 연습(/practice/)’에서 질문 2회 청취 → 녹음 게이지 확인 → Next 클릭 순서를 손에 익히세요.",
+        },
+      },
+    ],
+  },
+  {
+    id: "opic-2026-survey-12-items-strategy",
+    category: "시험 전략",
+    title: "2026 오픽 서베이 항목 추천: 돌발 질문을 줄이는 12개 선택 조합과 기출 연결법",
+    subtitle: "선택지를 무조건 줄이려다 낯선 주제를 고르는 대신, 4개의 핵심 스토리 블록으로 12개 이상의 서베이 항목을 안전하게 묶는 방법입니다.",
+    date: "2026.11.08",
+    publishedAt: "2026-11-08",
+    modifiedAt: "2026-11-08",
+    readMinutes: "8분 읽기",
+    summary: "오픽(OPIc) Background Survey는 최소 선택 개수를 채워야 다음 단계로 넘어갑니다. 12개 항목을 낱개로 외우지 않고 일상 산책, 실내 여가, 주거 공간, 카페·근교 외출의 4개 장면으로 통합하는 2026 서베이 전략을 정리했습니다.",
+    image: opic2026Survey12ItemsStrategyCover,
+    imageAlt: "오픽 서베이 12개 선택 항목을 일상 산책, 실내 미디어, 주거 공간, 카페 외출의 4개 공통 장면 블록으로 묶은 전략 매트릭스",
+    takeaway: "서베이 전략의 목적은 선택지 개수를 줄이는 것이 아니라, 어떤 항목이 출제되더라도 내가 미리 다듬어 둔 4개의 핵심 장면(Canonical Scene) 안에서 답이 나가도록 연결망을 만드는 것입니다.",
+    disclaimer: "설문 선택 항목의 최소 기준과 세부 명칭은 응시 시점의 공식 OPIc 화면을 따릅니다. 본 조합은 학습 부담을 줄이기 위한 OOM 권장 예시이며 특정 문제 출제를 보장하지 않습니다.",
+    creationNote: "한국 OPIc 공식 수험자 가이드의 Background Survey 진행 원칙과 오픽온미 STEP 2 추천 서베이 코스의 장면 재사용 설계를 결합해 12개 선택지 통합 가이드를 작성했습니다.",
+    sources: [magazineSources.opicCandidateGuide, magazineSources.opicOverview, magazineSources.actflTestTakerTips],
+    sections: [
+      {
+        heading: "1. 왜 ‘남들이 추천하는 12개’를 그대로 베끼면 막힐까",
+        paragraphs: [
+          "검색창에서 ‘2026 오픽 서베이 추천’을 찾아 체크리스트만 그대로 외워 가면, 시험장에서 막상 내가 거의 해 본 적 없는 항목이 나왔을 때 첫 문장부터 말문이 막힙니다. 예를 들어 콘서트에 가 본 기억이 가물가물한데 추천 목록에 있다는 이유로 고르면, 최근 경험이나 돌발 문제 해결 질문에서 디테일을 이어 가기 어렵습니다.",
+          "좋은 서베이 조합은 항목 이름이 무난한지가 아니라 ‘서로 다른 항목이 나와도 같은 공간과 인물, 감정 표현을 돌려쓸 수 있는가’로 결정됩니다. 선택지는 12개 이상을 체크하더라도 내 머릿속의 배경 세트는 4개만 유지하는 것이 오픽온미 서베이 설계의 출발점입니다.",
+        ],
+      },
+      {
+        heading: "2. 12개 선택지를 4개 핵심 장면으로 압축하는 매트릭스",
+        paragraphs: [
+          "직업·학생 여부와 거주 형태를 고른 뒤 여가·취미·운동·휴가 항목을 고를 때는 아래 네 가지 장면 블록을 기준으로 묶어 보세요. 각 블록 안에 속한 3~4개의 선택지는 질문 간판만 다를 뿐 실제로 묘사할 장소와 행동이 거의 겹칩니다.",
+          "이렇게 묶어 두면 ‘공원 가기’가 나오든 ‘걷기’가 나오든 똑같이 집 근처 나무 벤치와 주말 아침 공기를 묘사할 수 있고, ‘집에서 보내는 휴가’가 나오든 ‘TV 시청’이 나오든 거실 소파와 금요일 저녁 휴식 루틴으로 자연스럽게 연결할 수 있습니다.",
+        ],
+        bullets: [
+          "블록 1 (동네 산책·야외): 공원 가기 + 산책/걷기 + 조깅 + 운동 안 함 → ‘집 근처 공원 트랙과 주말 아침 환기’ 장면 하나로 통합",
+          "블록 2 (실내 미디어·문화): 영화 보기 + 음악 감상하기 + TV/영상 시청 → ‘금요일 밤 거실/극장에서 스트레스 푸는 루틴’으로 통합",
+          "블록 3 (집·주거 일상): 개인주택/아파트 거주 + 집에서 보내는 휴가 + 요리/집안일 → ‘가장 좋아하는 방과 작은 인테리어 변화’로 통합",
+          "블록 4 (카페·근교 이동): 카페/커피전문점 + 국내 여행 + 쇼핑하기 → ‘단골 동네 카페와 주말 반나절 나들이’로 통합",
+        ],
+      },
+      {
+        heading: "3. 기출 빈출 4대 질문 패턴에 한 장면 돌려쓰기",
+        paragraphs: [
+          "오픽에서 서베이 주제가 선택되면 보통 세 문제짜리 콤보(Combo) 세트로 이어집니다. 첫 문제는 장소나 평소 습관 묘사, 두 번째는 처음 시작하게 된 계기나 과거의 인상 깊은 경험, 세 번째는 최근에 겪은 작은 문제나 변화 질문이 자주 결합됩니다.",
+          "따라서 서베이 항목을 고를 때는 각 블록마다 ‘평소 루틴 1개 + 작은 사건 1개’만 짝지어 두면 충분합니다. 예를 들어 야외 블록에서는 ‘갑자기 비가 내려 근처 카페로 피신했던 일’, 실내 미디어 블록에서는 ‘모바일 예매 날짜를 착각해 시간을 바꿨던 일’처럼 소소하고 현실적인 사건 하나가 여러 항목의 과거 경험 질문을 동시에 방어해 줍니다.",
+        ],
+        example: {
+          title: "하나의 카페·산책 장면으로 3개 서베이 항목 방어하기",
+          description: "질문 주제가 바뀌어도 첫 문장의 키워드만 교체하고 중심 묘사는 그대로 유지합니다.",
+          lines: [
+            "공원 질문: Whenever I have free time on weekends, I walk to a small riverside park near my apartment.",
+            "걷기/운동 질문: Walking is my favorite way to stay healthy because I can clear my head along the riverside trail.",
+            "음악 감상 질문: I always put on my wireless earbuds and listen to acoustic playlists while walking along that park trail.",
+          ],
+        },
+      },
+      {
+        heading: "4. 서베이 선택과 돌발 질문의 관계를 오해하지 않기",
+        paragraphs: [
+          "많은 수험자가 서베이를 특정 조합으로 맞추면 돌발 질문(비서베이 주제)이 아예 사라진다고 기대하지만, 실제 오픽에서는 수험자의 적응력을 보기 위해 설문과 무관한 일상 주제(날씨, 교통, 건강, 재활용, 약속 변경 등)가 일부 섞여 나올 수 있습니다.",
+          "오히려 서베이 12개 항목을 4개 핵심 블록으로 단단히 고정해 두면, 돌발 질문이 나왔을 때도 당황하지 않고 이미 입에 익은 동네 공원, 거실, 단골 카페 장면으로 끌어당겨 답할 여유가 생깁니다. 지금 오픽온미 STEP 2 추천 서베이 화면에서 나만의 12개 조합을 직접 체크해 보고, 각 항목 옆에 연결할 핵심 장면 이름을 한 단어로 적어 보세요.",
+        ],
+        note: {
+          title: "서베이 확정 전 1분 점검",
+          text: "고른 12개 항목을 보며 ‘이 항목이 나오면 4개 핵심 장면 중 어디로 연결할지’ 3초 안에 대답할 수 있는지 확인하세요. 연결할 장면이 없는 외톨이 항목은 과감히 같은 블록의 다른 항목으로 교체합니다.",
         },
       },
     ],

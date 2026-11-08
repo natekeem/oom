@@ -5,11 +5,11 @@ import { MagazineList } from "./components/magazine/MagazineList";
 import { magazineArticles } from "./data/magazine";
 
 describe("Magazine editorial listing", () => {
-  it("publishes 30 unique, truthfully dated articles in newest-first order", () => {
-    expect(magazineArticles).toHaveLength(30);
-    expect(new Set(magazineArticles.map((article) => article.id)).size).toBe(30);
-    expect(new Set(magazineArticles.map((article) => article.title)).size).toBe(30);
-    expect(new Set(magazineArticles.map((article) => article.image)).size).toBe(30);
+  it("publishes 32 unique, truthfully dated articles in newest-first order", () => {
+    expect(magazineArticles).toHaveLength(32);
+    expect(new Set(magazineArticles.map((article) => article.id)).size).toBe(32);
+    expect(new Set(magazineArticles.map((article) => article.title)).size).toBe(32);
+    expect(new Set(magazineArticles.map((article) => article.image)).size).toBe(32);
 
     const publishedDates = magazineArticles.map((article) => article.publishedAt);
     expect(publishedDates).toEqual([...publishedDates].sort((left, right) => right.localeCompare(left)));

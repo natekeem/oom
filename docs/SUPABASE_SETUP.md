@@ -50,6 +50,15 @@ In repository Settings → Secrets and variables → Actions → **Variables**, 
 
 The existing Pages workflow passes these to the build. Re-run deployment after setting/changing them. Leave Pages source as GitHub Actions. No Google Client Secret, service-role key, Supabase secret key, or AI key belongs in this build. Missing values do not fail the build.
 
+## Free Tier Inactivity Prevention (Heartbeat / Keep-Alive)
+
+Supabase Free Tier projects pause automatically after approximately 7 days without inbound API traffic. To prevent unexpected pauses, `.github/workflows/supabase-keepalive.yml` is configured to ping the Supabase PostgREST API (`/rest/v1/`) twice daily (03:00, 15:00 UTC).
+
+- **Authentication:** Uses repository Variables or Secrets (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`) already configured for the Pages build.
+- **Manual Trigger:** Can be tested manually anytime via GitHub Actions → **Supabase Keep-Alive** → **Run workflow**.
+- **Alternative / Secondary Option:** Because GitHub automatically pauses scheduled workflows if a repository has no commit activity for 60 consecutive days, you can optionally configure a free external monitor (such as [cron-job.org](https://cron-job.org) or [UptimeRobot](https://uptimerobot.com)) to send a GET request every 3~5 days to `https://<PROJECT-REF>.supabase.co/rest/v1/` with header `apikey: <PUBLISHABLE_KEY>`.
+
+
 ## Database protection and release checks
 
 - `profiles` references Auth user IDs with cascade deletion. Signup always creates `plan = free` regardless of metadata. RLS permits only authenticated own-row SELECT/UPDATE. Table privileges are revoked first; UPDATE is granted only for `display_name` and `avatar_url`, so REST updates cannot change `plan`, ID, or timestamps. No browser INSERT/DELETE or anonymous SELECT grants exist.

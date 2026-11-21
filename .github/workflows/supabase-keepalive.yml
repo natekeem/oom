@@ -1,0 +1,42 @@
+name: Supabase Keep-Alive
+
+on:
+  schedule:
+    # 매일 UTC 03:00, 15:00 (한국 시간 12:00, 24:00) 12시간마다 실행하여 Supabase 무료 티어 pause 방지
+    - cron: '0 3,15 * * *'
+  workflow_dispatch: # GitHub Actions 탭에서 수동 실행 가능
+
+jobs:
+  heartbeat:
+    name: Supabase Heartbeat Ping
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        env:
+          SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
+          SUPABASE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY || secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ]; then
+            echo "❌ Error: VITE_SUPABASE_URL or VITE_SUPABASE_PUBLISHABLE_KEY is not set in repository Variables or Secrets."
+            echo "Please ensure they are configured in Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
+          # URL 끝의 슬래시 제거
+          CLEAN_URL="${SUPABASE_URL%/}"
+
+          echo "Pinging Supabase REST API at $CLEAN_URL/rest/v1/ ..."
+
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY" \
+            "$CLEAN_URL/rest/v1/")
+
+          echo "Response HTTP Status: $HTTP_STATUS"
+
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 400 ]; then
+            echo "✅ Supabase heartbeat successful! Database remains active."
+          else
+            echo "❌ Heartbeat received unexpected HTTP status: $HTTP_STATUS"
+            exit 1
+          fi

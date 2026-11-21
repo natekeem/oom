@@ -31,6 +31,9 @@ const selfIntroductionWarmup = new URL("../assets/magazine/self-introduction-war
 const strategyStoryPractice = new URL("../assets/magazine/strategy-story-practice.webp", import.meta.url).href;
 const opicActualExamScreenUiGuideCover = new URL("../assets/magazine/opic-actual-exam-screen-ui-guide-cover.jpg", import.meta.url).href;
 const opic2026Survey12ItemsStrategyCover = new URL("../assets/magazine/opic-2026-survey-12-items-strategy-cover.jpg", import.meta.url).href;
+const opicSmartGlassesExamSecurityRulesCover = new URL("../assets/magazine/opic-smart-glasses-exam-security-rules-cover.jpg", import.meta.url).href;
+const actflOpicAiScoringSystemAnalysisCover = new URL("../assets/magazine/actfl-opic-ai-scoring-system-analysis-cover.jpg", import.meta.url).href;
+const generativeAiChatgptGeminiOpicStudyGuideCover = new URL("../assets/magazine/generative-ai-chatgpt-gemini-opic-study-guide-cover.jpg", import.meta.url).href;
 
 export type MagazineExample = {
   title: string;
@@ -2287,10 +2290,225 @@ const topicPracticeMagazineArticles: MagazineArticleDraft[] = [
   },
 ];
 
+const aiInnovationMagazineArticles: MagazineArticleDraft[] = [
+  {
+    id: "opic-smart-glasses-exam-security-rules",
+    category: "시험 전략",
+    title: "스마트 글래스(AI 안경) 착용과 2026 오픽 시험장 보안 규정: 안경 검사 절차와 수험생 주의사항",
+    subtitle: "카메라·마이크 탑재 AI 안경 대중화로 엄격해진 시험장 전자기기 점검, 시력 교정용 일반 안경과의 구분 기준과 시험 당일 리스크를 없애는 체크리스트입니다.",
+    date: "2026.11.21",
+    publishedAt: "2026-11-21",
+    modifiedAt: "2026-11-21",
+    readMinutes: "8분 읽기",
+    summary: "최근 카메라와 AI 마이크가 장착된 스마트 글래스가 보급되면서 OPIc 및 각종 공인어학시험장의 안경 및 웨어러블 검사가 크게 강화되었습니다. 일반 시력 교정 안경 착용 시 확인 절차, 스마트 안경 반입 금지 기준, 시험 중 불필요한 오해를 피하는 실전 주의사항을 정리했습니다.",
+    image: opicSmartGlassesExamSecurityRulesCover,
+    imageAlt: "오픽 시험장 입실 전 감독관이 시력 교정용 일반 안경의 힌지와 테를 확인하고 웨어러블 전자기기 반입 금지 규정을 안내하는 체크인 데스크 장면",
+    takeaway: "안경을 착용하는 수험자는 시험장에 테가 지나치게 두껍지 않은 여분의 일반 안경을 지참하고, 모든 전자기기를 가방에 보관하여 시험 전 불필요한 실랑이와 멘탈 흔들림을 원천 차단해야 합니다.",
+    disclaimer: "본 가이드는 공인 어학시험 주관사(ACTFL 및 한국 OPIc)의 전자기기 부정행위 방지 지침 및 시험장 유의사항을 종합한 안내이며, 구체적인 현장 점검 방식은 고사장 감독관의 재량과 지침에 따릅니다.",
+    creationNote: "최근 웨어러블 디바이스 및 스마트 글래스 관련 수험자 문의와 공인 어학시험장의 강화된 부정행위 방지 절차를 확인하여, 안경 착용 수험생이 안심하고 시험에 집중할 수 있는 4단계 가이드로 구성했습니다.",
+    sources: [magazineSources.opicCandidateNotice, magazineSources.opicCandidateGuide, magazineSources.actflFamiliarization],
+    sections: [
+      {
+        heading: "1. 스마트 글래스 대중화와 시험장 보안 강화 배경",
+        paragraphs: [
+          "최근 카메라, 초소형 마이크, 골전도 스피커 및 생성형 AI 통신 기능이 내장된 스마트 글래스(Smart Glasses)가 일상적으로 보급되면서, 전 세계 공인 어학시험 주관사들의 부정행위 방지 가이드라인도 빠르게 개정되고 있습니다.",
+          "OPIc 시험은 컴퓨터 모니터를 보며 구두로 답변을 녹음하는 방식이기 때문에, 시각 정보 캡처나 실시간 음성 프롬프트를 수신할 수 있는 모든 웨어러블 기기의 시험실 반입이 엄격히 금지됩니다. 이에 따라 고사장 입실 전 본인 확인 단계에서 안경 테와 힌지 부분을 직접 확인하는 절차가 표준화되었습니다.",
+        ],
+        bullets: [
+          "반입 금지 대상: 카메라, 마이크, 블루투스 모듈, 배터리가 탑재된 모든 형태의 스마트 안경 및 오디오 프레임",
+          "허용 대상: 전자 회로가 전혀 없는 순수 시력 교정용 일반 도수 안경 및 무도수 보호 안경",
+          "검사 범위: 안경 림(Rim) 상단의 렌즈 구멍 여부, 템플(안경다리)의 비정상적인 두께, 힌지 내부 충전 접점 유무",
+        ],
+      },
+      {
+        heading: "2. 고사장 입실 시 안경 점검 절차와 수험생 대응법",
+        paragraphs: [
+          "고사장에 도착하여 신분증 확인을 진행할 때, 감독관이 안경을 벗어서 앞뒷면을 보여 달라고 요청할 수 있습니다. 이는 특정 수험생을 의심하는 것이 아니라 모든 안경 착용 수험생을 대상으로 진행되는 표준 보안 프로토콜입니다.",
+          "만약 착용 중인 안경의 다리(템플) 부분이 디자인상 다소 두껍거나 뿔테가 묵직한 경우, 추가적인 육안 검사나 금속 탐지기 스캔이 진행될 수 있습니다. 이때 당황하거나 불쾌해하지 않고 감독관의 안내에 침착하게 응하는 것이 시험 전 집중력을 유지하는 비결입니다.",
+        ],
+        example: {
+          title: "시험 당일 안경 선택 및 점검 체크리스트",
+          description: "시험장 가기 전 가방 속 소지품과 안경 상태를 미리 점검합니다.",
+          lines: [
+            "추천 안경: 테 내부가 훤히 보이는 얇은 메탈 프레임이나 투명 아세테이트 안경 착용",
+            "주의 안경: 템플 안쪽에 블루투스 스피커나 터치 센서가 들어갈 법한 볼륨감 있는 두꺼운 뿔테 지양",
+            "예비 대비: 혹시 모를 현장 오해나 분실에 대비해 도수가 맞는 단순한 보조 안경을 가방에 지참",
+          ],
+        },
+      },
+      {
+        heading: "3. 시험 중 불필요한 오해를 피하는 행동 요령",
+        paragraphs: [
+          "시험 중 헤드폰을 착용한 상태에서 안경테를 만지작거리거나, 관자놀이 부근을 지속적으로 톡톡 치는 행동, 안경다리를 귀 뒤로 반복해서 고쳐 쓰는 동작은 시험실 감독관이나 사후 모니터링 과정에서 불필요한 주의 대상이 될 수 있습니다.",
+          "오픽 시험은 각 좌석마다 파티션이 쳐져 있지만 고사장 전체를 조망하는 CCTV와 순회 감독관이 상시 감시하고 있습니다. 답변 중 긴장되어 손을 얼굴로 가져가는 습관이 있다면, 양손을 키보드 앞 책상 위에 편안하게 내려놓고 발화에만 집중하는 습관을 들이는 것이 안전합니다.",
+        ],
+        bullets: [
+          "귀 주변 및 관자놀이 만지기 금지: 골전도 리시버나 터치패드 조작으로 오인될 수 있는 손동작 자제",
+          "안경 벗었다 쓰기 반복 금지: 렌즈를 카메라 앵글처럼 모니터 쪽으로 기울이는 부자연스러운 행동 방지",
+          "헤드폰 밀착 착용: 귀 전체를 덮는 제공 헤드셋을 정위치에 착용하여 이어폰 미착용 상태 증명",
+        ],
+      },
+      {
+        heading: "4. 시험 전 전자기기 보관 1분 루틴",
+        paragraphs: [
+          "스마트 글래스뿐만 아니라 스마트워치, 피트니스 밴드, 무선 이어폰(에어팟·버즈), 스마트 링 등 몸에 착용하는 모든 전자기기는 고사장 입실 전 전원을 완전히 끄고 가방 안에 넣어야 합니다. 시험 도중 주머니에서 알람이 울리거나 전자기기가 발견되면 고의성 여부와 상관없이 즉시 퇴실 및 당회 시험 무효 처리가 됩니다.",
+          "오픽온미의 수험 가이드를 숙지하고, 시험 당일에는 오직 신분증과 본인의 말하기 호흡만 챙겨 시험실에 들어가세요. 기기에 대한 사소한 걱정을 지워낼 때 비로소 40분 동안 온전히 내 스토리라인에 몰입할 수 있습니다.",
+        ],
+        note: {
+          title: "시험 시작 10분 전 최종 확인",
+          text: "스마트폰 전원 종료 확인 → 스마트워치 해제 후 가방 보관 → 안경에 불필요한 액세서리(안경줄, 카메라 클립) 제거 → 화장실 다녀온 후 차분히 첫 문제 도입부 암송.",
+        },
+      },
+    ],
+  },
+  {
+    id: "actfl-opic-ai-scoring-system-analysis",
+    category: "평가 기준",
+    title: "ACTFL 오픽의 AI 자동 채점 도입과 평가 메커니즘: 인간 평가관(Rater)과 AI의 교차 검증 원리",
+    subtitle: "오픽은 정말 AI가 혼자 채점할까? 공인 Rater와 자동 음성 평가 엔진(AI)의 역할 분담, 발화 유창성 측정 지표와 '키워드 나열'이 통하지 않는 이유입니다.",
+    date: "2026.11.21",
+    publishedAt: "2026-11-21",
+    modifiedAt: "2026-11-21",
+    readMinutes: "8분 읽기",
+    summary: "ACTFL OPIc의 채점은 100% 인공지능 단독 평가나 100% 인간 평가가 아닌, 훈련된 공인 평가관(ACTFL Certified Rater)과 음향·언어 자동 분석 시스템의 정교한 교차 검증으로 이루어집니다. AI 채점 도입의 실체와 수험자가 지켜야 할 발화 리듬을 분석합니다.",
+    image: actflOpicAiScoringSystemAnalysisCover,
+    imageAlt: "헤드폰을 쓴 공인 언어 평가관이 노트북 화면에서 발화 음성 파형과 음향 지속 시간, 텍스트 일관성 지표를 교차 검증하는 전문 평가 환경",
+    takeaway: "AI 채점 시대에도 평가의 핵심은 ‘화려한 단어 수’가 아니라 ‘주어진 시간 동안 멈추지 않고 문장과 문장을 인과관계로 엮어내는 실제 사람과의 대화 호흡(Discourse Flow)’입니다.",
+    disclaimer: "본 분석은 ACTFL 공개 평가 가이드라인, OPIc 백서 및 공인 Rater 채점 기준에 기반하여 작성되었으며, ACTFL의 세부 특허 알고리즘이나 독점 평가 엔진의 내부 수치는 비공개 사항입니다.",
+    creationNote: "ACTFL Proficiency Guidelines 2024 및 OPIc Familiarization Guide에 공개된 말하기 능력 평가 준거(음향, 문법, 담화)를 바탕으로, 시중에 잘못 퍼진 '키워드 위주 AI 채점설'을 바로잡고 진정한 즉흥 발화 훈련법을 도출했습니다.",
+    sources: [magazineSources.actflOpic, magazineSources.actflGuidelines, magazineSources.actflTestTakerTips],
+    sections: [
+      {
+        heading: "1. ‘AI가 혼자 채점한다’는 소문의 실체",
+        paragraphs: [
+          "수험생 커뮤니티에서는 '오픽도 이제 AI가 채점하니 특정 고급 키워드(sophisticated vocabulary)만 많이 말하면 AL이 나온다'거나 '음성 인식률만 높이면 된다'는 식의 루머가 흔히 돕니다. 하지만 ACTFL 공인 OPIc의 실제 채점 체계는 그렇게 단순하지 않습니다.",
+          "ACTFL OPIc은 엄격한 자격 훈련을 거친 복수의 인간 공인 평가관(ACTFL Certified Raters)이 주 평가를 담당하며, 첨단 자동 음성 평가(Automated Speech Scoring) 엔진은 발화 유효성 검증, 발화 속도와 멈춤(Pause) 분석, 암기형 스크립트 이상치 탐지 및 1차·2차 평가관 간의 점수 불일치를 보정하는 하이브리드 교차 검증 시스템으로 운영됩니다.",
+        ],
+        bullets: [
+          "공인 Rater의 역할: 문맥 이해, 즉흥적 질문 대처 능력, 감정 전달, 롤플레이 문제 해결의 적절성 평가",
+          "자동화 엔진의 역할: 음향 유창성(Acoustic Fluency), 발화 지속 시간 대비 무음 구간 비율 측정, 비정상적 암기 패턴 감지",
+          "불일치 해결 절차: 평가관과 자동 시스템의 판정 차이가 크거나 Rater 간 등급이 갈릴 경우 상급 마스터 평가관의 재검토 진행",
+        ],
+      },
+      {
+        heading: "2. 시스템이 공통으로 측정하는 3대 음향·담화 지표",
+        paragraphs: [
+          "평가관의 귀와 자동 음성 분석 엔진이 공통적으로 가장 예민하게 포착하는 것은 '수험자가 말을 할 때 어떻게 쉬어 가는가(Pausing Behavior)'입니다. 원어민이나 AL 수준의 능숙한 화자는 의미 단위(Chunk) 사이에서 자연스럽게 숨을 고르지만, 스크립트를 달달 외운 화자는 쉼표가 없는 곳에서 뚝 끊기거나 엉뚱한 전치사 뒤에서 길게 멈춥니다.",
+          "또한 발화 속도(Words Per Minute) 자체보다 유의미한 발화 시간(Speech Time)과 침묵 시간(Silence Time)의 비율이 중요합니다. 침묵이 5초 이상 이어지면 유창성 감점 요인이 되므로, 적절한 담화 표지(Filler Words)로 시간을 벌면서 문장을 이어 가는 훈련이 필수적입니다.",
+        ],
+        example: {
+          title: "부자연스러운 암기식 끊어읽기 vs 자연스러운 의미 단위 청킹",
+          description: "같은 문장이라도 끊어 읽는 위치에 따라 기계적 암기와 자연스러운 회화가 구분됩니다.",
+          lines: [
+            "감점 패턴 (단어 기억 안 나서 엉뚱한 곳 정적): I went to... (3초 정적) ...the park because the... (4초 정적) ...weather was nice.",
+            "고득점 패턴 (생각하며 의미 단위로 이어가기): Well, actually, I headed out to the neighborhood park (반 호흡) simply because the weather was exceptionally clear that morning.",
+            "핵심: 문장 중간에 단어가 막히면 침묵하지 말고 'You know', 'How should I put it' 같은 필러로 생각할 시간을 벌며 다음 구절로 연결합니다.",
+          ],
+        },
+      },
+      {
+        heading: "3. ‘단어 나열식’ 답변이 AL이 아닌 IM에 그치는 이유",
+        paragraphs: [
+          "토익 라이팅처럼 단어 수를 채우는 시험과 달리, OPIc은 '문단 단위의 발화(Paragraph-length discourse)'를 요구합니다. 아무리 picturesque, mesmerizing, breathtaking 같은 고급 형용사를 연발하더라도, 그것들이 앞뒤 인과관계(Because, Therefore, That's why) 없이 단문 형태로 뚝뚝 끊어져 나열되면 등급은 Intermediate 수준에 묶입니다.",
+          "ACTFL 가이드라인에 명시된 AL(Advanced Low)의 절대 기준은 '과거 시제를 안정적으로 통제하면서, 발생한 사건을 시간 순서대로 엮고, 예기치 못한 문제 상황을 논리적으로 풀어나가는 능력'입니다. 즉, 단어의 난이도보다 '사건의 전개력'이 채점표의 상단을 결정합니다.",
+        ],
+        bullets: [
+          "IM 수준: '공원에 갔다. 날씨가 좋았다. 꽃이 예뻤다. 행복했다.' (단문 단순 나열)",
+          "IH 수준: '공원에 갔는데 날씨가 정말 화창해서 기분이 상쾌했다. 하지만 갑자기 소나기가 내려서 당황했다.' (접속사 활용 복문)",
+          "AL 수준: '평소처럼 산책로를 걷고 있었는데 예기치 않게 먹구름이 몰려왔다. 우산이 없었기 때문에 근처 정자로 급히 뛰어갔고, 거기서 비가 그칠 때까지 기다리며 친구와 통화했던 기억이 난다.' (사건-원인-대응-결과가 하나로 엮인 완전한 문단)",
+        ],
+      },
+      {
+        heading: "4. 기계가 아닌 사람에게 말하듯 호흡하는 실전 발화법",
+        paragraphs: [
+          "결국 오픽 시험에서 높은 등급을 받는 가장 확실한 비결은 모니터 뒤의 평가관을 진짜 대화 상대로 대하는 것입니다. 완벽한 문법을 구사하려는 강박을 내려놓고, 실제로 내 친구나 직장 동료에게 지난 주말에 있었던 소소한 일을 실감 나게 들려준다는 태도로 말해 보세요.",
+          "오픽온미의 Quick Practice에서 녹음 버튼을 누르고 내 목소리를 직접 들어보세요. 문장과 문장 사이의 침묵이 얼마나 긴지, filler가 자연스럽게 들어가는지 스스로 귀로 확인하고 다듬는 훈련이야말로 AI 시대에도 변하지 않는 가장 강력한 고득점 전략입니다.",
+        ],
+        note: {
+          title: "실전 모의고사 100% 활용 팁",
+          text: "오픽온미 STEP 6 실전 연습에서는 화면의 문항 카운트다운을 의식하지 말고, 질문 청취 후 3초 내에 첫 문장을 뱉은 뒤 '상황 설명 → 사건 발생 → 느낀 점'의 3단계 흐름으로 끊김 없이 60초를 채우는 훈련을 반복하세요.",
+        },
+      },
+    ],
+  },
+  {
+    id: "generative-ai-chatgpt-gemini-opic-study-guide",
+    category: "학습 방법",
+    title: "생성형 AI(ChatGPT·Gemini)로 오픽 준비할 때 절대 하지 말아야 할 실수와 200% 활용법",
+    subtitle: "AI가 써준 유려한 스크립트를 통째로 외우면 왜 IH/IM에서 멈출까? '모범답안 자판기'가 아닌 '즉흥 발화 시뮬레이터'로 AI를 활용하는 3단계 훈련법입니다.",
+    date: "2026.11.21",
+    publishedAt: "2026-11-21",
+    modifiedAt: "2026-11-21",
+    readMinutes: "8분 읽기",
+    summary: "ChatGPT나 Gemini 같은 생성형 AI는 오픽 공부의 훌륭한 파트너가 될 수도, 치명적인 독이 될 수도 있습니다. AI가 만들어준 원어민급 스크립트를 무작정 암기하다 시험장에서 얼어붙는 이유와, AI를 내 말하기 교정 코치로 똑똑하게 쓰는 실전 루틴을 소개합니다.",
+    image: generativeAiChatgptGeminiOpicStudyGuideCover,
+    imageAlt: "어두운 밤 스탠드 조명 아래에서 학습자가 마이크를 통해 영어로 소리 내어 말하고 노트북 화면의 음성 파형과 실시간 AI 피드백 카드를 확인하는 훈련 장면",
+    takeaway: "AI에게 완벽한 답을 써달라고 요구하지 마세요. 내가 직접 불완전하게 소리 내어 말한 뒤, AI에게 내 문장의 어색한 부분(FIX)과 살려둘 부분(KEEP)만 피드백받고 그 자리에서 다시 말해보는 훈련이 점수를 만듭니다.",
+    disclaimer: "특정 LLM 서비스의 성능이나 오픽 등급 취득을 보장하지 않습니다. 수험자 개인의 현재 영어 실력과 실제 입 밖으로 소리 내는 발화 연습량에 따라 결과는 달라질 수 있습니다.",
+    creationNote: "오픽온미의 6단계 실전 훈련 설계 및 Gemini 3.5 기반 관리형 AI 피드백 아키텍처를 바탕으로, 수험생들이 흔히 범하는 'AI 스크립트 단순 암기'의 부작용을 극복하는 구체적 발화 훈련 가이드를 완성했습니다.",
+    sources: [magazineSources.actflTestTakerTips, magazineSources.actflOpic, magazineSources.opicCandidateGuide],
+    sections: [
+      {
+        heading: "1. 완벽한 AI 모범 답안이 시험장에서 독이 되는 이유",
+        paragraphs: [
+          "ChatGPT나 Gemini에게 '오픽 재활용 문제 AL 수준 답변 써줘'라고 프롬프트를 넣으면, 3초 만에 원어민 에세이 수준의 유려한 영어 스크립트가 출력됩니다. 많은 수험생이 이 문장들을 노트에 정리하고 달달 외우기 시작합니다.",
+          "하지만 이렇게 만들어진 스크립트는 본인의 평소 구사 어휘나 문장 호흡과 완전히 겉돌기 마련입니다. 시험장 헤드폰 너머로 질문을 듣는 순간, 외웠던 5번째 줄의 한 단어가 기억나지 않으면 머릿속이 새하얘지며 10초 이상의 치명적인 정적이 발생합니다. 외운 티가 역력한 부자연스러운 억양과 돌발 변수에서의 무너짐은 공인 Rater에게 가장 쉽게 간파되는 감점 패턴입니다.",
+        ],
+        bullets: [
+          "암기형 발화의 맹점 1: 평소 내가 쓰지 않는 생소한 숙어는 시험장 긴장 상태에서 입 밖으로 튀어나오지 않음",
+          "암기형 발화의 맹점 2: 질문의 세부 뉘앙스가 조금만 바뀌어도 준비한 답안을 유연하게 수정하지 못하고 동문서답함",
+          "암기형 발화의 맹점 3: 스크립트가 끊기는 순간 침묵이 길어져 ACTFL 기준 유창성 최하위 판정을 받음",
+        ],
+      },
+      {
+        heading: "2. ‘답안 자판기’에서 ‘1:1 피드백 코치’로의 전환",
+        paragraphs: [
+          "생성형 AI를 오픽 준비에 활용할 때 가장 효과적인 방법은 AI에게 빈 도화지에 처음부터 글을 쓰게 하는 것이 아니라, '내가 직접 말해 본 불완전한 문장'을 던져주고 교정받는 것입니다.",
+          "문법이 틀리고 단어가 엉성해도 좋습니다. 내가 직접 뱉은 문장 구조를 바탕으로 어색한 시제를 바로잡고, 단문 두 개를 자연스러운 접속사로 이어 주는 피드백을 받을 때 그 표현은 온전히 내 것이 됩니다. AI는 작가가 아니라, 내 옆에 앉은 꼼꼼한 원어민 튜터여야 합니다.",
+        ],
+        example: {
+          title: "효과적인 AI 오픽 피드백 프롬프트 vs 잘못된 프롬프트",
+          description: "프롬프트 하나만 바꿔도 공부의 질이 완전히 달라집니다.",
+          lines: [
+            "❌ 잘못된 프롬프트: '오픽 호텔 예약 변경 롤플레이 AL 답안 10문장 써줘.' (외우다 포기하게 됨)",
+            "⭕ 올바른 프롬프트: '내가 방금 호텔 예약 변경 롤플레이를 소리 내어 해봤어: \"Hi, I booked room yesterday, but my schedule change so I need change date. Can I change?\" 내 원래 말투를 유지하면서 자연스러운 구어체로 2문장으로 다듬어주고, 시제 오류 하나만 짚어줘.'",
+            "결과 차이: 완전히 새로운 텍스트가 아니라 내가 말했던 문장이 세련되게 다듬어지므로 즉시 입에 붙습니다.",
+          ],
+        },
+      },
+      {
+        heading: "3. 오픽온미가 제안하는 4단계 AI 발화 루틴",
+        paragraphs: [
+          "오픽온미(OOM)의 실전 훈련 루프는 바로 이 철학 위에 설계되었습니다. 눈으로 텍스트를 읽는 공부를 멈추고, 반드시 귀로 듣고 입으로 뱉는 물리적 훈련이 중심이 되어야 합니다.",
+          "Quick Practice에서 질문을 듣고 60초간 녹음한 뒤, 내 음성이 전사된 텍스트(STT)를 직접 확인하세요. 그리고 AI 코치 피드백을 요청하여 내 답변 중 잘한 점(KEEP)과 어색한 표현(FIX)을 확인한 다음, 반드시 그 자리에서 '같은 문제 다시 말하기'를 눌러 수정된 문장을 입 밖으로 소리 내어 다시 녹음해 보는 것입니다.",
+        ],
+        bullets: [
+          "Step 1 (소리 내어 발화): 자막 없이 질문을 듣고 내 힘으로 45~60초간 답변 녹음",
+          "Step 2 (전사 확인): Gemini STT로 전사된 내 실제 말하기 텍스트를 눈으로 확인하며 말버릇 점검",
+          "Step 3 (AI 코칭 수용): KEEP(살릴 문장), FIX(고칠 문법), RETRY(재도전 포인트) 핵심 3가지만 확인",
+          "Step 4 (즉시 재발화): 교정된 표현을 머리에 담고 1분 안에 같은 문제 다시 녹음하여 뇌에 각인",
+        ],
+      },
+      {
+        heading: "4. 롤플레이 돌발 상황에서 AI 핑퐁 대화 훈련하기",
+        paragraphs: [
+          "STEP 5 롤플레이는 혼자 독백하듯 말하면 어색해지기 쉬운 파트입니다. 이때 AI에게 특정 점원이나 친구 역할을 부여하고, 3문장 이내로 짧게 주고받는 핑퐁 연습을 진행하면 돌발 상황 대처 능력이 비약적으로 향상됩니다.",
+          "예를 들어 '너는 렌터카 직원이고, 나는 예약한 차에 문제가 생겨 전화한 고객이야. 내가 말하면 한 문장으로 답변해줘'라고 설정한 뒤 즉흥적으로 문제를 해결해 보세요. 정해진 대본 없이 상황에 반응하는 순발력이 바로 AL을 가르는 핵심 역량입니다.",
+        ],
+        note: {
+          title: "오늘부터 실천하는 AI 오픽 원칙",
+          text: "AI가 생성한 스크립트를 10분 이상 들여다보지 마세요. 1분을 읽었다면 반드시 3분 동안 입 밖으로 소리 내어 말해야 진짜 내 영어 실력이 됩니다.",
+        },
+      },
+    ],
+  },
+];
+
 const newMagazineArticleDrafts: MagazineArticleDraft[] = [
   ...assessmentMagazineArticles,
   ...examPracticeMagazineArticles,
   ...topicPracticeMagazineArticles,
+  ...aiInnovationMagazineArticles,
 ];
 
 function estimateReadMinutes(article: Omit<MagazineArticle, "publishedAt" | "modifiedAt" | "author" | "reviewer" | "creationNote" | "sources">) {

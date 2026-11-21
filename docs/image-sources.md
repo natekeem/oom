@@ -36,3 +36,9 @@ These covers replace the former Flickr and StockSnap images so each article has 
 - `opic-im-to-ih-practice-plan-cover.jpg` — short waveform expanded through action, reason, and feeling cues
 - `opic-last-week-study-plan-cover.jpg` — restrained seven-day plan reusing a small set of familiar scenes
 - `opic-answer-checklist-cover.jpg` — recording waveform reviewed with four non-text answer-check tokens
+
+## 2026-11-21 AI and exam innovation covers (3)
+
+- `opic-smart-glasses-exam-security-rules-cover.jpg` — proctor inspecting regular prescription eyeglasses beside a clean workstation
+- `actfl-opic-ai-scoring-system-analysis-cover.jpg` — language evaluator reviewing audio waveforms and assessment metrics on a laptop screen
+- `generative-ai-chatgpt-gemini-opic-study-guide-cover.jpg` — adult learner practicing spoken English with a microphone, audio waveform, and notes

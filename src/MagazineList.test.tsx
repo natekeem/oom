@@ -5,11 +5,11 @@ import { MagazineList } from "./components/magazine/MagazineList";
 import { magazineArticles } from "./data/magazine";
 
 describe("Magazine editorial listing", () => {
-  it("publishes 32 unique, truthfully dated articles in newest-first order", () => {
-    expect(magazineArticles).toHaveLength(32);
-    expect(new Set(magazineArticles.map((article) => article.id)).size).toBe(32);
-    expect(new Set(magazineArticles.map((article) => article.title)).size).toBe(32);
-    expect(new Set(magazineArticles.map((article) => article.image)).size).toBe(32);
+  it("publishes 35 unique, truthfully dated articles in newest-first order", () => {
+    expect(magazineArticles).toHaveLength(35);
+    expect(new Set(magazineArticles.map((article) => article.id)).size).toBe(35);
+    expect(new Set(magazineArticles.map((article) => article.title)).size).toBe(35);
+    expect(new Set(magazineArticles.map((article) => article.image)).size).toBe(35);
 
     const publishedDates = magazineArticles.map((article) => article.publishedAt);
     expect(publishedDates).toEqual([...publishedDates].sort((left, right) => right.localeCompare(left)));
@@ -17,6 +17,20 @@ describe("Magazine editorial listing", () => {
       expect(article.publishedAt <= article.modifiedAt).toBe(true);
       expect(Date.parse(`${article.modifiedAt}T00:00:00+09:00`)).toBeLessThanOrEqual(Date.now());
       expect(article.sources.length).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it("keeps the new AI innovation articles substantive instead of summary-only", () => {
+    const aiArticles = magazineArticles.filter((article) => article.publishedAt === "2026-11-21");
+    expect(aiArticles).toHaveLength(3);
+    expect(new Set(aiArticles.map((article) => article.image)).size).toBe(3);
+
+    for (const article of aiArticles) {
+      expect(article.sections.length).toBeGreaterThanOrEqual(4);
+      expect(article.sections.flatMap((section) => section.paragraphs).length).toBeGreaterThanOrEqual(8);
+      expect(article.sections.some((section) => section.example)).toBe(true);
+      expect(article.sections.some((section) => section.bullets)).toBe(true);
+      expect(article.creationNote.length).toBeGreaterThan(40);
     }
   });
 

@@ -42,3 +42,8 @@ These covers replace the former Flickr and StockSnap images so each article has 
 - `opic-smart-glasses-exam-security-rules-cover.jpg` — proctor inspecting regular prescription eyeglasses beside a clean workstation
 - `actfl-opic-ai-scoring-system-analysis-cover.jpg` — language evaluator reviewing audio waveforms and assessment metrics on a laptop screen
 - `generative-ai-chatgpt-gemini-opic-study-guide-cover.jpg` — adult learner practicing spoken English with a microphone, audio waveform, and notes
+
+## 2026-11-22 Updated exam and strategy covers (2)
+
+- `opic-actual-exam-screen-ui-guide-cover.jpg` — composed adult test taker wearing studio headphones in an exam booth
+- `opic-2026-survey-12-items-strategy-cover.jpg` — reflective adult learner writing daily routine ideas in a notebook at a sunlit wooden desk
